@@ -1,0 +1,21 @@
+- hosts: localhost
+  vars:
+    a_ns: "litmus"
+
+  tasks:
+
+    - template:
+        src: liveness-app.j2
+        dest: liveness-app.yml 
+
+    - name: Deploying liveness pod 
+      shell: kubectl apply -f liveness-app.yml
+      register: liveness_app_deploy
+
+    - name: Verify that the liveness pod is running 
+      include_tasks: "../../utils/status_app_pod.yml"
+      vars:     
+        delay: 2
+        retries: 30
+        a_label: "run=liveness-app"
+

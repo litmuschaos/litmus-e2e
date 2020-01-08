@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  vars:
+    c_ns: "litmus"
+    replicas: "3"
+
+  tasks:
+
+    - template:
+        src: nginx.j2
+        dest: nginx.yml
+
+    - name: Deploying and exposing nginx deployment
+      shell: kubectl apply -f nginx.yml 
+      register: nginx_deploy
+
+    - name: Verify that the AUT (Application Under Test) is running 
+      include_tasks: "../../utils/status_app_pod.yml"
+      vars:     
+        delay: 2
+        retries: 60
+        a_ns: "{{ c_ns }}"
+        a_label: "run=nginx"

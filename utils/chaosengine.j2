@@ -1,0 +1,17 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: {{ name }}
+  namespace: litmus
+spec:
+  jobCleanUpPolicy: retain
+  monitoring: false
+  appinfo: 
+    appns: {{ a_ns }}
+    # FYI, To see app label, apply kubectl get pods --show-labels
+    applabel: {{ a_label }}
+    appkind:  {{ a_kind }}
+  chaosServiceAccount: {{ a_ns }}
+  experiments:
+    - name: {{ e_name }}
