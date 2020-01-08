@@ -1,11 +1,4 @@
-# Makefile for building litmus-e2 https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-
-
-IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
-
-# list only our namespaced dGirectories
-PACKAGES = $(shell go list ./... | grep -v '/vendor/')
-
+# Makefile for building litmus-e2e pipeline 
 
 .PHONY: install
 install:
@@ -28,7 +21,6 @@ deployapp:
 	@echo "--------------------"
 	@echo "Deploying app"
 	@echo "--------------------"
-#	@go run test/deploy_app.go
 	@ansible-playbook nginx/deployment/app_deploy.yml -vv
 	@kubectl get deploy nginx -n litmus
 	@kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n litmus

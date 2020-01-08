@@ -1,0 +1,121 @@
+---
+stages:
+  - setup
+  - install
+  - deploy
+  - generic-experiment
+  - infra-experiment
+  - push
+  - app-cleanup
+  - cleanup
+
+ClusterSetup:
+
+  stage: setup
+  tags:
+    - setup
+  script: 
+    - chmod 755 ./build/gitlab/stages/1-cluster-setup/gcp
+    - ./build/gitlab/stages/1-cluster-setup/gcp
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+InstallLitmus:
+
+  stage: install
+  tags:
+    - setup
+  script:
+    - make install
+    
+DeployApp:
+
+  stage: deploy
+  tags:
+    - setup
+  script:
+    - make deployapp
+
+Liveness:
+
+  stage: deploy
+  tags:
+    - setup
+  script:
+    - make liveness
+
+pod-delete:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make pod-delete
+
+container-kill:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make container-kill
+
+pod-network-latency:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make pod-network-latency
+
+pod-network-loss:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make pod-network-loss
+
+pod-network-corruption:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make pod-network-corruption
+
+node-cpu-hog:
+
+  stage: infra-experiment
+  tags: 
+    - experiment
+  script:
+    - make node-cpu-hog
+
+AppCleanup:
+
+  when: always
+  stage: app-cleanup
+  tags: 
+    - cleanup
+  script:
+    - make app-cleanup 
+
+
+ClusterCleanup:
+
+  when: always
+  stage: cleanup
+  tags:
+    - cleanup
+  script: 
+    - chmod 755 ./build/gitlab/stages/2-cluster-cleanup/cluster-cleanup
+    - ./build/gitlab/stages/2-cluster-cleanup/cluster-cleanup
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
