@@ -87,6 +87,14 @@ pod-network-corruption:
   script:
     - make pod-network-corruption
 
+pod-cpu-hog:
+
+  stage: generic-experiment
+  tags:
+    - experiment
+  script:
+    - make pod-cpu-hog
+    
 node-cpu-hog:
 
   stage: infra-experiment
