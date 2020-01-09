@@ -9,7 +9,7 @@ stages:
   - app-cleanup
   - cleanup
 
-ClusterSetup:
+Cluster Setup:
 
   stage: setup
   tags:
@@ -23,7 +23,7 @@ ClusterSetup:
     paths:
       - .kube/
 
-InstallLitmus:
+Litmus Infra Setup:
 
   stage: install
   tags:
@@ -31,7 +31,7 @@ InstallLitmus:
   script:
     - make install
     
-DeployApp:
+Deploy App:
 
   stage: deploy
   tags:
@@ -94,16 +94,17 @@ pod-cpu-hog:
     - experiment
   script:
     - make pod-cpu-hog
-    
+
 node-cpu-hog:
 
+  when: always
   stage: infra-experiment
   tags: 
     - experiment
   script:
     - make node-cpu-hog
 
-AppCleanup:
+App Cleanup:
 
   when: always
   stage: app-cleanup
@@ -113,7 +114,7 @@ AppCleanup:
     - make app-cleanup 
 
 
-ClusterCleanup:
+Cluster Cleanup:
 
   when: always
   stage: cleanup
@@ -127,4 +128,3 @@ ClusterCleanup:
     when: always
     paths:
       - .kube/
-

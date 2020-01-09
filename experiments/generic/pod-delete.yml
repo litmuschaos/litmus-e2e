@@ -1,10 +1,11 @@
+---
 - hosts: localhost
   vars:
     a_ns: litmus
     a_kind: deployment
-    name: engine-nginx1
+    name: engine-nginx1     #engine name
     a_label: run=nginx
-    e_name: pod-delete
+    e_name: pod-delete  
 
   tasks: 
        
@@ -26,7 +27,7 @@
     - name: Create chaos-engine
       shell: kubectl create -f ../../utils/chaosengine.yml
 
-    - name: Waiting for the chaos complition
+    - name: Waiting for the chaos completion
       shell: kubectl get po {{ name }}-runner -n {{ a_ns }} -o custom-columns=:.status.phase --no-headers
       register: result
       until: "'Succeeded' in result.stdout"

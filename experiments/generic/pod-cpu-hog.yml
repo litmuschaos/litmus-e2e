@@ -1,8 +1,9 @@
+---
 - hosts: localhost
   vars:
     a_ns: litmus
     a_kind: deployment
-    name: engine-nginx5
+    name: engine-nginx6
     a_label: run=nginx
     e_name: pod-cpu-hog
 
@@ -18,7 +19,7 @@
     - name: Create chaos-engine
       shell: kubectl create -f ../../utils/chaosengine.yml
 
-    - name: Waiting for the chaos complition
+    - name: Waiting for the chaos completion
       shell: kubectl get po {{ name }}-runner -n {{ a_ns }} -o custom-columns=:.status.phase --no-headers
       register: result
       until: "'Succeeded' in result.stdout"
@@ -39,4 +40,3 @@
       vars:
         delay: 2
         retries: 60
-

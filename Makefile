@@ -1,4 +1,4 @@
-# Makefile for building litmus-e2e 
+# Makefile for building litmus-e2e
 
 .PHONY: install
 install:
@@ -75,7 +75,7 @@ pod-network-corruption:
 	@ansible-playbook experiments/generic/pod-network-corruption.yml -vv
 
 .PHONY: pod-cpu-hog
-pod-network-corruption:
+pod-cpu-hog:
 
 	@echo "-------------------------------"
 	@echo "Running pod-cpu-hog experiment"
