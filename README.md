@@ -9,11 +9,11 @@ This repository contains the Gitlab e2e pipeline with BDD and other positive and
   </tr>
   <tr>
     <td>Setup</td>
-    <td>In this stage the gke cluster is setup with the given value of nodes</td>
+    <td>In this stage, the gke cluster is set up with the given value of nodes.</td>
   </tr>
   <tr>
     <td>Install</td>
-    <td>This is the Litmus installation stage, in this satge the crds rbacs and the operator are created</td>
+    <td>This is the Litmus installation stage, in this stage the crds rbacs and the operator are created.</td>
   </tr>
     <tr>
     <td>Deploy</td>
@@ -21,18 +21,18 @@ This repository contains the Gitlab e2e pipeline with BDD and other positive and
   </tr>
     <tr>
     <td>Generic-experiment</td>
-    <td>This stage includes the creation of experiment,engine and positive and negative test cases for the experiments</td>
+    <td>This stage includes the creation of experiments,engine and positive and negative test cases for the experiments.</td>
   </tr>
     <tr>
     <td>Infra-experiment</td>
-    <td>This stage also includes the creation of experiment,engine and positive and negative test cases of Infra experiments</td>
+    <td>This stage also includes the creation of experiments,engine and positive and negative test cases of Infra experiments.</td>
   </tr>
     <tr>
     <td>App-cleanup</td>
-    <td>This is the experiment and application cleanup stage on which all the engines,application,experiments are removed</td>
+    <td>This is the experiment and application cleanup stage on which all the engines, applications, experiments are removed.</td>
   </tr>
     <tr>
     <td>Cleanup</td>
-    <td>In this stage the cluster along with VPC Network gets deleted</td>
+    <td>In this stage, the cluster along with VPC Network gets deleted.</td>
   </tr>
 </table>

@@ -27,30 +27,34 @@ spec:
         - name: CHAOS_INTERVAL
           value: '10'
         - name: FORCE
-          value: "false"
+          value: 'false'
 {% elif e_name is defined and e_name == 'container-kill' %}
         - name: TARGET_CONTAINER
           value: 'nginx'
 {% elif e_name is defined and e_name == 'pod-network-latency' %}
         - name: ANSIBLE_STDOUT_CALLBACK
-          value: default
+          value: 'default'
         - name: TARGET_CONTAINER
-          value: "nginx" 
+          value: 'nginx' 
         - name: NETWORK_INTERFACE
-          value: eth0                   
+          value: 'eth0'                   
         - name: LIB_IMAGE
-          value: gaiaadm/pumba:0.6.5
+          value: 'gaiaadm/pumba:0.6.5'
         - name: NETWORK_LATENCY
-          value: "2000"
+          value: '60000'
         - name: TOTAL_CHAOS_DURATION
-          value: "60000"
+          value: '60000'
         - name: LIB
-          value: pumba
+          value: 'pumba'
 {% elif e_name is defined and e_name == 'pod-network-loss' %}
         - name: ANSIBLE_STDOUT_CALLBACK
           value: 'default'
         - name: TARGET_CONTAINER
           value: 'nginx' 
+        - name: NETWORK_PACKET_LOSS_PERCENTAGE
+          value: '100' #in PERCENTAGE
+        - name: TOTAL_CHAOS_DURATION
+          value: '60000' #in ms
         - name: LIB
           value: 'pumba'
         - name: LIB_IMAGE
@@ -81,7 +85,7 @@ spec:
         - name: TARGET_CONTAINER
           value: 'nginx'
         - name: CPU_CORES
-          value: "1" 
+          value: '1' 
         - name: TOTAL_CHAOS_DURATION
-          value: "90" 
+          value: '90' 
 {% endif %}
