@@ -1,10 +1,20 @@
+<<<<<<< HEAD
+=======
+---
+>>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8
 - hosts: localhost
   vars:
     a_ns: litmus
     a_kind: deployment
+<<<<<<< HEAD
     name: engine-nginx1
     a_label: run=nginx
     e_name: pod-delete
+=======
+    name: engine-nginx1     #engine name
+    a_label: run=nginx
+    e_name: pod-delete  
+>>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8
 
   tasks: 
        
@@ -26,7 +36,11 @@
     - name: Create chaos-engine
       shell: kubectl create -f ../../utils/chaosengine.yml
 
+<<<<<<< HEAD
     - name: Waiting for the chaos complition
+=======
+    - name: Waiting for the chaos completion
+>>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8
       shell: kubectl get po {{ name }}-runner -n {{ a_ns }} -o custom-columns=:.status.phase --no-headers
       register: result
       until: "'Succeeded' in result.stdout"
@@ -59,4 +73,8 @@
     - name: Result of Version test
       fail:
         msg: "Resource Verison does not match"
+<<<<<<< HEAD
       when: "rv_bef.stdout == rv_aft.stdout"
+=======
+      when: "rv_bef.stdout == rv_aft.stdout"
+>>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8

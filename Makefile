@@ -1,11 +1,4 @@
-# Makefile for building litmus-e2 https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-
-
-IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
-
-# list only our namespaced dGirectories
-PACKAGES = $(shell go list ./... | grep -v '/vendor/')
-
+# Makefile for building litmus-e2e
 
 .PHONY: install
 install:
@@ -28,7 +21,6 @@ deployapp:
 	@echo "--------------------"
 	@echo "Deploying app"
 	@echo "--------------------"
-#	@go run test/deploy_app.go
 	@ansible-playbook nginx/deployment/app_deploy.yml -vv
 	@kubectl get deploy nginx -n litmus
 	@kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n litmus
@@ -81,6 +73,14 @@ pod-network-corruption:
 	@echo "Running pod-network-corruption experiment"
 	@echo "--------------------------------"
 	@ansible-playbook experiments/generic/pod-network-corruption.yml -vv
+
+.PHONY: pod-cpu-hog
+pod-cpu-hog:
+
+	@echo "-------------------------------"
+	@echo "Running pod-cpu-hog experiment"
+	@echo "--------------------------------"
+	@ansible-playbook experiments/generic/pod-cpu-hog.yml -vv
 
 .PHONY: node-cpu-hog
 node-cpu-hog:

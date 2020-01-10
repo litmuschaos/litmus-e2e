@@ -3,14 +3,14 @@
   vars:
     a_ns: litmus
     a_kind: deployment
-    name: engine-nginx3             # engine name
+    name: engine-nginx6
     a_label: run=nginx
-    e_name: pod-network-latency
+    e_name: pod-cpu-hog
 
   tasks: 
        
-    - name: Installing pod-network-latency Experiment
-      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns}}
+    - name: Installing pod-cpu-hog Experiment
+      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml -n {{ a_ns}}
 
     - template:
         src: ../../utils/chaosengine.j2
