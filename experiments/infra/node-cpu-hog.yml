@@ -10,6 +10,8 @@
        
     - name: Installing node-cpu-hog Experiment
       shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/cpu-hog/experiment.yaml -n {{ a_ns}}
+      args:
+        executable: /bin/bash
 
     - template:
         src: ../../utils/chaosengine.j2
@@ -17,16 +19,22 @@
 
     - name: Create chaos-engine
       shell: kubectl create -f ../../utils/chaosengine.yml
+      args:
+        executable: /bin/bash
 
     - name: Waiting for the chaos complition
       shell: kubectl get po {{ name }}-runner -n {{ a_ns }} -o custom-columns=:.status.phase --no-headers
       register: result
+      args:
+        executable: /bin/bash
       until: "'Succeeded' in result.stdout"
       delay: 10
       retries: 50
 
     - name: Checking the verdict of the experiment 
       shell: kubectl get chaosresult {{ name }}-{{ e_name }} -n {{ a_ns }} -o jsonpath='{.spec.experimentstatus.verdict}'
+      args:
+        executable: /bin/bash
       register: cr
 
     - name: Result of verdict test

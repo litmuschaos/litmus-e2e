@@ -5,19 +5,11 @@ metadata:
   name: {{ name }}
   namespace: litmus
 spec:
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> master
   components:
     runner:
       image: "litmuschaos/chaos-executor:ci"
       type: "go"   
-<<<<<<< HEAD
-=======
->>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8
->>>>>>> master
+  jobCleanUpPolicy: delete
   monitoring: false
   appinfo: 
     appns: {{ a_ns }}
@@ -27,11 +19,6 @@ spec:
   chaosServiceAccount: {{ a_ns }}
   experiments:
     - name: {{ e_name }}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> master
       spec:
         components:
 {% if e_name is defined and e_name == 'pod-delete' %}
@@ -102,7 +89,3 @@ spec:
         - name: TOTAL_CHAOS_DURATION
           value: '90' 
 {% endif %}
-<<<<<<< HEAD
-=======
->>>>>>> a9ef9e3fdb0b686ecd08e5cd27541dd73fa161b8
->>>>>>> master
