@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+path=$(pwd)
+echo $SDK_TOKEN > key.json
+gcloud auth activate-service-account --key-file=key.json
+gcloud config set project ${PROJECT_NAME}
+export GOOGLE_APPLICATION_CREDENTIALS="$path/key.json"
+export GCP_SERVICE_ACCOUNT_FILE="$path/key.json"
+export GKEUSER=`echo $GKE_USER`
+
+git clone https://github.com/litmuschaos/litmus-e2e.git 
+cd litmus-e2e/build/gitlab/stages/
+
+truncate -s 0 ~/logs/clusters
+truncate -s 0 ~/logs/zone
+
+echo "creating cluster"
+
+ansible-playbook create-gke-cluster.yml -vv --extra-vars "project=${PROJECT_NAME}"
+mkdir $path/.kube
+cat ~/.kube/config > $path/.kube/config
+cat ~/.kube/config > $path/.kube/admin.conf
+cat ~/logs/clusters > $path/.kube/clusters
+cat ~/logs/zone > $path/.kube/zone
+
+kubectl get nodes

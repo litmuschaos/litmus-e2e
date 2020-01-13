@@ -30,6 +30,11 @@ Litmus Infra Setup:
     - setup
   script:
     - make install
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
     
 Deploy App:
 
@@ -39,6 +44,11 @@ Deploy App:
   script:
     - make deployapp
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 Liveness:
 
   stage: deploy
@@ -46,6 +56,11 @@ Liveness:
     - setup
   script:
     - make liveness
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 pod-delete:
 
@@ -55,6 +70,11 @@ pod-delete:
   script:
     - make pod-delete
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 container-kill:
 
   stage: generic-experiment
@@ -62,6 +82,11 @@ container-kill:
     - experiment
   script:
     - make container-kill
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 pod-network-latency:
 
@@ -71,6 +96,11 @@ pod-network-latency:
   script:
     - make pod-network-latency
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 pod-network-loss:
 
   stage: generic-experiment
@@ -78,6 +108,11 @@ pod-network-loss:
     - experiment
   script:
     - make pod-network-loss
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 pod-network-corruption:
 
@@ -87,6 +122,11 @@ pod-network-corruption:
   script:
     - make pod-network-corruption
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 pod-cpu-hog:
 
   stage: generic-experiment
@@ -94,6 +134,11 @@ pod-cpu-hog:
     - experiment
   script:
     - make pod-cpu-hog
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 node-cpu-hog:
 
@@ -104,6 +149,11 @@ node-cpu-hog:
   script:
     - make node-cpu-hog
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 App Cleanup:
 
   when: always
@@ -113,6 +163,10 @@ App Cleanup:
   script:
     - make app-cleanup 
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 Cluster Cleanup:
 

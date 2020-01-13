@@ -9,7 +9,7 @@ spec:
     runner:
       image: "litmuschaos/chaos-executor:ci"
       type: "go"   
-  jobCleanUpPolicy: retain
+  jobCleanUpPolicy: delete
   monitoring: false
   appinfo: 
     appns: {{ a_ns }}

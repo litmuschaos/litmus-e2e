@@ -1,0 +1,64 @@
+---
+- hosts: localhost
+  gather_facts: yes
+
+  vars_files:
+    - vars.yml
+  vars:
+    cluster_name:
+    set_zone:
+    test_case_name: "GKE_DELETE_CLUSTER"
+
+  tasks:
+
+    - block:
+
+        - name: Fetch Cluster Name
+          shell: cat ~/logs/clusters
+          register: cluster_name
+          when: not cluster_name
+
+        - name: Fetch Zone
+          shell: cat ~/logs/zone
+          register: set_zone
+          when: not set_zone
+
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - set_fact:
+            set_zone: "{{ set_zone.stdout }}"
+          when: set_zone.stdout is defined
+
+        - name: Delete GKE cluster
+          shell: gcloud container clusters delete {{ cluster_name }} --zone={{ set_zone }} --quiet     
+          args:
+            executable: /bin/bash   
+
+        - name: Remove Cluster Info
+          lineinfile:
+            state: absent
+            path: "~/logs/clusters"
+            regexp: "{{ cluster_name }}"
+
+        - name: Remove Zone Info
+          lineinfile:
+            state: absent
+            path: "~/logs/zone"
+            regexp: "{{ set_zone }}"
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:  
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"
+
+        - fail:
+            msg: "The cluster deletion failed"
+          when: true
+

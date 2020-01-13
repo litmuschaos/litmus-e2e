@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+path=$(pwd)
+echo $SDK_TOKEN > key.json
+gcloud auth activate-service-account --key-file=key.json
+gcloud config set project ${PROJECT_NAME}
+export GOOGLE_APPLICATION_CREDENTIALS="$path/key.json"
+export GCP_SERVICE_ACCOUNT_FILE="$path/key.json"
+
+echo "cleanup"
+mkdir -p ~/logs
+cp .kube/clusters ~/logs
+cp .kube/zone ~/logs
+git clone https://github.com/litmuschaos/litmus-e2e.git 
+cd litmus-e2e/build/gitlab/stages/
+echo "cleanup"
+ansible-playbook delete-gke-cluster.yml
