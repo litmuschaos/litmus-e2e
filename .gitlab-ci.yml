@@ -62,6 +62,19 @@ Liveness:
     paths:
       - .kube/
 
+Auxiliary App:
+
+  stage: deploy
+  tags:
+    - setup
+  script:
+    - make auxiliaryapp
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 pod-delete:
 
   stage: generic-experiment
@@ -154,6 +167,34 @@ node-cpu-hog:
     paths:
       - .kube/
 
+node-drain:
+
+  when: always
+  stage: infra-experiment
+  tags:
+    - experiment
+  script:
+    - make node-drain
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+disk-fill:
+
+  when: always
+  stage: infra-experiment
+  tags:
+    - experiment
+  script:
+    - make disk-fill
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 App Cleanup:
 
   when: always
@@ -182,4 +223,6 @@ Cluster Cleanup:
     when: always
     paths:
       - .kube/
+
+
 
