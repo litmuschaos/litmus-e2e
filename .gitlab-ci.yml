@@ -15,8 +15,8 @@ Cluster Setup:
   tags:
     - setup
   script: 
-    - chmod 755 ./build/gitlab/stages/1-cluster-setup/gcp
-    - ./build/gitlab/stages/1-cluster-setup/gcp
+    - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
+    - ./build/gitlab/stages/1-gke-setup/cluster-setup
 
   artifacts:
     when: always
@@ -175,10 +175,11 @@ Cluster Cleanup:
   tags:
     - cleanup
   script: 
-    - chmod 755 ./build/gitlab/stages/2-cluster-cleanup/cluster-cleanup
-    - ./build/gitlab/stages/2-cluster-cleanup/cluster-cleanup
+    - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
+    - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
 
   artifacts:
     when: always
     paths:
       - .kube/
+
