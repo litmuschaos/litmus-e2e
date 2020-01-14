@@ -13,7 +13,7 @@
     - block:
 
         - name: Generating Random Cluster Name
-          shell: python ../../utils/name_generator/namesgenerator.py
+          shell: python ../../../utils/name_generator/namesgenerator.py
           register: cluster_name
           when: not cluster_name
 
