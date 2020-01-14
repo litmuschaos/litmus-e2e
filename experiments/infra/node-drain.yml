@@ -51,6 +51,11 @@
         executable: /bin/bash
       register: cr
 
+    - name: Uncordoning the node
+      shell: kubectl uncordon "{{ app_node }}"
+      args:
+        executable: /bin/bash
+
     - name: Result of verdict test
       fail:
         msg: "Verdict is not pass"
