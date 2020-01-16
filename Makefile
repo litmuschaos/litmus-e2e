@@ -34,13 +34,13 @@ liveness:
 	@ansible-playbook nginx/liveness/liveness.yml -vv
 	@kubectl get pods -n litmus
 
-.PHONY: auxiliaryapp
-auxiliaryapp:
+.PHONY: auxiliary-app
+auxiliary-app:
 
 	@echo "------------------------"
 	@echo "Deploying Auxiliary App"
 	@echo "------------------------"
-	@kubectl run mypod --image=nginx -n litmus
+	@kubectl run aux-app --image=nginx -n litmus
 	
 .PHONY: pod-delete
 pod-delete:

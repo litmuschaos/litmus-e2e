@@ -68,7 +68,7 @@ Auxiliary App:
   tags:
     - setup
   script:
-    - make auxiliaryapp
+    - make auxiliary-app
 
   artifacts:
     when: always
