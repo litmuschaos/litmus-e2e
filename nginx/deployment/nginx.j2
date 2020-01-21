@@ -21,6 +21,11 @@ spec:
         image: nginx:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            ephemeral-storage: "2Gi"
+          limits:
+            ephemeral-storage: "4Gi"
 ---
 apiVersion: v1
 kind: Service
