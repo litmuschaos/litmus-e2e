@@ -33,6 +33,14 @@ liveness:
 	@echo "-------------------"
 	@ansible-playbook nginx/liveness/liveness.yml -vv
 	@kubectl get pods -n litmus
+
+.PHONY: auxiliary-app
+auxiliary-app:
+
+	@echo "------------------------"
+	@echo "Deploying Auxiliary App"
+	@echo "------------------------"
+	@kubectl run aux-app --image=nginx -n litmus
 	
 .PHONY: pod-delete
 pod-delete:
@@ -89,6 +97,22 @@ node-cpu-hog:
 	@echo "Running node-cpu-hog experiment"
 	@echo "--------------------------------"
 	@ansible-playbook experiments/infra/node-cpu-hog.yml -vv
+
+.PHONY: node-drain
+node-drain:
+
+	@echo "---------------------------------"
+	@echo "Running node-drain experiment"
+	@echo "---------------------------------"
+	@ansible-playbook experiments/infra/node-drain.yml -vv
+
+.PHONY: disk-fill
+disk-fill:
+
+	@echo "--------------------------------"
+	@echo "Running disk-fill experiment"
+	@echo "--------------------------------"
+	@ansible-playbook experiments/infra/disk-fill.yml -vv
 
 .PHONY: app-cleanup
 app-cleanup:
