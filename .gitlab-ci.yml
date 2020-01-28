@@ -1,17 +1,15 @@
 ---
 stages:
-  - setup
-  - install
-  - deploy
-  - generic-experiment
-  - infra-experiment
-  - push
-  - app-cleanup
-  - cleanup
+
+  - cluster setup
+  - Install litmus and openebs
+  - experiment
+  - openebs and litmus cleanup
+  - cluster cleanup
 
 Cluster Setup:
 
-  stage: setup
+  stage: cluster setup
   tags:
     - setup
   script: 
@@ -22,197 +20,67 @@ Cluster Setup:
     when: always
     paths:
       - .kube/
-
-Litmus Infra Setup:
-
-  stage: install
+  
+Build Litmus:
+  
+  stage: Install litmus and openebs
   tags:
     - setup
   script:
-    - make install
 
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
+    - go env
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
+    - go test setup_test.go -v
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+OpenEBS Pool Container Failure:
+  
+  stage: experiment
+  tags:
+    - experiment
+  script:
+
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - go env
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
+    - go test openebs-pool-container-failure_test.go -v
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+Removing Litmus and OpenEBS:
+  
+  stage: openebs and litmus cleanup
+  tags:
+    - cleanup
+  script:
+
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - go env
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
+    - go test cleanup_test.go -v
+    
   artifacts:
     when: always
     paths:
       - .kube/
     
-Deploy App:
-
-  stage: deploy
-  tags:
-    - setup
-  script:
-    - make deployapp
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-Liveness:
-
-  stage: deploy
-  tags:
-    - setup
-  script:
-    - make liveness
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-Auxiliary App:
-
-  stage: deploy
-  tags:
-    - setup
-  script:
-    - make auxiliary-app
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-delete:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make pod-delete
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-container-kill:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make container-kill
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-network-latency:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make pod-network-latency
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-network-loss:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make pod-network-loss
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-network-corruption:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make pod-network-corruption
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-cpu-hog:
-
-  stage: generic-experiment
-  tags:
-    - experiment
-  script:
-    - make pod-cpu-hog
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-node-cpu-hog:
-
-  when: always
-  stage: infra-experiment
-  tags: 
-    - experiment
-  script:
-    - make node-cpu-hog
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-node-drain:
-
-  when: always
-  stage: infra-experiment
-  tags:
-    - experiment
-  script:
-    - make node-drain
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-disk-fill:
-
-  when: always
-  stage: infra-experiment
-  tags:
-    - experiment
-  script:
-    - make disk-fill
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-App Cleanup:
-
-  when: always
-  stage: app-cleanup
-  tags: 
-    - cleanup
-  script:
-    - make app-cleanup 
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
 Cluster Cleanup:
 
   when: always
-  stage: cleanup
+  stage: cluster cleanup
   tags:
     - cleanup
   script: 
@@ -223,6 +91,5 @@ Cluster Cleanup:
     when: always
     paths:
       - .kube/
-
 
 
