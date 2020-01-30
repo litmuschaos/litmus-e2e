@@ -9,7 +9,7 @@
   tasks: 
        
     - name: Installing node-cpu-hog Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/cpu-hog/experiment.yaml -n {{ a_ns}}
+      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-cpu-hog/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 

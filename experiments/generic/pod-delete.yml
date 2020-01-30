@@ -18,7 +18,7 @@
       register: rv_bef   
 
     - name: Installing pod-delete Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml -n {{ a_ns}}
+      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
