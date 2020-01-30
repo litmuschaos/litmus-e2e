@@ -146,9 +146,9 @@ var _ = Describe("BDD of openebs experiment", func() {
 			//Fetching engine-nginx-runner pod
 			runner, err := client.CoreV1().Pods("litmus").Get("engine1-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
-			for i := 0; i < 300; i++ {
+			for i := 0; i < 50; i++ {
 				if string(runner.Status.Phase) != "Succeeded" {
-					time.Sleep(10 * time.Second)
+					time.Sleep(20 * time.Second)
 					runner, _ = client.CoreV1().Pods("litmus").Get("engine1-runner", metav1.GetOptions{})
 					fmt.Printf("Current Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
 				} else {

@@ -6,6 +6,15 @@ stages:
   - experiment
   - Infra cleanup
   - cluster cleanup
+  
+.before_script_template:
+  before_script:
+
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
 
 Cluster Setup:
 
@@ -24,17 +33,12 @@ Cluster Setup:
 Build Litmus:
 
   when: always
+  extends: .before_script_template
   stage: Infra setup
   tags:
     - setup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test install-litmus_test.go -v -count=1
+    - make build-litmus
 
   artifacts:
     when: always
@@ -45,17 +49,12 @@ Build Litmus:
 Build OpenEBS:
   
   when: always
+  extends: .before_script_template
   stage: Infra setup
   tags:
     - setup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-setup_test.go -v -count=1
+    - make build-openebs
 
   artifacts:
     when: always
@@ -65,17 +64,12 @@ Build OpenEBS:
 App Deploy:
 
   when: always
+  extends: .before_script_template
   stage: Infra setup
   tags:
     - setup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test app-deploy_test.go -v -count=1
+    - make app-deploy
 
   artifacts:
     when: always
@@ -85,15 +79,12 @@ App Deploy:
 OpenEBS Target Pod Failure:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-target-pod-failure_test.go -v -count=1
+    - make openebs-target-pod-failure
 
   artifacts:
     when: always
@@ -103,15 +94,12 @@ OpenEBS Target Pod Failure:
 OpenEBS Pool Container Failure:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-pool-container-failure_test.go -v -count=1
+    - make openebs-pool-container-failure
 
   artifacts:
     when: always
@@ -121,15 +109,12 @@ OpenEBS Pool Container Failure:
 OpenEBS Pool Pod Failure:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-pool-pod-failure_test.go -v -count=1 -timeout=20m
+    - make openebs-pool-pod-failure
 
   artifacts:
     when: always
@@ -139,15 +124,12 @@ OpenEBS Pool Pod Failure:
 OpenEBS Target Container Failure:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-target-container-failure_test.go -v -count=1
+    - make openebs-target-container-failure
 
   artifacts:
     when: always
@@ -157,15 +139,12 @@ OpenEBS Target Container Failure:
 OpenEBS Target Network Delay:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-target-network-delay_test.go -v -count=1
+    - make openebs-target-network-delay
 
   artifacts:
     when: always
@@ -175,15 +154,12 @@ OpenEBS Target Network Delay:
 OpenEBS Target Network Loss:
   
   when: always
+  extends: .before_script_template
   stage: experiment
   tags:
     - experiment
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-target-network-loss_test.go -v -count=1
+    - make openebs-target-network-loss
 
   artifacts:
     when: always
@@ -193,15 +169,12 @@ OpenEBS Target Network Loss:
 Application Cleanup:
   
   when: always
+  extends: .before_script_template
   stage: Infra cleanup
   tags:
     - cleanup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test app-cleanup_test.go -v -count=1
+    - make app-cleanup
     
   artifacts:
     when: always
@@ -211,15 +184,12 @@ Application Cleanup:
 Litmus Cleanup:
   
   when: always
+  extends: .before_script_template
   stage: Infra cleanup
   tags:
     - cleanup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test litmus-cleanup_test.go -v -count=1
+    - make litmus-cleanup
     
   artifacts:
     when: always
@@ -230,15 +200,12 @@ Litmus Cleanup:
 OpenEBS Cleanup:
   
   when: always
+  extends: .before_script_template
   stage: Infra cleanup
   tags:
     - cleanup
   script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-cleanup_test.go -v -count=1
+    - make openebs-cleanup
     
   artifacts:
     when: always
@@ -251,7 +218,7 @@ Cluster Cleanup:
   stage: cluster cleanup
   tags:
     - cleanup
-  script: 
+  script:
     - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
     - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
 
@@ -259,3 +226,4 @@ Cluster Cleanup:
     when: always
     paths:
       - .kube/
+
