@@ -129,7 +129,7 @@ OpenEBS Pool Pod Failure:
     - export GOPATH=$HOME/go
     - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
     - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}/tests/bdds
-    - go test openebs-pool-pod-failure_test.go -v -count=1
+    - go test openebs-pool-pod-failure_test.go -v -count=1 -timeout=20m
 
   artifacts:
     when: always

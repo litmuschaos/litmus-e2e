@@ -161,7 +161,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 			//Checking the chaosresult
 			By("Checking the chaosresult")
 			app, _ := clientSet.ChaosResults("litmus").Get("engine1-openebs-pool-pod-failure", metav1.GetOptions{})
-			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("pass"), "Verdict is not pass chaosresult")
+			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 		})
 	})
 
