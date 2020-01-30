@@ -9,7 +9,6 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	scheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -67,14 +66,6 @@ var _ = AfterSuite(func() {
 		fmt.Println(err)
 	}
 
-	//Removing Application
-	By("Deleting Application,Service and PVC")
-	err = exec.Command("kubectl", "delete", "-f", "../../percona/deployment.yml").Run()
-	Expect(err).To(BeNil(), "failed to delete application and its components")
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	//Removing SPC
 	By("Deleting SPC")
 	err = exec.Command("kubectl", "delete", "spc", "--all").Run()
@@ -83,66 +74,7 @@ var _ = AfterSuite(func() {
 		fmt.Println(err)
 	}
 
-	//Get the status of percona Application
-	app, err := client.AppsV1().Deployments("default").Get("percona", metav1.GetOptions{})
-	if err == nil {
-		count := 0
-		for app.Status.AvailableReplicas != 0 {
-			if count < 50 {
-				fmt.Printf("Percona Application is still deleting Currently Avaliable Count is: %v \n", app.Status.AvailableReplicas)
-				app, _ = client.AppsV1().Deployments("default").Get("percona", metav1.GetOptions{})
-				time.Sleep(10 * time.Second)
-				count++
-			} else {
-				Fail("Percona Deletion Failed Time Out")
-			}
-		}
-	}
-
-	//Deleting crds
-	By("Creating chaosengine crd")
-	err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
-	Expect(err).To(BeNil(), "failed to delete crds")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("crds deleted successfully")
-
-	//Deleting rbacs
-	By("Creating chaosengine rbac")
-	err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
-	Expect(err).To(BeNil(), "failed to create rbac")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("rbac deleted sucessfully")
-	//Deleting chaos-operator deployment
-	By("Deleting chaos-operator deployment")
-	err = exec.Command("kubectl", "delete", "deploy", "-n", "litmus", "--all").Run()
-	Expect(err).To(BeNil(), "failed to delete deployments")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("chaos-operator deleted sucessfully")
-
-	//Checking Whether Litmus is Deleted successfully
-	operator, err := client.AppsV1().Deployments("litmus").Get("litmus", metav1.GetOptions{})
-	count := 0
-	for operator.Status.AvailableReplicas != 0 {
-		if count < 5 {
-			fmt.Printf("Avaliable Count: %v", operator.Status.AvailableReplicas)
-			operator, _ = client.AppsV1().Deployments("litmus").Get("litmus", metav1.GetOptions{})
-			time.Sleep(2 * time.Second)
-			count++
-		} else {
-			Fail("Litmus Deletion Failed Time Out")
-		}
-	}
-	fmt.Println("Litmus is deleted successfully")
-
+	fmt.Println("SPC is deleted successfully")
 	//Removing PV
 	By("Deleting Pv")
 	err = exec.Command("kubectl", "delete", "pv", "-n", "openebs", "--all").Run()

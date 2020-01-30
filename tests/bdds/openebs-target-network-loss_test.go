@@ -1,4 +1,4 @@
-package bdd
+package delay
 
 import (
 	"fmt"
@@ -86,7 +86,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-loss/experiment.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			if err != nil {
 				fmt.Println(err)
@@ -98,7 +98,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 			By("Creating ChaosEngine")
 			chaosEngine := &v1alpha1.ChaosEngine{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      "engine",
+					Name:      "engine5",
 					Namespace: "litmus",
 				},
 				Spec: v1alpha1.ChaosEngineSpec{
@@ -117,13 +117,17 @@ var _ = Describe("BDD of openebs experiment", func() {
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "delete",
+					JobCleanUpPolicy: "retain",
 					Experiments: []v1alpha1.ExperimentList{
 						{
-							Name: "openebs-pool-container-failure",
+							Name: "openebs-target-network-loss",
 							Spec: v1alpha1.ExperimentAttributes{
 								Components: v1alpha1.ExperimentComponents{
 									ENV: []v1alpha1.ExperimentENV{
+										{
+											Name:  "TARGET_CONTAINER",
+											Value: "cstor-istgt",
+										},
 										{
 											Name:  "APP_PVC",
 											Value: "percona-vol1-claim",
@@ -144,13 +148,13 @@ var _ = Describe("BDD of openebs experiment", func() {
 			fmt.Println("Chaosengine created successfully...")
 
 			//Fetching engine-nginx-runner pod
-			runner, err := client.CoreV1().Pods("litmus").Get("engine-runner", metav1.GetOptions{})
+			runner, err := client.CoreV1().Pods("litmus").Get("engine5-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
 			for i := 0; i < 30; i++ {
 				if string(runner.Status.Phase) != "Succeeded" {
 					time.Sleep(10 * time.Second)
-					runner, _ = client.CoreV1().Pods("litmus").Get("engine-runner", metav1.GetOptions{})
-					fmt.Printf("Current Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
+					runner, _ = client.CoreV1().Pods("litmus").Get("engine5-runner", metav1.GetOptions{})
+					fmt.Printf("Currently Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
 				} else {
 					break
 				}
@@ -160,7 +164,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, _ := clientSet.ChaosResults("litmus").Get("engine-openebs-pool-container-failure", metav1.GetOptions{})
+			app, _ := clientSet.ChaosResults("litmus").Get("engine5-openebs-target-network-loss", metav1.GetOptions{})
 			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 		})
 	})

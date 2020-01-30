@@ -5,6 +5,7 @@ metadata:
   name: percona
   labels:
     name: percona
+    openebs.io/target-affinity: percona
   namespace: litmus
 spec:
   replicas: 1
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         name: percona
+        openebs.io/target-affinity: percona
     spec:
       securityContext:
         fsGroup: 999
@@ -50,6 +52,8 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: percona-vol1-claim
+  labels: 
+    openebs.io/target-affinity: percona 
   namespace: litmus
 spec:
   storageClassName: openebs-cstor-sparse

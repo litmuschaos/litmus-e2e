@@ -1,12 +1,9 @@
 /*
 Copyright 2019 LitmusChaos Authors
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
    http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +24,8 @@ import (
 type ChaosEngineSpec struct {
 	//Appinfo contains deployment details of AUT
 	Appinfo ApplicationParams `json:"appinfo"`
-	//ChaosType define wheather it is an infra chaos or app chaos
-	ChaosType string `json:"chaosType,omitempty"`
+	//AnnotationCheck defines whether annotation check is allowed or not. It can be true or false
+	AnnotationCheck string `json:"annotationCheck,omitempty"`
 	//ChaosServiceAccount is the SvcAcc specified for chaos runner pods
 	ChaosServiceAccount string `json:"chaosServiceAccount"`
 	//Components contains the image of runnner and monitor pod
