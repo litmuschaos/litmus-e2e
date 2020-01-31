@@ -10,7 +10,7 @@
   tasks: 
        
     - name: Installing pod-cpu-hog Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml -n {{ a_ns}}
+      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
