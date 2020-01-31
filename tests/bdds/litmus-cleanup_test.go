@@ -92,7 +92,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("All chaosexperiment deleted successfully")
 
 			//Deleting crds
-			By("Creating chaosengine crd")
+			By("Deleting all crds")
 			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
 			Expect(err).To(BeNil(), "failed to delete crds")
 			if err != nil {
@@ -102,7 +102,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("crds deleted successfully")
 
 			//Deleting rbacs
-			By("Creating chaosengine rbac")
+			By(Deleting rbac")
 			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {

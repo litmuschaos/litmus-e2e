@@ -1,5 +1,5 @@
 # Litmus-OpenEBS E2E 
-This repository contains the Gitlab e2e pipeline with BDD and other test cases for Litmus OpenEBS experiments. An application is deployed using the OpenEBS Storage class and the chaos is performed on the different OpenEBS components using that application and after the chaos is performed the application is removed successfully.
+This repository contains the Gitlab e2e pipeline with BDD and other test cases for OpenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
 ## Here are the different stages of the Gitlab pipeline:
 
 <table style="width:100%">

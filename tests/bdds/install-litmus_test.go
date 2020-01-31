@@ -72,7 +72,7 @@ var _ = Describe("BDD of litmus installation", func() {
 
 			//Creating crds
 			var err error
-			By("Creating chaosengine crd")
+			By("Creating all crds")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create crds")
 			if err != nil {
@@ -82,7 +82,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("crds installed successfully")
 
 			//Creating rbacs
-			By("Creating chaosengine rbac")
+			By("Creating rbac")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
