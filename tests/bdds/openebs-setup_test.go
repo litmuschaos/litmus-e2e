@@ -81,7 +81,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			//Changing the required field
 			By("Changing the required field")
-			err = exec.Command("sed", "-i", "157 s/false/true/", "openebs-operator-1.2.0.yaml").Run()
+			err = exec.Command("sed", "-i", "/name:", "OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL/{n;s/.*/",          "value: "true"/}", "openebs-operator-1.2.0.yaml").Run()
 			Expect(err).To(BeNil(), "failed to make changes in OpenEBS Charts")
 			if err != nil {
 				fmt.Println(err)
