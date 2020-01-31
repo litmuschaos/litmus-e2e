@@ -1,4 +1,4 @@
-package install
+package deleteall
 
 import (
 	"fmt"
@@ -62,13 +62,13 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests to check secondary resources
-var _ = Describe("BDD of litmus installation", func() {
+//BDD Tests to delete litmus
+var _ = Describe("BDD of litmus cleanup", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for the custom resources", func() {
+	Context("Check for the litmus components", func() {
 
-		It("Should check for creation of Litmus", func() {
+		It("Should check for deletion of Litmus", func() {
 
 			//Deleting all chaosengines
 			var err error
@@ -92,7 +92,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("All chaosexperiment deleted successfully")
 
 			//Deleting crds
-			By("Creating chaosengine crd")
+			By("Delete chaosengine crd")
 			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
 			Expect(err).To(BeNil(), "failed to delete crds")
 			if err != nil {
@@ -102,7 +102,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("crds deleted successfully")
 
 			//Deleting rbacs
-			By("Creating chaosengine rbac")
+			By("Delete chaosengine rbac")
 			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
@@ -131,7 +131,7 @@ var _ = Describe("BDD of litmus installation", func() {
 					time.Sleep(2 * time.Second)
 					count++
 				} else {
-					Fail("Litmus Deletion Failed Time Out")
+					Fail("Chaos Engine deletion Failed Time Out")
 				}
 			}
 			fmt.Println("Litmus is deleted successfully")

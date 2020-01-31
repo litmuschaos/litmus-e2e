@@ -62,18 +62,18 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests to check secondary resources
+//BDD Tests to check application cleanup
 var _ = Describe("BDD of Application Cleanup", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for the application", func() {
+	Context("Checking for the application", func() {
 
 		It("Should check for deletion of application,pv and service", func() {
 
 			//Removing Application
 			var err error
 			By("Deleting Application,Service and PVC")
-			err = exec.Command("kubectl", "delete", "-f", "../../percona/deployment.yml").Run()
+			err = exec.Command("kubectl", "delete", "-f", "../percona/deployment.yml").Run()
 			Expect(err).To(BeNil(), "failed to delete application and its components")
 			if err != nil {
 				fmt.Println(err)
@@ -85,12 +85,12 @@ var _ = Describe("BDD of Application Cleanup", func() {
 				count := 0
 				for app.Status.AvailableReplicas != 0 {
 					if count < 50 {
-						fmt.Printf("Percona Application is Removing the current available count is: %v \n", app.Status.AvailableReplicas)
+						fmt.Printf("Percona Application is Deleting the current available count is: %v \n", app.Status.AvailableReplicas)
 						app, _ = client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
 						time.Sleep(10 * time.Second)
 						count++
 					} else {
-						Fail("Percona Deletion Failed Time Out")
+						Fail("percona deletion failed Time Out")
 					}
 				}
 			}

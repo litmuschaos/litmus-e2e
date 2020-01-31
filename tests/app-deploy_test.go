@@ -62,7 +62,7 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests to check secondary resources
+//BDD Tests to check application deployment
 var _ = Describe("BDD of Application Deployment", func() {
 
 	// BDD TEST CASE 1
@@ -73,7 +73,7 @@ var _ = Describe("BDD of Application Deployment", func() {
 			//Deploying percona application
 			var err error
 			By("Deploying percona Application")
-			err = exec.Command("kubectl", "apply", "-f", "../../percona/deployment.yml").Run()
+			err = exec.Command("kubectl", "apply", "-f", "../percona/deployment.yml").Run()
 			Expect(err).To(BeNil(), "failed to create the application")
 			if err != nil {
 				fmt.Println(err)
@@ -84,12 +84,12 @@ var _ = Describe("BDD of Application Deployment", func() {
 			count := 0
 			for app.Status.UnavailableReplicas != 0 {
 				if count < 30 {
-					fmt.Printf("Percona is getting ready Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
+					fmt.Printf("Percona is getting ready, Currently the Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
 					app, _ = client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
 					time.Sleep(10 * time.Second)
 					count++
 				} else {
-					Fail("Litmus Deletion Failed Time Out")
+					Fail("Litmus Installation Failed Time Out")
 				}
 			}
 

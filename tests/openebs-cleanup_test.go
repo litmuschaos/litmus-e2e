@@ -60,7 +60,7 @@ var _ = AfterSuite(func() {
 
 	//Removing All Downloaded files
 	By("Removing all Downloaded files")
-	err = exec.Command("rm", "-rf", "bdds/openebs-operator-1.2.0.yaml*").Run()
+	err = exec.Command("rm", "-rf", "openebs-operator-1.2.0.yaml*").Run()
 	Expect(err).To(BeNil(), "fail to remove downloaded files")
 	if err != nil {
 		fmt.Println(err)
@@ -73,8 +73,8 @@ var _ = AfterSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("SPC is deleted successfully")
+
 	//Removing PV
 	By("Deleting Pv")
 	err = exec.Command("kubectl", "delete", "pv", "-n", "openebs", "--all").Run()
@@ -82,8 +82,8 @@ var _ = AfterSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("PV is deleted successfully")
+
 	//Removing Blockdevices
 	By("Deleting Blockdevices")
 	err = exec.Command("kubectl", "delete", "bd", "-n", "openebs", "--all").Run()
@@ -91,7 +91,6 @@ var _ = AfterSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("Blockdevices deleted successfully")
 
 	//Removing the deployment components
@@ -101,7 +100,6 @@ var _ = AfterSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("deployment components are deleted successfully")
 
 	//Removing OpenEBS NDM DaemonSet
@@ -111,7 +109,6 @@ var _ = AfterSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("NDM Daemonset is deleted successfully")
 
 	//Removing openebs crds
@@ -130,6 +127,6 @@ var _ = AfterSuite(func() {
 	err = exec.Command("kubectl", "delete", "ns", "litmus", "openebs").Run()
 	time.Sleep(2 * time.Second)
 
-	fmt.Println("Namespace deleted successfully")
+	fmt.Println("Namespaces deleted successfully")
 
 })

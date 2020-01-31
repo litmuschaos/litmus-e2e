@@ -62,17 +62,17 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests to check secondary resources
+//BDD Tests to Install Litmus
 var _ = Describe("BDD of litmus installation", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for the custom resources", func() {
+	Context("Check for the Litmus components", func() {
 
 		It("Should check for creation of Litmus", func() {
 
 			//Creating crds
 			var err error
-			By("Creating chaosengine crd")
+			By("Creating all crds")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create crds")
 			if err != nil {
@@ -82,7 +82,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("crds installed successfully")
 
 			//Creating rbacs
-			By("Creating chaosengine rbac")
+			By("Creating rbac")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
@@ -92,7 +92,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			fmt.Println("rbac installed sucessfully")
 
 			//Creating Chaos-Operator
-			By("creating operator")
+			By("creating chaos-operator")
 			err = exec.Command("kubectl", "create", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create chaos-operator")
 			if err != nil {
@@ -109,11 +109,11 @@ var _ = Describe("BDD of litmus installation", func() {
 					time.Sleep(5 * time.Second)
 					count++
 				} else {
-					Fail("Litmus Deletion Failed Time Out")
+					Fail("Operator is not in Ready state Time Out")
 				}
 			}
 
-			fmt.Println("Chaos-operator created successfully")
+			fmt.Println("chaos-operator created successfully")
 			fmt.Println("Litmus installed successfully")
 		})
 	})
