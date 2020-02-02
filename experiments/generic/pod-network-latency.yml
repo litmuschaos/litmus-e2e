@@ -10,7 +10,7 @@
   tasks: 
        
     - name: Installing pod-network-latency Experiment
-      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }
+      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
