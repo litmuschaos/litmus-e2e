@@ -1,128 +1,103 @@
 # Makefile for building litmus-e2e
 
-.PHONY: install
-install:
+.PHONY: build-litmus
+build-litmus:
 
-	@echo "-------------------"
-	@echo "Installing Litmus"
-	@echo "-------------------"
-	@echo "Creatign crds"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-	@echo "Creating rbac"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml
-	@echo "Creating chaos-operator"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml
-	@echo "Litmus installed successfully"
+	@echo "------------"
+	@echo "Build Litmus"
+	@echo "------------"
+	@go test tests/install-litmus_test.go -v -count=1
 
 
-.PHONY: deployapp
-deployapp:
+.PHONY: build-openebs
+build-openebs:
 
-	@echo "--------------------"
-	@echo "Deploying app"
-	@echo "--------------------"
-	@ansible-playbook nginx/deployment/app_deploy.yml -vv
-	@kubectl get deploy nginx -n litmus
-	@kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n litmus
+	@echo "-------------"
+	@echo "Build OpenEBS"
+	@echo "-------------"
+	@go test tests/openebs-setup_test.go -v -count=1
 
-.PHONY: liveness
-liveness:
+.PHONY: app-deploy
+app-deploy:
 
-	@echo "-------------------"
-	@echo "Checking liveness"
-	@echo "-------------------"
-	@ansible-playbook nginx/liveness/liveness.yml -vv
-	@kubectl get pods -n litmus
+	@echo "---------------------"
+	@echo "Deploying Application"
+	@echo "---------------------"
+	@go test tests/app-deploy_test.go -v -count=1
 
-.PHONY: auxiliary-app
-auxiliary-app:
+.PHONY: openebs-target-pod-failure
+openebs-target-pod-failure:
 
-	@echo "------------------------"
-	@echo "Deploying Auxiliary App"
-	@echo "------------------------"
-	@kubectl run aux-app --image=nginx -n litmus
-	
-.PHONY: pod-delete
-pod-delete:
+	@echo "----------------------------------"
+	@echo "Running OpenEBS Target Pod Failure"
+	@echo "----------------------------------"
+	@go test tests/openebs-target-pod-failure_test.go -v -count=1
 
-	@echo "-------------------------------"
-	@echo "Running pod-delete experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-delete.yml -vv
+.PHONY: openebs-pool-container-failure
+openebs-pool-container-failure:
 
-.PHONY: container-kill
-container-kill:
+	@echo "--------------------------------------"
+	@echo "Running OpenEBS Pool Container Failure"
+	@echo "--------------------------------------"
+	@go test tests/openebs-pool-container-failure_test.go -v -count=1
 
-	@echo "-------------------------------"
-	@echo "Running container-kill experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/container-kill.yml -vv
-
-.PHONY: pod-network-latency
-pod-network-latency:
-
-	@echo "-------------------------------"
-	@echo "Running pod-network-latency experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-latency.yml -vv
-
-.PHONY: pod-network-loss
-pod-network-loss:
-
-	@echo "-------------------------------"
-	@echo "Running pod-network-loss experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-loss.yml -vv
-
-.PHONY: pod-network-corruption
-pod-network-corruption:
-
-	@echo "-------------------------------"
-	@echo "Running pod-network-corruption experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-corruption.yml -vv
-
-.PHONY: pod-cpu-hog
-pod-cpu-hog:
-
-	@echo "-------------------------------"
-	@echo "Running pod-cpu-hog experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-cpu-hog.yml -vv
-
-.PHONY: node-cpu-hog
-node-cpu-hog:
-
-	@echo "-------------------------------"
-	@echo "Running node-cpu-hog experiment"
-	@echo "--------------------------------"
-	@ansible-playbook experiments/infra/node-cpu-hog.yml -vv
-
-.PHONY: node-drain
-node-drain:
-
-	@echo "---------------------------------"
-	@echo "Running node-drain experiment"
-	@echo "---------------------------------"
-	@ansible-playbook experiments/infra/node-drain.yml -vv
-
-.PHONY: disk-fill
-disk-fill:
+.PHONY: openebs-pool-pod-failure
+openebs-pool-pod-failure:
 
 	@echo "--------------------------------"
-	@echo "Running disk-fill experiment"
+	@echo "Running OpenEBS Pool Pod Failure"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/infra/disk-fill.yml -vv
+	@go test tests/openebs-pool-pod-failure_test.go -v -count=1 -timeout=20m
+
+.PHONY: openebs-target-container-failure
+openebs-target-container-failure:
+
+	@echo "----------------------------------------"
+	@echo "Running OpenEBS Target Container Failure"
+	@echo "----------------------------------------"
+	@go test tests/openebs-target-container-failure_test.go -v -count=1
+
+.PHONY: openebs-target-network-delay
+openebs-target-network-delay:
+
+	@echo "-------------------------------------"
+	@echo "Running OpenEBS Target Network Delay"
+	@echo "-------------------------------------"
+	@go test tests/openebs-target-network-delay_test.go -v -count=1
+
+
+.PHONY: openebs-target-network-loss
+openebs-target-network-loss:
+
+	@echo "-----------------------------------"
+	@echo "Running OpenEBS Target Network Loss"
+	@echo "-----------------------------------"
+	@go test tests/openebs-target-network-loss_test.go -v -count=1
+
 
 .PHONY: app-cleanup
 app-cleanup:
 
-	@echo "--------------------"
-	@echo "Deleting litmus"
-	@echo "--------------------"
-	@kubectl delete chaosengine -n litmus --all
-	@kubectl delete chaosexperiment -n litmus --all
-	@kubectl delete deploy -n litmus --all
-	@kubectl delete svc nginx -n litmus
-	@kubectl delete -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-	@kubectl delete -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml
+	@echo "-------------------"
+	@echo "Application Cleanup"
+	@echo "-------------------"
+	@go test tests/app-cleanup_test.go -v -count=1
+
+
+.PHONY: litmus-cleanup
+litmus-cleanup:
+
+	@echo "--------------"
+	@echo "Litmus Cleanup"
+	@echo "--------------"
+	@go test tests/litmus-cleanup_test.go -v -count=1
+
+
+.PHONY: openebs-cleanup
+openebs-cleanup:
+
+	@echo "---------------"
+	@echo "OpenEBS Cleanup"
+	@echo "---------------"
+	@go test tests/openebs-cleanup_test.go -v -count=1
+
