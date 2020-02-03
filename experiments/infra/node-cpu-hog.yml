@@ -4,7 +4,7 @@
     a_kind: deployment
     name: engine-nginx7
     a_label: run=nginx
-    e_name: cpu-hog
+    e_name: node-cpu-hog
 
   tasks: 
        

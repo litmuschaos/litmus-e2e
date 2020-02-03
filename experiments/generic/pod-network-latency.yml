@@ -10,7 +10,7 @@
   tasks: 
        
     - name: Installing pod-network-latency Experiment
-      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }
+      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -41,7 +41,7 @@
     - name: Result of verdict test
       fail:
         msg: "Verdict is not pass"
-      when: "cr.stdout != 'pass'"
+      when: "cr.stdout != 'pass' and cr.stdout != 'Pass'"
 
     - name: Verify that the AUT (Application Under Test) is running
       include_tasks: "../../utils/status_app_pod.yml"
