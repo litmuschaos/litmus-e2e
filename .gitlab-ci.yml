@@ -20,7 +20,7 @@ Cluster Setup:
 
   stage: cluster setup
   tags:
-    - setup
+    - litmus-openebs
   script: 
     - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
     - ./build/gitlab/stages/1-gke-setup/cluster-setup
@@ -36,7 +36,7 @@ Build Litmus:
   extends: .before_script_template
   stage: Infra setup
   tags:
-    - setup
+    - litmus-openebs
   script:
     - make build-litmus
 
@@ -52,7 +52,7 @@ Build OpenEBS:
   extends: .before_script_template
   stage: Infra setup
   tags:
-    - setup
+    - litmus-openebs
   script:
     - make build-openebs
 
@@ -67,7 +67,7 @@ App Deploy:
   extends: .before_script_template
   stage: Infra setup
   tags:
-    - setup
+    - litmus-openebs
   script:
     - make app-deploy
 
@@ -82,7 +82,7 @@ OpenEBS Target Pod Failure:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-target-pod-failure
 
@@ -97,7 +97,7 @@ OpenEBS Pool Container Failure:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-pool-container-failure
 
@@ -112,7 +112,7 @@ OpenEBS Pool Pod Failure:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-pool-pod-failure
 
@@ -127,7 +127,7 @@ OpenEBS Target Container Failure:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-target-container-failure
 
@@ -142,7 +142,7 @@ OpenEBS Target Network Delay:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-target-network-delay
 
@@ -157,7 +157,7 @@ OpenEBS Target Network Loss:
   extends: .before_script_template
   stage: experiment
   tags:
-    - experiment
+    - litmus-openebs
   script:
     - make openebs-target-network-loss
 
@@ -172,7 +172,7 @@ Application Cleanup:
   extends: .before_script_template
   stage: Infra cleanup
   tags:
-    - cleanup
+    - litmus-openebs
   script:
     - make app-cleanup
     
@@ -187,7 +187,7 @@ Litmus Cleanup:
   extends: .before_script_template
   stage: Infra cleanup
   tags:
-    - cleanup
+    - litmus-openebs
   script:
     - make litmus-cleanup
     
@@ -203,7 +203,7 @@ OpenEBS Cleanup:
   extends: .before_script_template
   stage: Infra cleanup
   tags:
-    - cleanup
+    - litmus-openebs
   script:
     - make openebs-cleanup
     
@@ -217,7 +217,7 @@ Cluster Cleanup:
   when: always
   stage: cluster cleanup
   tags:
-    - cleanup
+    - litmus-openebs
   script:
     - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
     - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
