@@ -13,7 +13,7 @@ Cluster Setup:
 
   stage: setup
   tags:
-    - setup
+    - litmus-build
   script: 
     - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
     - ./build/gitlab/stages/1-gke-setup/cluster-setup
@@ -27,7 +27,7 @@ Litmus Infra Setup:
 
   stage: install
   tags:
-    - setup
+    - litmus-build
   script:
     - make install
 
@@ -40,7 +40,7 @@ Deploy App:
 
   stage: deploy
   tags:
-    - setup
+    - litmus-build
   script:
     - make deployapp
 
@@ -53,7 +53,7 @@ Liveness:
 
   stage: deploy
   tags:
-    - setup
+    - litmus-build
   script:
     - make liveness
 
@@ -66,7 +66,7 @@ Auxiliary App:
 
   stage: deploy
   tags:
-    - setup
+    - litmus-build
   script:
     - make auxiliary-app
 
@@ -79,7 +79,7 @@ pod-delete:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make pod-delete
 
@@ -92,7 +92,7 @@ container-kill:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make container-kill
 
@@ -105,7 +105,7 @@ pod-network-latency:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make pod-network-latency
 
@@ -118,7 +118,7 @@ pod-network-loss:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make pod-network-loss
 
@@ -131,7 +131,7 @@ pod-network-corruption:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make pod-network-corruption
 
@@ -144,7 +144,7 @@ pod-cpu-hog:
 
   stage: generic-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make pod-cpu-hog
 
@@ -158,7 +158,7 @@ node-cpu-hog:
   when: always
   stage: infra-experiment
   tags: 
-    - experiment
+    - litmus-build
   script:
     - make node-cpu-hog
 
@@ -172,7 +172,7 @@ node-drain:
   when: always
   stage: infra-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make node-drain
 
@@ -186,7 +186,7 @@ disk-fill:
   when: always
   stage: infra-experiment
   tags:
-    - experiment
+    - litmus-build
   script:
     - make disk-fill
 
@@ -200,7 +200,7 @@ App Cleanup:
   when: always
   stage: app-cleanup
   tags: 
-    - cleanup
+    - litmus-build
   script:
     - make app-cleanup 
 
@@ -214,7 +214,7 @@ Cluster Cleanup:
   when: always
   stage: cleanup
   tags:
-    - cleanup
+    - litmus-build
   script: 
     - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
     - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
