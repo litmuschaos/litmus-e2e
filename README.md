@@ -58,7 +58,6 @@ This repository contains the Gitlab e2e pipeline with BDD and other test cases f
 New pod can be tested by checking:-<br><i>
   - Resource Version(old)<br>
   - Name<br>
-  - hostIP<br>
   - podIP<br>
   - startTime</i><br>
 </td>
@@ -67,7 +66,6 @@ Gets deleted and <b>new one</b> gets created with:-<i><br>
   - Resource Version
          (new)<br>
   - Name(different)<br>
-  - hostIP(different)<br>
   - podIP(different)<br>
   - startTime(different)</i><br>
 </td>
