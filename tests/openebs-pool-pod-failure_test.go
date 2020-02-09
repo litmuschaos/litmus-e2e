@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"testing"
 	"time"
 
@@ -21,11 +22,15 @@ import (
 )
 
 var (
-	kubeconfig string
-	config     *restclient.Config
-	client     *kubernetes.Clientset
-	clientSet  *chaosClient.LitmuschaosV1alpha1Client
-	err        error
+	kubeconfig      string
+	config          *restclient.Config
+	client          *kubernetes.Clientset
+	clientSet       *chaosClient.LitmuschaosV1alpha1Client
+	err             error
+	podNameBefore   [3]string
+	podIpBefore     [3]string
+	hostIpBefore    [3]string
+	startTimeBefore [3]*metav1.Time
 )
 
 func TestChaos(t *testing.T) {
@@ -80,9 +85,30 @@ var _ = BeforeSuite(func() {
 var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 
 	// BDD TEST CASE 1
+	resourceVersionSumBefore := 0
+	cspPodLabels := "app=cstor-pool"
+	cspPodNs := "openebs"
 	Context("Check for the openebs components", func() {
 
 		It("Should check for creation of runner pod", func() {
+
+			//Getting the Sum of Resource Version, CSP pod name,PodIP, HostIP, StartTime before Chaos
+			csp, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get csp pods")
+			for i, podSpec := range csp.Items {
+				rv, _ := strconv.Atoi(podSpec.ResourceVersion)
+				podNameBefore[i] = podSpec.Name
+				podIpBefore[i] = podSpec.Status.PodIP
+				hostIpBefore[i] = podSpec.Status.HostIP
+				startTimeBefore[i] = podSpec.Status.StartTime
+				resourceVersionSumBefore = resourceVersionSumBefore + rv
+			}
+
+			fmt.Println("Resource Version before chaos has been recorded")
+			fmt.Println("CSP pod Name before chaos has been recorded")
+			fmt.Println("PodIP of csp pod has been recorded")
+			fmt.Println("HosIP of csp pod has been recorded")
+			fmt.Println("StartTime of csp pod has been recorded")
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
@@ -151,7 +177,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 				if string(runner.Status.Phase) != "Succeeded" {
 					time.Sleep(20 * time.Second)
 					runner, _ = client.CoreV1().Pods("litmus").Get("engine1-runner", metav1.GetOptions{})
-					fmt.Printf("Current Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
+					fmt.Printf("Currently, the Runner pod is in %v State, Please Wait ...\n", runner.Status.Phase)
 				} else {
 					break
 				}
@@ -166,4 +192,125 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 		})
 	})
 
+	//Matching the Resource Verison after Chaos
+	Context("Check Resource Version of pool container", func() {
+
+		It("Should check for the change in Resource Version after Chaos", func() {
+
+			resourceVersionSumAfter := 0
+			csp_rv, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for _, podSpec := range csp_rv.Items {
+				rv, _ := strconv.Atoi(podSpec.ResourceVersion)
+				resourceVersionSumAfter = resourceVersionSumAfter + rv
+			}
+
+			Expect(resourceVersionSumAfter-resourceVersionSumBefore).NotTo(Equal(0), "The Resource Version does not change")
+			fmt.Printf("The Resource Version changes\n")
+
+		})
+	})
+
+	//Matching the Pool Pod Name
+	Context("Check csp pod Name", func() {
+
+		It("Should check for the change in name of csp pod after Chaos", func() {
+
+			var podNameAfter [3]string
+			podNameChanged := false
+			csp_name, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for i, podSpec := range csp_name.Items {
+				podNameAfter[i] = podSpec.Name
+			}
+
+			for i := range podNameAfter {
+				if podNameAfter[i] != podNameBefore[i] {
+					podNameChanged = true
+					break
+				}
+			}
+
+			Expect(podNameChanged).NotTo(Equal(false), "The csp pod name does not change")
+			fmt.Printf("CSP pod name Changes!!!\n")
+
+		})
+	})
+
+	//Matching csp pod PodIP
+	Context("Check csp pod PodIP", func() {
+
+		It("Should check for the change in csp pod PodIP after Chaos", func() {
+
+			var podIpAfter [3]string
+			podIpChanged := false
+			csp_podip, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for i, podSpec := range csp_podip.Items {
+				podIpAfter[i] = podSpec.Status.PodIP
+			}
+
+			for i := range podIpAfter {
+				if podIpAfter[i] != podIpAfter[i] {
+					podIpChanged = true
+					break
+				}
+			}
+
+			Expect(podIpChanged).NotTo(Equal(false), "The csp pod PodIP does not change")
+			fmt.Printf("CSP pod PodIP Changes!!!\n")
+
+		})
+	})
+
+	//Matching csp pod HostIP
+	Context("Check csp pod HostIP", func() {
+
+		It("Should check for the change in csp pod HostIP after Chaos", func() {
+
+			var hostIpAfter [3]string
+			hostIpChanged := false
+			csp_hostip, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for i, podSpec := range csp_hostip.Items {
+				hostIpAfter[i] = podSpec.Status.HostIP
+			}
+
+			for i := range hostIpAfter {
+				if hostIpAfter[i] != hostIpAfter[i] {
+					hostIpChanged = true
+					break
+				}
+			}
+
+			Expect(hostIpChanged).NotTo(Equal(false), "The csp pod HostIP does not change")
+			fmt.Printf("CSP pod HostIP Changes!!!\n")
+
+		})
+	})
+	//Matching csp pod StartTime
+	Context("Check csp pod StartTime", func() {
+
+		It("Should check for the change in csp pod StartTime after Chaos", func() {
+
+			var startTimeAfter [3]*metav1.Time
+			startTimeChanged := false
+			csp_starttime, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for i, podSpec := range csp_starttime.Items {
+				startTimeAfter[i] = podSpec.Status.StartTime
+			}
+
+			for i := range startTimeAfter {
+				if startTimeAfter[i] != startTimeAfter[i] {
+					startTimeChanged = true
+					break
+				}
+			}
+
+			Expect(startTimeChanged).NotTo(Equal(false), "The csp pod StartTime does not change")
+			fmt.Printf("CSP pod StartTime Changes!!!\n")
+
+		})
+	})
 })
