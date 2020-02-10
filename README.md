@@ -68,7 +68,7 @@ This repository contains the Gitlab e2e pipeline with BDD and other test cases f
   </tr>
 </table>
 
-### Validations for OpenEBS Experiments (To be done)
+### Validations for OpenEBS Experiments
 <table style="width:100%">
   <tr>
     <th rowspan="2"><h3>Experiments</h3></th>
