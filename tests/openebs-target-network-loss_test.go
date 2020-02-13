@@ -109,7 +109,7 @@ var _ = Describe("BDD of openebs target network loss experiment", func() {
 						Applabel: "name=percona",
 						AppKind:  "deployment",
 					},
-					ChaosServiceAccount: "litmus",
+					ChaosServiceAccount: "nginx-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
 							Image: "litmuschaos/chaos-runner:latest",
