@@ -6,6 +6,8 @@
     name: engine-nginx6
     a_label: run=nginx
     e_name: pod-cpu-hog
+    service_acc: nginx-sa
+
 
   tasks: 
        

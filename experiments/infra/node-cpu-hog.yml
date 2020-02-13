@@ -5,6 +5,8 @@
     name: engine-nginx7
     a_label: run=nginx
     e_name: node-cpu-hog
+    service_acc: nginx-sa
+
 
   tasks: 
        

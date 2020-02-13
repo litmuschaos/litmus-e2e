@@ -6,6 +6,8 @@
     name: engine-nginx1     #engine name
     a_label: run=nginx
     e_name: pod-delete  
+    service_acc: nginx-sa
+
 
   tasks: 
        

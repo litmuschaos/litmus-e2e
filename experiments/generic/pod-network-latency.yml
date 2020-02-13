@@ -6,6 +6,8 @@
     name: engine-nginx3             # engine name
     a_label: run=nginx
     e_name: pod-network-latency
+    service_acc: nginx-sa
+
 
   tasks: 
        
