@@ -91,10 +91,12 @@ var _ = Describe("BDD of litmus installation", func() {
 
 			fmt.Println("rbac installed sucessfully")
 
-			//Creating Chaos-Operator
-			By("creating chaos-operator")
-			err = exec.Command("kubectl", "create", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create chaos-operator")
+			//Creating Chaos operator
+			By("Creating Chaos Operator")
+			exec.Command("wget", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
+			exec.Command("sed", "-i", "s/operator:ci/operator:latest/g", "operator.yaml").Run()
+			err = exec.Command("kubectl", "apply", "-f", "operator.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create operator")
 			if err != nil {
 				fmt.Println(err)
 			}
