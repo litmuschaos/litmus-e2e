@@ -16,7 +16,7 @@ spec:
     # FYI, To see app label, apply kubectl get pods --show-labels
     applabel: {{ a_label }}
     appkind:  {{ a_kind }}
-  chaosServiceAccount: {{ a_ns }}
+  chaosServiceAccount: {{ service_acc }}
   experiments:
     - name: {{ e_name }}
       spec:

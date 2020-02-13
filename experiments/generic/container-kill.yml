@@ -6,6 +6,7 @@
     name: engine-nginx2     #engine name
     a_label: run=nginx
     e_name: container-kill
+    service_acc: nginx-sa
 
 
   tasks:

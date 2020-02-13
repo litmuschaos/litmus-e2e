@@ -5,6 +5,8 @@
     name: engine-nginx8
     a_label: run=nginx
     e_name: node-drain
+    service_acc: nginx-sa
+
 
   tasks: 
 

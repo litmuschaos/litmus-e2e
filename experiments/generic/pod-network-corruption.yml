@@ -6,6 +6,8 @@
     name: engine-nginx5
     a_label: run=nginx
     e_name: pod-network-corruption
+    service_acc: nginx-sa
+
 
   tasks: 
        
