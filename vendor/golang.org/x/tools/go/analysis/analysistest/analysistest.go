@@ -193,13 +193,11 @@ func check(t Testing, gopath string, pass *analysis.Pass, diagnostics []analysis
 			for _, c := range cgroup.List {
 
 				text := strings.TrimPrefix(c.Text, "//")
-				if text == c.Text { // not a //-comment.
-					text = strings.TrimPrefix(text, "/*")
-					text = strings.TrimSuffix(text, "*/")
+				if text == c.Text {
+					continue // not a //-comment
 				}
 
 				// Hack: treat a comment of the form "//...// want..."
-				// or "/*...// want... */
 				// as if it starts at 'want'.
 				// This allows us to add comments on comments,
 				// as required when testing the buildtag analyzer.

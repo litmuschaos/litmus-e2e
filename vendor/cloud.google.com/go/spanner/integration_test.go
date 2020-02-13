@@ -39,7 +39,6 @@ import (
 	"google.golang.org/api/option"
 	adminpb "google.golang.org/genproto/googleapis/spanner/admin/database/v1"
 	instancepb "google.golang.org/genproto/googleapis/spanner/admin/instance/v1"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -155,20 +154,6 @@ func initIntegrationTests() (cleanup func()) {
 	var err error
 
 	opts := append(grpcHeaderChecker.CallOptions(), option.WithTokenSource(ts), option.WithEndpoint(endpoint))
-
-	// Run integration tests against the given emulator. Currently, the database and
-	// instance admin clients are auto-generated, which do not support to configure
-	// SPANNER_EMULATOR_HOST.
-	emulatorAddr := os.Getenv("SPANNER_EMULATOR_HOST")
-	if emulatorAddr != "" {
-		opts = append(
-			grpcHeaderChecker.CallOptions(),
-			option.WithEndpoint(emulatorAddr),
-			option.WithGRPCDialOption(grpc.WithInsecure()),
-			option.WithoutAuthentication(),
-		)
-	}
-
 	// Create InstanceAdmin and DatabaseAdmin clients.
 	instanceAdmin, err = instance.NewInstanceAdminClient(ctx, opts...)
 	if err != nil {
@@ -302,7 +287,7 @@ func TestIntegration_SingleUse(t *testing.T) {
 				// writes[3] is the last write, all subsequent strong read
 				// should have a timestamp larger than that.
 				if ts.Before(writes[3].ts) {
-					return fmt.Errorf("read got timestamp %v, want it to be no earlier than %v", ts, writes[3].ts)
+					return fmt.Errorf("read got timestamp %v, want it to be no later than %v", ts, writes[3].ts)
 				}
 				return nil
 			},
@@ -313,7 +298,7 @@ func TestIntegration_SingleUse(t *testing.T) {
 			tb:   MinReadTimestamp(writes[3].ts),
 			checkTs: func(ts time.Time) error {
 				if ts.Before(writes[3].ts) {
-					return fmt.Errorf("read got timestamp %v, want it to be no earlier than %v", ts, writes[3].ts)
+					return fmt.Errorf("read got timestamp %v, want it to be no later than %v", ts, writes[3].ts)
 				}
 				return nil
 			},
@@ -324,7 +309,7 @@ func TestIntegration_SingleUse(t *testing.T) {
 			tb:   MaxStaleness(time.Second),
 			checkTs: func(ts time.Time) error {
 				if ts.Before(writes[3].ts) {
-					return fmt.Errorf("read got timestamp %v, want it to be no earlier than %v", ts, writes[3].ts)
+					return fmt.Errorf("read got timestamp %v, want it to be no later than %v", ts, writes[3].ts)
 				}
 				return nil
 			},
@@ -451,75 +436,7 @@ func TestIntegration_SingleUse(t *testing.T) {
 			if err := test.checkTs(rts); err != nil {
 				t.Fatalf("%d: SingleUse.ReadUsingIndex doesn't return expected timestamp: %v", i, err)
 			}
-			// SingleUse.ReadRowUsingIndex
-			got = nil
-			for _, k := range []Key{{"Marc", "Foo"}, {"Alpha", "Beta"}, {"Last", "End"}} {
-				su = client.Single().WithTimestampBound(test.tb)
-				r, err := su.ReadRowUsingIndex(ctx, "Singers", "SingerByName", k, []string{"SingerId", "FirstName", "LastName"})
-				if err != nil {
-					continue
-				}
-				v, err := rowToValues(r)
-				if err != nil {
-					continue
-				}
-				got = append(got, v)
-				rts, err = su.Timestamp()
-				if err != nil {
-					t.Fatalf("%d: SingleUse.ReadRowUsingIndex(%v) doesn't return a timestamp, error: %v", i, k, err)
-				}
-				if err := test.checkTs(rts); err != nil {
-					t.Fatalf("%d: SingleUse.ReadRowUsingIndex(%v) doesn't return expected timestamp: %v", i, k, err)
-				}
-			}
-			if !testEqual(got, test.want) {
-				t.Fatalf("%d: got unexpected results from SingleUse.ReadRowUsingIndex: %v, want %v", i, got, test.want)
-			}
 		})
-	}
-}
-
-// Test resource-based routing enabled.
-func TestIntegration_SingleUse_WithResourceBasedRouting(t *testing.T) {
-	os.Setenv("GOOGLE_CLOUD_SPANNER_ENABLE_RESOURCE_BASED_ROUTING", "true")
-	defer os.Setenv("GOOGLE_CLOUD_SPANNER_ENABLE_RESOURCE_BASED_ROUTING", "")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
-	// Set up testing environment.
-	client, _, cleanup := prepareIntegrationTest(ctx, t, DefaultSessionPoolConfig, singerDBStatements)
-	defer cleanup()
-
-	writes := []struct {
-		row []interface{}
-		ts  time.Time
-	}{
-		{row: []interface{}{1, "Marc", "Foo"}},
-		{row: []interface{}{2, "Tars", "Bar"}},
-		{row: []interface{}{3, "Alpha", "Beta"}},
-		{row: []interface{}{4, "Last", "End"}},
-	}
-	// Try to write four rows through the Apply API.
-	for i, w := range writes {
-		var err error
-		m := InsertOrUpdate("Singers",
-			[]string{"SingerId", "FirstName", "LastName"},
-			w.row)
-		if writes[i].ts, err = client.Apply(ctx, []*Mutation{m}, ApplyAtLeastOnce()); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	row, err := client.Single().ReadRow(ctx, "Singers", Key{3}, []string{"FirstName"})
-	if err != nil {
-		t.Errorf("SingleUse.ReadRow returns error %v, want nil", err)
-	}
-	var got string
-	if err := row.Column(0, &got); err != nil {
-		t.Errorf("row.Column returns error %v, want nil", err)
-	}
-	if want := "Alpha"; got != want {
-		t.Errorf("got %q, want %q", got, want)
 	}
 }
 
@@ -747,32 +664,6 @@ func TestIntegration_ReadOnlyTransaction(t *testing.T) {
 		if roTs != rts {
 			t.Errorf("%d: got two read timestamps: %v, %v, want ReadOnlyTransaction to return always the same read timestamp", i, roTs, rts)
 		}
-		// ReadOnlyTransaction.ReadRowUsingIndex
-		got = nil
-		for _, k := range []Key{{"Marc", "Foo"}, {"Alpha", "Beta"}, {"Last", "End"}} {
-			r, err := ro.ReadRowUsingIndex(ctx, "Singers", "SingerByName", k, []string{"SingerId", "FirstName", "LastName"})
-			if err != nil {
-				continue
-			}
-			v, err := rowToValues(r)
-			if err != nil {
-				continue
-			}
-			got = append(got, v)
-			rts, err = ro.Timestamp()
-			if err != nil {
-				t.Errorf("%d: ReadOnlyTransaction.ReadRowUsingIndex(%v) doesn't return a timestamp, error: %v", i, k, err)
-			}
-			if err := test.checkTs(rts); err != nil {
-				t.Errorf("%d: ReadOnlyTransaction.ReadRowUsingIndex(%v) doesn't return expected timestamp: %v", i, k, err)
-			}
-			if roTs != rts {
-				t.Errorf("%d: got two read timestamps: %v, %v, want ReadOnlyTransaction to return always the same read timestamp", i, roTs, rts)
-			}
-		}
-		if !testEqual(got, test.want) {
-			t.Errorf("%d: got unexpected results from ReadOnlyTransaction.ReadRowUsingIndex: %v, want %v", i, got, test.want)
-		}
 		ro.Close()
 	}
 }
@@ -962,23 +853,8 @@ func TestIntegration_Reads(t *testing.T) {
 		t.Fatalf("got %v, want NotFound", err)
 	}
 
-	// Index point read.
-	rowIndex, err := client.Single().ReadRowUsingIndex(ctx, testTable, testTableIndex, Key{"v1"}, testTableColumns)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var gotIndex testTableRow
-	if err := rowIndex.ToStruct(&gotIndex); err != nil {
-		t.Fatal(err)
-	}
-	if wantIndex := (testTableRow{"k1", "v1"}); gotIndex != wantIndex {
-		t.Errorf("got %v, want %v", gotIndex, wantIndex)
-	}
-	// Index point read not found.
-	_, err = client.Single().ReadRowUsingIndex(ctx, testTable, testTableIndex, Key{"v999"}, testTableColumns)
-	if ErrCode(err) != codes.NotFound {
-		t.Fatalf("got %v, want NotFound", err)
-	}
+	// No index point read not found, because Go does not have ReadRowUsingIndex.
+
 	rangeReads(ctx, t, client)
 	indexRangeReads(ctx, t, client)
 }
@@ -1454,7 +1330,6 @@ func TestIntegration_QueryExpressions(t *testing.T) {
 }
 
 func TestIntegration_QueryStats(t *testing.T) {
-	skipEmulatorTest(t)
 	t.Parallel()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
@@ -1525,16 +1400,6 @@ func TestIntegration_ReadErrors(t *testing.T) {
 	client, _, cleanup := prepareIntegrationTest(ctx, t, DefaultSessionPoolConfig, readDBStatements)
 	defer cleanup()
 
-	var ms []*Mutation
-	for i := 0; i < 2; i++ {
-		ms = append(ms, InsertOrUpdate(testTable,
-			testTableColumns,
-			[]interface{}{fmt.Sprintf("k%d", i), fmt.Sprintf("v")}))
-	}
-	if _, err := client.Apply(ctx, ms); err != nil {
-		t.Fatal(err)
-	}
-
 	// Read over invalid table fails
 	_, err := client.Single().ReadRow(ctx, "badTable", Key{1}, []string{"StringValue"})
 	if msg, ok := matchError(err, codes.NotFound, "badTable"); !ok {
@@ -1567,12 +1432,6 @@ func TestIntegration_ReadErrors(t *testing.T) {
 	<-dctx.Done()
 	_, err = client.Single().ReadRow(dctx, "TestTable", Key{1}, []string{"StringValue"})
 	if msg, ok := matchError(err, codes.DeadlineExceeded, ""); !ok {
-		t.Error(msg)
-	}
-	// Read should fail if there are multiple rows returned.
-	_, err = client.Single().ReadRowUsingIndex(ctx, testTable, testTableIndex, Key{"v"}, testTableColumns)
-	wantMsgPart := fmt.Sprintf("more than one row found by index(Table: %v, IndexKey: %v, Index: %v)", testTable, Key{"v"}, testTableIndex)
-	if msg, ok := matchError(err, codes.FailedPrecondition, wantMsgPart); !ok {
 		t.Error(msg)
 	}
 }
@@ -2330,7 +2189,6 @@ func TestIntegration_StructParametersBind(t *testing.T) {
 }
 
 func TestIntegration_PDML(t *testing.T) {
-	skipEmulatorTest(t)
 	t.Parallel()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
@@ -2734,17 +2592,9 @@ func isNaN(x interface{}) bool {
 
 // createClient creates Cloud Spanner data client.
 func createClient(ctx context.Context, dbPath string, spc SessionPoolConfig) (client *Client, err error) {
-	if os.Getenv("SPANNER_EMULATOR_HOST") == "" {
-		client, err = NewClientWithConfig(ctx, dbPath, ClientConfig{
-			SessionPoolConfig: spc,
-		}, option.WithTokenSource(testutil.TokenSource(ctx, Scope, AdminScope)), option.WithEndpoint(endpoint))
-	} else {
-		// When the emulator is enabled, option.WithoutAuthentication()
-		// will be added automatically which is incompatible with
-		// option.WithTokenSource(testutil.TokenSource(ctx, Scope)).
-		client, err = NewClientWithConfig(ctx, dbPath, ClientConfig{SessionPoolConfig: spc})
-	}
-
+	client, err = NewClientWithConfig(ctx, dbPath, ClientConfig{
+		SessionPoolConfig: spc,
+	}, option.WithTokenSource(testutil.TokenSource(ctx, Scope)), option.WithEndpoint(endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("cannot create data client on DB %v: %v", dbPath, err)
 	}
@@ -2828,10 +2678,4 @@ func maxDuration(a, b time.Duration) time.Duration {
 		return a
 	}
 	return b
-}
-
-func skipEmulatorTest(t *testing.T) {
-	if os.Getenv("SPANNER_EMULATOR_HOST") != "" {
-		t.Skip("Skipping testing against the emulator.")
-	}
 }

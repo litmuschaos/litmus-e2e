@@ -35,9 +35,8 @@ func Print(ctx context.Context, message string, tags ...tag.Tagger) {
 	})
 }
 
-// Error takes a message and a tag list and combines them into a single tag
-// list before delivering them to the loggers. It captures the error in the
-// delivered event.
+// Print takes a message and a tag list and combines them into a single tag
+// list before delivering them to the loggers.
 func Error(ctx context.Context, message string, err error, tags ...tag.Tagger) {
 	if err == nil {
 		err = errorString(message)

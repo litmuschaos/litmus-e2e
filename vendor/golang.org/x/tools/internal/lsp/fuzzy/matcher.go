@@ -227,7 +227,7 @@ func (m *Matcher) computeScore(candidate string, candidateLower []byte) int {
 		var skipPenalty int
 		if i == 1 || (i-1) == lastSegStart {
 			// Skipping the start of first or last segment.
-			skipPenalty++
+			skipPenalty += 1
 		}
 
 		for j := 0; j <= pattLen; j++ {

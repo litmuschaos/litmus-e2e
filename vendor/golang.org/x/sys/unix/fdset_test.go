@@ -50,14 +50,4 @@ func TestFdSet(t *testing.T) {
 			}
 		}
 	}
-
-	for fd := 1; fd < unix.FD_SETSIZE; fd += 2 {
-		fdSet.Clear(fd)
-	}
-
-	for fd := 0; fd < unix.FD_SETSIZE; fd++ {
-		if fdSet.IsSet(fd) {
-			t.Fatalf("Clear(%d) did not clear fd", fd)
-		}
-	}
 }

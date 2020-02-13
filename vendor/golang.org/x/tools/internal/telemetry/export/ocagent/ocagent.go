@@ -46,8 +46,9 @@ func Discover() *Config {
 type exporter struct {
 	mu      sync.Mutex
 	config  Config
+	node    *wire.Node
 	spans   []*telemetry.Span
-	metrics []telemetry.MetricData
+	metrics []*wire.Metric
 }
 
 // Connect creates a process specific exporter with the specified
@@ -77,6 +78,21 @@ func Connect(config *Config) export.Exporter {
 	if exporter.config.Rate == 0 {
 		exporter.config.Rate = 2 * time.Second
 	}
+	exporter.node = &wire.Node{
+		Identifier: &wire.ProcessIdentifier{
+			HostName:       exporter.config.Host,
+			Pid:            exporter.config.Process,
+			StartTimestamp: convertTimestamp(exporter.config.Start),
+		},
+		LibraryInfo: &wire.LibraryInfo{
+			Language:           wire.LanguageGo,
+			ExporterVersion:    "0.0.1",
+			CoreLibraryVersion: "x/tools",
+		},
+		ServiceInfo: &wire.ServiceInfo{
+			Name: exporter.config.Service,
+		},
+	}
 	go func() {
 		for _ = range time.Tick(exporter.config.Rate) {
 			exporter.Flush()
@@ -98,7 +114,7 @@ func (e *exporter) Log(context.Context, telemetry.Event) {}
 func (e *exporter) Metric(ctx context.Context, data telemetry.MetricData) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	e.metrics = append(e.metrics, data)
+	e.metrics = append(e.metrics, convertMetric(data, e.config.Start))
 }
 
 func (e *exporter) Flush() {
@@ -109,44 +125,31 @@ func (e *exporter) Flush() {
 		spans[i] = convertSpan(s)
 	}
 	e.spans = nil
-	metrics := make([]*wire.Metric, len(e.metrics))
-	for i, m := range e.metrics {
-		metrics[i] = convertMetric(m, e.config.Start)
-	}
+	metrics := e.metrics
 	e.metrics = nil
 
 	if len(spans) > 0 {
 		e.send("/v1/trace", &wire.ExportTraceServiceRequest{
-			Node:  e.config.buildNode(),
+			Node:  e.node,
 			Spans: spans,
 			//TODO: Resource?
 		})
 	}
 	if len(metrics) > 0 {
 		e.send("/v1/metrics", &wire.ExportMetricsServiceRequest{
-			Node:    e.config.buildNode(),
+			Node:    e.node,
 			Metrics: metrics,
 			//TODO: Resource?
 		})
 	}
 }
 
-func (cfg *Config) buildNode() *wire.Node {
-	return &wire.Node{
-		Identifier: &wire.ProcessIdentifier{
-			HostName:       cfg.Host,
-			Pid:            cfg.Process,
-			StartTimestamp: convertTimestamp(cfg.Start),
-		},
-		LibraryInfo: &wire.LibraryInfo{
-			Language:           wire.LanguageGo,
-			ExporterVersion:    "0.0.1",
-			CoreLibraryVersion: "x/tools",
-		},
-		ServiceInfo: &wire.ServiceInfo{
-			Name: cfg.Service,
-		},
-	}
+func EncodeAnnotation(a telemetry.Event) ([]byte, error) {
+	return json.Marshal(convertAnnotation(a))
+}
+
+func EncodeMetric(m telemetry.MetricData, at time.Time) ([]byte, error) {
+	return json.Marshal(convertMetric(m, at))
 }
 
 func (e *exporter) send(endpoint string, message interface{}) {
@@ -296,7 +299,7 @@ func convertAnnotation(event telemetry.Event) *wire.Annotation {
 	}
 	tags := event.Tags
 	if event.Error != nil {
-		tags = append(tags, tag.Of("error", event.Error))
+		tags = append(tags, tag.Of("Error", event.Error))
 	}
 	if description == "" && len(tags) == 0 {
 		return nil

@@ -11,17 +11,10 @@ import (
 )
 
 func (r *runner) Completion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.DeepCompletion = false
-		opts.Matcher = source.CaseInsensitive
-		opts.UnimportedCompletion = false
-		opts.InsertTextFormat = protocol.PlainTextTextFormat
-		// Only enable literal completions if in the completion literals tests.
-		// TODO(rstambler): Separate out literal completion tests.
-		if strings.Contains(string(src.URI()), "literal") {
-			opts.InsertTextFormat = protocol.SnippetTextFormat
-		}
-
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		Deep:          false,
+		FuzzyMatching: false,
+		Documentation: true,
 	})
 	if !strings.Contains(string(src.URI()), "builtins") {
 		got = tests.FilterBuiltins(got)
@@ -33,11 +26,10 @@ func (r *runner) Completion(t *testing.T, src span.Span, test tests.Completion, 
 }
 
 func (r *runner) CompletionSnippet(t *testing.T, src span.Span, expected tests.CompletionSnippet, placeholders bool, items tests.CompletionItems) {
-	list := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.Placeholders = placeholders
-		opts.DeepCompletion = true
-		opts.Matcher = source.Fuzzy
-		opts.UnimportedCompletion = false
+	list := r.callCompletion(t, src, source.CompletionOptions{
+		Placeholders:  placeholders,
+		Deep:          true,
+		FuzzyMatching: true,
 	})
 	got := tests.FindItem(list, *items[expected.CompletionItem])
 	want := expected.PlainSnippet
@@ -50,7 +42,9 @@ func (r *runner) CompletionSnippet(t *testing.T, src span.Span, expected tests.C
 }
 
 func (r *runner) UnimportedCompletion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {})
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		Unimported: true,
+	})
 	if !strings.Contains(string(src.URI()), "builtins") {
 		got = tests.FilterBuiltins(got)
 	}
@@ -61,10 +55,9 @@ func (r *runner) UnimportedCompletion(t *testing.T, src span.Span, test tests.Co
 }
 
 func (r *runner) DeepCompletion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.DeepCompletion = true
-		opts.Matcher = source.CaseInsensitive
-		opts.UnimportedCompletion = false
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		Deep:          true,
+		Documentation: true,
 	})
 	if !strings.Contains(string(src.URI()), "builtins") {
 		got = tests.FilterBuiltins(got)
@@ -76,10 +69,9 @@ func (r *runner) DeepCompletion(t *testing.T, src span.Span, test tests.Completi
 }
 
 func (r *runner) FuzzyCompletion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.DeepCompletion = true
-		opts.Matcher = source.Fuzzy
-		opts.UnimportedCompletion = false
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		FuzzyMatching: true,
+		Deep:          true,
 	})
 	if !strings.Contains(string(src.URI()), "builtins") {
 		got = tests.FilterBuiltins(got)
@@ -91,9 +83,8 @@ func (r *runner) FuzzyCompletion(t *testing.T, src span.Span, test tests.Complet
 }
 
 func (r *runner) CaseSensitiveCompletion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.Matcher = source.CaseSensitive
-		opts.UnimportedCompletion = false
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		CaseSensitive: true,
 	})
 	if !strings.Contains(string(src.URI()), "builtins") {
 		got = tests.FilterBuiltins(got)
@@ -105,10 +96,9 @@ func (r *runner) CaseSensitiveCompletion(t *testing.T, src span.Span, test tests
 }
 
 func (r *runner) RankCompletion(t *testing.T, src span.Span, test tests.Completion, items tests.CompletionItems) {
-	got := r.callCompletion(t, src, func(opts *source.Options) {
-		opts.DeepCompletion = true
-		opts.Matcher = source.Fuzzy
-		opts.UnimportedCompletion = false
+	got := r.callCompletion(t, src, source.CompletionOptions{
+		FuzzyMatching: true,
+		Deep:          true,
 	})
 	want := expected(t, test, items)
 	if msg := tests.CheckCompletionOrder(want, got, true); msg != "" {
@@ -127,7 +117,7 @@ func expected(t *testing.T, test tests.Completion, items tests.CompletionItems) 
 	return want
 }
 
-func (r *runner) callCompletion(t *testing.T, src span.Span, options func(*source.Options)) []protocol.CompletionItem {
+func (r *runner) callCompletion(t *testing.T, src span.Span, options source.CompletionOptions) []protocol.CompletionItem {
 	t.Helper()
 
 	view, err := r.server.session.ViewOf(src.URI())
@@ -136,7 +126,8 @@ func (r *runner) callCompletion(t *testing.T, src span.Span, options func(*sourc
 	}
 	original := view.Options()
 	modified := original
-	options(&modified)
+	modified.InsertTextFormat = protocol.SnippetTextFormat
+	modified.Completion = options
 	view, err = view.SetOptions(r.ctx, modified)
 	if err != nil {
 		t.Error(err)

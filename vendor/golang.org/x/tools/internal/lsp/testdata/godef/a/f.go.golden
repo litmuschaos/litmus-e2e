@@ -1,7 +1,5 @@
 -- switchStringY-definition --
-godef/a/f.go:8:9-10: defined here as ```go
-var y string
-```
+godef/a/f.go:8:9-10: defined here as var y string
 -- switchStringY-definition-json --
 {
 	"span": {
@@ -17,17 +15,13 @@ var y string
 			"offset": 77
 		}
 	},
-	"description": "```go\nvar y string\n```"
+	"description": "var y string"
 }
 
 -- switchStringY-hover --
-```go
 var y string
-```
 -- switchY-definition --
-godef/a/f.go:8:9-10: defined here as ```go
-var y int
-```
+godef/a/f.go:8:9-10: defined here as var y int
 -- switchY-definition-json --
 {
 	"span": {
@@ -43,10 +37,8 @@ var y int
 			"offset": 77
 		}
 	},
-	"description": "```go\nvar y int\n```"
+	"description": "var y int"
 }
 
 -- switchY-hover --
-```go
 var y int
-```

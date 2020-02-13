@@ -9,11 +9,9 @@ import (
 	"context"
 	"fmt"
 	"go/token"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"testing"
@@ -21,7 +19,6 @@ import (
 	"golang.org/x/tools/go/packages/packagestest"
 	"golang.org/x/tools/internal/lsp/cache"
 	"golang.org/x/tools/internal/lsp/diff"
-	"golang.org/x/tools/internal/lsp/mod"
 	"golang.org/x/tools/internal/lsp/protocol"
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/lsp/tests"
@@ -52,48 +49,40 @@ func testLSP(t *testing.T, exporter packagestest.Exporter) {
 	defer data.Exported.Cleanup()
 
 	cache := cache.New(nil)
-	session := cache.NewSession()
+	session := cache.NewSession(ctx)
 	options := tests.DefaultOptions()
 	session.SetOptions(options)
 	options.Env = data.Config.Env
 	if _, _, err := session.NewView(ctx, viewName, span.FileURI(data.Config.Dir), options); err != nil {
 		t.Fatal(err)
 	}
-	var modifications []source.FileModification
 	for filename, content := range data.Config.Overlay {
-		kind := source.DetectLanguage("", filename)
-		if kind != source.Go {
-			continue
-		}
-		modifications = append(modifications, source.FileModification{
-			URI:        span.FileURI(filename),
-			Action:     source.Open,
-			Version:    -1,
-			Text:       content,
-			LanguageID: "go",
-		})
-	}
-	if _, err := session.DidModifyFiles(ctx, modifications); err != nil {
-		t.Fatal(err)
+		session.SetOverlay(span.FileURI(filename), source.DetectLanguage("", filename), -1, content)
 	}
 	r := &runner{
 		server: &Server{
-			session:   session,
-			delivered: map[span.URI]sentDiagnostics{},
+			session: session,
 		},
 		data: data,
 		ctx:  ctx,
 	}
+
 	tests.Run(t, r, data)
 }
 
 // TODO: Actually test the LSP diagnostics function in this test.
 func (r *runner) Diagnostics(t *testing.T, uri span.URI, want []source.Diagnostic) {
 	v := r.server.session.View(viewName)
-	_, got, err := source.FileDiagnostics(r.ctx, v.Snapshot(), uri)
+	f, err := v.GetFile(r.ctx, uri)
+	if err != nil {
+		t.Fatalf("no file for %s: %v", f, err)
+	}
+	identity := v.Snapshot().Handle(r.ctx, f).Identity()
+	results, _, err := source.Diagnostics(r.ctx, v.Snapshot(), f, true, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+	got := results[identity]
 	// A special case to test that there are no diagnostics for a file.
 	if len(want) == 1 && want[0].Source == "no_diagnostics" {
 		if len(got) != 0 {
@@ -302,13 +291,22 @@ func (r *runner) Format(t *testing.T, spn span.Span) {
 func (r *runner) Import(t *testing.T, spn span.Span) {
 	uri := spn.URI()
 	filename := uri.Filename()
+	goimported := string(r.data.Golden("goimports", filename, func() ([]byte, error) {
+		cmd := exec.Command("goimports", filename)
+		out, _ := cmd.Output() // ignore error, sometimes we have intentionally ungofmt-able files
+		return out, nil
+	}))
+
 	actions, err := r.server.CodeAction(r.ctx, &protocol.CodeActionParams{
 		TextDocument: protocol.TextDocumentIdentifier{
 			URI: protocol.NewURI(uri),
 		},
 	})
 	if err != nil {
-		t.Fatal(err)
+		if goimported != "" {
+			t.Error(err)
+		}
+		return
 	}
 	m, err := r.data.Mapper(uri)
 	if err != nil {
@@ -322,11 +320,8 @@ func (r *runner) Import(t *testing.T, spn span.Span) {
 		}
 		got = res[uri]
 	}
-	want := string(r.data.Golden("goimports", filename, func() ([]byte, error) {
-		return []byte(got), nil
-	}))
-	if want != got {
-		t.Errorf("import failed for %s, expected:\n%v\ngot:\n%v", filename, want, got)
+	if goimported != got {
+		t.Errorf("import failed for %s, expected:\n%v\ngot:\n%v", filename, goimported, got)
 	}
 }
 
@@ -337,8 +332,13 @@ func (r *runner) SuggestedFix(t *testing.T, spn span.Span) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	f, err := view.GetFile(r.ctx, uri)
+	if err != nil {
+		t.Fatal(err)
+	}
 	snapshot := view.Snapshot()
-	_, diagnostics, err := source.FileDiagnostics(r.ctx, snapshot, uri)
+	fileID := snapshot.Handle(r.ctx, f).Identity()
+	diagnostics, _, err := source.Diagnostics(r.ctx, snapshot, f, true, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -348,7 +348,7 @@ func (r *runner) SuggestedFix(t *testing.T, spn span.Span) {
 		},
 		Context: protocol.CodeActionContext{
 			Only:        []protocol.CodeActionKind{protocol.QuickFix},
-			Diagnostics: toProtocolDiagnostics(diagnostics),
+			Diagnostics: toProtocolDiagnostics(r.ctx, diagnostics[fileID]),
 		},
 	})
 	if err != nil {
@@ -442,14 +442,14 @@ func (r *runner) Definition(t *testing.T, spn span.Span, d tests.Definition) {
 	}
 }
 
-func (r *runner) Implementation(t *testing.T, spn span.Span, impls []span.Span) {
-	sm, err := r.data.Mapper(spn.URI())
+func (r *runner) Implementation(t *testing.T, spn span.Span, m tests.Implementations) {
+	sm, err := r.data.Mapper(m.Src.URI())
 	if err != nil {
 		t.Fatal(err)
 	}
-	loc, err := sm.Location(spn)
+	loc, err := sm.Location(m.Src)
 	if err != nil {
-		t.Fatalf("failed for %v: %v", spn, err)
+		t.Fatalf("failed for %v: %v", m.Src, err)
 	}
 	tdpp := protocol.TextDocumentPositionParams{
 		TextDocument: protocol.TextDocumentIdentifier{URI: loc.URI},
@@ -461,45 +461,31 @@ func (r *runner) Implementation(t *testing.T, spn span.Span, impls []span.Span) 
 	}
 	locs, err = r.server.Implementation(r.ctx, params)
 	if err != nil {
-		t.Fatalf("failed for %v: %v", spn, err)
+		t.Fatalf("failed for %v: %v", m.Src, err)
 	}
-	if len(locs) != len(impls) {
-		t.Fatalf("got %d locations for implementation, expected %d", len(locs), len(impls))
+	if len(locs) != len(m.Implementations) {
+		t.Fatalf("got %d locations for implementation, expected %d", len(locs), len(m.Implementations))
 	}
-
-	var results []span.Span
 	for i := range locs {
 		locURI := span.NewURI(locs[i].URI)
 		lm, err := r.data.Mapper(locURI)
 		if err != nil {
 			t.Fatal(err)
 		}
-		imp, err := lm.Span(locs[i])
-		if err != nil {
+		if imp, err := lm.Span(locs[i]); err != nil {
 			t.Fatalf("failed for %v: %v", locs[i], err)
-		}
-		results = append(results, imp)
-	}
-	// Sort results and expected to make tests deterministic.
-	sort.SliceStable(results, func(i, j int) bool {
-		return span.Compare(results[i], results[j]) == -1
-	})
-	sort.SliceStable(impls, func(i, j int) bool {
-		return span.Compare(impls[i], impls[j]) == -1
-	})
-	for i := range results {
-		if results[i] != impls[i] {
-			t.Errorf("for %dth implementation of %v got %v want %v", i, spn, results[i], impls[i])
+		} else if imp != m.Implementations[i] {
+			t.Errorf("for %dth implementation of %v got %v want %v", i, m.Src, imp, m.Implementations[i])
 		}
 	}
 }
 
 func (r *runner) Highlight(t *testing.T, src span.Span, locations []span.Span) {
-	m, err := r.data.Mapper(src.URI())
+	m, err := r.data.Mapper(locations[0].URI())
 	if err != nil {
 		t.Fatal(err)
 	}
-	loc, err := m.Location(src)
+	loc, err := m.Location(locations[0])
 	if err != nil {
 		t.Fatalf("failed for %v: %v", locations[0], err)
 	}
@@ -517,23 +503,11 @@ func (r *runner) Highlight(t *testing.T, src span.Span, locations []span.Span) {
 	if len(highlights) != len(locations) {
 		t.Fatalf("got %d highlights for highlight at %v:%v:%v, expected %d", len(highlights), src.URI().Filename(), src.Start().Line(), src.Start().Column(), len(locations))
 	}
-	// Check to make sure highlights have a valid range.
-	var results []span.Span
 	for i := range highlights {
-		h, err := m.RangeSpan(highlights[i].Range)
-		if err != nil {
+		if h, err := m.RangeSpan(highlights[i].Range); err != nil {
 			t.Fatalf("failed for %v: %v", highlights[i], err)
-		}
-		results = append(results, h)
-	}
-	// Sort results to make tests deterministic since DocumentHighlight uses a map.
-	sort.SliceStable(results, func(i, j int) bool {
-		return span.Compare(results[i], results[j]) == -1
-	})
-	// Check to make sure all the expected highlights are found.
-	for i := range results {
-		if results[i] != locations[i] {
-			t.Errorf("want %v, got %v\n", locations[i], results[i])
+		} else if h != locations[i] {
+			t.Errorf("want %v, got %v\n", locations[i], h)
 		}
 	}
 }
@@ -547,47 +521,36 @@ func (r *runner) References(t *testing.T, src span.Span, itemList []span.Span) {
 	if err != nil {
 		t.Fatalf("failed for %v: %v", src, err)
 	}
-	for _, includeDeclaration := range []bool{true, false} {
-		t.Run(fmt.Sprintf("refs-declaration-%v", includeDeclaration), func(t *testing.T) {
-			want := make(map[protocol.Location]bool)
-			for i, pos := range itemList {
-				// We don't want the first result if we aren't including the declaration.
-				if i == 0 && !includeDeclaration {
-					continue
-				}
-				m, err := r.data.Mapper(pos.URI())
-				if err != nil {
-					t.Fatal(err)
-				}
-				loc, err := m.Location(pos)
-				if err != nil {
-					t.Fatalf("failed for %v: %v", src, err)
-				}
-				want[loc] = true
-			}
-			params := &protocol.ReferenceParams{
-				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
-					TextDocument: protocol.TextDocumentIdentifier{URI: loc.URI},
-					Position:     loc.Range.Start,
-				},
-				Context: protocol.ReferenceContext{
-					IncludeDeclaration: includeDeclaration,
-				},
-			}
-			got, err := r.server.References(r.ctx, params)
-			if err != nil {
-				t.Fatalf("failed for %v: %v", src, err)
-			}
-			if len(got) != len(want) {
-				t.Errorf("references failed: different lengths got %v want %v", len(got), len(want))
-			}
-			for _, loc := range got {
-				if !want[loc] {
-					t.Errorf("references failed: incorrect references got %v want %v", loc, want)
-				}
-			}
-		})
 
+	want := make(map[protocol.Location]bool)
+	for _, pos := range itemList {
+		m, err := r.data.Mapper(pos.URI())
+		if err != nil {
+			t.Fatal(err)
+		}
+		loc, err := m.Location(pos)
+		if err != nil {
+			t.Fatalf("failed for %v: %v", src, err)
+		}
+		want[loc] = true
+	}
+	params := &protocol.ReferenceParams{
+		TextDocumentPositionParams: protocol.TextDocumentPositionParams{
+			TextDocument: protocol.TextDocumentIdentifier{URI: loc.URI},
+			Position:     loc.Range.Start,
+		},
+	}
+	got, err := r.server.References(r.ctx, params)
+	if err != nil {
+		t.Fatalf("failed for %v: %v", src, err)
+	}
+	if len(got) != len(want) {
+		t.Errorf("references failed: different lengths got %v want %v", len(got), len(want))
+	}
+	for _, loc := range got {
+		if !want[loc] {
+			t.Errorf("references failed: incorrect references got %v want %v", loc, want)
+		}
 	}
 }
 
@@ -927,107 +890,5 @@ func TestBytesOffset(t *testing.T) {
 		if err == nil && got.Offset() != test.want {
 			t.Errorf("want %d for %q(Line:%d,Character:%d), but got %d", test.want, test.text, int(test.pos.Line), int(test.pos.Character), got.Offset())
 		}
-	}
-}
-
-// TODO(golang/go#36091): This function can be refactored to look like the rest of this file
-// when marker support gets added for go.mod files.
-func TestModfileSuggestedFixes(t *testing.T) {
-	if runtime.GOOS == "android" {
-		t.Skip("this test cannot find mod/testdata files")
-	}
-
-	ctx := tests.Context(t)
-	cache := cache.New(nil)
-	session := cache.NewSession()
-	options := tests.DefaultOptions()
-	options.TempModfile = true
-	options.Env = append(os.Environ(), "GOPACKAGESDRIVER=off", "GOROOT=")
-
-	server := Server{
-		session:   session,
-		delivered: map[span.URI]sentDiagnostics{},
-	}
-
-	for _, tt := range []string{"indirect", "unused"} {
-		t.Run(tt, func(t *testing.T) {
-			folder, err := tests.CopyFolderToTempDir(filepath.Join("mod", "testdata", tt))
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.RemoveAll(folder)
-
-			_, snapshot, err := session.NewView(ctx, "suggested_fix_test", span.FileURI(folder), options)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			realURI, tempURI := snapshot.View().ModFiles()
-			// TODO: Add testing for when the -modfile flag is turned off and we still get diagnostics.
-			if tempURI == "" {
-				return
-			}
-			realfh, err := snapshot.GetFile(realURI)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			reports, err := mod.Diagnostics(ctx, snapshot)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if len(reports) != 1 {
-				t.Errorf("expected 1 fileHandle, got %d", len(reports))
-			}
-
-			_, m, _, err := snapshot.ModTidyHandle(ctx, realfh).Tidy(ctx)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			for fh, diags := range reports {
-				actions, err := server.CodeAction(ctx, &protocol.CodeActionParams{
-					TextDocument: protocol.TextDocumentIdentifier{
-						URI: protocol.NewURI(fh.URI),
-					},
-					Context: protocol.CodeActionContext{
-						Only:        []protocol.CodeActionKind{protocol.SourceOrganizeImports},
-						Diagnostics: toProtocolDiagnostics(diags),
-					},
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				if len(actions) == 0 {
-					t.Fatal("no code actions returned")
-				}
-				if len(actions) > 1 {
-					t.Fatal("expected only 1 code action")
-				}
-				res := map[span.URI]string{}
-				for _, docEdits := range actions[0].Edit.DocumentChanges {
-					uri := span.URI(docEdits.TextDocument.URI)
-					content, err := ioutil.ReadFile(uri.Filename())
-					if err != nil {
-						t.Fatal(err)
-					}
-					res[uri] = string(content)
-					sedits, err := source.FromProtocolEdits(m, docEdits.Edits)
-					if err != nil {
-						t.Fatal(err)
-					}
-					res[uri] = applyEdits(res[uri], sedits)
-				}
-				got := res[fh.URI]
-				contents, err := ioutil.ReadFile(filepath.Join(folder, "go.mod.golden"))
-				if err != nil {
-					t.Fatal(err)
-				}
-				want := string(contents)
-				if want != got {
-					t.Errorf("suggested fixes failed for %s, expected:\n%s\ngot:\n%s", fh.URI.Filename(), want, got)
-				}
-			}
-		})
 	}
 }

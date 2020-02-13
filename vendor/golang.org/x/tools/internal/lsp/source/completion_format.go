@@ -47,13 +47,13 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 	// expandFuncCall mutates the completion label, detail, and snippet
 	// to that of an invocation of sig.
 	expandFuncCall := func(sig *types.Signature) {
-		params := formatParams(c.ctx, c.snapshot, c.pkg, sig, c.qf)
+		params := formatParams(c.snapshot, c.pkg, sig, c.qf)
 		snip = c.functionCallSnippet(label, params)
 		results, writeParens := formatResults(sig.Results(), c.qf)
 		detail = "func" + formatFunction(params, results, writeParens)
 
 		// Add variadic "..." if we are using a function result to fill in a variadic parameter.
-		if sig.Results().Len() == 1 && c.inference.matchesVariadic(sig.Results().At(0).Type()) {
+		if sig.Results().Len() == 1 && c.expectedType.matchesVariadic(sig.Results().At(0).Type()) {
 			snip.WriteText("...")
 		}
 	}
@@ -68,7 +68,7 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 			detail = "struct{...}" // for anonymous structs
 		} else if obj.IsField() {
 			var err error
-			detail, err = formatFieldType(c.ctx, c.snapshot, c.pkg, obj, c.qf)
+			detail, err = formatFieldType(c.snapshot, c.pkg, obj, c.qf)
 			if err != nil {
 				detail = types.TypeString(obj.Type(), c.qf)
 			}
@@ -88,7 +88,7 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 		}
 
 		// Add variadic "..." if we are using a variable to fill in a variadic parameter.
-		if c.inference.matchesVariadic(obj.Type()) {
+		if c.expectedType.matchesVariadic(obj.Type()) {
 			snip = &snippet.Builder{}
 			snip.WriteText(insert + "...")
 		}
@@ -130,31 +130,6 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 		}
 	}
 
-	// Prepend "&" or "*" operator as appropriate.
-	var prefixOp string
-	if cand.takeAddress {
-		prefixOp = "&"
-	} else if cand.makePointer || cand.dereference {
-		prefixOp = "*"
-	}
-
-	if prefixOp != "" {
-		// If we are in a selector, add an edit to place prefix before selector.
-		if sel := enclosingSelector(c.path, c.pos); sel != nil {
-			edits, err := prependEdit(c.snapshot.View().Session().Cache().FileSet(), c.mapper, sel, prefixOp)
-			if err != nil {
-				log.Error(c.ctx, "error generating prefix edit", err)
-			} else {
-				protocolEdits = append(protocolEdits, edits...)
-			}
-		} else {
-			// If there is no selector, just stick the prefix at the start.
-			insert = prefixOp + insert
-		}
-
-		label = prefixOp + label
-	}
-
 	detail = strings.TrimPrefix(detail, "untyped ")
 	item := CompletionItem{
 		Label:               label,
@@ -167,7 +142,7 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 		snippet:             snip,
 	}
 	// If the user doesn't want documentation for completion items.
-	if !c.opts.documentation {
+	if !c.opts.Documentation {
 		return item, nil
 	}
 	pos := c.snapshot.View().Session().Cache().FileSet().Position(obj.Pos())
@@ -185,11 +160,11 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 	if cand.imp != nil && cand.imp.pkg != nil {
 		searchPkg = cand.imp.pkg
 	}
-	file, pkg, err := findPosInPackage(c.snapshot.View(), searchPkg, obj.Pos())
+	file, pkg, err := c.snapshot.View().FindPosInPackage(searchPkg, obj.Pos())
 	if err != nil {
 		return item, nil
 	}
-	ident, err := findIdentifier(c.ctx, c.snapshot, pkg, file, obj.Pos())
+	ident, err := findIdentifier(c.snapshot, pkg, file, obj.Pos())
 	if err != nil {
 		return item, nil
 	}
@@ -199,7 +174,7 @@ func (c *completer) item(cand candidate) (CompletionItem, error) {
 		return item, nil
 	}
 	item.Documentation = hover.Synopsis
-	if c.opts.fullDocumentation {
+	if c.opts.FullDocumentation {
 		item.Documentation = hover.FullDocumentation
 	}
 	return item, nil
@@ -219,7 +194,7 @@ func (c *completer) importEdits(imp *importInfo) ([]protocol.TextEdit, error) {
 		}
 	}
 	if ph == nil {
-		return nil, errors.Errorf("building import completion for %v: no ParseGoHandle for %s", imp.importPath, c.filename)
+		return nil, errors.Errorf("no ParseGoHandle for %s", c.filename)
 	}
 
 	return computeOneImportFixEdits(c.ctx, c.snapshot.View(), ph, &imports.ImportFix{
@@ -244,12 +219,11 @@ func (c *completer) formatBuiltin(cand candidate) CompletionItem {
 		item.Kind = protocol.ConstantCompletion
 	case *types.Builtin:
 		item.Kind = protocol.FunctionCompletion
-		astObj, err := c.snapshot.View().LookupBuiltin(c.ctx, obj.Name())
-		if err != nil {
-			log.Error(c.ctx, "no builtin package", err)
+		builtin := c.snapshot.View().BuiltinPackage().Lookup(obj.Name())
+		if obj == nil {
 			break
 		}
-		decl, ok := astObj.Decl.(*ast.FuncDecl)
+		decl, ok := builtin.Decl.(*ast.FuncDecl)
 		if !ok {
 			break
 		}

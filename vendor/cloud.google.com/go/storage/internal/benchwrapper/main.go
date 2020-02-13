@@ -33,7 +33,7 @@ import (
 var port = flag.String("port", "", "specify a port to run on")
 
 // minRead respresents the number of bytes to read at a time.
-const minRead = 10000
+const minRead = 1024 * 1024
 
 func main() {
 	flag.Parse()
@@ -74,7 +74,7 @@ func (s *server) Read(ctx context.Context, in *pb.ObjectRead) (*pb.EmptyResponse
 		return nil, err
 	}
 	defer r.Close()
-	for r.Remain() > 0 || r.Remain() == -1 {
+	for int(r.Remain()) > 0 {
 		ba := make([]byte, minRead)
 		_, err := r.Read(ba)
 		if err == io.EOF {

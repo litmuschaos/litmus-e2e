@@ -11,7 +11,6 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
-	"path"
 	"sort"
 	"sync"
 
@@ -25,8 +24,8 @@ import (
 	errors "golang.org/x/xerrors"
 )
 
-// packageHandle implements source.PackageHandle.
-type packageHandle struct {
+// checkPackageHandle implements source.CheckPackageHandle.
+type checkPackageHandle struct {
 	handle *memoize.Handle
 
 	goFiles []source.ParseGoHandle
@@ -44,69 +43,69 @@ type packageHandle struct {
 	key []byte
 }
 
-func (ph *packageHandle) packageKey() packageKey {
+func (cph *checkPackageHandle) packageKey() packageKey {
 	return packageKey{
-		id:   ph.m.id,
-		mode: ph.mode,
+		id:   cph.m.id,
+		mode: cph.mode,
 	}
 }
 
-// packageData contains the data produced by type-checking a package.
-type packageData struct {
+// checkPackageData contains the data produced by type-checking a package.
+type checkPackageData struct {
 	memoize.NoCopy
 
 	pkg *pkg
 	err error
 }
 
-// buildPackageHandle returns a source.PackageHandle for a given package and config.
-func (s *snapshot) buildPackageHandle(ctx context.Context, id packageID, mode source.ParseMode) (*packageHandle, error) {
-	// Check if we already have this PackageHandle cached.
-	if ph := s.getPackage(id, mode); ph != nil {
-		return ph, nil
+// checkPackageHandle returns a source.CheckPackageHandle for a given package and config.
+func (s *snapshot) checkPackageHandle(ctx context.Context, id packageID, mode source.ParseMode) (*checkPackageHandle, error) {
+	// Check if we already have this CheckPackageHandle cached.
+	if cph := s.getPackage(id, mode); cph != nil {
+		return cph, nil
 	}
 
-	// Build the PackageHandle for this ID and its dependencies.
-	ph, deps, err := s.buildKey(ctx, id, mode)
+	// Build the CheckPackageHandle for this ID and its dependencies.
+	cph, deps, err := s.buildKey(ctx, id, mode)
 	if err != nil {
 		return nil, err
 	}
 
-	// Do not close over the packageHandle or the snapshot in the Bind function.
+	// Do not close over the checkPackageHandle or the snapshot in the Bind function.
 	// This creates a cycle, which causes the finalizers to never run on the handles.
 	// The possible cycles are:
 	//
-	//     packageHandle.h.function -> packageHandle
-	//     packageHandle.h.function -> snapshot -> packageHandle
+	//     checkPackageHandle.h.function -> checkPackageHandle
+	//     checkPackageHandle.h.function -> snapshot -> checkPackageHandle
 	//
 
-	m := ph.m
-	goFiles := ph.goFiles
-	compiledGoFiles := ph.compiledGoFiles
-	key := ph.key
+	m := cph.m
+	goFiles := cph.goFiles
+	compiledGoFiles := cph.compiledGoFiles
+	key := cph.key
 	fset := s.view.session.cache.fset
 
 	h := s.view.session.cache.store.Bind(string(key), func(ctx context.Context) interface{} {
 		// Begin loading the direct dependencies, in parallel.
 		for _, dep := range deps {
-			go func(dep *packageHandle) {
+			go func(dep *checkPackageHandle) {
 				dep.check(ctx)
 			}(dep)
 		}
-		data := &packageData{}
+		data := &checkPackageData{}
 		data.pkg, data.err = typeCheck(ctx, fset, m, mode, goFiles, compiledGoFiles, deps)
 		return data
 	})
-	ph.handle = h
+	cph.handle = h
 
-	// Cache the PackageHandle in the snapshot.
-	s.addPackage(ph)
+	// Cache the CheckPackageHandle in the snapshot.
+	s.addPackage(cph)
 
-	return ph, nil
+	return cph, nil
 }
 
-// buildKey computes the key for a given packageHandle.
-func (s *snapshot) buildKey(ctx context.Context, id packageID, mode source.ParseMode) (*packageHandle, map[packagePath]*packageHandle, error) {
+// buildKey computes the checkPackageKey for a given checkPackageHandle.
+func (s *snapshot) buildKey(ctx context.Context, id packageID, mode source.ParseMode) (*checkPackageHandle, map[packagePath]*checkPackageHandle, error) {
 	m := s.getMetadata(id)
 	if m == nil {
 		return nil, nil, errors.Errorf("no metadata for %s", id)
@@ -119,28 +118,25 @@ func (s *snapshot) buildKey(ctx context.Context, id packageID, mode source.Parse
 	if err != nil {
 		return nil, nil, err
 	}
-	ph := &packageHandle{
+	cph := &checkPackageHandle{
 		m:               m,
 		goFiles:         goFiles,
 		compiledGoFiles: compiledGoFiles,
 		mode:            mode,
 	}
+
 	// Make sure all of the depList are sorted.
 	depList := append([]packageID{}, m.deps...)
 	sort.Slice(depList, func(i, j int) bool {
 		return depList[i] < depList[j]
 	})
 
-	deps := make(map[packagePath]*packageHandle)
+	deps := make(map[packagePath]*checkPackageHandle)
 
 	// Begin computing the key by getting the depKeys for all dependencies.
 	var depKeys [][]byte
 	for _, depID := range depList {
-		mode := source.ParseExported
-		if _, ok := s.isWorkspacePackage(depID); ok {
-			mode = source.ParseFull
-		}
-		depHandle, err := s.buildPackageHandle(ctx, depID, mode)
+		depHandle, err := s.checkPackageHandle(ctx, depID, source.ParseExported)
 		if err != nil {
 			log.Error(ctx, "no dep handle", err, telemetry.Package.Of(depID))
 
@@ -152,12 +148,12 @@ func (s *snapshot) buildKey(ctx context.Context, id packageID, mode source.Parse
 		deps[depHandle.m.pkgPath] = depHandle
 		depKeys = append(depKeys, depHandle.key)
 	}
-	ph.key = checkPackageKey(ph.m.id, ph.compiledGoFiles, m.config, depKeys)
-	return ph, deps, nil
+	cph.key = checkPackageKey(cph.m.id, cph.compiledGoFiles, m.config, depKeys)
+	return cph, deps, nil
 }
 
-func checkPackageKey(id packageID, pghs []source.ParseGoHandle, cfg *packages.Config, deps [][]byte) []byte {
-	return []byte(hashContents([]byte(fmt.Sprintf("%s%s%s%s", id, hashParseKeys(pghs), hashConfig(cfg), hashContents(bytes.Join(deps, nil))))))
+func checkPackageKey(id packageID, phs []source.ParseGoHandle, cfg *packages.Config, deps [][]byte) []byte {
+	return []byte(hashContents([]byte(fmt.Sprintf("%s%s%s%s", id, hashParseKeys(phs), hashConfig(cfg), hashContents(bytes.Join(deps, nil))))))
 }
 
 // hashConfig returns the hash for the *packages.Config.
@@ -177,61 +173,62 @@ func hashConfig(config *packages.Config) string {
 	return hashContents(b.Bytes())
 }
 
-func (ph *packageHandle) Check(ctx context.Context) (source.Package, error) {
-	return ph.check(ctx)
+func (cph *checkPackageHandle) Check(ctx context.Context) (source.Package, error) {
+	return cph.check(ctx)
 }
 
-func (ph *packageHandle) check(ctx context.Context) (*pkg, error) {
-	v := ph.handle.Get(ctx)
+func (cph *checkPackageHandle) check(ctx context.Context) (*pkg, error) {
+	v := cph.handle.Get(ctx)
 	if v == nil {
-		return nil, ctx.Err()
+		return nil, errors.Errorf("no package for %s", cph.m.id)
 	}
-	data := v.(*packageData)
+	data := v.(*checkPackageData)
 	return data.pkg, data.err
 }
 
-func (ph *packageHandle) CompiledGoFiles() []source.ParseGoHandle {
-	return ph.compiledGoFiles
+func (cph *checkPackageHandle) CompiledGoFiles() []source.ParseGoHandle {
+	return cph.compiledGoFiles
 }
 
-func (ph *packageHandle) ID() string {
-	return string(ph.m.id)
+func (cph *checkPackageHandle) ID() string {
+	return string(cph.m.id)
 }
 
-func (ph *packageHandle) MissingDependencies() []string {
+func (cph *checkPackageHandle) MissingDependencies() []string {
 	var md []string
-	for i := range ph.m.missingDeps {
+	for i := range cph.m.missingDeps {
 		md = append(md, string(i))
 	}
 	return md
 }
 
-func (ph *packageHandle) Cached() (source.Package, error) {
-	return ph.cached()
+func (cph *checkPackageHandle) Cached() (source.Package, error) {
+	return cph.cached()
 }
 
-func (ph *packageHandle) cached() (*pkg, error) {
-	v := ph.handle.Cached()
+func (cph *checkPackageHandle) cached() (*pkg, error) {
+	v := cph.handle.Cached()
 	if v == nil {
-		return nil, errors.Errorf("no cached type information for %s", ph.m.pkgPath)
+		return nil, errors.Errorf("no cached type information for %s", cph.m.pkgPath)
 	}
-	data := v.(*packageData)
+	data := v.(*checkPackageData)
 	return data.pkg, data.err
 }
 
 func (s *snapshot) parseGoHandles(ctx context.Context, files []span.URI, mode source.ParseMode) ([]source.ParseGoHandle, error) {
 	phs := make([]source.ParseGoHandle, 0, len(files))
 	for _, uri := range files {
-		fh, err := s.GetFile(uri)
+		f, err := s.view.GetFile(ctx, uri)
 		if err != nil {
 			return nil, err
 		}
+		fh := s.Handle(ctx, f)
 		phs = append(phs, s.view.session.cache.ParseGoHandle(fh, mode))
 	}
 	return phs, nil
 }
 
-func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode source.ParseMode, goFiles []source.ParseGoHandle, compiledGoFiles []source.ParseGoHandle, deps map[packagePath]*packageHandle) (*pkg, error) {
+func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode source.ParseMode, goFiles []source.ParseGoHandle, compiledGoFiles []source.ParseGoHandle, deps map[packagePath]*checkPackageHandle) (*pkg, error) {
 	ctx, done := trace.StartSpan(ctx, "cache.importer.typeCheck", telemetry.Package.Of(m.id))
 	defer done()
 
@@ -258,15 +255,14 @@ func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode sourc
 		},
 	}
 	var (
-		files        = make([]*ast.File, len(pkg.compiledGoFiles))
-		parseErrors  = make([]error, len(pkg.compiledGoFiles))
-		actualErrors = make([]error, len(pkg.compiledGoFiles))
-		wg           sync.WaitGroup
+		files       = make([]*ast.File, len(pkg.compiledGoFiles))
+		parseErrors = make([]error, len(pkg.compiledGoFiles))
+		wg          sync.WaitGroup
 	)
 	for i, ph := range pkg.compiledGoFiles {
 		wg.Add(1)
 		go func(i int, ph source.ParseGoHandle) {
-			files[i], _, parseErrors[i], actualErrors[i] = ph.Parse(ctx)
+			files[i], _, parseErrors[i], _ = ph.Parse(ctx)
 			wg.Done()
 		}(i, ph)
 	}
@@ -299,7 +295,7 @@ func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode sourc
 	if pkg.pkgPath == "unsafe" {
 		pkg.types = types.Unsafe
 	} else if len(files) == 0 { // not the unsafe package, no parsed files
-		return nil, errors.Errorf("no parsed files for package %s, expected: %s, errors: %v, list errors: %v", pkg.pkgPath, pkg.compiledGoFiles, actualErrors, rawErrors)
+		return nil, errors.Errorf("no parsed files for package %s", pkg.pkgPath)
 	} else {
 		pkg.types = types.NewPackage(string(m.pkgPath), m.name)
 	}
@@ -310,24 +306,6 @@ func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode sourc
 		},
 		Importer: importerFunc(func(pkgPath string) (*types.Package, error) {
 			dep := deps[packagePath(pkgPath)]
-			if dep == nil {
-				// We may be in GOPATH mode, in which case we need to check vendor dirs.
-				searchDir := path.Dir(pkg.PkgPath())
-				for {
-					vdir := packagePath(path.Join(searchDir, "vendor", pkgPath))
-					if vdep := deps[vdir]; vdep != nil {
-						dep = vdep
-						break
-					}
-
-					// Search until Dir doesn't take us anywhere new, e.g. "." or "/".
-					next := path.Dir(searchDir)
-					if searchDir == next {
-						break
-					}
-					searchDir = next
-				}
-			}
 			if dep == nil {
 				return nil, errors.Errorf("no package for import %s", pkgPath)
 			}
@@ -360,6 +338,7 @@ func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode sourc
 			pkg.errors = append(pkg.errors, srcErr)
 		}
 	}
+
 	return pkg, nil
 }
 

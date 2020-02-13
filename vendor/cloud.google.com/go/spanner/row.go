@@ -176,8 +176,8 @@ func errDecodeColumn(i int, err error) error {
 	if err == nil {
 		return nil
 	}
-	var se *Error
-	if !errorAs(err, &se) {
+	se, ok := toSpannerError(err).(*Error)
+	if !ok {
 		return spannerErrorf(codes.InvalidArgument, "failed to decode column %v, error = <%v>", i, err)
 	}
 	se.decorate(fmt.Sprintf("failed to decode column %v", i))

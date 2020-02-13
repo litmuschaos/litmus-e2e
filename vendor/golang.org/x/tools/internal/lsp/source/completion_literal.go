@@ -20,16 +20,12 @@ import (
 // literal generates composite literal, function literal, and make()
 // completion items.
 func (c *completer) literal(literalType types.Type, imp *importInfo) {
-	if !c.opts.literal {
-		return
-	}
+	expType := c.expectedType.objType
 
-	expType := c.inference.objType
-
-	if c.inference.variadic {
+	if c.expectedType.variadic {
 		// Don't offer literal slice candidates for variadic arguments.
 		// For example, don't offer "[]interface{}{}" in "fmt.Print(<>)".
-		if c.inference.matchesVariadic(literalType) {
+		if c.expectedType.matchesVariadic(literalType) {
 			return
 		}
 
@@ -63,20 +59,14 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 		}
 	}
 
-	// Check if an object of type literalType would match our expected type.
-	cand := candidate{
-		obj: c.fakeObj(literalType),
-	}
-
-	switch literalType.Underlying().(type) {
-	// These literal types are addressable (e.g. "&[]int{}"), others are
-	// not (e.g. can't do "&(func(){})").
-	case *types.Struct, *types.Array, *types.Slice, *types.Map:
-		cand.addressable = true
-	}
-
-	if !c.matchingCandidate(&cand) {
-		return
+	// Check if an object of type literalType or *literalType would
+	// match our expected type.
+	var isPointer bool
+	if !c.matchingType(literalType) {
+		isPointer = true
+		if !c.matchingType(types.NewPointer(literalType)) {
+			return
+		}
 	}
 
 	var (
@@ -111,12 +101,12 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 
 	// If prefix matches the type name, client may want a composite literal.
 	if score := c.matcher.Score(matchName); score >= 0 {
-		if cand.takeAddress {
+		if isPointer {
 			if sel != nil {
 				// If we are in a selector we must place the "&" before the selector.
 				// For example, "foo.B<>" must complete to "&foo.Bar{}", not
 				// "foo.&Bar{}".
-				edits, err := prependEdit(c.snapshot.View().Session().Cache().FileSet(), c.mapper, sel, "&")
+				edits, err := referenceEdit(c.snapshot.View().Session().Cache().FileSet(), c.mapper, sel)
 				if err != nil {
 					log.Error(c.ctx, "error making edit for literal pointer completion", err)
 					return
@@ -131,19 +121,11 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 		switch t := literalType.Underlying().(type) {
 		case *types.Struct, *types.Array, *types.Slice, *types.Map:
 			c.compositeLiteral(t, typeName, float64(score), addlEdits)
-		case *types.Signature:
-			// Add a literal completion for a signature type that implements
-			// an interface. For example, offer "http.HandlerFunc()" when
-			// expected type is "http.Handler".
-			if isInterface(expType) {
-				c.basicLiteral(t, typeName, float64(score), addlEdits)
-			}
-		case *types.Basic:
+		case *types.Basic, *types.Signature:
 			// Add a literal completion for basic types that implement our
 			// expected interface (e.g. named string type http.Dir
-			// implements http.FileSystem), or are identical to our expected
-			// type (i.e. yielding a type conversion such as "float64()").
-			if isInterface(expType) || types.Identical(expType, literalType) {
+			// implements http.FileSystem).
+			if isInterface(expType) {
 				c.basicLiteral(t, typeName, float64(score), addlEdits)
 			}
 		}
@@ -152,7 +134,7 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 	// If prefix matches "make", client may want a "make()"
 	// invocation. We also include the type name to allow for more
 	// flexible fuzzy matching.
-	if score := c.matcher.Score("make." + matchName); !cand.takeAddress && score >= 0 {
+	if score := c.matcher.Score("make." + matchName); !isPointer && score >= 0 {
 		switch literalType.Underlying().(type) {
 		case *types.Slice:
 			// The second argument to "make()" for slices is required, so default to "0".
@@ -165,7 +147,7 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 	}
 
 	// If prefix matches "func", client may want a function literal.
-	if score := c.matcher.Score("func"); !cand.takeAddress && score >= 0 && !isInterface(expType) {
+	if score := c.matcher.Score("func"); !isPointer && score >= 0 && !isInterface(expType) {
 		switch t := literalType.Underlying().(type) {
 		case *types.Signature:
 			c.functionLiteral(t, float64(score))
@@ -173,9 +155,9 @@ func (c *completer) literal(literalType types.Type, imp *importInfo) {
 	}
 }
 
-// prependEdit produces text edits that preprend the specified prefix
-// to the specified node.
-func prependEdit(fset *token.FileSet, m *protocol.ColumnMapper, node ast.Node, prefix string) ([]protocol.TextEdit, error) {
+// referenceEdit produces text edits that prepend a "&" operator to the
+// specified node.
+func referenceEdit(fset *token.FileSet, m *protocol.ColumnMapper, node ast.Node) ([]protocol.TextEdit, error) {
 	rng := newMappedRange(fset, m, node.Pos(), node.Pos())
 	spn, err := rng.Span()
 	if err != nil {
@@ -183,7 +165,7 @@ func prependEdit(fset *token.FileSet, m *protocol.ColumnMapper, node ast.Node, p
 	}
 	return ToProtocolEdits(m, []diff.TextEdit{{
 		Span:    spn,
-		NewText: prefix,
+		NewText: "&",
 	}})
 }
 
@@ -213,7 +195,7 @@ func (c *completer) functionLiteral(sig *types.Signature, matchScore float64) {
 			// Our parameter names are guesses, so they must be placeholders
 			// for easy correction. If placeholders are disabled, don't
 			// offer the completion.
-			if !c.opts.placeholders {
+			if !c.opts.Placeholders {
 				return
 			}
 
@@ -367,7 +349,7 @@ func (c *completer) makeCall(typeName string, secondArg string, matchScore float
 	if secondArg != "" {
 		snip.WriteText(", ")
 		snip.WritePlaceholder(func(b *snippet.Builder) {
-			if c.opts.placeholders {
+			if c.opts.Placeholders {
 				b.WriteText(secondArg)
 			}
 		})
