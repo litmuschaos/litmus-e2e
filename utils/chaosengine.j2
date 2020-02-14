@@ -10,6 +10,7 @@ spec:
       image: "litmuschaos/chaos-runner:latest"
       type: "go"   
   jobCleanUpPolicy: delete
+  engineState: 'active'
   monitoring: false
   appinfo: 
     appns: {{ a_ns }}
