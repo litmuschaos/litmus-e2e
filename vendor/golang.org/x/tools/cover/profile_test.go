@@ -198,12 +198,6 @@ some/fancy/path:42.69,44.16 2`,
 :42.69,44.16 2 3`,
 			expectErr: true,
 		},
-		{
-			name: "a negative count is an error",
-			input: `mode: count
-some/fancy/path:42.69,44.16 2 -1`,
-			expectErr: true,
-		},
 	}
 
 	for _, tc := range tests {

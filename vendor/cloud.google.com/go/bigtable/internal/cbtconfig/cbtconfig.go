@@ -127,18 +127,10 @@ func Load() (*Config, error) {
 		}
 		return nil, fmt.Errorf("Reading %s: %v", filename, err)
 	}
-	s := bufio.NewScanner(bytes.NewReader(data))
-	return readConfig(s, filename)
-}
-
-func readConfig(s *bufio.Scanner, filename string) (*Config, error) {
 	c := new(Config)
+	s := bufio.NewScanner(bytes.NewReader(data))
 	for s.Scan() {
 		line := s.Text()
-		// Ignore empty lines.
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
 		i := strings.Index(line, "=")
 		if i < 0 {
 			return nil, fmt.Errorf("Bad line in %s: %q", filename, line)

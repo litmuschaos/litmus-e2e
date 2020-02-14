@@ -4,7 +4,6 @@ package imports
 
 import (
 	"archive/zip"
-	"context"
 	"fmt"
 	"go/build"
 	"io/ioutil"
@@ -13,7 +12,6 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
-	"sort"
 	"strings"
 	"sync"
 	"testing"
@@ -91,7 +89,7 @@ package z
 
 	mt.assertFound("y", "y")
 
-	scan, err := scanToSlice(mt.resolver, nil)
+	scan, err := mt.resolver.scan(nil, false, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,6 +149,7 @@ import _ "example.com"
 
 	mt.assertScanFinds("example.com", "x")
 	mt.assertScanFinds("example.com", "x")
+
 }
 
 // Tests that scanning the module cache > 1 time is able to find the same module
@@ -210,8 +209,12 @@ import _ "rsc.io/quote"
 	}
 
 	// Uninitialize the go.mod dependent cached information and make sure it still finds the package.
-	mt.resolver.ClearForNewMod()
+	mt.resolver.Initialized = false
+	mt.resolver.Main = nil
+	mt.resolver.ModsByModPath = nil
+	mt.resolver.ModsByDir = nil
 	mt.assertScanFinds("rsc.io/quote", "quote")
+
 }
 
 // Tests that -mod=vendor works. Adapted from mod_vendor_build.txt.
@@ -239,7 +242,7 @@ import _ "rsc.io/sampler"
 	}
 
 	// Clear out the resolver's cache, since we've changed the environment.
-	mt.resolver = newModuleResolver(mt.env)
+	mt.resolver = &ModuleResolver{env: mt.env}
 	mt.env.GOFLAGS = "-mod=vendor"
 	mt.assertModuleFoundInDir("rsc.io/sampler", "sampler", `/vendor/`)
 }
@@ -569,7 +572,7 @@ func (t *modTest) assertFound(importPath, pkgName string) (string, *pkg) {
 
 func (t *modTest) assertScanFinds(importPath, pkgName string) *pkg {
 	t.Helper()
-	scan, err := scanToSlice(t.resolver, nil)
+	scan, err := t.resolver.scan(nil, true, nil)
 	if err != nil {
 		t.Errorf("scan failed: %v", err)
 	}
@@ -580,32 +583,6 @@ func (t *modTest) assertScanFinds(importPath, pkgName string) *pkg {
 	}
 	t.Errorf("scanning for %v did not find %v", pkgName, importPath)
 	return nil
-}
-
-func scanToSlice(resolver Resolver, exclude []gopathwalk.RootType) ([]*pkg, error) {
-	var mu sync.Mutex
-	var result []*pkg
-	filter := &scanCallback{
-		rootFound: func(root gopathwalk.Root) bool {
-			for _, rt := range exclude {
-				if root.Type == rt {
-					return false
-				}
-			}
-			return true
-		},
-		dirFound: func(pkg *pkg) bool {
-			return true
-		},
-		packageNameLoaded: func(pkg *pkg) bool {
-			mu.Lock()
-			defer mu.Unlock()
-			result = append(result, pkg)
-			return false
-		},
-	}
-	err := resolver.scan(context.Background(), filter)
-	return result, err
 }
 
 // assertModuleFoundInDir is the same as assertFound, but also checks that the
@@ -694,7 +671,7 @@ func setup(t *testing.T, main, wd string) *modTest {
 	return &modTest{
 		T:        t,
 		env:      env,
-		resolver: newModuleResolver(env),
+		resolver: &ModuleResolver{env: env},
 		cleanup:  func() { removeDir(dir) },
 	}
 }
@@ -851,8 +828,8 @@ func TestInvalidModCache(t *testing.T) {
 		GOSUMDB:     "off",
 		WorkingDir:  dir,
 	}
-	resolver := newModuleResolver(env)
-	scanToSlice(resolver, nil)
+	resolver := &ModuleResolver{env: env}
+	resolver.scan(nil, true, nil)
 }
 
 func TestGetCandidatesRanking(t *testing.T) {
@@ -873,43 +850,31 @@ import _ "rsc.io/quote"
 	}
 
 	type res struct {
-		relevance  int
 		name, path string
 	}
 	want := []res{
 		// Stdlib
-		{7, "bytes", "bytes"},
-		{7, "http", "net/http"},
-		// Main module
-		{6, "rpackage", "example.com/rpackage"},
-		// Direct module deps
-		{5, "quote", "rsc.io/quote"},
-		// Indirect deps
-		{4, "language", "golang.org/x/text/language"},
+		{"bytes", "bytes"},
+		{"http", "net/http"},
+		// In scope modules
+		{"language", "golang.org/x/text/language"},
+		{"quote", "rsc.io/quote"},
+		{"rpackage", "example.com/rpackage"},
 		// Out of scope modules
-		{3, "quote", "rsc.io/quote/v2"},
+		{"quote", "rsc.io/quote/v2"},
 	}
-	var mu sync.Mutex
+	candidates, err := getAllCandidates("foo.go", mt.env)
+	if err != nil {
+		t.Fatalf("getAllCandidates() = %v", err)
+	}
 	var got []res
-	add := func(c ImportFix) {
-		mu.Lock()
-		defer mu.Unlock()
+	for _, c := range candidates {
 		for _, w := range want {
 			if c.StmtInfo.ImportPath == w.path {
-				got = append(got, res{c.Relevance, c.IdentName, c.StmtInfo.ImportPath})
+				got = append(got, res{c.IdentName, c.StmtInfo.ImportPath})
 			}
 		}
 	}
-	if err := getAllCandidates(context.Background(), add, "", "foo.go", "foo", mt.env); err != nil {
-		t.Fatalf("getAllCandidates() = %v", err)
-	}
-	sort.Slice(got, func(i, j int) bool {
-		ri, rj := got[i], got[j]
-		if ri.relevance != rj.relevance {
-			return ri.relevance > rj.relevance // Highest first.
-		}
-		return ri.name < rj.name
-	})
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("wanted candidates in order %v, got %v", want, got)
 	}
@@ -923,10 +888,10 @@ func BenchmarkScanModCache(b *testing.B) {
 		Logf:   log.Printf,
 	}
 	exclude := []gopathwalk.RootType{gopathwalk.RootGOROOT}
-	scanToSlice(env.GetResolver(), exclude)
+	env.GetResolver().scan(nil, true, exclude)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		scanToSlice(env.GetResolver(), exclude)
+		env.GetResolver().scan(nil, true, exclude)
 		env.GetResolver().(*ModuleResolver).ClearForNewScan()
 	}
 }

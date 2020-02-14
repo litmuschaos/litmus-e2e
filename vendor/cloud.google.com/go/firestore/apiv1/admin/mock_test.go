@@ -199,20 +199,17 @@ func TestMain(m *testing.M) {
 }
 
 func TestFirestoreAdminCreateIndex(t *testing.T) {
-	var expectedResponse = &adminpb.Index{}
+	var name string = "name3373707"
+	var done bool = true
+	var expectedResponse = &longrunningpb.Operation{
+		Name: name,
+		Done: done,
+	}
 
 	mockFirestoreAdmin.err = nil
 	mockFirestoreAdmin.reqs = nil
 
-	any, err := ptypes.MarshalAny(expectedResponse)
-	if err != nil {
-		t.Fatal(err)
-	}
-	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], &longrunningpb.Operation{
-		Name:   "longrunning-test",
-		Done:   true,
-		Result: &longrunningpb.Operation_Response{Response: any},
-	})
+	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], expectedResponse)
 
 	var formattedParent string = fmt.Sprintf("projects/%s/databases/%s/collectionGroups/%s", "[PROJECT]", "[DATABASE]", "[COLLECTION_ID]")
 	var index *adminpb.Index = &adminpb.Index{}
@@ -226,11 +223,7 @@ func TestFirestoreAdminCreateIndex(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	respLRO, err := c.CreateIndex(context.Background(), request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	resp, err := respLRO.Wait(context.Background())
+	resp, err := c.CreateIndex(context.Background(), request)
 
 	if err != nil {
 		t.Fatal(err)
@@ -454,20 +447,17 @@ func TestFirestoreAdminDeleteIndexError(t *testing.T) {
 	}
 }
 func TestFirestoreAdminImportDocuments(t *testing.T) {
-	var expectedResponse = &emptypb.Empty{}
+	var name2 string = "name2-1052831874"
+	var done bool = true
+	var expectedResponse = &longrunningpb.Operation{
+		Name: name2,
+		Done: done,
+	}
 
 	mockFirestoreAdmin.err = nil
 	mockFirestoreAdmin.reqs = nil
 
-	any, err := ptypes.MarshalAny(expectedResponse)
-	if err != nil {
-		t.Fatal(err)
-	}
-	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], &longrunningpb.Operation{
-		Name:   "longrunning-test",
-		Done:   true,
-		Result: &longrunningpb.Operation_Response{Response: any},
-	})
+	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], expectedResponse)
 
 	var formattedName string = fmt.Sprintf("projects/%s/databases/%s", "[PROJECT]", "[DATABASE]")
 	var request = &adminpb.ImportDocumentsRequest{
@@ -479,14 +469,18 @@ func TestFirestoreAdminImportDocuments(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	respLRO, err := c.ImportDocuments(context.Background(), request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = respLRO.Wait(context.Background())
+	resp, err := c.ImportDocuments(context.Background(), request)
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if want, got := request, mockFirestoreAdmin.reqs[0]; !proto.Equal(want, got) {
+		t.Errorf("wrong request %q, want %q", got, want)
+	}
+
+	if want, got := expectedResponse, resp; !proto.Equal(want, got) {
+		t.Errorf("wrong response %q, want %q)", got, want)
 	}
 }
 
@@ -514,20 +508,17 @@ func TestFirestoreAdminImportDocumentsError(t *testing.T) {
 	_ = resp
 }
 func TestFirestoreAdminExportDocuments(t *testing.T) {
-	var expectedResponse = &adminpb.ExportDocumentsResponse{}
+	var name2 string = "name2-1052831874"
+	var done bool = true
+	var expectedResponse = &longrunningpb.Operation{
+		Name: name2,
+		Done: done,
+	}
 
 	mockFirestoreAdmin.err = nil
 	mockFirestoreAdmin.reqs = nil
 
-	any, err := ptypes.MarshalAny(expectedResponse)
-	if err != nil {
-		t.Fatal(err)
-	}
-	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], &longrunningpb.Operation{
-		Name:   "longrunning-test",
-		Done:   true,
-		Result: &longrunningpb.Operation_Response{Response: any},
-	})
+	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], expectedResponse)
 
 	var formattedName string = fmt.Sprintf("projects/%s/databases/%s", "[PROJECT]", "[DATABASE]")
 	var request = &adminpb.ExportDocumentsRequest{
@@ -539,11 +530,7 @@ func TestFirestoreAdminExportDocuments(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	respLRO, err := c.ExportDocuments(context.Background(), request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	resp, err := respLRO.Wait(context.Background())
+	resp, err := c.ExportDocuments(context.Background(), request)
 
 	if err != nil {
 		t.Fatal(err)
@@ -713,20 +700,17 @@ func TestFirestoreAdminListFieldsError(t *testing.T) {
 	_ = resp
 }
 func TestFirestoreAdminUpdateField(t *testing.T) {
-	var expectedResponse = &adminpb.Field{}
+	var name string = "name3373707"
+	var done bool = true
+	var expectedResponse = &longrunningpb.Operation{
+		Name: name,
+		Done: done,
+	}
 
 	mockFirestoreAdmin.err = nil
 	mockFirestoreAdmin.reqs = nil
 
-	any, err := ptypes.MarshalAny(expectedResponse)
-	if err != nil {
-		t.Fatal(err)
-	}
-	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], &longrunningpb.Operation{
-		Name:   "longrunning-test",
-		Done:   true,
-		Result: &longrunningpb.Operation_Response{Response: any},
-	})
+	mockFirestoreAdmin.resps = append(mockFirestoreAdmin.resps[:0], expectedResponse)
 
 	var field *adminpb.Field = &adminpb.Field{}
 	var request = &adminpb.UpdateFieldRequest{
@@ -738,11 +722,7 @@ func TestFirestoreAdminUpdateField(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	respLRO, err := c.UpdateField(context.Background(), request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	resp, err := respLRO.Wait(context.Background())
+	resp, err := c.UpdateField(context.Background(), request)
 
 	if err != nil {
 		t.Fatal(err)

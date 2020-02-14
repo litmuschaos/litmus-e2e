@@ -113,8 +113,6 @@ func shouldRetry(err error) bool {
 	if !ok {
 		return false
 	}
-	// Only retry on UNAVAILABLE as per https://aip.dev/194. Other errors from
-	// https://cloud.google.com/datastore/docs/concepts/errors may be retried
-	// by the user if desired, but are not retried by the clientg.
-	return s.Code() == codes.Unavailable
+	// See https://cloud.google.com/datastore/docs/concepts/errors.
+	return s.Code() == codes.Unavailable || s.Code() == codes.DeadlineExceeded
 }

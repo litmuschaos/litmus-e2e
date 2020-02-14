@@ -48,13 +48,13 @@ import (
 )
 
 const (
-	testProjectID                = "test-project-ID"
-	testInstance                 = "test-instance"
-	testZone                     = "test-zone"
-	testService                  = "test-service"
-	testSvcVersion               = "test-service-version"
-	testProfileDuration          = time.Second * 10
-	testProfileCollectionTimeout = time.Second * 15
+	testProjectID       = "test-project-ID"
+	testInstance        = "test-instance"
+	testZone            = "test-zone"
+	testService         = "test-service"
+	testSvcVersion      = "test-service-version"
+	testProfileDuration = time.Second * 10
+	testServerTimeout   = time.Second * 15
 )
 
 func createTestDeployment() *pb.Deployment {
@@ -370,7 +370,6 @@ func TestInitializeAgent(t *testing.T) {
 	for _, tt := range []struct {
 		config               Config
 		enableMutex          bool
-		wantErr              bool
 		wantProfileTypes     []pb.ProfileType
 		wantDeploymentLabels map[string]string
 		wantProfileLabels    map[string]string
@@ -418,29 +417,13 @@ func TestInitializeAgent(t *testing.T) {
 			wantDeploymentLabels: map[string]string{languageLabel: "go"},
 			wantProfileLabels:    map[string]string{},
 		},
-		{
-			config:               Config{NoCPUProfiling: true},
-			wantProfileTypes:     []pb.ProfileType{pb.ProfileType_HEAP, pb.ProfileType_THREADS, pb.ProfileType_HEAP_ALLOC},
-			wantDeploymentLabels: map[string]string{languageLabel: "go"},
-			wantProfileLabels:    map[string]string{},
-		},
-		{
-			config:  Config{NoCPUProfiling: true, NoHeapProfiling: true, NoGoroutineProfiling: true, NoAllocProfiling: true},
-			wantErr: true,
-		},
 	} {
 
 		config = tt.config
 		config.ProjectID = testProjectID
 		config.Service = testService
 		mutexEnabled = tt.enableMutex
-		a, err := initializeAgent(nil)
-		if err != nil {
-			if !tt.wantErr {
-				t.Fatalf("initializeAgent() got error: %v, want no error", err)
-			}
-			continue
-		}
+		a := initializeAgent(nil)
 
 		wantDeployment := &pb.Deployment{
 			ProjectId: testProjectID,
@@ -755,15 +738,18 @@ func TestInitializeConfig(t *testing.T) {
 type fakeProfilerServer struct {
 	count       int
 	gotProfiles map[string][]byte
+	done        chan bool
 }
 
 func (fs *fakeProfilerServer) CreateProfile(ctx context.Context, in *pb.CreateProfileRequest) (*pb.Profile, error) {
 	fs.count++
-	switch fs.count % 2 {
+	switch fs.count {
 	case 1:
 		return &pb.Profile{Name: "testCPU", ProfileType: pb.ProfileType_CPU, Duration: ptypes.DurationProto(testProfileDuration)}, nil
-	default:
+	case 2:
 		return &pb.Profile{Name: "testHeap", ProfileType: pb.ProfileType_HEAP}, nil
+	default:
+		select {}
 	}
 }
 
@@ -773,6 +759,7 @@ func (fs *fakeProfilerServer) UpdateProfile(ctx context.Context, in *pb.UpdatePr
 		fs.gotProfiles["CPU"] = in.Profile.ProfileBytes
 	case pb.ProfileType_HEAP:
 		fs.gotProfiles["HEAP"] = in.Profile.ProfileBytes
+		fs.done <- true
 	}
 	return in.Profile, nil
 }
@@ -931,29 +918,27 @@ func hog(dt time.Duration, hogger func(mu1, mu2 *sync.Mutex, start time.Time, dt
 }
 
 func TestAgentWithServer(t *testing.T) {
-	oldDialGRPC, oldConfig, oldProfilingDone := dialGRPC, config, profilingDone
+	oldDialGRPC, oldConfig := dialGRPC, config
 	defer func() {
-		dialGRPC, config, profilingDone = oldDialGRPC, oldConfig, oldProfilingDone
+		dialGRPC, config = oldDialGRPC, oldConfig
 	}()
-
-	profilingDone = make(chan bool)
 
 	srv, err := testutil.NewServer()
 	if err != nil {
 		t.Fatalf("testutil.NewServer(): %v", err)
 	}
-	fakeServer := &fakeProfilerServer{gotProfiles: map[string][]byte{}}
+	fakeServer := &fakeProfilerServer{gotProfiles: map[string][]byte{}, done: make(chan bool)}
 	pb.RegisterProfilerServiceServer(srv.Gsrv, fakeServer)
+
 	srv.Start()
 
 	dialGRPC = gtransport.DialInsecure
 	if err := Start(Config{
-		Service:     testService,
-		ProjectID:   testProjectID,
-		APIAddr:     srv.Addr,
-		Instance:    testInstance,
-		Zone:        testZone,
-		numProfiles: 2,
+		Service:   testService,
+		ProjectID: testProjectID,
+		APIAddr:   srv.Addr,
+		Instance:  testInstance,
+		Zone:      testZone,
 	}); err != nil {
 		t.Fatalf("Start(): %v", err)
 	}
@@ -962,9 +947,9 @@ func TestAgentWithServer(t *testing.T) {
 	go profileeLoop(quitProfilee)
 
 	select {
-	case <-profilingDone:
-	case <-time.After(testProfileCollectionTimeout):
-		t.Errorf("got timeout after %v, want profile collection done", testProfileCollectionTimeout)
+	case <-fakeServer.done:
+	case <-time.After(testServerTimeout):
+		t.Errorf("got timeout after %v, want fake server done", testServerTimeout)
 	}
 	quitProfilee <- true
 

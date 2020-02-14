@@ -107,8 +107,8 @@ func (c *completer) shouldPrune() bool {
 	}
 
 	// Check our remaining budget every 100 candidates.
-	if c.opts.budget > 0 && c.deepState.candidateCount%100 == 0 {
-		spent := float64(time.Since(c.startTime)) / float64(c.opts.budget)
+	if c.opts.Budget > 0 && c.deepState.candidateCount%100 == 0 {
+		spent := float64(time.Since(c.startTime)) / float64(c.opts.Budget)
 
 		switch {
 		case spent >= 0.90:
@@ -140,12 +140,10 @@ func (c *completer) shouldPrune() bool {
 
 // deepSearch searches through obj's subordinate objects for more
 // completion items.
-func (c *completer) deepSearch(cand candidate) {
+func (c *completer) deepSearch(obj types.Object, imp *importInfo) {
 	if c.deepState.maxDepth == 0 {
 		return
 	}
-
-	obj := cand.obj
 
 	// If we are definitely completing a struct field name, deep completions
 	// don't make sense.
@@ -176,7 +174,7 @@ func (c *completer) deepSearch(cand candidate) {
 			// the deep chain.
 			c.deepState.push(obj, true)
 			// The result of a function call is not addressable.
-			c.methodsAndFields(sig.Results().At(0).Type(), false, cand.imp)
+			c.methodsAndFields(sig.Results().At(0).Type(), false, imp)
 			c.deepState.pop()
 		}
 	}
@@ -186,9 +184,11 @@ func (c *completer) deepSearch(cand candidate) {
 
 	switch obj := obj.(type) {
 	case *types.PkgName:
-		c.packageMembers(obj.Imported(), stdScore, cand.imp)
+		c.packageMembers(obj.Imported(), imp)
 	default:
-		c.methodsAndFields(obj.Type(), cand.addressable, cand.imp)
+		// For now it is okay to assume obj is addressable since we don't search beyond
+		// function calls.
+		c.methodsAndFields(obj.Type(), true, imp)
 	}
 
 	// Pop the object off our search stack.

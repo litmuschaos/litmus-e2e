@@ -7,7 +7,6 @@ package source
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"time"
 
 	"golang.org/x/tools/go/analysis"
@@ -43,22 +42,11 @@ import (
 
 var (
 	DefaultOptions = Options{
-		ClientOptions:       DefaultClientOptions,
-		ServerOptions:       DefaultServerOptions,
-		UserOptions:         DefaultUserOptions,
-		DebuggingOptions:    DefaultDebuggingOptions,
-		ExperimentalOptions: DefaultExperimentalOptions,
-		Hooks:               DefaultHooks,
-	}
-	DefaultClientOptions = ClientOptions{
-		InsertTextFormat:              protocol.PlainTextTextFormat,
-		PreferredContentFormat:        protocol.Markdown,
-		ConfigurationSupported:        true,
-		DynamicConfigurationSupported: true,
-		DynamicWatchedFilesSupported:  true,
-		LineFoldingOnly:               false,
-	}
-	DefaultServerOptions = ServerOptions{
+		Env:                    os.Environ(),
+		TextDocumentSyncKind:   protocol.Incremental,
+		HoverKind:              SynopsisDocumentation,
+		InsertTextFormat:       protocol.PlainTextTextFormat,
+		PreferredContentFormat: protocol.PlainText,
 		SupportedCodeActions: map[FileKind]map[protocol.CodeActionKind]bool{
 			Go: {
 				protocol.SourceOrganizeImports: true,
@@ -72,137 +60,74 @@ var (
 		SupportedCommands: []string{
 			"tidy", // for go.mod files
 		},
-	}
-	DefaultUserOptions = UserOptions{
-		Env:                     os.Environ(),
-		HoverKind:               SynopsisDocumentation,
-		LinkTarget:              "pkg.go.dev",
-		Matcher:                 Fuzzy,
-		DeepCompletion:          true,
-		UnimportedCompletion:    true,
-		CompletionDocumentation: true,
-	}
-	DefaultHooks = Hooks{
+		Completion: CompletionOptions{
+			Documentation: true,
+			Deep:          true,
+			FuzzyMatching: true,
+			Budget:        100 * time.Millisecond,
+		},
 		ComputeEdits: myers.ComputeEdits,
-		URLRegexp:    regexp.MustCompile(`(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`),
 		Analyzers:    defaultAnalyzers,
 		GoDiff:       true,
-	}
-	DefaultExperimentalOptions = ExperimentalOptions{
-		TempModfile: false,
-	}
-	DefaultDebuggingOptions = DebuggingOptions{
-		CompletionBudget: 100 * time.Millisecond,
 	}
 )
 
 type Options struct {
-	ClientOptions
-	ServerOptions
-	UserOptions
-	DebuggingOptions
-	ExperimentalOptions
-	Hooks
-}
-
-type ClientOptions struct {
-	InsertTextFormat              protocol.InsertTextFormat
-	ConfigurationSupported        bool
-	DynamicConfigurationSupported bool
-	DynamicWatchedFilesSupported  bool
-	PreferredContentFormat        protocol.MarkupKind
-	LineFoldingOnly               bool
-}
-
-type ServerOptions struct {
-	SupportedCodeActions map[FileKind]map[protocol.CodeActionKind]bool
-	SupportedCommands    []string
-}
-
-type UserOptions struct {
 	// Env is the current set of environment overrides on this view.
 	Env []string
 
 	// BuildFlags is used to adjust the build flags applied to the view.
 	BuildFlags []string
 
-	// HoverKind specifies the format of the content for hover requests.
-	HoverKind HoverKind
-
-	// DisabledAnalyses specify analyses that the user would like to disable.
+	HoverKind        HoverKind
 	DisabledAnalyses map[string]struct{}
 
-	// StaticCheck enables additional analyses from staticcheck.io.
 	StaticCheck bool
+	GoDiff      bool
 
-	// LinkTarget is the website used for documentation.
-	LinkTarget string
+	WatchFileChanges              bool
+	InsertTextFormat              protocol.InsertTextFormat
+	ConfigurationSupported        bool
+	DynamicConfigurationSupported bool
+	DynamicWatchedFilesSupported  bool
+	PreferredContentFormat        protocol.MarkupKind
+	LineFoldingOnly               bool
+
+	SupportedCodeActions map[FileKind]map[protocol.CodeActionKind]bool
+
+	SupportedCommands []string
+
+	// TODO: Remove the option once we are certain there are no issues here.
+	TextDocumentSyncKind protocol.TextDocumentSyncKind
+
+	Completion CompletionOptions
+
+	ComputeEdits diff.ComputeEdits
+
+	Analyzers map[string]*analysis.Analyzer
 
 	// LocalPrefix is used to specify goimports's -local behavior.
 	LocalPrefix string
 
-	// Matcher specifies the type of matcher to use for completion requests.
-	Matcher Matcher
-
-	// DeepCompletion allows completion to perform nested searches through
-	// possible candidates.
-	DeepCompletion bool
-
-	// UnimportedCompletion enables completion for unimported packages.
-	UnimportedCompletion bool
-
-	// CompletionDocumentation returns additional documentation with completion
-	// requests.
-	CompletionDocumentation bool
-
-	// Placeholders adds placeholders to parameters and structs in completion
-	// results.
-	Placeholders bool
-}
-
-type completionOptions struct {
-	deepCompletion    bool
-	unimported        bool
-	documentation     bool
-	fullDocumentation bool
-	placeholders      bool
-	literal           bool
-	matcher           Matcher
-	budget            time.Duration
-}
-
-type Hooks struct {
-	GoDiff       bool
-	ComputeEdits diff.ComputeEdits
-	URLRegexp    *regexp.Regexp
-	Analyzers    map[string]*analysis.Analyzer
-}
-
-type ExperimentalOptions struct {
-	// WARNING: This configuration will be changed in the future.
-	// It only exists while this feature is under development.
-	// Disable use of the -modfile flag in Go 1.14.
-	TempModfile bool
-}
-
-type DebuggingOptions struct {
 	VerboseOutput bool
+}
 
-	// CompletionBudget is the soft latency goal for completion requests. Most
+type CompletionOptions struct {
+	Deep              bool
+	FuzzyMatching     bool
+	CaseSensitive     bool
+	Unimported        bool
+	Documentation     bool
+	FullDocumentation bool
+	Placeholders      bool
+
+	// Budget is the soft latency goal for completion requests. Most
 	// requests finish in a couple milliseconds, but in some cases deep
 	// completions can take much longer. As we use up our budget we
 	// dynamically reduce the search scope to ensure we return timely
 	// results. Zero means unlimited.
-	CompletionBudget time.Duration
+	Budget time.Duration
 }
-
-type Matcher int
-
-const (
-	Fuzzy = Matcher(iota)
-	CaseInsensitive
-	CaseSensitive
-)
 
 type HoverKind int
 
@@ -212,7 +137,7 @@ const (
 	SynopsisDocumentation
 	FullDocumentation
 
-	// Structured is an experimental setting that returns a structured hover format.
+	// structured is an experimental setting that returns a structured hover format.
 	// This format separates the signature from the documentation, so that the client
 	// can do more manipulation of these fields.
 	//
@@ -238,8 +163,6 @@ const (
 	OptionDeprecated
 	OptionUnexpected
 )
-
-type LinkTarget string
 
 func SetOptions(options *Options, opts interface{}) OptionResults {
 	var results OptionResults
@@ -302,41 +225,29 @@ func (o *Options) set(name string, value interface{}) OptionResult {
 		}
 		o.BuildFlags = flags
 
+	case "noIncrementalSync":
+		if v, ok := result.asBool(); ok && v {
+			o.TextDocumentSyncKind = protocol.Full
+		}
+	case "watchFileChanges":
+		result.setBool(&o.WatchFileChanges)
 	case "completionDocumentation":
-		result.setBool(&o.CompletionDocumentation)
+		result.setBool(&o.Completion.Documentation)
 	case "usePlaceholders":
-		result.setBool(&o.Placeholders)
+		result.setBool(&o.Completion.Placeholders)
 	case "deepCompletion":
-		result.setBool(&o.DeepCompletion)
+		result.setBool(&o.Completion.Deep)
+	case "fuzzyMatching":
+		result.setBool(&o.Completion.FuzzyMatching)
+	case "caseSensitiveCompletion":
+		result.setBool(&o.Completion.CaseSensitive)
 	case "completeUnimported":
-		result.setBool(&o.UnimportedCompletion)
-	case "completionBudget":
-		if v, ok := result.asString(); ok {
-			d, err := time.ParseDuration(v)
-			if err != nil {
-				result.errorf("failed to parse duration %q: %v", v, err)
-				break
-			}
-			o.CompletionBudget = d
-		}
-
-	case "matcher":
-		matcher, ok := result.asString()
-		if !ok {
-			break
-		}
-		switch matcher {
-		case "fuzzy":
-			o.Matcher = Fuzzy
-		case "caseSensitive":
-			o.Matcher = CaseSensitive
-		default:
-			o.Matcher = CaseInsensitive
-		}
+		result.setBool(&o.Completion.Unimported)
 
 	case "hoverKind":
-		hoverKind, ok := result.asString()
+		hoverKind, ok := value.(string)
 		if !ok {
+			result.errorf("invalid type %T for string option %q", value, name)
 			break
 		}
 		switch hoverKind {
@@ -354,14 +265,6 @@ func (o *Options) set(name string, value interface{}) OptionResult {
 			result.errorf("Unsupported hover kind", tag.Of("HoverKind", hoverKind))
 		}
 
-	case "linkTarget":
-		linkTarget, ok := value.(string)
-		if !ok {
-			result.errorf("invalid type %T for string option %q", value, name)
-			break
-		}
-		o.LinkTarget = linkTarget
-
 	case "experimentalDisabledAnalyses":
 		disabledAnalyses, ok := value.([]interface{})
 		if !ok {
@@ -376,6 +279,9 @@ func (o *Options) set(name string, value interface{}) OptionResult {
 	case "staticcheck":
 		result.setBool(&o.StaticCheck)
 
+	case "go-diff":
+		result.setBool(&o.GoDiff)
+
 	case "local":
 		localPrefix, ok := value.(string)
 		if !ok {
@@ -386,9 +292,6 @@ func (o *Options) set(name string, value interface{}) OptionResult {
 
 	case "verboseOutput":
 		result.setBool(&o.VerboseOutput)
-
-	case "tempModfile":
-		result.setBool(&o.TempModfile)
 
 	// Deprecated settings.
 	case "wantSuggestedFixes":
@@ -410,23 +313,6 @@ func (o *Options) set(name string, value interface{}) OptionResult {
 		result.State = OptionDeprecated
 		result.Replacement = "completeUnimported"
 
-	case "fuzzyMatching":
-		result.State = OptionDeprecated
-		result.Replacement = "matcher"
-
-	case "caseSensitiveCompletion":
-		result.State = OptionDeprecated
-		result.Replacement = "matcher"
-
-	case "noIncrementalSync":
-		result.State = OptionDeprecated
-
-	case "watchFileChanges":
-		result.State = OptionDeprecated
-
-	case "go-diff":
-		result.State = OptionDeprecated
-
 	default:
 		result.State = OptionUnexpected
 	}
@@ -442,15 +328,6 @@ func (r *OptionResult) asBool() (bool, bool) {
 	if !ok {
 		r.errorf("Invalid type %T for bool option %q", r.Value, r.Name)
 		return false, false
-	}
-	return b, true
-}
-
-func (r *OptionResult) asString() (string, bool) {
-	b, ok := r.Value.(string)
-	if !ok {
-		r.errorf("Invalid type %T for string option %q", r.Value, r.Name)
-		return "", false
 	}
 	return b, true
 }

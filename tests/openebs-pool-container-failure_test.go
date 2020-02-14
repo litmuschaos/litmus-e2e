@@ -103,6 +103,7 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 				},
 				Spec: v1alpha1.ChaosEngineSpec{
 					AnnotationCheck:  "false",
+					EngineState:      "active",
 					AuxiliaryAppInfo: "",
 					Appinfo: v1alpha1.ApplicationParams{
 						Appns:    "litmus",

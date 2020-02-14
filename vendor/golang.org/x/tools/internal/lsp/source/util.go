@@ -5,6 +5,7 @@
 package source
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"go/ast"
@@ -13,7 +14,6 @@ import (
 	"go/types"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 
 	"golang.org/x/tools/internal/lsp/protocol"
@@ -65,35 +65,14 @@ func (s mappedRange) URI() span.URI {
 	return s.m.URI
 }
 
-// getParsedFile is a convenience function that extracts the Package and ParseGoHandle for a File in a Snapshot.
-// selectPackage is typically Narrowest/WidestPackageHandle below.
-func getParsedFile(ctx context.Context, snapshot Snapshot, fh FileHandle, selectPackage PackagePolicy) (Package, ParseGoHandle, error) {
-	phs, err := snapshot.PackageHandles(ctx, fh)
-	if err != nil {
-		return nil, nil, err
-	}
-	ph, err := selectPackage(phs)
-	if err != nil {
-		return nil, nil, err
-	}
-	pkg, err := ph.Check(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-	pgh, err := pkg.File(fh.Identity().URI)
-	return pkg, pgh, err
-}
-
-type PackagePolicy func([]PackageHandle) (PackageHandle, error)
-
-// NarrowestPackageHandle picks the "narrowest" package for a given file.
+// NarrowestCheckPackageHandle picks the "narrowest" package for a given file.
 //
 // By "narrowest" package, we mean the package with the fewest number of files
 // that includes the given file. This solves the problem of test variants,
 // as the test will have more files than the non-test package.
-func NarrowestPackageHandle(handles []PackageHandle) (PackageHandle, error) {
+func NarrowestCheckPackageHandle(handles []CheckPackageHandle) (CheckPackageHandle, error) {
 	if len(handles) < 1 {
-		return nil, errors.Errorf("no PackageHandles")
+		return nil, errors.Errorf("no CheckPackageHandles")
 	}
 	result := handles[0]
 	for _, handle := range handles[1:] {
@@ -102,18 +81,18 @@ func NarrowestPackageHandle(handles []PackageHandle) (PackageHandle, error) {
 		}
 	}
 	if result == nil {
-		return nil, errors.Errorf("nil PackageHandles have been returned")
+		return nil, errors.Errorf("nil CheckPackageHandles have been returned")
 	}
 	return result, nil
 }
 
-// WidestPackageHandle returns the PackageHandle containing the most files.
+// WidestCheckPackageHandle returns the CheckPackageHandle containing the most files.
 //
 // This is useful for something like diagnostics, where we'd prefer to offer diagnostics
 // for as many files as possible.
-func WidestPackageHandle(handles []PackageHandle) (PackageHandle, error) {
+func WidestCheckPackageHandle(handles []CheckPackageHandle) (CheckPackageHandle, error) {
 	if len(handles) < 1 {
-		return nil, errors.Errorf("no PackageHandles")
+		return nil, errors.Errorf("no CheckPackageHandles")
 	}
 	result := handles[0]
 	for _, handle := range handles[1:] {
@@ -122,36 +101,22 @@ func WidestPackageHandle(handles []PackageHandle) (PackageHandle, error) {
 		}
 	}
 	if result == nil {
-		return nil, errors.Errorf("nil PackageHandles have been returned")
+		return nil, errors.Errorf("nil CheckPackageHandles have been returned")
 	}
 	return result, nil
 }
 
-// SpecificPackageHandle creates a PackagePolicy to select a
-// particular PackageHandle when you alread know the one you want.
-func SpecificPackageHandle(desiredID string) PackagePolicy {
-	return func(handles []PackageHandle) (PackageHandle, error) {
-		for _, h := range handles {
-			if h.ID() == desiredID {
-				return h, nil
-			}
-		}
-
-		return nil, fmt.Errorf("no package handle with expected id %q", desiredID)
-	}
-}
-
-func IsGenerated(ctx context.Context, snapshot Snapshot, uri span.URI) bool {
-	fh, err := snapshot.GetFile(uri)
+func IsGenerated(ctx context.Context, view View, uri span.URI) bool {
+	f, err := view.GetFile(ctx, uri)
 	if err != nil {
 		return false
 	}
-	ph := snapshot.View().Session().Cache().ParseGoHandle(fh, ParseHeader)
+	ph := view.Session().Cache().ParseGoHandle(view.Snapshot().Handle(ctx, f), ParseHeader)
 	parsed, _, _, err := ph.Parse(ctx)
 	if err != nil {
 		return false
 	}
-	tok := snapshot.View().Session().Cache().FileSet().File(parsed.Pos())
+	tok := view.Session().Cache().FileSet().File(parsed.Pos())
 	if tok == nil {
 		return false
 	}
@@ -168,8 +133,8 @@ func IsGenerated(ctx context.Context, snapshot Snapshot, uri span.URI) bool {
 	return false
 }
 
-func nodeToProtocolRange(view View, pkg Package, n ast.Node) (protocol.Range, error) {
-	mrng, err := posToMappedRange(view, pkg, n.Pos(), n.End())
+func nodeToProtocolRange(ctx context.Context, view View, m *protocol.ColumnMapper, n ast.Node) (protocol.Range, error) {
+	mrng, err := nodeToMappedRange(view, m, n)
 	if err != nil {
 		return protocol.Range{}, err
 	}
@@ -199,19 +164,27 @@ func nameToMappedRange(v View, pkg Package, pos token.Pos, name string) (mappedR
 	return posToMappedRange(v, pkg, pos, pos+token.Pos(len(name)))
 }
 
+func nodeToMappedRange(view View, m *protocol.ColumnMapper, n ast.Node) (mappedRange, error) {
+	return posToRange(view, m, n.Pos(), n.End())
+}
+
 func posToMappedRange(v View, pkg Package, pos, end token.Pos) (mappedRange, error) {
 	logicalFilename := v.Session().Cache().FileSet().File(pos).Position(pos).Filename
-	m, err := findMapperInPackage(v, pkg, span.FileURI(logicalFilename))
+	m, err := v.FindMapperInPackage(pkg, span.FileURI(logicalFilename))
 	if err != nil {
 		return mappedRange{}, err
 	}
+	return posToRange(v, m, pos, end)
+}
+
+func posToRange(view View, m *protocol.ColumnMapper, pos, end token.Pos) (mappedRange, error) {
 	if !pos.IsValid() {
 		return mappedRange{}, errors.Errorf("invalid position for %v", pos)
 	}
 	if !end.IsValid() {
 		return mappedRange{}, errors.Errorf("invalid position for %v", end)
 	}
-	return newMappedRange(v.Session().Cache().FileSet(), m, pos, end), nil
+	return newMappedRange(view.Session().Cache().FileSet(), m, pos, end), nil
 }
 
 // Matches cgo generated comment as well as the proposed standard:
@@ -247,19 +220,6 @@ func (k FileKind) String() string {
 	default:
 		return "go"
 	}
-}
-
-// Returns the index and the node whose position is contained inside the node list.
-func nodeAtPos(nodes []ast.Node, pos token.Pos) (ast.Node, int) {
-	if nodes == nil {
-		return nil, -1
-	}
-	for i, node := range nodes {
-		if node.Pos() <= pos && pos <= node.End() {
-			return node, i
-		}
-	}
-	return nil, -1
 }
 
 // indexExprAtPos returns the index of the expression containing pos.
@@ -311,48 +271,24 @@ func fieldSelections(T types.Type) (fields []*types.Var) {
 	return fields
 }
 
-// typeIsValid reports whether typ doesn't contain any Invalid types.
-func typeIsValid(typ types.Type) bool {
-	// Check named types separately, because we don't want
-	// to call Underlying() on them to avoid problems with recursive types.
-	if _, ok := typ.(*types.Named); ok {
-		return true
-	}
-
-	switch typ := typ.Underlying().(type) {
-	case *types.Basic:
-		return typ.Kind() != types.Invalid
-	case *types.Array:
-		return typeIsValid(typ.Elem())
-	case *types.Slice:
-		return typeIsValid(typ.Elem())
-	case *types.Pointer:
-		return typeIsValid(typ.Elem())
-	case *types.Map:
-		return typeIsValid(typ.Key()) && typeIsValid(typ.Elem())
-	case *types.Chan:
-		return typeIsValid(typ.Elem())
-	case *types.Signature:
-		return typeIsValid(typ.Params()) && typeIsValid(typ.Results())
-	case *types.Tuple:
-		for i := 0; i < typ.Len(); i++ {
-			if !typeIsValid(typ.At(i).Type()) {
-				return false
-			}
-		}
-		return true
-	case *types.Struct, *types.Interface:
-		// Don't bother checking structs, interfaces for validity.
-		return true
-	default:
-		return false
-	}
-}
-
 // resolveInvalid traverses the node of the AST that defines the scope
 // containing the declaration of obj, and attempts to find a user-friendly
 // name for its invalid type. The resulting Object and its Type are fake.
-func resolveInvalid(fset *token.FileSet, obj types.Object, node ast.Node, info *types.Info) types.Object {
+func resolveInvalid(obj types.Object, node ast.Node, info *types.Info) types.Object {
+	// Construct a fake type for the object and return a fake object with this type.
+	formatResult := func(expr ast.Expr) types.Object {
+		var typename string
+		switch t := expr.(type) {
+		case *ast.SelectorExpr:
+			typename = fmt.Sprintf("%s.%s", t.X, t.Sel)
+		case *ast.Ident:
+			typename = t.String()
+		default:
+			return nil
+		}
+		typ := types.NewNamed(types.NewTypeName(token.NoPos, obj.Pkg(), typename, nil), types.Typ[types.Invalid], nil)
+		return types.NewVar(obj.Pos(), obj.Pkg(), obj.Name(), typ)
+	}
 	var resultExpr ast.Expr
 	ast.Inspect(node, func(node ast.Node) bool {
 		switch n := node.(type) {
@@ -370,14 +306,12 @@ func resolveInvalid(fset *token.FileSet, obj types.Object, node ast.Node, info *
 				}
 			}
 			return false
+		// TODO(rstambler): Handle range statements.
 		default:
 			return true
 		}
 	})
-	// Construct a fake type for the object and return a fake object with this type.
-	typename := formatNode(fset, resultExpr)
-	typ := types.NewNamed(types.NewTypeName(token.NoPos, obj.Pkg(), typename, nil), types.Typ[types.Invalid], nil)
-	return types.NewVar(obj.Pos(), obj.Pkg(), obj.Name(), typ)
+	return formatResult(resultExpr)
 }
 
 func isPointer(T types.Type) bool {
@@ -385,21 +319,12 @@ func isPointer(T types.Type) bool {
 	return ok
 }
 
-func isVar(obj types.Object) bool {
-	_, ok := obj.(*types.Var)
-	return ok
-}
-
-// deref returns a pointer's element type, traversing as many levels as needed.
-// Otherwise it returns typ.
+// deref returns a pointer's element type; otherwise it returns typ.
 func deref(typ types.Type) types.Type {
-	for {
-		p, ok := typ.Underlying().(*types.Pointer)
-		if !ok {
-			return typ
-		}
-		typ = p.Elem()
+	if p, ok := typ.Underlying().(*types.Pointer); ok {
+		return p.Elem()
 	}
+	return typ
 }
 
 func isTypeName(obj types.Object) bool {
@@ -444,16 +369,6 @@ func enclosingSelector(path []ast.Node, pos token.Pos) *ast.SelectorExpr {
 	return nil
 }
 
-func enclosingValueSpec(path []ast.Node, pos token.Pos) *ast.ValueSpec {
-	for _, n := range path {
-		if vs, ok := n.(*ast.ValueSpec); ok {
-			return vs
-		}
-	}
-
-	return nil
-}
-
 // typeConversion returns the type being converted to if call is a type
 // conversion expression.
 func typeConversion(call *ast.CallExpr, info *types.Info) types.Type {
@@ -486,11 +401,11 @@ func fieldsAccessible(s *types.Struct, p *types.Package) bool {
 	return false
 }
 
-func formatParams(ctx context.Context, s Snapshot, pkg Package, sig *types.Signature, qf types.Qualifier) []string {
+func formatParams(s Snapshot, pkg Package, sig *types.Signature, qf types.Qualifier) []string {
 	params := make([]string, 0, sig.Params().Len())
 	for i := 0; i < sig.Params().Len(); i++ {
 		el := sig.Params().At(i)
-		typ, err := formatFieldType(ctx, s, pkg, el, qf)
+		typ, err := formatFieldType(s, pkg, el, qf)
 		if err != nil {
 			typ = types.TypeString(el.Type(), qf)
 		}
@@ -509,12 +424,12 @@ func formatParams(ctx context.Context, s Snapshot, pkg Package, sig *types.Signa
 	return params
 }
 
-func formatFieldType(ctx context.Context, s Snapshot, srcpkg Package, obj types.Object, qf types.Qualifier) (string, error) {
-	file, pkg, err := findPosInPackage(s.View(), srcpkg, obj.Pos())
+func formatFieldType(s Snapshot, srcpkg Package, obj types.Object, qf types.Qualifier) (string, error) {
+	file, pkg, err := s.View().FindPosInPackage(srcpkg, obj.Pos())
 	if err != nil {
 		return "", err
 	}
-	ident, err := findIdentifier(ctx, s, pkg, file, obj.Pos())
+	ident, err := findIdentifier(s, pkg, file, obj.Pos())
 	if err != nil {
 		return "", err
 	}
@@ -525,15 +440,12 @@ func formatFieldType(ctx context.Context, s Snapshot, srcpkg Package, obj types.
 	if !ok {
 		return "", errors.Errorf("ident %s is not a field type", ident.Name)
 	}
-	return formatNode(s.View().Session().Cache().FileSet(), f.Type), nil
-}
-
-func formatNode(fset *token.FileSet, n ast.Node) string {
-	var buf strings.Builder
-	if err := printer.Fprint(&buf, fset, n); err != nil {
-		return ""
+	var typeNameBuf bytes.Buffer
+	fset := s.View().Session().Cache().FileSet()
+	if err := printer.Fprint(&typeNameBuf, fset, f.Type); err != nil {
+		return "", err
 	}
-	return buf.String()
+	return typeNameBuf.String(), nil
 }
 
 func formatResults(tup *types.Tuple, qf types.Qualifier) ([]string, bool) {
@@ -606,104 +518,4 @@ func formatFunction(params []string, results []string, writeResultParens bool) s
 	}
 
 	return detail.String()
-}
-
-func SortDiagnostics(d []Diagnostic) {
-	sort.Slice(d, func(i int, j int) bool {
-		return CompareDiagnostic(d[i], d[j]) < 0
-	})
-}
-
-func CompareDiagnostic(a, b Diagnostic) int {
-	if r := protocol.CompareRange(a.Range, b.Range); r != 0 {
-		return r
-	}
-	if a.Message < b.Message {
-		return -1
-	}
-	if a.Message == b.Message {
-		return 0
-	}
-	return 1
-}
-
-func findPosInPackage(v View, searchpkg Package, pos token.Pos) (*ast.File, Package, error) {
-	tok := v.Session().Cache().FileSet().File(pos)
-	if tok == nil {
-		return nil, nil, errors.Errorf("no file for pos in package %s", searchpkg.ID())
-	}
-	uri := span.FileURI(tok.Name())
-
-	var (
-		ph  ParseGoHandle
-		pkg Package
-		err error
-	)
-	// Special case for ignored files.
-	if v.Ignore(uri) {
-		ph, err = findIgnoredFile(v, uri)
-	} else {
-		ph, pkg, err = findFileInPackage(searchpkg, uri)
-	}
-	if err != nil {
-		return nil, nil, err
-	}
-	file, _, _, err := ph.Cached()
-	if err != nil {
-		return nil, nil, err
-	}
-	if !(file.Pos() <= pos && pos <= file.End()) {
-		return nil, nil, fmt.Errorf("pos %v, apparently in file %q, is not between %v and %v", pos, ph.File().Identity().URI, file.Pos(), file.End())
-	}
-	return file, pkg, nil
-}
-
-func findMapperInPackage(v View, searchpkg Package, uri span.URI) (*protocol.ColumnMapper, error) {
-	var (
-		ph  ParseGoHandle
-		err error
-	)
-	// Special case for ignored files.
-	if v.Ignore(uri) {
-		ph, err = findIgnoredFile(v, uri)
-	} else {
-		ph, _, err = findFileInPackage(searchpkg, uri)
-	}
-	if err != nil {
-		return nil, err
-	}
-	_, m, _, err := ph.Cached()
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func findIgnoredFile(v View, uri span.URI) (ParseGoHandle, error) {
-	fh, err := v.Snapshot().GetFile(uri)
-	if err != nil {
-		return nil, err
-	}
-	return v.Session().Cache().ParseGoHandle(fh, ParseFull), nil
-}
-
-func findFileInPackage(pkg Package, uri span.URI) (ParseGoHandle, Package, error) {
-	queue := []Package{pkg}
-	seen := make(map[string]bool)
-
-	for len(queue) > 0 {
-		pkg := queue[0]
-		queue = queue[1:]
-		seen[pkg.ID()] = true
-
-		if f, err := pkg.File(uri); err == nil {
-			return f, pkg, nil
-		}
-		for _, dep := range pkg.Imports() {
-			if !seen[dep.ID()] {
-				queue = append(queue, dep)
-			}
-		}
-	}
-	return nil, nil, errors.Errorf("no file for %s in package %s", uri, pkg.ID())
 }

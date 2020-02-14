@@ -1,27 +1,27 @@
 package ocagent_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
 	"golang.org/x/tools/internal/telemetry"
+	"golang.org/x/tools/internal/telemetry/export/ocagent"
 	"golang.org/x/tools/internal/telemetry/metric"
 )
 
 func TestEncodeMetric(t *testing.T) {
+	start, _ := time.Parse(time.RFC3339Nano, "1970-01-01T00:00:00Z")
 	end, _ := time.Parse(time.RFC3339Nano, "1970-01-01T00:00:30Z")
-	const prefix = testNodeStr + `
-	"metrics":[`
-	const suffix = `]}`
+
 	tests := []struct {
-		name string
-		data telemetry.MetricData
-		want string
+		name  string
+		data  telemetry.MetricData
+		start time.Time
+		want  string
 	}{
 		{
 			name: "nil data",
-			want: prefix + `null` + suffix,
+			want: `null`,
 		},
 		{
 			name: "Int64Data cumulative",
@@ -38,7 +38,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				EndTime: &end,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "int",
 					"description": "int metric",
@@ -78,7 +79,7 @@ func TestEncodeMetric(t *testing.T) {
 						]
 					}
 				]
-			}` + suffix,
+			}`,
 		},
 		{
 			name: "Int64Data gauge",
@@ -90,7 +91,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				IsGauge: true,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "int-gauge",
 					"description": "int metric gauge",
@@ -101,7 +103,7 @@ func TestEncodeMetric(t *testing.T) {
 						}
 					]
 				}
-			}` + suffix,
+			}`,
 		},
 		{
 			name: "Float64Data cumulative",
@@ -117,7 +119,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				EndTime: &end,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "float",
 					"description": "float metric",
@@ -148,7 +151,7 @@ func TestEncodeMetric(t *testing.T) {
 						]
 					}
 				]
-			}` + suffix,
+			}`,
 		},
 		{
 			name: "Float64Data gauge",
@@ -160,7 +163,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				IsGauge: true,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "float-gauge",
 					"description": "float metric gauge",
@@ -171,7 +175,7 @@ func TestEncodeMetric(t *testing.T) {
 						}
 					]
 				}
-			}` + suffix,
+			}`,
 		},
 		{
 			name: "HistogramInt64",
@@ -197,7 +201,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				EndTime: &end,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "histogram int",
 					"description": "histogram int metric",
@@ -242,7 +247,7 @@ func TestEncodeMetric(t *testing.T) {
 						]
 					}
 				]
-			}` + suffix,
+			}`,
 		},
 		{
 			name: "HistogramFloat64",
@@ -267,7 +272,8 @@ func TestEncodeMetric(t *testing.T) {
 				},
 				EndTime: &end,
 			},
-			want: prefix + `{
+			start: start,
+			want: `{
 				"metric_descriptor": {
 					"name": "histogram float",
 					"description": "histogram float metric",
@@ -308,16 +314,16 @@ func TestEncodeMetric(t *testing.T) {
 						]
 					}
 				]
-			}` + suffix,
+			}`,
 		},
 	}
 
-	ctx := context.TODO()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			exporter.Metric(ctx, tt.data)
-			exporter.Flush()
-			got := sent.get("/v1/metrics")
+			got, err := ocagent.EncodeMetric(tt.data, tt.start)
+			if err != nil {
+				t.Fatal(err)
+			}
 			checkJSON(t, got, []byte(tt.want))
 		})
 	}

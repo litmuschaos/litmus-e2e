@@ -61,17 +61,17 @@ type Application struct {
 	Remote string `flag:"remote" help:"*EXPERIMENTAL* - forward all commands to a remote lsp"`
 
 	// Enable verbose logging
-	Verbose bool `flag:"v" help:"verbose output"`
+	Verbose bool `flag:"v" help:"Verbose output"`
 
 	// Control ocagent export of telemetry
-	OCAgent string `flag:"ocagent" help:"the address of the ocagent, or off"`
+	OCAgent string `flag:"ocagent" help:"The address of the ocagent, or off"`
 
 	// PrepareOptions is called to update the options when a new view is built.
 	// It is primarily to allow the behavior of gopls to be modified by hooks.
 	PrepareOptions func(*source.Options)
 }
 
-// New returns a new Application ready to run.
+// Returns a new Application ready to run.
 func New(name, wd string, env []string, options func(*source.Options)) *Application {
 	if wd == "" {
 		wd, _ = os.Getwd()
@@ -101,22 +101,9 @@ func (app *Application) ShortHelp() string {
 // This includes the short help for all the sub commands.
 func (app *Application) DetailedHelp(f *flag.FlagSet) {
 	fmt.Fprint(f.Output(), `
-gopls is a Go language server. It is typically used with an editor to provide
-language features. When no command is specified, gopls will default to the 'serve'
-command. The language features can also be accessed via the gopls command-line interface.
-
 Available commands are:
 `)
-	fmt.Fprint(f.Output(), `
-main:
-`)
-	for _, c := range app.mainCommands() {
-		fmt.Fprintf(f.Output(), "  %s : %v\n", c.Name(), c.ShortHelp())
-	}
-	fmt.Fprint(f.Output(), `
-features:
-`)
-	for _, c := range app.featureCommands() {
+	for _, c := range app.commands() {
 		fmt.Fprintf(f.Output(), "  %s : %v\n", c.Name(), c.ShortHelp())
 	}
 	fmt.Fprint(f.Output(), `
@@ -151,35 +138,22 @@ func (app *Application) Run(ctx context.Context, args ...string) error {
 // command line.
 // The command is specified by the first non flag argument.
 func (app *Application) commands() []tool.Application {
-	var commands []tool.Application
-	commands = append(commands, app.mainCommands()...)
-	commands = append(commands, app.featureCommands()...)
-	return commands
-}
-
-func (app *Application) mainCommands() []tool.Application {
 	return []tool.Application{
 		&app.Serve,
-		&version{app: app},
 		&bug{},
-	}
-}
-
-func (app *Application) featureCommands() []tool.Application {
-	return []tool.Application{
 		&check{app: app},
 		&foldingRanges{app: app},
 		&format{app: app},
-		&highlight{app: app},
+		&links{app: app},
 		&implementation{app: app},
 		&imports{app: app},
-		&links{app: app},
 		&query{app: app},
 		&references{app: app},
 		&rename{app: app},
 		&signature{app: app},
 		&suggestedfix{app: app},
 		&symbols{app: app},
+		&version{app: app},
 	}
 }
 
@@ -192,8 +166,8 @@ func (app *Application) connect(ctx context.Context) (*connection, error) {
 	switch app.Remote {
 	case "":
 		connection := newConnection(app)
-		ctx, connection.Server = lsp.NewClientServer(ctx, cache.New(app.options).NewSession(), connection.Client)
-		return connection, connection.initialize(ctx, app.options)
+		ctx, connection.Server = lsp.NewClientServer(ctx, cache.New(app.options), connection.Client)
+		return connection, connection.initialize(ctx)
 	case "internal":
 		internalMu.Lock()
 		defer internalMu.Unlock()
@@ -208,10 +182,10 @@ func (app *Application) connect(ctx context.Context) (*connection, error) {
 		ctx, jc, connection.Server = protocol.NewClient(ctx, jsonrpc2.NewHeaderStream(cr, cw), connection.Client)
 		go jc.Run(ctx)
 		go func() {
-			ctx, srv := lsp.NewServer(ctx, cache.New(app.options).NewSession(), jsonrpc2.NewHeaderStream(sr, sw))
+			ctx, srv := lsp.NewServer(ctx, cache.New(app.options), jsonrpc2.NewHeaderStream(sr, sw))
 			srv.Run(ctx)
 		}()
-		if err := connection.initialize(ctx, app.options); err != nil {
+		if err := connection.initialize(ctx); err != nil {
 			return nil, err
 		}
 		internalConnections[app.wd] = connection
@@ -226,24 +200,17 @@ func (app *Application) connect(ctx context.Context) (*connection, error) {
 		var jc *jsonrpc2.Conn
 		ctx, jc, connection.Server = protocol.NewClient(ctx, stream, connection.Client)
 		go jc.Run(ctx)
-		return connection, connection.initialize(ctx, app.options)
+		return connection, connection.initialize(ctx)
 	}
 }
 
-func (c *connection) initialize(ctx context.Context, options func(*source.Options)) error {
+func (c *connection) initialize(ctx context.Context) error {
 	params := &protocol.ParamInitialize{}
 	params.RootURI = string(span.FileURI(c.Client.app.wd))
 	params.Capabilities.Workspace.Configuration = true
-
-	// Make sure to respect configured options when sending initialize request.
-	opts := source.DefaultOptions
-	if options != nil {
-		options(&opts)
-	}
 	params.Capabilities.TextDocument.Hover = protocol.HoverClientCapabilities{
-		ContentFormat: []protocol.MarkupKind{opts.PreferredContentFormat},
+		ContentFormat: []protocol.MarkupKind{protocol.PlainText},
 	}
-
 	if _, err := c.Server.Initialize(ctx, params); err != nil {
 		return err
 	}
@@ -263,19 +230,18 @@ type cmdClient struct {
 	app  *Application
 	fset *token.FileSet
 
-	diagnosticsMu   sync.Mutex
-	diagnosticsDone chan struct{}
-
 	filesMu sync.Mutex
 	files   map[span.URI]*cmdFile
 }
 
 type cmdFile struct {
-	uri         span.URI
-	mapper      *protocol.ColumnMapper
-	err         error
-	added       bool
-	diagnostics []protocol.Diagnostic
+	uri            span.URI
+	mapper         *protocol.ColumnMapper
+	err            error
+	added          bool
+	hasDiagnostics chan struct{}
+	diagnosticsMu  sync.Mutex
+	diagnostics    []protocol.Diagnostic
 }
 
 func newConnection(app *Application) *connection {
@@ -357,9 +323,6 @@ func (c *cmdClient) ApplyEdit(ctx context.Context, p *protocol.ApplyWorkspaceEdi
 }
 
 func (c *cmdClient) PublishDiagnostics(ctx context.Context, p *protocol.PublishDiagnosticsParams) error {
-	if p.URI == "gopls://diagnostics-done" {
-		close(c.diagnosticsDone)
-	}
 	// Don't worry about diagnostics without versions.
 	if p.Version == 0 {
 		return nil
@@ -370,7 +333,15 @@ func (c *cmdClient) PublishDiagnostics(ctx context.Context, p *protocol.PublishD
 
 	uri := span.URI(p.URI)
 	file := c.getFile(ctx, uri)
+
+	file.diagnosticsMu.Lock()
+	defer file.diagnosticsMu.Unlock()
+
+	hadDiagnostics := file.diagnostics != nil
 	file.diagnostics = p.Diagnostics
+	if !hadDiagnostics {
+		close(file.hasDiagnostics)
+	}
 	return nil
 }
 
@@ -378,7 +349,8 @@ func (c *cmdClient) getFile(ctx context.Context, uri span.URI) *cmdFile {
 	file, found := c.files[uri]
 	if !found || file.err != nil {
 		file = &cmdFile{
-			uri: uri,
+			uri:            uri,
+			hasDiagnostics: make(chan struct{}),
 		}
 		c.files[uri] = file
 	}
@@ -429,16 +401,6 @@ func (c *connection) AddFile(ctx context.Context, uri span.URI) *cmdFile {
 		file.err = errors.Errorf("%v: %v", uri, err)
 	}
 	return file
-}
-
-func (c *connection) diagnoseFiles(ctx context.Context, files []span.URI) error {
-	c.Client.diagnosticsMu.Lock()
-	defer c.Client.diagnosticsMu.Unlock()
-
-	c.Client.diagnosticsDone = make(chan struct{})
-	_, err := c.Server.NonstandardRequest(ctx, "gopls/diagnoseFiles", map[string]interface{}{"files": files})
-	<-c.Client.diagnosticsDone
-	return err
 }
 
 func (c *connection) terminate(ctx context.Context) {

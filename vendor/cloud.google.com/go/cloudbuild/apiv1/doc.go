@@ -16,7 +16,8 @@
 
 // Package cloudbuild is an auto-generated package for the
 // Cloud Build API.
-
+//
+//   NOTE: This package is in alpha. It is not stable, and is likely to change.
 //
 // Creates and manages builds on Google Cloud Platform.
 //
@@ -96,4 +97,4 @@ func versionGo() string {
 	return "UNKNOWN"
 }
 
-const versionClient = "20191216"
+const versionClient = "20191115"

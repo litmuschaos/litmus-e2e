@@ -62,7 +62,6 @@ const (
 	MethodGetSession          string = "GET_SESSION"
 	MethodExecuteSql          string = "EXECUTE_SQL"
 	MethodExecuteStreamingSql string = "EXECUTE_STREAMING_SQL"
-	MethodExecuteBatchDml     string = "EXECUTE_BATCH_DML"
 )
 
 // StatementResult represents a mocked result on the test server. The result is
@@ -431,7 +430,7 @@ func (s *inMemSpannerServer) findSession(name string) (*spannerpb.Session, error
 	defer s.mu.Unlock()
 	session := s.sessions[name]
 	if session == nil {
-		return nil, gstatus.Error(codes.NotFound, fmt.Sprintf("Session not found: %s", name))
+		return nil, gstatus.Error(codes.NotFound, fmt.Sprintf("Session %s not found", name))
 	}
 	return session, nil
 }
@@ -774,9 +773,13 @@ func (s *inMemSpannerServer) ExecuteStreamingSql(req *spannerpb.ExecuteSqlReques
 }
 
 func (s *inMemSpannerServer) ExecuteBatchDml(ctx context.Context, req *spannerpb.ExecuteBatchDmlRequest) (*spannerpb.ExecuteBatchDmlResponse, error) {
-	if err := s.simulateExecutionTime(MethodExecuteBatchDml, req); err != nil {
-		return nil, err
+	s.mu.Lock()
+	if s.stopped {
+		s.mu.Unlock()
+		return nil, gstatus.Error(codes.Unavailable, "server has been stopped")
 	}
+	s.receivedRequests <- req
+	s.mu.Unlock()
 	if req.Session == "" {
 		return nil, gstatus.Error(codes.InvalidArgument, "Missing session name")
 	}
