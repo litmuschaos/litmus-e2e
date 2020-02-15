@@ -17,17 +17,17 @@
         executable: /bin/bash
 
     - name: Replace the namespace field in rbac
-      shell: sed -i "s#namespace: default#namespace: litmus#g" {{ e_name }}-sa.yaml
+      shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml
       args:
         executable: /bin/bash
 
     - name: Creating rbac for {{ e_name }} experiment
-      shell: kubectl create -f {{ e_name }}-sa.yaml
+      shell: kubectl apply -f {{ e_name }}-sa.yaml
       args:
         executable: /bin/bash
 
     - name: Installing pod-network-latency Experiment
-      shell: kubectl create -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }}
+      shell: kubectl apply -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -35,8 +35,8 @@
         src: ../../utils/chaosengine.j2
         dest: ../../utils/chaosengine.yml
 
-    - name: Create chaos-engine
-      shell: kubectl create -f ../../utils/chaosengine.yml
+    - name: apply chaos-engine
+      shell: kubectl apply -f ../../utils/chaosengine.yml
       args:
         executable: /bin/bash
 
