@@ -108,6 +108,13 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 				fmt.Println(err)
 			}
 
+			//Creating Chaos-Experiment
+			By("Creating Experiment")
+			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml", "-n", "litmus").Run()
+			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			if err != nil {
+				fmt.Println(err)
+			}
 			fmt.Println("Chaos Experiment Created Successfully")
 
 			//Creating chaosEngine
