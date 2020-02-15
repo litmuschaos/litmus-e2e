@@ -94,7 +94,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			//Creating Chaos operator
 			By("Creating Chaos Operator")
 			exec.Command("wget", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
-			exec.Command("sed", "-i", "s/operator:ci/operator:latest/g", "operator.yaml").Run()
+			exec.Command("sed", "-i", "s/operator:ci/operator:1.1.0/g", "operator.yaml").Run()
 			err = exec.Command("kubectl", "apply", "-f", "operator.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create operator")
 			if err != nil {

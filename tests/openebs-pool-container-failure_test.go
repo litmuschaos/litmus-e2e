@@ -136,7 +136,7 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 					ChaosServiceAccount: "pool-container-failure-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:latest",
+							Image: "litmuschaos/chaos-runner:1.1.0",
 							Type:  "go",
 						},
 					},

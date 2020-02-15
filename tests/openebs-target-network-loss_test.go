@@ -137,7 +137,7 @@ var _ = Describe("BDD of openebs target network loss experiment", func() {
 					ChaosServiceAccount: "target-network-loss-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:latest",
+							Image: "litmuschaos/chaos-runner:1.1.0",
 							Type:  "go",
 						},
 					},
