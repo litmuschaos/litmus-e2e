@@ -6,11 +6,16 @@
     name: engine-nginx1     #engine name
     a_label: run=nginx
     e_name: pod-delete  
-    service_acc: nginx-sa
+    service_acc: pod-delete-sa
 
 
   tasks: 
        
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+
     - name: Get the resourceVersion of the target deploy before chaos injection
       shell: >
         kubectl get deployment nginx

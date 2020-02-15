@@ -5,10 +5,15 @@
     name: engine-nginx7
     a_label: run=nginx
     e_name: node-cpu-hog
-    service_acc: nginx-sa
+    service_acc: node-cpu-hog-sa
 
 
   tasks: 
+       
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/rbac.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
        
     - name: Installing node-cpu-hog Experiment
       shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-cpu-hog/experiment.yaml -n {{ a_ns }}

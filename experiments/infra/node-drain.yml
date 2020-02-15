@@ -5,10 +5,15 @@
     name: engine-nginx8
     a_label: run=nginx
     e_name: node-drain
-    service_acc: nginx-sa
+    service_acc: node-drain-sa
 
 
   tasks: 
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
 
     - name: Select a random node name of nginx deployment replicas
       shell: kubectl get po -n {{ a_ns }} -l {{ a_label }} -o jsonpath='{.items[0].spec.nodeName}'
