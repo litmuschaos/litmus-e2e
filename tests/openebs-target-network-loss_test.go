@@ -84,10 +84,26 @@ var _ = Describe("BDD of openebs target network loss experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			//Creating rbac for experiment
-			By("Creating rbac for experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-loss/rbac.yaml", "-n", "litmus").Run()
+			//Fetching rbac file
+			By("Fetching rbac file for the experiment")
+			err = exec.Command("wget", "-O", "target-network-loss-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-loss/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Modify Namespace field of the rbac
+			By("Modify Namespace field of the rbac")
+			err = exec.Command("sed", "-i", `s/namespace: openebs/namespace: litmus/g`, "target-network-loss-sa.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Creating rbac file for the experiment
+			By("Creating rbac file for the experiment")
+			err = exec.Command("kubectl", "apply", "-f", "target-network-loss-sa.yaml").Run()
+			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			if err != nil {
 				fmt.Println(err)
 			}
