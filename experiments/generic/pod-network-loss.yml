@@ -17,7 +17,7 @@
         executable: /bin/bash
 
     - name: Replace the namespace field in rbac
-      shell: sed -i 's/namespace: default/namespace: litmus/g' {{ e_name }}-sa.yaml
+      shell: sed -i "s#namespace: default#namespace: litmus#g" {{ e_name }}-sa.yaml
       args:
         executable: /bin/bash
 
