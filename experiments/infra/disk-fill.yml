@@ -10,20 +10,20 @@
 
   tasks: 
 
-  - name: Fetching rbac for disk-fill
-    shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/rbac.yaml 
-    args:
-      executable: /bin/bash
+    - name: Fetching rbac for disk-fill
+      shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/rbac.yaml 
+      args:
+        executable: /bin/bash
 
-  - name: Replace the namespace field in rbac
-    shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml
-    args:
-      executable: /bin/bash
+    - name: Replace the namespace field in rbac
+      shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
 
-  - name: Creating rbac for {{ e_name }} experiment
-    shell: kubectl apply -f {{ e_name }}-sa.yaml
-    args:
-      executable: /bin/bash
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
 
     - name: Installing disk-fill Experiment
       shell: kubectl apply -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml -n {{ a_ns }}
