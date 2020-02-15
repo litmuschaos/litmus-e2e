@@ -94,7 +94,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 
 			//Modify Namespace field of the rbac
 			By("Modify Namespace field of the rbac")
-			err = exec.Command("sed", "-i", `s/namespace: openebs/namespace: litmus/g`, "pool-pod-failure-sa.yaml").Run()
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "pool-pod-failure-sa.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
 				fmt.Println(err)

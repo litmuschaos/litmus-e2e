@@ -94,7 +94,7 @@ var _ = Describe("BDD of openebs target network delay", func() {
 
 			//Modify Namespace field of the rbac
 			By("Modify Namespace field of the rbac")
-			err = exec.Command("sed", "-i", `s/namespace: openebs/namespace: litmus/g`, "target-network-delay-sa.yaml").Run()
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "target-network-delay-sa.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
 				fmt.Println(err)
@@ -108,7 +108,7 @@ var _ = Describe("BDD of openebs target network delay", func() {
 				fmt.Println(err)
 			}
 
-			//Creating Chaos-Experiment
+			//Creating Chao
 			By("Creating Experiment")
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")

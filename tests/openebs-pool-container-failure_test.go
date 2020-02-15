@@ -94,14 +94,14 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 
 			//Modify Namespace field of the rbac
 			By("Modify Namespace field of the rbac")
-			err = exec.Command("sed", "-i", `s/namespace: openebs/namespace: litmus/g`, "pool-container-failure-sa.yaml").Run()
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "pool-container-failure-sa.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			//Creating Chaos-Experiment
-			By("Creating Experiment")
+			//Creating rbac for the experiment
+			By("Creating rbac for the experiment")
 			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-sa.yaml").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			if err != nil {
