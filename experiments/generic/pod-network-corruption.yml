@@ -22,7 +22,7 @@
         executable: /bin/bash
 
     - name: Creating rbac for {{ e_name }} experiment
-      shell: kubectl create -f {{ e_name }}-sa.yaml -n {{ a_ns }}
+      shell: kubectl create -f {{ e_name }}-sa.yaml
       args:
         executable: /bin/bash
 

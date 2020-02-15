@@ -16,12 +16,12 @@
       executable: /bin/bash
 
   - name: Replace the namespace field in rbac
-    shell: sed -i 's/namespace:default/namespace:litmus/g' {{ e_name }}-sa.yaml
+    shell: sed -i 's/namespace: default/namespace: litmus/g' {{ e_name }}-sa.yaml
     args:
       executable: /bin/bash
 
   - name: Creating rbac for {{ e_name }} experiment
-    shell: kubectl create -f {{ e_name }}-sa.yaml -n {{ a_ns }}
+    shell: kubectl create -f {{ e_name }}-sa.yaml 
     args:
       executable: /bin/bash
        
