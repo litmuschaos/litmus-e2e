@@ -5,10 +5,15 @@
     name: engine-nginx9
     a_label: run=nginx
     e_name: disk-fill
-    service_acc: nginx-sa
+    service_acc: disk-fill-sa
 
 
   tasks: 
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/rbac.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
 
     - name: Installing disk-fill Experiment
       shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml -n {{ a_ns }}

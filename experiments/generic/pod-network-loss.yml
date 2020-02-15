@@ -6,11 +6,16 @@
     name: engine-nginx4
     a_label: run=nginx
     e_name: pod-network-loss
-    service_acc: nginx-sa
+    service_acc: pod-network-loss-sa
 
 
   tasks: 
-       
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-loss/rbac.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+
     - name: Installing pod-network-loss Experiment
       shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-loss/experiment.yaml -n {{ a_ns }}
       args:
