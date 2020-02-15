@@ -11,8 +11,18 @@
 
   tasks: 
        
+    - name: Fetching rbac for pod-delete
+      shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml 
+      args:
+        executable: /bin/bash
+
+    - name: Replace the namespace filed in rbac
+      shell: sed -i 's/namespace:default/namespace:litmus/g' {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
+
     - name: Creating rbac for {{ e_name }} experiment
-      shell: kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml -n {{ a_ns }}
+      shell: kubectl create -f {{ e_name }}-sa.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
