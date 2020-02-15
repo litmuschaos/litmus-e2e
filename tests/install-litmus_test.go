@@ -89,14 +89,6 @@ var _ = Describe("BDD of litmus installation", func() {
 				fmt.Println(err)
 			}
 
-			//Creating rbac for experiments
-			By("Creating rbac for experiments")
-			err = exec.Command("kubectl", "apply", "-f", "../utils/rbac.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			fmt.Println("rbac installed sucessfully")
 
 			//Creating Chaos operator

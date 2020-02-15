@@ -84,6 +84,14 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
+			//Creating rbac for experiment
+			By("Creating rbac for experiment")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-pool-pod-failure/rbac.yaml", "-n", "litmus").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-pod-failure/experiment.yaml", "-n", "litmus").Run()
@@ -110,7 +118,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 						Applabel: "name=percona",
 						AppKind:  "deployment",
 					},
-					ChaosServiceAccount: "nginx-sa",
+					ChaosServiceAccount: "pool-pod-failure-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
 							Image: "litmuschaos/chaos-runner:latest",
