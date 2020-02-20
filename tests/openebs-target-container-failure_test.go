@@ -1,4 +1,4 @@
-package test
+package tests
 
 import (
 	"fmt"
@@ -120,6 +120,30 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			fmt.Printf("Container StartedAt time before Chaos has been recorded\n")
 
+			//Fetching rbac file
+			By("Fetching rbac file for the experiment")
+			err = exec.Command("wget", "-O", "target-container-failure-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/rbac.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Modify Namespace field of the rbac
+			By("Modify Namespace field of the rbac")
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "target-container-failure-sa.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Creating rbac file for the experiment
+			By("Creating rbac file for the experiment")
+			err = exec.Command("kubectl", "apply", "-f", "target-container-failure-sa.yaml").Run()
+			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml", "-n", "litmus").Run()
@@ -139,21 +163,22 @@ var _ = Describe("BDD of openebs experiment", func() {
 				},
 				Spec: v1alpha1.ChaosEngineSpec{
 					AnnotationCheck:  "false",
+					EngineState:      "active",
 					AuxiliaryAppInfo: "",
 					Appinfo: v1alpha1.ApplicationParams{
 						Appns:    "litmus",
 						Applabel: "name=percona",
 						AppKind:  "deployment",
 					},
-					ChaosServiceAccount: "litmus",
+					ChaosServiceAccount: "target-container-failure-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-executor:ci",
+							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-container-failure",

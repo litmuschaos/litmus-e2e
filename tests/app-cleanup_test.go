@@ -1,4 +1,4 @@
-package appcleanup
+package tests
 
 import (
 	"fmt"
