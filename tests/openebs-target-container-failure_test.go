@@ -95,7 +95,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 			csp, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
 			Expect(err).To(BeNil(), "fail to get csp pods")
 			for _, podSpec := range csp.Items {
-				resourceVersionBefore, _ := strconv.Atoi(podSpec.ResourceVersion)
+				resourceVersionBefore, _ = strconv.Atoi(podSpec.ResourceVersion)
 			}
 
 			fmt.Printf("Resource Version before chaos has been recorded\n")
@@ -239,7 +239,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 			csp_rv, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
 			Expect(err).To(BeNil(), "fail to get the csp pods")
 			for _, podSpec := range csp_rv.Items {
-				resourceVersionAfter, _ := strconv.Atoi(podSpec.ResourceVersion)
+				resourceVersionAfter, _ = strconv.Atoi(podSpec.ResourceVersion)
 			}
 
 			Expect(resourceVersionAfter-resourceVersionBefore).NotTo(Equal(0), "The Resource Version does not change")
@@ -317,7 +317,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 				}
 			}
 
-			Expect(startedAtAfter).NotTo(Equal(false), "The Container startedAt time does not change")
+			Expect(startedAtChanged).NotTo(Equal(false), "The Container startedAt time does not change")
 			fmt.Printf("Container startedAt time Changes!!!\n")
 
 		})
