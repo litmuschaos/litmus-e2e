@@ -1,4 +1,4 @@
-package remove
+package tests
 
 import (
 	"fmt"

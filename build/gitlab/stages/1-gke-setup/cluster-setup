@@ -8,7 +8,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="$path/key.json"
 export GCP_SERVICE_ACCOUNT_FILE="$path/key.json"
 export GKEUSER=`echo $GKE_USER`
 
-git clone https://github.com/litmuschaos/litmus-e2e.git 
+git clone https://github.com/litmuschaos/litmus-e2e.git -b ${CI_BUILD_REF_NAME} 
 cd litmus-e2e/build/gitlab/stages/
 
 truncate -s 0 ~/logs/clusters

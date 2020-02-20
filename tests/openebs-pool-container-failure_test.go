@@ -1,4 +1,4 @@
-package bdd
+package tests
 
 import (
 	"fmt"
@@ -113,6 +113,30 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			fmt.Printf("ContainerIDs before chaos has been recorded\n")
 			fmt.Printf("Container Restart count before chaos has been recorded\n")
 
+			//Fetching rbac file
+			By("Fetching rbac file for the experiment")
+			err = exec.Command("wget", "-O", "pool-container-failure-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-pool-container-failure/rbac.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Modify Namespace field of the rbac
+			By("Modify Namespace field of the rbac")
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "pool-container-failure-sa.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Creating rbac for the experiment
+			By("Creating rbac for the experiment")
+			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-sa.yaml").Run()
+			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml", "-n", "litmus").Run()
@@ -132,16 +156,17 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 				},
 				Spec: v1alpha1.ChaosEngineSpec{
 					AnnotationCheck:  "false",
+					EngineState:      "active",
 					AuxiliaryAppInfo: "",
 					Appinfo: v1alpha1.ApplicationParams{
 						Appns:    "litmus",
 						Applabel: "name=percona",
 						AppKind:  "deployment",
 					},
-					ChaosServiceAccount: "litmus",
+					ChaosServiceAccount: "pool-container-failure-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-executor:ci",
+							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
 					},

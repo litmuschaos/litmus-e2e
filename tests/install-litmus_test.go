@@ -1,4 +1,4 @@
-package install
+package tests
 
 import (
 	"fmt"
@@ -81,8 +81,8 @@ var _ = Describe("BDD of litmus installation", func() {
 
 			fmt.Println("crds installed successfully")
 
-			//Creating rbacs
-			By("Creating rbac")
+			//Creating rbac for chaos-operator
+			By("Creating rbac for operator")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create rbac")
 			if err != nil {
