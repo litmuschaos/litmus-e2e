@@ -1,4 +1,4 @@
-package delay
+package tests
 
 import (
 	"fmt"
@@ -84,7 +84,31 @@ var _ = Describe("BDD of openebs target network delay", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			//Creating Chaos-Experiment
+			//Fetching rbac file
+			By("Fetching rbac file for the experiment")
+			err = exec.Command("wget", "-O", "target-network-delay-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-delay/rbac.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Modify Namespace field of the rbac
+			By("Modify Namespace field of the rbac")
+			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "target-network-delay-sa.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Creating rbac file for the experiment
+			By("Creating rbac file for the experiment")
+			err = exec.Command("kubectl", "apply", "-f", "target-network-delay-sa.yaml").Run()
+			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Creating Chao
 			By("Creating Experiment")
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
@@ -103,21 +127,22 @@ var _ = Describe("BDD of openebs target network delay", func() {
 				},
 				Spec: v1alpha1.ChaosEngineSpec{
 					AnnotationCheck:  "false",
+					EngineState:      "active",
 					AuxiliaryAppInfo: "",
 					Appinfo: v1alpha1.ApplicationParams{
 						Appns:    "litmus",
 						Applabel: "name=percona",
 						AppKind:  "deployment",
 					},
-					ChaosServiceAccount: "litmus",
+					ChaosServiceAccount: "target-network-delay-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-executor:ci",
+							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-network-delay",
