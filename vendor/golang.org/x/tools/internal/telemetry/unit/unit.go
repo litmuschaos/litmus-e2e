@@ -10,10 +10,10 @@ package unit
 type Unit string
 
 const (
-	// Dimensionless indicates that a measure has no specified units.
+	// UnitDimensionless indicates that a measure has no specified units.
 	Dimensionless = "1"
-	// Bytes indicates that that a measure is recording number of bytes.
+	// UnitBytes indicates that that a measure is recording number of bytes.
 	Bytes = "By"
-	// Milliseconds indicates that a measure is recording a duration in milliseconds.
+	// UnitMilliseconds indicates that a measure is recording a duration in milliseconds.
 	Milliseconds = "ms"
 )

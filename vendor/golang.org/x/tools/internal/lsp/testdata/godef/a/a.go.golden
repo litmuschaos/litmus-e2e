@@ -1,25 +1,5 @@
--- Lock-hover --
-Lock locks m\.
-
-[`(sync.Mutex).Lock` on pkg.go.dev](https://pkg.go.dev/sync#Mutex.Lock)
-
-```go
-func (*sync.Mutex).Lock()
-```
--- Name-hover --
-Name returns the object\'s \(package\-local, unqualified\) name\.
-
-[`(types.TypeName).Name` on pkg.go.dev](https://pkg.go.dev/go/types#TypeName.Name)
-
-```go
-func (*types.object).Name() string
-```
 -- Random-definition --
-godef/a/random.go:3:6-12: defined here as [`a.Random` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random)
-
-```go
-func Random() int
-```
+godef/a/random.go:3:6-12: defined here as func Random() int
 -- Random-definition-json --
 {
 	"span": {
@@ -35,21 +15,13 @@ func Random() int
 			"offset": 22
 		}
 	},
-	"description": "[`a.Random` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random)\n\n```go\nfunc Random() int\n```"
+	"description": "func Random() int"
 }
 
 -- Random-hover --
-[`a.Random` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random)
-
-```go
 func Random() int
-```
 -- Random2-definition --
-godef/a/random.go:8:6-13: defined here as [`a.Random2` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random2)
-
-```go
-func Random2(y int) int
-```
+godef/a/random.go:8:6-13: defined here as func Random2(y int) int
 -- Random2-definition-json --
 {
 	"span": {
@@ -65,56 +37,35 @@ func Random2(y int) int
 			"offset": 78
 		}
 	},
-	"description": "[`a.Random2` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random2)\n\n```go\nfunc Random2(y int) int\n```"
+	"description": "func Random2(y int) int"
 }
 
 -- Random2-hover --
-[`a.Random2` on pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/internal/lsp/godef/a#Random2)
-
-```go
 func Random2(y int) int
-```
 -- err-definition --
-godef/a/a.go:23:6-9: defined here as ```go
-var err error
-```
+godef/a/a.go:14:6-9: defined here as var err error
 -- err-definition-json --
 {
 	"span": {
 		"uri": "file://godef/a/a.go",
 		"start": {
-			"line": 23,
+			"line": 14,
 			"column": 6,
-			"offset": 287
+			"offset": 203
 		},
 		"end": {
-			"line": 23,
+			"line": 14,
 			"column": 9,
-			"offset": 290
+			"offset": 206
 		}
 	},
-	"description": "```go\nvar err error\n```"
+	"description": "var err error"
 }
 
 -- err-hover --
-```go
 var err error
-```
 -- make-hover --
-The make built\-in function allocates and initializes an object of type slice, map, or chan \(only\)\.
-
-[`make` on pkg.go.dev](https://pkg.go.dev/builtin#make)
-
-```go
+The make built-in function allocates and initializes an object of type slice, map, or chan (only).
 func(t Type, size ...IntegerType) Type
-```
 -- string-hover --
-```go
 string
-```
--- x-hover --
-x is a variable\.
-
-```go
-var x string
-```

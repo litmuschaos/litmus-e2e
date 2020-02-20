@@ -28,6 +28,7 @@ var (
 	clientSet         *chaosClient.LitmuschaosV1alpha1Client
 	err               error
 	containerIdBefore [3]string
+	podIpAfter        string
 	podIpBefore       string
 )
 
@@ -173,7 +174,7 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-pod-failure",

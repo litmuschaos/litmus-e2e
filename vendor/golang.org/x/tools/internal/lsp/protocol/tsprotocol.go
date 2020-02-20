@@ -1,7 +1,7 @@
 // Package protocol contains data types and code for LSP jsonrpcs
 // generated automatically from vscode-languageserver-node
 // commit: 635ab1fe6f8c57ce9402e573d007f24d6d290fd3
-// last fetched Fri Jan 10 2020 17:17:33 GMT-0500 (Eastern Standard Time)
+// last fetched Mon Oct 14 2019 09:09:30 GMT-0400 (Eastern Daylight Time)
 package protocol
 
 // Code generated (see typescript/README.md) DO NOT EDIT.
@@ -126,7 +126,7 @@ type CodeAction struct {
 	 * provides a edit and a command, first the edit is
 	 * executed and then the command.
 	 */
-	Command *Command `json:"command,omitempty"`
+	Command Command `json:"command,omitempty"`
 }
 
 /**
@@ -552,7 +552,7 @@ type CompletionItem struct {
 	 * *Note:* The text edit's range must be a [single line] and it must contain the position
 	 * at which completion has been requested.
 	 */
-	TextEdit *TextEdit `json:"textEdit,omitempty"`
+	TextEdit TextEdit `json:"textEdit,omitempty"`
 	/**
 	 * An optional array of additional [text edits](#TextEdit) that are applied when
 	 * selecting this completion. Edits must not overlap (including the same insert position)
@@ -574,7 +574,7 @@ type CompletionItem struct {
 	 * additional modifications to the current document should be described with the
 	 * [additionalTextEdits](#CompletionItem.additionalTextEdits)-property.
 	 */
-	Command *Command `json:"command,omitempty"`
+	Command Command `json:"command,omitempty"`
 	/**
 	 * An data entry field that is preserved on a completion item between
 	 * a [CompletionRequest](#CompletionRequest) and a [CompletionResolveRequest]
@@ -1027,7 +1027,7 @@ type DidSaveTextDocumentParams struct {
 	 * Optional the content when saved. Depends on the includeText value
 	 * when the save notification was requested.
 	 */
-	Text *string `json:"text,omitempty"`
+	Text string `json:"text,omitempty"`
 }
 
 type DocumentColorClientCapabilities struct {
@@ -1882,7 +1882,7 @@ type InnerServerCapabilities struct {
 	 * specified if the client states that it supports
 	 * `prepareSupport` in its initial `initialize` request.
 	 */
-	RenameProvider interface{}/*boolean | RenameOptions*/ `json:"renameProvider,omitempty"`
+	RenameProvider RenameOptions/*boolean | RenameOptions*/ `json:"renameProvider,omitempty"`
 	/**
 	 * The server provides folding provider support.
 	 */
@@ -2477,7 +2477,7 @@ type ServerCapabilities = struct {
 	 * specified if the client states that it supports
 	 * `prepareSupport` in its initial `initialize` request.
 	 */
-	RenameProvider interface{}/*boolean | RenameOptions*/ `json:"renameProvider,omitempty"`
+	RenameProvider RenameOptions/*boolean | RenameOptions*/ `json:"renameProvider,omitempty"`
 	/**
 	 * The server provides folding provider support.
 	 */
@@ -3685,7 +3685,7 @@ const (
 	WatchDelete WatchKind = 4
 )
 
-// Types created to name formal parameters and embedded structs
+// Types created to avoid struct in formal parameters and embedded structs
 type ParamConfiguration struct {
 	ConfigurationParams
 	PartialResultParams

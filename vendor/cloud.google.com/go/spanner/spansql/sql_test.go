@@ -21,10 +21,6 @@ import (
 	"testing"
 )
 
-func boolAddr(b bool) *bool {
-	return &b
-}
-
 func TestSQL(t *testing.T) {
 	reparseDDL := func(s string) (interface{}, error) {
 		ddl, err := ParseDDLStmt(s)
@@ -56,10 +52,9 @@ func TestSQL(t *testing.T) {
 					{Name: "Cf", Type: Type{Base: Bytes, Len: 4711}},
 					{Name: "Cg", Type: Type{Base: Bytes, Len: MaxLen}},
 					{Name: "Ch", Type: Type{Base: Date}},
-					{Name: "Ci", Type: Type{Base: Timestamp}, AllowCommitTimestamp: boolAddr(true)},
+					{Name: "Ci", Type: Type{Base: Timestamp}},
 					{Name: "Cj", Type: Type{Array: true, Base: Int64}},
 					{Name: "Ck", Type: Type{Array: true, Base: String, Len: MaxLen}},
-					{Name: "Cl", Type: Type{Base: Timestamp}, AllowCommitTimestamp: boolAddr(false)},
 				},
 				PrimaryKey: []KeyPart{
 					{Column: "Ca"},
@@ -75,10 +70,9 @@ func TestSQL(t *testing.T) {
   Cf BYTES(4711),
   Cg BYTES(MAX),
   Ch DATE,
-  Ci TIMESTAMP OPTIONS (allow_commit_timestamp = true),
+  Ci TIMESTAMP,
   Cj ARRAY<INT64>,
   Ck ARRAY<STRING(MAX)>,
-  Cl TIMESTAMP OPTIONS (allow_commit_timestamp = null),
 ) PRIMARY KEY(Ca, Cb DESC)`,
 			reparseDDL,
 		},

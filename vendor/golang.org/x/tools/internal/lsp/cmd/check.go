@@ -8,6 +8,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"time"
 
 	"golang.org/x/tools/internal/span"
 	errors "golang.org/x/xerrors"
@@ -40,7 +41,6 @@ func (c *check) Run(ctx context.Context, args ...string) error {
 		return nil
 	}
 	checking := map[span.URI]*cmdFile{}
-	var uris []span.URI
 	// now we ready to kick things off
 	conn, err := c.app.connect(ctx)
 	if err != nil {
@@ -49,20 +49,22 @@ func (c *check) Run(ctx context.Context, args ...string) error {
 	defer conn.terminate(ctx)
 	for _, arg := range args {
 		uri := span.FileURI(arg)
-		uris = append(uris, uri)
 		file := conn.AddFile(ctx, uri)
 		if file.err != nil {
 			return file.err
 		}
 		checking[uri] = file
 	}
-	if err := conn.diagnoseFiles(ctx, uris); err != nil {
-		return err
-	}
-	conn.Client.filesMu.Lock()
-	defer conn.Client.filesMu.Unlock()
-
+	// now wait for results
+	// TODO: maybe conn.ExecuteCommand(ctx, &protocol.ExecuteCommandParams{Command: "gopls-wait-idle"})
 	for _, file := range checking {
+		select {
+		case <-file.hasDiagnostics:
+		case <-time.After(30 * time.Second):
+			return errors.Errorf("timed out waiting for results from %v", file.uri)
+		}
+		file.diagnosticsMu.Lock()
+		defer file.diagnosticsMu.Unlock()
 		for _, d := range file.diagnostics {
 			spn, err := file.mapper.RangeSpan(d.Range)
 			if err != nil {

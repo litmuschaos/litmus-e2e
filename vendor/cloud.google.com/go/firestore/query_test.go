@@ -743,25 +743,22 @@ func TestQuerySubCollections(t *testing.T) {
 	subDoc := subColl.Doc("sub-doc")
 	subSubColl := subDoc.Collection("sub-sub-collection")
 	subSubDoc := subSubColl.Doc("sub-sub-doc")
-	collGroup := c.CollectionGroup("collection-group")
 
 	testCases := []struct {
-		queryColl      *Query
+		queryColl      *CollectionRef
 		queryFilterDoc *DocumentRef // startAt or endBefore
 		wantColl       string
 		wantRef        string
 		wantErr        bool
 	}{
 		// Queries are allowed at depth 0.
-		{parentColl.query(), parentDoc, "parent-collection", "projects/P/databases/DB/documents/parent-collection/parent-doc", false},
+		{parentColl, parentDoc, "parent-collection", "projects/P/databases/DB/documents/parent-collection/parent-doc", false},
 		// Queries are allowed at any depth.
-		{subColl.query(), subDoc, "sub-collection", "projects/P/databases/DB/documents/parent-collection/parent-doc/sub-collection/sub-doc", false},
-		// Queries must be on immediate children (not allowed on grandchildren),
-		// except for CollectionGroup queries.
-		{subColl.query(), someOtherParentDoc, "", "", true},
-		{collGroup.query(), someOtherParentDoc, "collection-group", "projects/P/databases/DB/documents/parent-collection/some-other-parent-doc", false},
+		{subColl, subDoc, "sub-collection", "projects/P/databases/DB/documents/parent-collection/parent-doc/sub-collection/sub-doc", false},
+		// Queries must be on immediate children (not allowed on grandchildren).
+		{subColl, someOtherParentDoc, "", "", true},
 		// Queries must be on immediate children (not allowed on siblings).
-		{subColl.query(), subSubDoc, "", "", true},
+		{subColl, subSubDoc, "", "", true},
 	}
 
 	// startAt
@@ -786,7 +783,7 @@ func TestQuerySubCollections(t *testing.T) {
 		}
 		want := &pb.StructuredQuery{
 			From: []*pb.StructuredQuery_CollectionSelector{
-				{CollectionId: testCase.wantColl, AllDescendants: testCase.queryColl.allDescendants},
+				{CollectionId: testCase.wantColl},
 			},
 			OrderBy: []*pb.StructuredQuery_Order{
 				{Field: fref1("a"), Direction: pb.StructuredQuery_ASCENDING},
@@ -828,7 +825,7 @@ func TestQuerySubCollections(t *testing.T) {
 		}
 		want := &pb.StructuredQuery{
 			From: []*pb.StructuredQuery_CollectionSelector{
-				{CollectionId: testCase.wantColl, AllDescendants: testCase.queryColl.allDescendants},
+				{CollectionId: testCase.wantColl},
 			},
 			OrderBy: []*pb.StructuredQuery_Order{
 				{Field: fref1("a"), Direction: pb.StructuredQuery_ASCENDING},

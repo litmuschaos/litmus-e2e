@@ -193,14 +193,8 @@ func (h *Handle) run(ctx context.Context) interface{} {
 	h.cancel = cancel
 	h.state = stateRunning
 	h.done = make(chan struct{})
-	function := h.function // Read under the lock
 	go func() {
-		// Just in case the function does something expensive without checking
-		// the context, double-check we're still alive.
-		if childCtx.Err() != nil {
-			return
-		}
-		v := function(childCtx)
+		v := h.function(childCtx)
 		if childCtx.Err() != nil {
 			return
 		}

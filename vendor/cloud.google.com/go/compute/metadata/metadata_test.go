@@ -17,7 +17,6 @@ package metadata
 import (
 	"bytes"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -58,18 +57,6 @@ func TestOverrideUserAgent(t *testing.T) {
 	c.Get("foo")
 	if got, want := rt.gotUserAgent, userAgent; got != want {
 		t.Errorf("got %q, want %q", got, want)
-	}
-}
-
-func TestGetFailsOnBadURL(t *testing.T) {
-	c := NewClient(http.DefaultClient)
-	old := os.Getenv(metadataHostEnv)
-	defer os.Setenv(metadataHostEnv, old)
-	os.Setenv(metadataHostEnv, "host:-1")
-	_, err := c.Get("suffix")
-	log.Printf("%v", err)
-	if err == nil {
-		t.Errorf("got %v, want non-nil error", err)
 	}
 }
 

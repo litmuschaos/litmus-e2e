@@ -97,7 +97,6 @@ func TestExtract(t *testing.T) {
 			dst: func() *GCSReference {
 				g := NewGCSReference("uri")
 				g.DestinationFormat = Avro
-				g.Compression = Snappy
 				return g
 			}(),
 			src: c.Dataset("dataset-id").Table("table-id"),
@@ -108,7 +107,6 @@ func TestExtract(t *testing.T) {
 				j := defaultExtractJob()
 				j.Configuration.Extract.UseAvroLogicalTypes = true
 				j.Configuration.Extract.DestinationFormat = "AVRO"
-				j.Configuration.Extract.Compression = "SNAPPY"
 				return j
 			}(),
 		},

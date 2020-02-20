@@ -34,8 +34,8 @@ type Serve struct {
 	Mode    string `flag:"mode" help:"no effect"`
 	Port    int    `flag:"port" help:"port on which to run gopls for debugging purposes"`
 	Address string `flag:"listen" help:"address on which to listen for remote connections"`
-	Trace   bool   `flag:"rpc.trace" help:"print the full rpc trace in lsp inspector format"`
-	Debug   string `flag:"debug" help:"serve debug information on the supplied address"`
+	Trace   bool   `flag:"rpc.trace" help:"Print the full rpc trace in lsp inspector format"`
+	Debug   string `flag:"debug" help:"Serve debug information on the supplied address"`
 
 	app *Application
 }
@@ -62,12 +62,12 @@ func (s *Serve) Run(ctx context.Context, args ...string) error {
 		return tool.CommandLineErrorf("server does not take arguments, got %v", args)
 	}
 	out := os.Stderr
-	logfile := s.Logfile
-	if logfile != "" {
-		if logfile == "auto" {
-			logfile = filepath.Join(os.TempDir(), fmt.Sprintf("gopls-%d.log", os.Getpid()))
+	if s.Logfile != "" {
+		filename := s.Logfile
+		if filename == "auto" {
+			filename = filepath.Join(os.TempDir(), fmt.Sprintf("gopls-%d.log", os.Getpid()))
 		}
-		f, err := os.Create(logfile)
+		f, err := os.Create(filename)
 		if err != nil {
 			return errors.Errorf("Unable to create log file: %v", err)
 		}
@@ -76,7 +76,7 @@ func (s *Serve) Run(ctx context.Context, args ...string) error {
 		out = f
 	}
 
-	debug.Serve(ctx, s.Debug, debugServe{s: s, logfile: logfile, start: time.Now()})
+	debug.Serve(ctx, s.Debug)
 
 	if s.app.Remote != "" {
 		return s.forward()
@@ -97,7 +97,7 @@ func (s *Serve) Run(ctx context.Context, args ...string) error {
 	if s.Trace {
 		stream = protocol.LoggingStream(stream, out)
 	}
-	ctx, srv := lsp.NewServer(ctx, cache.New(s.app.options).NewSession(), stream)
+	ctx, srv := lsp.NewServer(ctx, cache.New(s.app.options), stream)
 	return prepare(ctx, srv).Run(ctx)
 }
 
@@ -120,20 +120,6 @@ func (s *Serve) forward() error {
 
 	return <-errc
 }
-
-// debugServe implements the debug.Instance interface.
-type debugServe struct {
-	s       *Serve
-	logfile string
-	start   time.Time
-}
-
-func (d debugServe) Logfile() string      { return d.logfile }
-func (d debugServe) StartTime() time.Time { return d.start }
-func (d debugServe) Port() int            { return d.s.Port }
-func (d debugServe) Address() string      { return d.s.Address }
-func (d debugServe) Debug() string        { return d.s.Debug }
-func (d debugServe) Workdir() string      { return d.s.app.wd }
 
 type handler struct{}
 

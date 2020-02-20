@@ -95,6 +95,10 @@ func (r *runner) RankCompletion(t *testing.T, src span.Span, test tests.Completi
 	//TODO: add command line completions tests when it works
 }
 
+func (r *runner) Highlight(t *testing.T, src span.Span, locations []span.Span) {
+	//TODO: add command line highlight tests when it works
+}
+
 func (r *runner) PrepareRename(t *testing.T, src span.Span, want *source.PrepareItem) {
 	//TODO: add command line prepare rename tests when it works
 }
@@ -140,7 +144,6 @@ func (r *runner) RunGoplsCmd(t testing.TB, args ...string) (string, string) {
 	return string(stdout), string(stderr)
 }
 
-// NormalizeGoplsCmd runs the gopls command and normalizes its output.
 func (r *runner) NormalizeGoplsCmd(t testing.TB, args ...string) (string, string) {
 	stdout, stderr := r.RunGoplsCmd(t, args...)
 	return r.Normalize(stdout), r.Normalize(stderr)

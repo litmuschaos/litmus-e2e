@@ -35,7 +35,6 @@ var (
 	duration       = flag.Int("duration", 200, "duration of the benchmark in seconds")
 	apiAddr        = flag.String("api_address", "", "API address of the profiler (e.g. 'cloudprofiler.googleapis.com:443')")
 	projectID      = flag.String("project_id", "", "cloud project ID")
-	numBusyworkers = flag.Int("num_busyworkers", 20, "number of busyworkers to run in parallel")
 )
 
 // busywork continuously generates 1MiB of random data and compresses it
@@ -94,10 +93,11 @@ func main() {
 
 	var mu sync.Mutex
 	var wg sync.WaitGroup
-	wg.Add(*numBusyworkers)
-	runtime.GOMAXPROCS(*numBusyworkers)
+	const numBusyworkers = 20
+	wg.Add(numBusyworkers)
+	runtime.GOMAXPROCS(numBusyworkers)
 
-	for i := 0; i < *numBusyworkers; i++ {
+	for i := 0; i < numBusyworkers; i++ {
 		go func() {
 			defer wg.Done()
 			busywork(&mu)
