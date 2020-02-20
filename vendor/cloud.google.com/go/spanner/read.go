@@ -48,38 +48,11 @@ func errEarlyReadEnd() error {
 
 // stream is the internal fault tolerant method for streaming data from Cloud
 // Spanner.
-func stream(
-	ctx context.Context,
-	logger *log.Logger,
-	rpc func(ct context.Context, resumeToken []byte) (streamingReceiver, error),
-	setTimestamp func(time.Time),
-	release func(error),
-) *RowIterator {
-	return streamWithReplaceSessionFunc(
-		ctx,
-		logger,
-		rpc,
-		nil,
-		setTimestamp,
-		release,
-	)
-}
-
-// this stream method will automatically retry the stream on a new session if
-// the replaceSessionFunc function has been defined. This function should only be
-// used for single-use transactions.
-func streamWithReplaceSessionFunc(
-	ctx context.Context,
-	logger *log.Logger,
-	rpc func(ct context.Context, resumeToken []byte) (streamingReceiver, error),
-	replaceSession func(ctx context.Context) error,
-	setTimestamp func(time.Time),
-	release func(error),
-) *RowIterator {
+func stream(ctx context.Context, rpc func(ct context.Context, resumeToken []byte) (streamingReceiver, error), setTimestamp func(time.Time), release func(error)) *RowIterator {
 	ctx, cancel := context.WithCancel(ctx)
 	ctx = trace.StartSpan(ctx, "cloud.google.com/go/spanner.RowIterator")
 	return &RowIterator{
-		streamd:      newResumableStreamDecoder(ctx, logger, rpc, replaceSession),
+		streamd:      newResumableStreamDecoder(ctx, rpc),
 		rowd:         &partialResultSetDecoder{},
 		setTimestamp: setTimestamp,
 		release:      release,
@@ -322,16 +295,6 @@ type resumableStreamDecoder struct {
 	// resumable.
 	rpc func(ctx context.Context, restartToken []byte) (streamingReceiver, error)
 
-	// replaceSessionFunc is a function that can be used to replace the session
-	// that is being used to execute the read operation. This function should
-	// only be defined for single-use transactions that can safely retry the
-	// read operation on a new session. If this function is nil, the stream
-	// does not support retrying the query on a new session.
-	replaceSessionFunc func(ctx context.Context) error
-
-	// logger is the logger to use.
-	logger *log.Logger
-
 	// stream is the current RPC streaming receiver.
 	stream streamingReceiver
 
@@ -367,12 +330,10 @@ type resumableStreamDecoder struct {
 // newResumableStreamDecoder creates a new resumeableStreamDecoder instance.
 // Parameter rpc should be a function that creates a new stream beginning at the
 // restartToken if non-nil.
-func newResumableStreamDecoder(ctx context.Context, logger *log.Logger, rpc func(ct context.Context, restartToken []byte) (streamingReceiver, error), replaceSession func(ctx context.Context) error) *resumableStreamDecoder {
+func newResumableStreamDecoder(ctx context.Context, rpc func(ct context.Context, restartToken []byte) (streamingReceiver, error)) *resumableStreamDecoder {
 	return &resumableStreamDecoder{
 		ctx:                         ctx,
-		logger:                      logger,
 		rpc:                         rpc,
-		replaceSessionFunc:          replaceSession,
 		maxBytesBetweenResumeTokens: atomic.LoadInt32(&maxBytesBetweenResumeTokens),
 		backoff:                     DefaultRetryBackoff,
 	}
@@ -542,7 +503,7 @@ func (d *resumableStreamDecoder) next() bool {
 			return true
 
 		default:
-			logf(d.logger, "Unexpected resumableStreamDecoder.state: %v", d.state)
+			log.Printf("Unexpected resumableStreamDecoder.state: %v", d.state)
 			return false
 		}
 	}
@@ -565,26 +526,15 @@ func (d *resumableStreamDecoder) tryRecv(retryer gax.Retryer) {
 		d.changeState(finished)
 		return
 	}
-	if d.replaceSessionFunc != nil && isSessionNotFoundError(d.err) && d.resumeToken == nil {
-		// A 'Session not found' error occurred before we received a resume
-		// token and a replaceSessionFunc function is defined. Try to restart
-		// the stream on a new session.
-		if err := d.replaceSessionFunc(d.ctx); err != nil {
-			d.err = err
-			d.changeState(aborted)
-			return
-		}
-	} else {
-		delay, shouldRetry := retryer.Retry(d.err)
-		if !shouldRetry || d.state != queueingRetryable {
-			d.changeState(aborted)
-			return
-		}
-		if err := gax.Sleep(d.ctx, delay); err != nil {
-			d.err = err
-			d.changeState(aborted)
-			return
-		}
+	delay, shouldRetry := retryer.Retry(d.err)
+	if !shouldRetry || d.state != queueingRetryable {
+		d.changeState(aborted)
+		return
+	}
+	if err := gax.Sleep(d.ctx, delay); err != nil {
+		d.err = err
+		d.changeState(aborted)
+		return
 	}
 	// Clear error and retry the stream.
 	d.err = nil

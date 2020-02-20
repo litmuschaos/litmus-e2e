@@ -22,6 +22,9 @@ type version struct {
 	app *Application
 }
 
+// bug implements the bug command.
+type bug struct{}
+
 func (v *version) Name() string      { return "version" }
 func (v *version) Usage() string     { return "" }
 func (v *version) ShortHelp() string { return "print the gopls version information" }
@@ -30,14 +33,12 @@ func (v *version) DetailedHelp(f *flag.FlagSet) {
 	f.PrintDefaults()
 }
 
-// Run prints version information to stdout.
+// Run collects some basic information and then prepares an issue ready to
+// be reported.
 func (v *version) Run(ctx context.Context, args ...string) error {
 	debug.PrintVersionInfo(os.Stdout, v.app.Verbose, debug.PlainText)
 	return nil
 }
-
-// bug implements the bug command.
-type bug struct{}
 
 func (b *bug) Name() string      { return "bug" }
 func (b *bug) Usage() string     { return "" }
@@ -47,7 +48,7 @@ func (b *bug) DetailedHelp(f *flag.FlagSet) {
 	f.PrintDefaults()
 }
 
-const goplsBugPrefix = "x/tools/gopls: "
+const goplsBugPrefix = "gopls: "
 const goplsBugHeader = `Please answer these questions before submitting your issue. Thanks!
 
 #### What did you do?

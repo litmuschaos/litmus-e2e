@@ -283,11 +283,7 @@ func TestRetryApplyBulk_UnretryableErrors(t *testing.T) {
 		status.Errorf(codes.FailedPrecondition, ""),
 		status.Errorf(codes.Aborted, ""),
 	}
-	if !testutil.Equal(want, errors,
-		cmp.Comparer(func(x, y error) bool {
-			return x == y || (x != nil && y != nil && x.Error() == y.Error())
-		}),
-	) {
+	if !testutil.Equal(want, errors) {
 		t.Errorf("unretryable errors: got: %v, want: %v", errors, want)
 	}
 }

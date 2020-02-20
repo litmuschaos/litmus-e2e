@@ -97,21 +97,13 @@ func (d *database) evalSelect(sel spansql.Select, params queryParams, aux []span
 		params: params,
 	}
 
-	// Is this a `SELECT *` query?
-	selectStar := len(sel.List) == 1 && sel.List[0] == spansql.Star
-
-	if selectStar {
-		// Every column will appear in the output.
-		ri.Cols = append([]colInfo(nil), ec.table.cols...)
-	} else {
-		for _, e := range sel.List {
-			ci, err := ec.colInfo(e)
-			if err != nil {
-				return nil, err
-			}
-			// TODO: deal with ci.Name == ""?
-			ri.Cols = append(ri.Cols, ci)
+	for _, e := range sel.List {
+		ci, err := ec.colInfo(e)
+		if err != nil {
+			return nil, err
 		}
+		// TODO: deal with ci.Name == ""?
+		ri.Cols = append(ri.Cols, ci)
 	}
 	for _, r := range t.rows {
 		ec.row = r
@@ -128,27 +120,16 @@ func (d *database) evalSelect(sel spansql.Select, params queryParams, aux []span
 		}
 
 		// Evaluate SELECT expression list on the row.
-		var res resultRow
-		if selectStar {
-			var out []interface{}
-			for i := range r {
-				out = append(out, r.copyDataElem(i))
-			}
-			res.data = out
-		} else {
-			out, err := ec.evalExprList(sel.List)
-			if err != nil {
-				return nil, err
-			}
-			res.data = out
+		out, err := ec.evalExprList(sel.List)
+		if err != nil {
+			return nil, err
 		}
 		a, err := ec.evalExprList(aux)
 		if err != nil {
 			return nil, err
 		}
-		res.aux = a
 
-		ri.rows = append(ri.rows, res)
+		ri.rows = append(ri.rows, resultRow{data: out, aux: a})
 	}
 
 	return ri, nil

@@ -7,7 +7,6 @@ package source
 import (
 	"go/ast"
 	"go/token"
-	"math"
 )
 
 type labelType int
@@ -54,10 +53,10 @@ func (c *completer) labels(lt labelType) {
 		return
 	}
 
-	addLabel := func(score float64, l *ast.LabeledStmt) {
+	addLabel := func(l *ast.LabeledStmt) {
 		labelObj := c.pkg.GetTypesInfo().ObjectOf(l.Label)
 		if labelObj != nil {
-			c.found(candidate{obj: labelObj, score: score})
+			c.found(labelObj, highScore, nil)
 		}
 	}
 
@@ -65,7 +64,7 @@ func (c *completer) labels(lt labelType) {
 	case labelBreak, labelContinue:
 		// "break" and "continue" only accept labels from enclosing statements.
 
-		for i, p := range c.path {
+		for _, p := range c.path {
 			switch p := p.(type) {
 			case *ast.FuncLit:
 				// Labels are function scoped, so don't continue out of functions.
@@ -74,11 +73,11 @@ func (c *completer) labels(lt labelType) {
 				switch p.Stmt.(type) {
 				case *ast.ForStmt, *ast.RangeStmt:
 					// Loop labels can be used for "break" or "continue".
-					addLabel(highScore*math.Pow(.99, float64(i)), p)
+					addLabel(p)
 				case *ast.SwitchStmt, *ast.SelectStmt, *ast.TypeSwitchStmt:
 					// Switch and select labels can be used only for "break".
 					if lt == labelBreak {
-						addLabel(highScore*math.Pow(.99, float64(i)), p)
+						addLabel(p)
 					}
 				}
 			}
@@ -103,7 +102,7 @@ func (c *completer) labels(lt labelType) {
 				}
 				return false
 			case *ast.LabeledStmt:
-				addLabel(highScore, n)
+				addLabel(n)
 			}
 
 			return true

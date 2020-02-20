@@ -1,7 +1,3 @@
-// Copyright 2019 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package cache
 
 import (
@@ -42,7 +38,8 @@ func (s *snapshot) Analyze(ctx context.Context, id string, analyzers []*analysis
 	for _, ah := range roots {
 		diagnostics, _, err := ah.analyze(ctx)
 		if err != nil {
-			return nil, err
+			log.Error(ctx, "no results", err)
+			continue
 		}
 		results = append(results, diagnostics...)
 	}
@@ -83,14 +80,14 @@ func (s *snapshot) actionHandle(ctx context.Context, id packageID, mode source.P
 	if act != nil {
 		return act, nil
 	}
-	ph := s.getPackage(id, mode)
-	if ph == nil {
-		return nil, errors.Errorf("no PackageHandle for %s:%v", id, mode == source.ParseExported)
+	cph := s.getPackage(id, mode)
+	if cph == nil {
+		return nil, errors.Errorf("no CheckPackageHandle for %s:%v", id, mode == source.ParseExported)
 	}
-	if len(ph.key) == 0 {
-		return nil, errors.Errorf("no key for PackageHandle %s", id)
+	if len(cph.key) == 0 {
+		return nil, errors.Errorf("no key for CheckPackageHandle %s", id)
 	}
-	pkg, err := ph.check(ctx)
+	pkg, err := cph.check(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +112,8 @@ func (s *snapshot) actionHandle(ctx context.Context, id packageID, mode source.P
 		// An analysis that consumes/produces facts
 		// must run on the package's dependencies too.
 		if len(a.FactTypes) > 0 {
-			importIDs := make([]string, 0, len(ph.m.deps))
-			for _, importID := range ph.m.deps {
+			importIDs := make([]string, 0, len(cph.m.deps))
+			for _, importID := range cph.m.deps {
 				importIDs = append(importIDs, string(importID))
 			}
 			sort.Strings(importIDs) // for determinism
@@ -132,7 +129,7 @@ func (s *snapshot) actionHandle(ctx context.Context, id packageID, mode source.P
 
 	fset := s.view.session.cache.fset
 
-	h := s.view.session.cache.store.Bind(buildActionKey(a, ph), func(ctx context.Context) interface{} {
+	h := s.view.session.cache.store.Bind(buildActionKey(a, cph), func(ctx context.Context) interface{} {
 		// Analyze dependencies first.
 		results, err := execAll(ctx, fset, deps)
 		if err != nil {
@@ -151,7 +148,7 @@ func (s *snapshot) actionHandle(ctx context.Context, id packageID, mode source.P
 func (act *actionHandle) analyze(ctx context.Context) ([]*source.Error, interface{}, error) {
 	v := act.handle.Get(ctx)
 	if v == nil {
-		return nil, nil, ctx.Err()
+		return nil, nil, errors.Errorf("no analyses for %s", act.pkg.ID())
 	}
 	data, ok := v.(*actionData)
 	if !ok {
@@ -163,8 +160,23 @@ func (act *actionHandle) analyze(ctx context.Context) ([]*source.Error, interfac
 	return data.diagnostics, data.result, data.err
 }
 
-func buildActionKey(a *analysis.Analyzer, ph *packageHandle) string {
-	return hashContents([]byte(fmt.Sprintf("%p %s", a, string(ph.key))))
+func (act *actionHandle) cached() ([]*source.Error, interface{}, error) {
+	v := act.handle.Cached()
+	if v == nil {
+		return nil, nil, errors.Errorf("no cached analyses for %s", act.pkg.ID())
+	}
+	data, ok := v.(*actionData)
+	if !ok {
+		return nil, nil, errors.Errorf("unexpected type for cached analysis %s:%s", act.pkg.ID(), act.analyzer.Name)
+	}
+	if data == nil {
+		return nil, nil, errors.Errorf("unexpected nil cached analysis for %s:%s", act.pkg.ID(), act.analyzer.Name)
+	}
+	return data.diagnostics, data.result, data.err
+}
+
+func buildActionKey(a *analysis.Analyzer, cph *checkPackageHandle) string {
+	return hashContents([]byte(fmt.Sprintf("%p %s", a, string(cph.key))))
 }
 
 func (act *actionHandle) String() string {
@@ -206,7 +218,7 @@ func runAnalysis(ctx context.Context, fset *token.FileSet, analyzer *analysis.An
 	defer func() {
 		if r := recover(); r != nil {
 			log.Print(ctx, fmt.Sprintf("analysis panicked: %s", r), telemetry.Package.Of(pkg.PkgPath))
-			data.err = errors.Errorf("analysis %s for package %s panicked: %v", analyzer.Name, pkg.PkgPath(), r)
+			data.err = errors.Errorf("analysis %s for package %s panicked: %v", analyzer.Name, pkg.PkgPath())
 		}
 	}()
 

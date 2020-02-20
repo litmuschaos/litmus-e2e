@@ -150,16 +150,15 @@ func TestRunTransaction(t *testing.T) {
 }
 
 func TestTransactionErrors(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1708")
 	ctx := context.Background()
 	const db = "projects/projectID/databases/(default)"
 	c, srv, cleanup := newMock(t)
 	defer cleanup()
 
 	var (
-		tid        = []byte{1}
-		unknownErr = status.Errorf(codes.Unknown, "so sad")
-		beginReq   = &pb.BeginTransactionRequest{
+		tid         = []byte{1}
+		internalErr = status.Errorf(codes.Internal, "so sad")
+		beginReq    = &pb.BeginTransactionRequest{
 			Database: db,
 		}
 		beginRes = &pb.BeginTransactionResponse{Transaction: tid}
@@ -173,10 +172,10 @@ func TestTransactionErrors(t *testing.T) {
 	)
 
 	// BeginTransaction has a permanent error.
-	srv.addRPC(beginReq, unknownErr)
+	srv.addRPC(beginReq, internalErr)
 	err := c.RunTransaction(ctx, func(context.Context, *Transaction) error { return nil })
-	if status.Code(err) != codes.Unknown {
-		t.Errorf("got <%v>, want Unknown", err)
+	if status.Code(err) != codes.Internal {
+		t.Errorf("got <%v>, want Internal", err)
 	}
 
 	// Get has a permanent error.
@@ -186,22 +185,22 @@ func TestTransactionErrors(t *testing.T) {
 	}
 	srv.reset()
 	srv.addRPC(beginReq, beginRes)
-	srv.addRPC(getReq, unknownErr)
+	srv.addRPC(getReq, internalErr)
 	srv.addRPC(rollbackReq, &empty.Empty{})
 	err = c.RunTransaction(ctx, get)
-	if status.Code(err) != codes.Unknown {
-		t.Errorf("got <%v>, want Unknown", err)
+	if status.Code(err) != codes.Internal {
+		t.Errorf("got <%v>, want Internal", err)
 	}
 
 	// Get has a permanent error, but the rollback fails. We still
 	// return Get's error.
 	srv.reset()
 	srv.addRPC(beginReq, beginRes)
-	srv.addRPC(getReq, unknownErr)
+	srv.addRPC(getReq, internalErr)
 	srv.addRPC(rollbackReq, status.Errorf(codes.FailedPrecondition, ""))
 	err = c.RunTransaction(ctx, get)
-	if status.Code(err) != codes.Unknown {
-		t.Errorf("got <%v>, want Unknown", err)
+	if status.Code(err) != codes.Internal {
+		t.Errorf("got <%v>, want Internal", err)
 	}
 
 	// Commit has a permanent error.
@@ -217,10 +216,10 @@ func TestTransactionErrors(t *testing.T) {
 			ReadTime: aTimestamp2,
 		},
 	})
-	srv.addRPC(commitReq, unknownErr)
+	srv.addRPC(commitReq, internalErr)
 	err = c.RunTransaction(ctx, get)
-	if status.Code(err) != codes.Unknown {
-		t.Errorf("got <%v>, want Unknown", err)
+	if status.Code(err) != codes.Internal {
+		t.Errorf("got <%v>, want Internal", err)
 	}
 
 	// Read after write.

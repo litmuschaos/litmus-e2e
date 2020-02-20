@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package shadow defines an Analyzer that checks for shadowed variables.
 package shadow
 
 import (

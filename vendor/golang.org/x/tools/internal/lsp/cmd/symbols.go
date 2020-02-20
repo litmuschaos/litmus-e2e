@@ -15,7 +15,7 @@ import (
 	"golang.org/x/tools/internal/tool"
 )
 
-// symbols implements the symbols verb for gopls
+// references implements the references verb for gopls
 type symbols struct {
 	app *Application
 }

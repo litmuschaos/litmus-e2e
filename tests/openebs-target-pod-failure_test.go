@@ -28,6 +28,7 @@ var (
 	clientSet         *chaosClient.LitmuschaosV1alpha1Client
 	err               error
 	containerIdBefore [3]string
+	podIpAfter        string
 	podIpBefore       string
 )
 

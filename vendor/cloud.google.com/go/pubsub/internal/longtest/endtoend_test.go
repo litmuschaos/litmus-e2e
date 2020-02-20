@@ -39,7 +39,6 @@ const (
 	nMessages               = 1e4
 	acceptableDupPercentage = 1
 	numAcceptableDups       = int(nMessages * acceptableDupPercentage / 100)
-	resourcePrefix          = "endtoend"
 )
 
 // The end-to-end pumps many messages into a topic and tests that they are all
@@ -50,7 +49,7 @@ func TestEndToEnd_Dupes(t *testing.T) {
 	defer cancel()
 	client, topic, cleanup := prepareEndToEndTest(ctx, t)
 	defer cleanup()
-	subPrefix := fmt.Sprintf("%s-%d", resourcePrefix, time.Now().UnixNano())
+	subPrefix := fmt.Sprintf("endtoend-%d", time.Now().UnixNano())
 
 	// Two subscriptions to the same topic.
 	var err error
@@ -165,7 +164,7 @@ func TestEndToEnd_LongProcessingTime(t *testing.T) {
 	defer cancel()
 	client, topic, cleanup := prepareEndToEndTest(ctx, t)
 	defer cleanup()
-	subPrefix := fmt.Sprintf("%s-%d", resourcePrefix, time.Now().UnixNano())
+	subPrefix := fmt.Sprintf("endtoend-%d", time.Now().UnixNano())
 
 	// Two subscriptions to the same topic.
 	sub, err := client.CreateSubscription(ctx, subPrefix+"-00", pubsub.SubscriptionConfig{
@@ -343,7 +342,7 @@ func prepareEndToEndTest(ctx context.Context, t *testing.T) (*pubsub.Client, *pu
 	}
 
 	now := time.Now()
-	topicName := fmt.Sprintf("%s-%d", resourcePrefix, now.UnixNano())
+	topicName := fmt.Sprintf("endtoend-%d", now.UnixNano())
 
 	client, err := pubsub.NewClient(ctx, testutil.ProjID(), option.WithTokenSource(ts))
 	if err != nil {
@@ -389,21 +388,16 @@ func cleanupTopic(ctx context.Context, client *pubsub.Client) error {
 		// Take timestamp from id.
 		tID := t.ID()
 		p := strings.Split(tID, "-")
-
-		// Only delete resources created from the endtoend test.
-		// Otherwise, this will affect other tests running midflight.
-		if p[0] == resourcePrefix {
-			tCreated := p[len(p)-1]
-			timestamp, err := strconv.ParseInt(tCreated, 10, 64)
-			if err != nil {
-				continue
-			}
-			timeTCreated := time.Unix(0, timestamp)
-			if time.Since(timeTCreated) > expireAge {
-				log.Printf("deleting topic %q", tID)
-				if err := t.Delete(ctx); err != nil {
-					return fmt.Errorf("Delete topic: %v: %v", t.String(), err)
-				}
+		tCreated := p[len(p)-1]
+		timestamp, err := strconv.ParseInt(tCreated, 10, 64)
+		if err != nil {
+			continue
+		}
+		timeTCreated := time.Unix(0, timestamp)
+		if time.Since(timeTCreated) > expireAge {
+			log.Printf("deleting topic %q", tID)
+			if err := t.Delete(ctx); err != nil {
+				return fmt.Errorf("Delete topic: %v: %v", t.String(), err)
 			}
 		}
 	}
@@ -429,21 +423,16 @@ func cleanupSubscription(ctx context.Context, client *pubsub.Client) error {
 		}
 		sID := s.ID()
 		p := strings.Split(sID, "-")
-
-		// Only delete resources created from the endtoend test.
-		// Otherwise, this will affect other tests running midflight.
-		if p[0] == resourcePrefix {
-			sCreated := p[len(p)-2]
-			timestamp, err := strconv.ParseInt(sCreated, 10, 64)
-			if err != nil {
-				continue
-			}
-			timeSCreated := time.Unix(0, timestamp)
-			if time.Since(timeSCreated) > expireAge {
-				log.Printf("deleting subscription %q", sID)
-				if err := s.Delete(ctx); err != nil {
-					return fmt.Errorf("Delete subscription: %v: %v", s.String(), err)
-				}
+		sCreated := p[len(p)-2]
+		timestamp, err := strconv.ParseInt(sCreated, 10, 64)
+		if err != nil {
+			continue
+		}
+		timeSCreated := time.Unix(0, timestamp)
+		if time.Since(timeSCreated) > expireAge {
+			log.Printf("deleting subscription %q", sID)
+			if err := s.Delete(ctx); err != nil {
+				return fmt.Errorf("Delete subscription: %v: %v", s.String(), err)
 			}
 		}
 	}
