@@ -178,7 +178,7 @@ var _ = Describe("BDD of openebs experiment", func() {
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-container-failure",

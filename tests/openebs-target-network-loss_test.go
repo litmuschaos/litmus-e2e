@@ -142,7 +142,7 @@ var _ = Describe("BDD of openebs target network loss experiment", func() {
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-network-loss",
