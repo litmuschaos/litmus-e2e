@@ -276,7 +276,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 			}
 
 			for i := range podIpAfter {
-				if podIpAfter[i] != podIpAfter[i] {
+				if podIpBefore[i] != podIpAfter[i] {
 					podIpChanged = true
 					break
 				}
@@ -302,7 +302,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 			}
 
 			for i := range hostIpAfter {
-				if hostIpAfter[i] != hostIpAfter[i] {
+				if hostIpBefore[i] != hostIpAfter[i] {
 					hostIpChanged = true
 					break
 				}
@@ -327,7 +327,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 			}
 
 			for i := range startTimeAfter {
-				if startTimeAfter[i] != startTimeAfter[i] {
+				if startTimeBefore[i] != startTimeAfter[i] {
 					startTimeChanged = true
 					break
 				}
