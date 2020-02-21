@@ -170,7 +170,7 @@ func TestApply_RetryOnAbort(t *testing.T) {
 	defer teardown()
 
 	// First commit will fail, and the retry will begin a new transaction.
-	errAbrt := spannerErrorf(codes.Aborted, "")
+	errAbrt := gstatus.Errorf(codes.Aborted, "")
 	server.TestSpanner.PutExecutionTime(MethodCommitTransaction,
 		SimulatedExecutionTime{
 			Errors: []error{errAbrt},
@@ -195,40 +195,46 @@ func TestApply_RetryOnAbort(t *testing.T) {
 	}
 }
 
-// Tests that NotFound errors cause failures, and aren't retried.
-func TestTransaction_NotFound(t *testing.T) {
+// Tests that SessionNotFound errors are retried.
+func TestTransaction_SessionNotFound(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
 	server, client, teardown := setupMockedTestServer(t)
 	defer teardown()
 
-	wantErr := spannerErrorf(codes.NotFound, "Session not found")
+	serverErr := gstatus.Errorf(codes.NotFound, "Session not found")
 	server.TestSpanner.PutExecutionTime(MethodBeginTransaction,
 		SimulatedExecutionTime{
-			Errors: []error{wantErr, wantErr, wantErr},
+			Errors: []error{serverErr, serverErr, serverErr},
 		})
 	server.TestSpanner.PutExecutionTime(MethodCommitTransaction,
 		SimulatedExecutionTime{
-			Errors: []error{wantErr, wantErr, wantErr},
+			Errors: []error{serverErr},
 		})
 
 	txn := client.ReadOnlyTransaction()
 	defer txn.Close()
 
+	var wantErr error
 	if _, _, got := txn.acquire(ctx); !testEqual(wantErr, got) {
-		t.Fatalf("Expect acquire to fail, got %v, want %v.", got, wantErr)
+		t.Fatalf("Expect acquire to succeed, got %v, want %v.", got, wantErr)
 	}
 
-	// The failure should recycle the session, we expect it to be used in
-	// following requests.
+	// The server error should lead to a retry of the BeginTransaction call and
+	// a valid session handle to be returned that will be used by the following
+	// requests. Note that calling txn.Query(...) does not actually send the
+	// query to the (mock) server. That is done at the first call to
+	// RowIterator.Next. The following statement only verifies that the
+	// transaction is in a valid state and received a valid session handle.
 	if got := txn.Query(ctx, NewStatement("SELECT 1")); !testEqual(wantErr, got.err) {
-		t.Fatalf("Expect Query to fail, got %v, want %v.", got.err, wantErr)
+		t.Fatalf("Expect Query to succeed, got %v, want %v.", got.err, wantErr)
 	}
 
 	if got := txn.Read(ctx, "Users", KeySets(Key{"alice"}, Key{"bob"}), []string{"name", "email"}); !testEqual(wantErr, got.err) {
-		t.Fatalf("Expect Read to fail, got %v, want %v.", got.err, wantErr)
+		t.Fatalf("Expect Read to succeed, got %v, want %v.", got.err, wantErr)
 	}
 
+	wantErr = toSpannerError(serverErr)
 	ms := []*Mutation{
 		Insert("Accounts", []string{"AccountId", "Nickname", "Balance"}, []interface{}{int64(1), "Foo", int64(50)}),
 		Insert("Accounts", []string{"AccountId", "Nickname", "Balance"}, []interface{}{int64(2), "Bar", int64(1)}),

@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 	gax "github.com/googleapis/gax-go/v2"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-	"google.golang.org/api/transport"
+	gtransport "google.golang.org/api/transport/grpc"
 	schedulerpb "google.golang.org/genproto/googleapis/cloud/scheduler/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -106,8 +106,8 @@ func defaultCloudSchedulerCallOptions() *CloudSchedulerCallOptions {
 //
 // Methods, except Close, may be called concurrently. However, fields must not be modified concurrently with method calls.
 type CloudSchedulerClient struct {
-	// The connection to the service.
-	conn *grpc.ClientConn
+	// Connection pool of gRPC connections to the service.
+	connPool gtransport.ConnPool
 
 	// The gRPC API client.
 	cloudSchedulerClient schedulerpb.CloudSchedulerClient
@@ -124,30 +124,32 @@ type CloudSchedulerClient struct {
 // The Cloud Scheduler API allows external entities to reliably
 // schedule asynchronous jobs.
 func NewCloudSchedulerClient(ctx context.Context, opts ...option.ClientOption) (*CloudSchedulerClient, error) {
-	conn, err := transport.DialGRPC(ctx, append(defaultCloudSchedulerClientOptions(), opts...)...)
+	connPool, err := gtransport.DialPool(ctx, append(defaultCloudSchedulerClientOptions(), opts...)...)
 	if err != nil {
 		return nil, err
 	}
 	c := &CloudSchedulerClient{
-		conn:        conn,
+		connPool:    connPool,
 		CallOptions: defaultCloudSchedulerCallOptions(),
 
-		cloudSchedulerClient: schedulerpb.NewCloudSchedulerClient(conn),
+		cloudSchedulerClient: schedulerpb.NewCloudSchedulerClient(connPool),
 	}
 	c.setGoogleClientInfo()
 
 	return c, nil
 }
 
-// Connection returns the client's connection to the API service.
+// Connection returns a connection to the API service.
+//
+// Deprecated.
 func (c *CloudSchedulerClient) Connection() *grpc.ClientConn {
-	return c.conn
+	return c.connPool.Conn()
 }
 
 // Close closes the connection to the API service. The user should invoke this when
 // the client is no longer required.
 func (c *CloudSchedulerClient) Close() error {
-	return c.conn.Close()
+	return c.connPool.Close()
 }
 
 // setGoogleClientInfo sets the name and version of the application in
@@ -244,7 +246,8 @@ func (c *CloudSchedulerClient) CreateJob(ctx context.Context, req *schedulerpb.C
 // not be executed. If this happens, retry the UpdateJob request
 // until a successful response is received.
 func (c *CloudSchedulerClient) UpdateJob(ctx context.Context, req *schedulerpb.UpdateJobRequest, opts ...gax.CallOption) (*schedulerpb.Job, error) {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "job.name", url.QueryEscape(req.GetJob().GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.UpdateJob[0:len(c.CallOptions.UpdateJob):len(c.CallOptions.UpdateJob)], opts...)
 	var resp *schedulerpb.Job
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {

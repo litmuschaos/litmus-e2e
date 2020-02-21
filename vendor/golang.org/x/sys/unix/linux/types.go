@@ -406,6 +406,16 @@ type Timeval C.struct_timeval
 
 type Timex C.struct_timex
 
+const (
+	TIME_OK    = C.TIME_OK
+	TIME_INS   = C.TIME_INS
+	TIME_DEL   = C.TIME_DEL
+	TIME_OOP   = C.TIME_OOP
+	TIME_WAIT  = C.TIME_WAIT
+	TIME_ERROR = C.TIME_ERROR
+	TIME_BAD   = C.TIME_BAD
+)
+
 type Time_t C.time_t
 
 type Tms C.struct_tms
@@ -439,6 +449,20 @@ type Flock_t C.struct_flock
 type FscryptPolicy C.struct_fscrypt_policy
 
 type FscryptKey C.struct_fscrypt_key
+
+type FscryptPolicyV1 C.struct_fscrypt_policy_v1
+
+type FscryptPolicyV2 C.struct_fscrypt_policy_v2
+
+type FscryptGetPolicyExArg C.struct_fscrypt_get_policy_ex_arg
+
+type FscryptKeySpecifier C.struct_fscrypt_key_specifier
+
+type FscryptAddKeyArg C.struct_fscrypt_add_key_arg
+
+type FscryptRemoveKeyArg C.struct_fscrypt_remove_key_arg
+
+type FscryptGetKeyStatusArg C.struct_fscrypt_get_key_status_arg
 
 // Structure for Keyctl
 

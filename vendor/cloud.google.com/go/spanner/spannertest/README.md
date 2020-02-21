@@ -19,10 +19,10 @@ by ascending esotericism:
 - SELECT HAVING
 - arithmetic expressions (operators, parens)
 - transaction simulation
-- DML statements
+- INSERT/UPDATE DML statements
 - case insensitivity
 - alternate literal types (esp. strings)
-- TIMESTAMP types
+- allow_commit_timestamp
 - STRUCT types
 - expression functions
 - expression type casting, coercion
@@ -31,7 +31,6 @@ by ascending esotericism:
 - SELECT aliases
 - subselects
 - set operations (UNION, INTERSECT, EXCEPT)
-- SELECT star expressions
 - partition support
 - conditional expressions
 - table sampling (implementation)

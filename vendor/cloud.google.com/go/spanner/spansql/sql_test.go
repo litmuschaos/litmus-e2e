@@ -21,18 +21,36 @@ import (
 	"testing"
 )
 
+func boolAddr(b bool) *bool {
+	return &b
+}
+
 func TestSQL(t *testing.T) {
 	reparseDDL := func(s string) (interface{}, error) {
 		ddl, err := ParseDDLStmt(s)
-		return ddl, err
+		if err != nil {
+			return nil, err
+		}
+		ddl.clearOffset()
+		return ddl, nil
+	}
+	reparseDML := func(s string) (interface{}, error) {
+		dml, err := ParseDMLStmt(s)
+		if err != nil {
+			return nil, err
+		}
+		return dml, nil
 	}
 	reparseQuery := func(s string) (interface{}, error) {
 		q, err := ParseQuery(s)
 		return q, err
 	}
 	reparseExpr := func(s string) (interface{}, error) {
-		e, err := newParser(s).parseExpr()
-		return e, err
+		e, pe := newParser("f-expr", s).parseExpr()
+		if pe != nil {
+			return nil, pe
+		}
+		return e, nil
 	}
 
 	tests := []struct {
@@ -41,7 +59,7 @@ func TestSQL(t *testing.T) {
 		reparse func(string) (interface{}, error)
 	}{
 		{
-			CreateTable{
+			&CreateTable{
 				Name: "Ta",
 				Columns: []ColumnDef{
 					{Name: "Ca", Type: Type{Base: Bool}, NotNull: true},
@@ -52,14 +70,16 @@ func TestSQL(t *testing.T) {
 					{Name: "Cf", Type: Type{Base: Bytes, Len: 4711}},
 					{Name: "Cg", Type: Type{Base: Bytes, Len: MaxLen}},
 					{Name: "Ch", Type: Type{Base: Date}},
-					{Name: "Ci", Type: Type{Base: Timestamp}},
+					{Name: "Ci", Type: Type{Base: Timestamp}, AllowCommitTimestamp: boolAddr(true)},
 					{Name: "Cj", Type: Type{Array: true, Base: Int64}},
 					{Name: "Ck", Type: Type{Array: true, Base: String, Len: MaxLen}},
+					{Name: "Cl", Type: Type{Base: Timestamp}, AllowCommitTimestamp: boolAddr(false)},
 				},
 				PrimaryKey: []KeyPart{
 					{Column: "Ca"},
 					{Column: "Cb", Desc: true},
 				},
+				Position: Position{Line: 1},
 			},
 			`CREATE TABLE Ta (
   Ca BOOL NOT NULL,
@@ -70,14 +90,15 @@ func TestSQL(t *testing.T) {
   Cf BYTES(4711),
   Cg BYTES(MAX),
   Ch DATE,
-  Ci TIMESTAMP,
+  Ci TIMESTAMP OPTIONS (allow_commit_timestamp = true),
   Cj ARRAY<INT64>,
   Ck ARRAY<STRING(MAX)>,
+  Cl TIMESTAMP OPTIONS (allow_commit_timestamp = null),
 ) PRIMARY KEY(Ca, Cb DESC)`,
 			reparseDDL,
 		},
 		{
-			CreateTable{
+			&CreateTable{
 				Name: "Tsub",
 				Columns: []ColumnDef{
 					{Name: "SomeId", Type: Type{Base: Int64}, NotNull: true},
@@ -91,6 +112,7 @@ func TestSQL(t *testing.T) {
 					Parent:   "Ta",
 					OnDelete: CascadeOnDelete,
 				},
+				Position: Position{Line: 1},
 			},
 			`CREATE TABLE Tsub (
   SomeId INT64 NOT NULL,
@@ -100,62 +122,81 @@ func TestSQL(t *testing.T) {
 			reparseDDL,
 		},
 		{
-			DropTable{
-				Name: "Ta",
+			&DropTable{
+				Name:     "Ta",
+				Position: Position{Line: 1},
 			},
 			"DROP TABLE Ta",
 			reparseDDL,
 		},
 		{
-			CreateIndex{
+			&CreateIndex{
 				Name:  "Ia",
 				Table: "Ta",
 				Columns: []KeyPart{
 					{Column: "Ca"},
 					{Column: "Cb", Desc: true},
 				},
+				Position: Position{Line: 1},
 			},
 			"CREATE INDEX Ia ON Ta(Ca, Cb DESC)",
 			reparseDDL,
 		},
 		{
-			DropIndex{
-				Name: "Ia",
+			&DropIndex{
+				Name:     "Ia",
+				Position: Position{Line: 1},
 			},
 			"DROP INDEX Ia",
 			reparseDDL,
 		},
 		{
-			AlterTable{
+			&AlterTable{
 				Name:       "Ta",
 				Alteration: AddColumn{Def: ColumnDef{Name: "Ca", Type: Type{Base: Bool}}},
+				Position:   Position{Line: 1},
 			},
 			"ALTER TABLE Ta ADD COLUMN Ca BOOL",
 			reparseDDL,
 		},
 		{
-			AlterTable{
+			&AlterTable{
 				Name:       "Ta",
 				Alteration: DropColumn{Name: "Ca"},
+				Position:   Position{Line: 1},
 			},
 			"ALTER TABLE Ta DROP COLUMN Ca",
 			reparseDDL,
 		},
 		{
-			AlterTable{
+			&AlterTable{
 				Name:       "Ta",
 				Alteration: SetOnDelete{Action: NoActionOnDelete},
+				Position:   Position{Line: 1},
 			},
 			"ALTER TABLE Ta SET ON DELETE NO ACTION",
 			reparseDDL,
 		},
 		{
-			AlterTable{
+			&AlterTable{
 				Name:       "Ta",
 				Alteration: SetOnDelete{Action: CascadeOnDelete},
+				Position:   Position{Line: 1},
 			},
 			"ALTER TABLE Ta SET ON DELETE CASCADE",
 			reparseDDL,
+		},
+		{
+			&Delete{
+				Table: "Ta",
+				Where: ComparisonOp{
+					LHS: ID("C"),
+					Op:  Gt,
+					RHS: IntegerLiteral(2),
+				},
+			},
+			"DELETE FROM Ta WHERE C > 2",
+			reparseDML,
 		},
 		{
 			Query{
@@ -195,6 +236,17 @@ func TestSQL(t *testing.T) {
 			ComparisonOp{LHS: ID("X"), Op: NotBetween, RHS: ID("Y"), RHS2: ID("Z")},
 			`X NOT BETWEEN Y AND Z`,
 			reparseExpr,
+		},
+		{
+			Query{
+				Select: Select{
+					List: []Expr{
+						ID("Desc"),
+					},
+				},
+			},
+			"SELECT `Desc`",
+			reparseQuery,
 		},
 	}
 	for _, test := range tests {

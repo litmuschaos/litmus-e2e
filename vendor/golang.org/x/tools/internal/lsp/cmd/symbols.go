@@ -15,7 +15,7 @@ import (
 	"golang.org/x/tools/internal/tool"
 )
 
-// references implements the references verb for gopls
+// symbols implements the symbols verb for gopls
 type symbols struct {
 	app *Application
 }
@@ -44,7 +44,7 @@ func (r *symbols) Run(ctx context.Context, args ...string) error {
 	from := span.Parse(args[0])
 	p := protocol.DocumentSymbolParams{
 		TextDocument: protocol.TextDocumentIdentifier{
-			URI: string(from.URI()),
+			URI: protocol.URIFromSpanURI(from.URI()),
 		},
 	}
 

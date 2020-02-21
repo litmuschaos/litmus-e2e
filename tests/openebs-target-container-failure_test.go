@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus-e2e/pkg/utils"
 	restclient "k8s.io/client-go/rest"
 )
 
@@ -27,8 +29,10 @@ var (
 	client            *kubernetes.Clientset
 	clientSet         *chaosClient.LitmuschaosV1alpha1Client
 	err               error
-	containerIdBefore [3]string
-	startedAtBefore   [3]metav1.Time
+	containerIdBefore [9]string
+	startedAtBefore   [9]metav1.Time
+	experimentName    = "openebs-target-container-failure"
+	engineName        = "engine3"
 )
 
 func TestChaos(t *testing.T) {
@@ -64,12 +68,12 @@ var _ = BeforeSuite(func() {
 	}
 
 	//Getting the Application Status
-	app, _ := client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
+	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("percona", metav1.GetOptions{})
 	count := 0
 	for app.Status.UnavailableReplicas != 0 {
 		if count < 50 {
 			fmt.Printf("Percona is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
-			app, _ = client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
+			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("percona", metav1.GetOptions{})
 			time.Sleep(10 * time.Second)
 			count++
 		} else {
@@ -84,69 +88,52 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 	// BDD TEST CASE 1
 	resourceVersionBefore := 0
-	restartCountSumBefore := 0
-	cspPodLabels := "openebs.io/target=cstor-target"
-	cspPodNs := "openebs"
+	containerDetailsBefore := make(map[string][]interface{})
+
 	Context("Check for the custom resources", func() {
 
 		It("Should check for creation of runner pod", func() {
 
 			//Getting the Sum of Resource Version before Chaos
-			csp, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
-			Expect(err).To(BeNil(), "fail to get csp pods")
-			for _, podSpec := range csp.Items {
+			target, err := client.CoreV1().Pods(chaosTypes.TargetPodNs).List(metav1.ListOptions{LabelSelector: chaosTypes.TargetPodLabels})
+			Expect(err).To(BeNil(), "Fail to get Target pods")
+			for _, podSpec := range target.Items {
 				resourceVersionBefore, _ = strconv.Atoi(podSpec.ResourceVersion)
 			}
 
-			fmt.Printf("Resource Version before chaos has been recorded\n")
+			fmt.Println("Resource Version before chaos has been recorded")
 
-			//Getting the ContainerIDs of CSP pod Containers and Sum of Container Restart Count
+			//Getting the ContainerIDs of target pod Containers and Sum of Container Restart Count
 			containerCount := 0
-			for _, podSpec := range csp.Items {
+			for _, podSpec := range target.Items {
 				for i := 0; i < len(podSpec.Status.ContainerStatuses); i++ {
 					containerIdBefore[containerCount] = (podSpec.Status.ContainerStatuses[i].ContainerID)
-					restartCountSumBefore = restartCountSumBefore + int(podSpec.Status.ContainerStatuses[i].RestartCount)
+					containerDetailsBefore[podSpec.Status.ContainerStatuses[i].Name] = append(containerDetailsBefore[podSpec.Status.ContainerStatuses[i].Name], int(podSpec.Status.ContainerStatuses[i].RestartCount))
 					containerCount++
 				}
 			}
 
-			fmt.Printf("ContainerIDs before chaos has been recorded\n")
-			fmt.Printf("Container Restart count before chaos has been recorded\n")
+			fmt.Println("ContainerIDs before chaos has been recorded")
+			fmt.Println("Container Restart count before chaos has been recorded")
 
 			//Getting the Container StartedAt value before Chaos
-			for i, podSpec := range csp.Items {
+			for i, podSpec := range target.Items {
 				startedAtBefore[i] = (podSpec.Status.ContainerStatuses[i].State.Running.StartedAt)
 			}
 
-			fmt.Printf("Container StartedAt time before Chaos has been recorded\n")
+			fmt.Println("Container StartedAt time before Chaos has been recorded")
 
-			//Fetching rbac file
-			By("Fetching rbac file for the experiment")
-			err = exec.Command("wget", "-O", "target-container-failure-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/rbac.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
+			//Installing RBAC for the experiment
 
-			//Modify Namespace field of the rbac
-			By("Modify Namespace field of the rbac")
-			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "target-container-failure-sa.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			//Creating rbac file for the experiment
-			By("Creating rbac file for the experiment")
-			err = exec.Command("kubectl", "apply", "-f", "target-container-failure-sa.yaml").Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/rbac.yaml"
+			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
+			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
+			Expect(err).To(BeNil(), "Fail to create RBAC")
+			fmt.Println("Rbac has been created successfully !!!")
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			if err != nil {
 				fmt.Println(err)
@@ -154,96 +141,93 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			fmt.Println("Chaos Experiment Created Successfully")
 
-			//Creating chaosEngine
-			By("Creating ChaosEngine")
-			chaosEngine := &v1alpha1.ChaosEngine{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "engine3",
-					Namespace: "litmus",
-				},
-				Spec: v1alpha1.ChaosEngineSpec{
-					AnnotationCheck:  "false",
-					EngineState:      "active",
-					AuxiliaryAppInfo: "",
-					Appinfo: v1alpha1.ApplicationParams{
-						Appns:    "litmus",
-						Applabel: "name=percona",
-						AppKind:  "deployment",
-					},
-					ChaosServiceAccount: "target-container-failure-sa",
-					Components: v1alpha1.ComponentParams{
-						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:ci",
-							Type:  "go",
-						},
-					},
-					Monitoring:       false,
-					JobCleanUpPolicy: "delete",
-					Experiments: []v1alpha1.ExperimentList{
-						{
-							Name: "openebs-target-container-failure",
-							Spec: v1alpha1.ExperimentAttributes{
-								Components: v1alpha1.ExperimentComponents{
-									ENV: []v1alpha1.ExperimentENV{
-										{
-											Name:  "TARGET_CONTAINER",
-											Value: "cstor-istgt",
-										},
-										{
-											Name:  "APP_PVC",
-											Value: "percona-vol1-claim",
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			}
+			//Installing chaos engine for the experiment
+			//Fetching engine file
+			By("Fetching engine file for the experiment")
+			err = exec.Command("wget", "-O", "target-container-failure-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/engine.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to fetch engine file")
+			//Modify chaos engine spec
+			//Modify Namespace,Name,AppNs,AppLabel of the engine
 
-			_, err = clientSet.ChaosEngines("litmus").Create(chaosEngine)
+			err = exec.Command("sed", "-i",
+				`s/namespace: default/namespace: litmus/g;
+			         s/name: target-chaos/name: engine3/g;
+			         s/appns: 'default'/appns: 'litmus'/g;
+			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
+				"target-container-failure-ce.yaml").Run()
+
+			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
+			//Modify APP_PVC
+			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "target-container-failure-ce.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
+
+			//Creating ChaosEngine
+			By("Creating ChaosEngine")
+			err = exec.Command("kubectl", "apply", "-f", "target-container-failure-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			Expect(err).To(BeNil(), "Fail to create chaos engine")
 			if err != nil {
 				fmt.Println(err)
 			}
-			time.Sleep(5 * time.Second)
 
 			fmt.Println("Chaosengine created successfully...")
+			time.Sleep(2 * time.Second)
 
-			//Fetching engine-nginx-runner pod
-			runner, err := client.CoreV1().Pods("litmus").Get("engine3-runner", metav1.GetOptions{})
-			fmt.Printf("name : %v \n", runner.Name)
-			for i := 0; i < 30; i++ {
+			//Getting the TotalChaosDuration from ChaosEngine if not present in engine
+			//Then takes from Chaos Experiment
+			ChaosDurationFromEngine, err := utils.GetTotalChaosDurationFromEngine(engineName, experimentName, clientSet)
+			Expect(err).To(BeNil(), "fail to get chaos engine")
+			if ChaosDurationFromEngine == "" {
+				ChaosDurationFromExperiment, err := utils.GetTotalChaosDurationFromExperiment(experimentName, clientSet)
+				Expect(err).To(BeNil(), "fail to get chaos experiment")
+				Expect(ChaosDurationFromExperiment).NotTo(BeNil(), "fail to get chaos duration")
+
+				//Fetching engine-runner pod
+				runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+				fmt.Printf("name : %v \n", runner.Name)
 				if string(runner.Status.Phase) != "Succeeded" {
-					time.Sleep(10 * time.Second)
-					runner, _ = client.CoreV1().Pods("litmus").Get("engine3-runner", metav1.GetOptions{})
-					fmt.Printf("Currently, the Runner pod is in %v State, Please Wait ...\n", runner.Status.Phase)
-				} else {
-					break
+					ExperimentChaosDuration, _ := strconv.Atoi(ChaosDurationFromExperiment)
+					fmt.Println("BRACE YOURSELF, EXPERIMENT BEGINS!")
+					time.Sleep(time.Duration(ExperimentChaosDuration+150) * time.Second)
+					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+					fmt.Printf("The Runner pod is in %v State EXPERIMENT ENDS!...\n", runner.Status.Phase)
+					Expect(err).To(BeNil())
+					Expect(string(runner.Status.Phase)).To(Equal("Succeeded"))
+				}
+			} else {
+
+				//Fetching engine-runner pod
+				runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+				fmt.Printf("name : %v \n", runner.Name)
+				if string(runner.Status.Phase) != "Succeeded" {
+					EngineChaosDuration, _ := strconv.Atoi(ChaosDurationFromEngine)
+					fmt.Println("BRACE YOURSELF, EXPERIMENT BEGINS!")
+					time.Sleep(time.Duration(EngineChaosDuration+150) * time.Second)
+					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+					fmt.Printf("The Runner pod is in %v State EXPERIMENT ENDS!...\n", runner.Status.Phase)
+					Expect(err).To(BeNil())
+					Expect(string(runner.Status.Phase)).To(Equal("Succeeded"))
 				}
 			}
-			Expect(err).To(BeNil())
-			Expect(string(runner.Status.Phase)).To(Or(Equal("Running"), Equal("Succeeded")))
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, _ := clientSet.ChaosResults("litmus").Get("engine3-openebs-target-container-failure", metav1.GetOptions{})
+			app, _ := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get("engine3-openebs-target-container-failure", metav1.GetOptions{})
 			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 		})
 	})
 
 	//Matching the Resource Verison after Chaos
-	Context("Check Resource Version of pool container", func() {
+	Context("Check Resource Version of target container", func() {
 
 		It("Should check for the change in Resource Version after Chaos", func() {
-			resourceVersionAfter := 0
-			csp_rv, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
-			Expect(err).To(BeNil(), "fail to get the csp pods")
-			for _, podSpec := range csp_rv.Items {
-				resourceVersionAfter, _ = strconv.Atoi(podSpec.ResourceVersion)
-			}
 
-			Expect(resourceVersionAfter-resourceVersionBefore).NotTo(Equal(0), "The Resource Version does not change")
-			fmt.Printf("The Resource Version changes\n")
+			podDetails := chaosTypes.PodDetails{}
+			podDetails.PodNamespace = chaosTypes.TargetPodNs
+			podDetails.PodLabel = chaosTypes.TargetPodLabels
+			resourceVersion, err := utils.ComparePodResourceVersion(resourceVersionBefore, podDetails, client)
+			Expect(resourceVersion).NotTo(Equal(0), "The Resource Version does not change")
+			Expect(err).To(BeNil(), "Fail to get the pods")
+			fmt.Println("The Resource Version changed !!!")
 
 		})
 	})
@@ -251,29 +235,15 @@ var _ = Describe("BDD of openebs experiment", func() {
 	//Matching the ContainerIDs after Chaos
 	Context("Check ContainerIDs after chaos", func() {
 
-		It("Should check for the change in ContainerIDs of csp pod", func() {
+		It("Should check for the change in ContainerIDs of target pod", func() {
 
-			var containerIdAfter [3]string
-			containerCount := 0
-			containerIDChanged := false
-			csp, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
-			Expect(err).To(BeNil(), "fail to get the csp pods")
-			for _, podSpec := range csp.Items {
-				for i := 0; i < len(podSpec.Status.ContainerStatuses); i++ {
-					containerIdAfter[containerCount] = (podSpec.Status.ContainerStatuses[i].ContainerID)
-					containerCount++
-				}
-			}
-
-			for i := range containerIdBefore {
-				if containerIdBefore[i] != containerIdAfter[i] {
-					containerIDChanged = true
-					break
-				}
-			}
-
-			Expect(containerIDChanged).NotTo(Equal(false), "The Container ID does not change")
-			fmt.Printf("Container ID Changes!!!\n")
+			podDetails := chaosTypes.PodDetails{}
+			podDetails.PodNamespace = chaosTypes.TargetPodNs
+			podDetails.PodLabel = chaosTypes.TargetPodLabels
+			containerID, err := utils.CompareContainerID(containerIdBefore, podDetails, client)
+			Expect(containerID).NotTo(Equal(false), "The Container ID does not change")
+			Expect(err).To(BeNil(), "Fail to get the pods")
+			fmt.Println("Container ID Changed !!!")
 		})
 	})
 
@@ -282,17 +252,14 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 		It("Should check for the change in Container Restart Count after Chaos", func() {
 
-			restartCountSumAfter := 0
-			csp_rc, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
-			Expect(err).To(BeNil(), "fail to get the csp pods")
-			for _, podSpec := range csp_rc.Items {
-				for i := 0; i < len(podSpec.Status.ContainerStatuses); i++ {
-					restartCountSumAfter = restartCountSumAfter + int(podSpec.Status.ContainerStatuses[i].RestartCount)
-				}
-			}
-
-			Expect(restartCountSumAfter-restartCountSumBefore).NotTo(Equal(0), "The restart count does not change")
-			fmt.Printf("The Restart count changes")
+			containerName := "cstor-istgt"
+			podDetails := chaosTypes.PodDetails{}
+			podDetails.PodNamespace = chaosTypes.TargetPodNs
+			podDetails.PodLabel = chaosTypes.TargetPodLabels
+			containerRestartCount, err := utils.CompareContainerRestartCount(containerDetailsBefore, containerName, podDetails, client)
+			Expect(containerRestartCount).NotTo(Equal(true), "The restart count does not change")
+			Expect(err).To(BeNil(), "Fail to get the pods")
+			fmt.Println("The Restart count changed !!!")
 
 		})
 	})
@@ -300,25 +267,15 @@ var _ = Describe("BDD of openebs experiment", func() {
 	//Matching the Container StartedAt time after chaos
 	Context("Check Container StartedAt time", func() {
 
-		It("Should check for the change in Container StartedAt time after Chaos", func() {
+		It("Should check for the change in Container Start time after Chaos", func() {
 
-			var startedAtAfter [3]metav1.Time
-			startedAtChanged := false
-			csp_startedat, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
-			Expect(err).To(BeNil(), "fail to get the csp pods")
-			for i, podSpec := range csp_startedat.Items {
-				startedAtAfter[i] = (podSpec.Status.ContainerStatuses[i].State.Running.StartedAt)
-			}
-
-			for i := range startedAtAfter {
-				if startedAtAfter[i] != startedAtBefore[i] {
-					startedAtChanged = true
-					break
-				}
-			}
-
-			Expect(startedAtChanged).NotTo(Equal(false), "The Container startedAt time does not change")
-			fmt.Printf("Container startedAt time Changes!!!\n")
+			podDetails := chaosTypes.PodDetails{}
+			podDetails.PodNamespace = chaosTypes.TargetPodNs
+			podDetails.PodLabel = chaosTypes.TargetPodLabels
+			startedAt, err := utils.CompareStartedAt(startedAtBefore, podDetails, client)
+			Expect(startedAt).NotTo(Equal(false), "The Container start time does not change")
+			Expect(err).To(BeNil(), "Fail to get the pods")
+			fmt.Println("Container startedAt time Changed !!!")
 
 		})
 	})
