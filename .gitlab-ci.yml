@@ -166,6 +166,21 @@ OpenEBS Target Network Loss:
     paths:
       - .kube/
 
+OpenEBS Control Plane Validation:
+
+  when: always
+  extends: .before_script_template
+  stage: experiment
+  tags:
+    - litmus-openebs
+  script:
+    - make openebs-control-plane-validation
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 Application Cleanup:
   
   when: always
