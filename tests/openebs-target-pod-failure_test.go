@@ -144,7 +144,7 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 					},
 					ChaosServiceAccount: "target-pod-failure-sa",
 					Components: v1alpha1.ComponentParams{
-						Runner: v1alpha1.RunnerInfo{=
+						Runner: v1alpha1.RunnerInfo{
 							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
