@@ -108,13 +108,14 @@ var _ = Describe("BDD of openebs target network delay", func() {
 				fmt.Println(err)
 			}
 
-			//Creating Chao
+			//Creating Chaos Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml", "-n", "litmus").Run()
+			err = exec.Command("wget", "-O", "target-network-delay-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml").Run()
+			Expect(err).To(BeNil(), "fail get chaos experiment")
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-network-delay-ce.yaml").Run()
+			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
+			err = exec.Command("kubectl", "apply", "-f", "target-network-delay-ce.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
 
 			fmt.Println("Chaos Experiment Created Successfully")
 
