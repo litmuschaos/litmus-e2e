@@ -142,11 +142,12 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-pod-failure/experiment.yaml", "-n", "litmus").Run()
+			err = exec.Command("wget", "-O", "target-pod-failure-ce.yml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-pod-failure/experiment.yaml").Run()
+			Expect(err).To(BeNil(), "fail get chaos experiment")
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-pod-failure-ce.yaml").Run()
+			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
+			err = exec.Command("kubectl", "apply", "-f", "target-pod-failure-ce.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
 
 			fmt.Println("Chaos Experiment Created Successfully")
 
