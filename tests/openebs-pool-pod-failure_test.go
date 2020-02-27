@@ -136,7 +136,7 @@ var _ = Describe("BDD of openebs pool pod failure experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "pool-pod-failure-ce.yml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-pod-failure/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pool-pod-failure-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-pod-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "pool-pod-failure-ce.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")

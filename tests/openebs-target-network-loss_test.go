@@ -110,7 +110,7 @@ var _ = Describe("BDD of openebs target network loss experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "target-network-loss-ce.yml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-loss/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "target-network-loss-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-loss/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-network-loss-ce.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
