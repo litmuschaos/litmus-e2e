@@ -37,7 +37,7 @@
         executable: /bin/bash
   
     - name: Creating {{ e_name }} experiment
-      shell: kubectl apply -f {{ e_name }}.yaml
+      shell: kubectl apply -f {{ e_name }}.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
      
