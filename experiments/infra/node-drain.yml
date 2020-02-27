@@ -25,6 +25,21 @@
       args:
         executable: /bin/bash
 
+    - name: Fetching chart of {{ e_name }}
+      shell: wget -O {{ e_name }}.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/experiment.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Replace the image tag in chart
+      shell: sed -i 's#image{{ ":" }} litmuschaos/ansible-runner:latest#image{{ ":" }} litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Creating {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}.yaml
+      args:
+        executable: /bin/bash
+
     - name: Select a random node name of nginx deployment replicas
       shell: kubectl get po -n {{ a_ns }} -l {{ a_label }} -o jsonpath='{.items[0].spec.nodeName}'
       args:
@@ -36,11 +51,6 @@
 
     - name: Cordoning the node 
       shell: kubectl cordon "{{ app_node }}"
-      args:
-        executable: /bin/bash
-
-    - name: Installing node-drain Experiment
-      shell: kubectl apply -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-drain/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 

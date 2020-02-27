@@ -26,8 +26,18 @@
       args:
         executable: /bin/bash
 
-    - name: Installing pod-network-latency Experiment
-      shell: kubectl apply -f  https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml -n {{ a_ns }}
+    - name: Fetching chart of {{ e_name }}
+      shell: wget -O {{ e_name }}.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-latency/experiment.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Replace the image tag in chart
+      shell: sed -i 's#image{{ ":" }} litmuschaos/ansible-runner:latest#image{{ ":" }} litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Creating {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}.yaml
       args:
         executable: /bin/bash
 

@@ -23,6 +23,8 @@ spec:
       spec:
         components:
           env:
+          - name: RAMP_TIME
+            value: '60'
 {% if e_name is defined and e_name == 'pod-delete' %}
           - name: TOTAL_CHAOS_DURATION
             value: '30'
