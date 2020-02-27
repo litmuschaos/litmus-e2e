@@ -1,4 +1,4 @@
-package delay
+package tests
 
 import (
 	"fmt"
@@ -137,12 +137,12 @@ var _ = Describe("BDD of openebs target network delay", func() {
 					ChaosServiceAccount: "target-network-delay-sa",
 					Components: v1alpha1.ComponentParams{
 						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:1.1.0",
+							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-network-delay",

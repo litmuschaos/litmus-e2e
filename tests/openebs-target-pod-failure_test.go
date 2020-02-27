@@ -1,9 +1,10 @@
-package delay
+package tests
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"testing"
 	"time"
 
@@ -21,11 +22,14 @@ import (
 )
 
 var (
-	kubeconfig string
-	config     *restclient.Config
-	client     *kubernetes.Clientset
-	clientSet  *chaosClient.LitmuschaosV1alpha1Client
-	err        error
+	kubeconfig        string
+	config            *restclient.Config
+	client            *kubernetes.Clientset
+	clientSet         *chaosClient.LitmuschaosV1alpha1Client
+	err               error
+	containerIdBefore [3]string
+	podIpAfter        string
+	podIpBefore       string
 )
 
 func TestChaos(t *testing.T) {
@@ -80,6 +84,10 @@ var _ = BeforeSuite(func() {
 var _ = Describe("BDD of openebs target pod failure experiment", func() {
 
 	// BDD TEST CASE 1
+	resourceVersionBefore := 0
+	restartCountSumBefore := 0
+	cspPodLabels := "openebs.io/target=cstor-target"
+	cspPodNs := "openebs"
 	Context("Check for the openebs components", func() {
 
 		It("Should check for creation of runner pod", func() {
@@ -136,13 +144,13 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 					},
 					ChaosServiceAccount: "target-pod-failure-sa",
 					Components: v1alpha1.ComponentParams{
-						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:1.1.0",
+						Runner: v1alpha1.RunnerInfo{=
+							Image: "litmuschaos/chaos-runner:ci",
 							Type:  "go",
 						},
 					},
 					Monitoring:       false,
-					JobCleanUpPolicy: "retain",
+					JobCleanUpPolicy: "delete",
 					Experiments: []v1alpha1.ExperimentList{
 						{
 							Name: "openebs-target-pod-failure",
@@ -180,7 +188,7 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 				if string(runner.Status.Phase) != "Succeeded" {
 					time.Sleep(10 * time.Second)
 					runner, _ = client.CoreV1().Pods("litmus").Get("engine6-runner", metav1.GetOptions{})
-					fmt.Printf("Currently Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
+					fmt.Printf("Currently, Runner pod is in %v State, Please Wait ...\n", runner.Status.Phase)
 				} else {
 					break
 				}
@@ -192,6 +200,89 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 			By("Checking the chaosresult")
 			app, _ := clientSet.ChaosResults("litmus").Get("engine6-openebs-target-pod-failure", metav1.GetOptions{})
 			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+		})
+	})
+
+	//Matching the Resource Verison after Chaos
+	Context("Check Resource Version of pool container", func() {
+
+		It("Should check for the change in Resource Version after Chaos", func() {
+			resourceVersionAfter := 0
+			csp_rv, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for _, podSpec := range csp_rv.Items {
+				resourceVersionAfter, _ = strconv.Atoi(podSpec.ResourceVersion)
+			}
+
+			Expect(resourceVersionAfter-resourceVersionBefore).NotTo(Equal(0), "The Resource Version does not change")
+			fmt.Println("The Resource Version changes")
+
+		})
+	})
+
+	//Matching the ContainerIDs after Chaos
+	Context("Check ContainerIDs after chaos", func() {
+
+		It("Should check for the change in ContainerIDs of csp pod", func() {
+
+			var containerIdAfter [3]string
+			containerCount := 0
+			containerIDChanged := false
+			csp, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for _, podSpec := range csp.Items {
+				for i := 0; i < len(podSpec.Status.ContainerStatuses); i++ {
+					containerIdAfter[containerCount] = (podSpec.Status.ContainerStatuses[i].ContainerID)
+					containerCount++
+				}
+			}
+
+			for i := range containerIdBefore {
+				if containerIdBefore[i] != containerIdAfter[i] {
+					containerIDChanged = true
+					break
+				}
+			}
+
+			Expect(containerIDChanged).NotTo(Equal(false), "The Container ID does not change")
+			fmt.Println("Container ID Changes!!!")
+		})
+	})
+
+	//Matching the Container Restart Count after Chaos
+	Context("Check Container Restart Count", func() {
+
+		It("Should check for the change in Container Restart Count after Chaos", func() {
+
+			restartCountSumAfter := 0
+			csp_rc, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for _, podSpec := range csp_rc.Items {
+				for i := 0; i < len(podSpec.Status.ContainerStatuses); i++ {
+					restartCountSumAfter = restartCountSumAfter + int(podSpec.Status.ContainerStatuses[i].RestartCount)
+				}
+			}
+
+			Expect(restartCountSumAfter-restartCountSumBefore).NotTo(Equal(0), "The restart count does not change")
+			fmt.Println("The Restart count changes")
+
+		})
+	})
+
+	//Matching csp pod PodIP
+	Context("Check csp pod PodIP", func() {
+
+		It("Should check for the change in csp pod PodIP after Chaos", func() {
+
+			csp_podip, err := client.CoreV1().Pods(cspPodNs).List(metav1.ListOptions{LabelSelector: cspPodLabels})
+			Expect(err).To(BeNil(), "fail to get the csp pods")
+			for _, podSpec := range csp_podip.Items {
+				podIpAfter = podSpec.Status.PodIP
+			}
+
+			Expect(podIpAfter).NotTo(Equal(podIpBefore), "The csp pod PodIP does not change")
+			fmt.Println("CSP pod PodIP Changes!!!")
+
 		})
 	})
 

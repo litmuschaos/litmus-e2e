@@ -1,4 +1,4 @@
-package deleteall
+package tests
 
 import (
 	"fmt"
