@@ -6,11 +6,28 @@
     name: engine-nginx5
     a_label: run=nginx
     e_name: pod-network-corruption
+    service_acc: pod-network-corruption-sa
+
 
   tasks: 
        
+    - name: Fetching rbac for pod-network-corruption
+      shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-corruption/rbac.yaml 
+      args:
+        executable: /bin/bash
+
+    - name: Replace the namespace field in rbac
+      shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
+
     - name: Installing pod-network-corruption Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-corruption/experiment.yaml -n {{ a_ns }}
+      shell: kubectl apply -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-corruption/experiment.yaml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -18,8 +35,8 @@
         src: ../../utils/chaosengine.j2
         dest: ../../utils/chaosengine.yml
 
-    - name: Create chaos-engine
-      shell: kubectl create -f ../../utils/chaosengine.yml
+    - name: apply chaos-engine
+      shell: kubectl apply -f ../../utils/chaosengine.yml
       args:
         executable: /bin/bash
 

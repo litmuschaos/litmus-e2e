@@ -8,10 +8,12 @@ install:
 	@echo "-------------------"
 	@echo "Creatign crds"
 	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-	@echo "Creating rbac"
+	@echo "Creating rbac for chaos-operator"
 	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml
 	@echo "Creating chaos-operator"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml
+	@wget https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml
+	@sed -i 's/operator:ci/operator:latest/g' operator.yaml 
+	@kubectl apply -f operator.yaml
 	@echo "Litmus installed successfully"
 
 

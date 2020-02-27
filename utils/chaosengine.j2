@@ -7,16 +7,17 @@ metadata:
 spec:
   components:
     runner:
-      image: "litmuschaos/chaos-executor:ci"
+      image: "litmuschaos/chaos-runner:latest"
       type: "go"   
   jobCleanUpPolicy: delete
+  engineState: 'active'
   monitoring: false
   appinfo: 
     appns: {{ a_ns }}
     # FYI, To see app label, apply kubectl get pods --show-labels
     applabel: {{ a_label }}
     appkind:  {{ a_kind }}
-  chaosServiceAccount: {{ a_ns }}
+  chaosServiceAccount: {{ service_acc }}
   experiments:
     - name: {{ e_name }}
       spec:
