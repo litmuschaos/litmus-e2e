@@ -74,6 +74,13 @@ openebs-target-network-loss:
 	@echo "-----------------------------------"
 	@go test tests/openebs-target-network-loss_test.go -v -count=1
 
+.PHONY: openebs-control-plane-validation
+openebs-control-plane-validation:
+
+	@echo "-----------------------------------"
+	@echo "Running OpenEBS Control Plane Validation"
+	@echo "-----------------------------------"
+	@go test tests/openebs-control-plane-validation_test.go -v -count=1
 
 .PHONY: app-cleanup
 app-cleanup:
