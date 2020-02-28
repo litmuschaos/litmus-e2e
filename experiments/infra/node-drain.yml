@@ -31,7 +31,7 @@
         executable: /bin/bash
     
     - name: Replace the image tag in chart
-      shell: sed -i 's#image{{ ":" }} litmuschaos/ansible-runner:latest#image{{ ":" }} litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
+      shell: sed -i 's#litmuschaos/ansible-runner:latest#litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
       args:
         executable: /bin/bash
     
