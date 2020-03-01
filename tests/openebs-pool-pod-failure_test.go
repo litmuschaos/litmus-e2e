@@ -138,7 +138,8 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			err = exec.Command("sed", "-i",
 				`s/namespace: default/namespace: litmus/g;
 			         s/name: target-chaos/name: engine1/g;
-			         s/appns: 'default'/appns: 'litmus'/g;
+					 s/appns: 'default'/appns: 'litmus'/g;
+					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;					 
 			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
 				"pool-pod-failure-ce.yaml").Run()
 
@@ -158,42 +159,46 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			fmt.Println("Chaosengine created successfully...")
 			time.Sleep(2 * time.Second)
 
-			//Getting the TotalChaosDuration from ChaosEngine if not present in engine
-			//Then takes from Chaos Experiment
-			ChaosDurationFromEngine, err := utils.GetTotalChaosDurationFromEngine(engineName, experimentName, clientSet)
-			Expect(err).To(BeNil(), "fail to get chaos engine")
-			if ChaosDurationFromEngine == "" {
-				ChaosDurationFromExperiment, err := utils.GetTotalChaosDurationFromExperiment(experimentName, clientSet)
-				Expect(err).To(BeNil(), "fail to get chaos experiment")
-				Expect(ChaosDurationFromExperiment).NotTo(BeNil(), "fail to get chaos duration")
-
-				//Fetching engine-runner pod
-				runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-				fmt.Printf("name : %v \n", runner.Name)
-				if string(runner.Status.Phase) != "Succeeded" {
-					ExperimentChaosDuration, _ := strconv.Atoi(ChaosDurationFromExperiment)
-					fmt.Println("BRACE YOURSELF, EXPERIMENT BEGINS!")
-					time.Sleep(time.Duration(ExperimentChaosDuration+800) * time.Second)
+			//Fetching the runner pod and Checking if it get in Running state or not
+			By("Wait for engine to come in running sate")
+			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+			fmt.Printf("name : %v \n", runner.Name)
+			//Running it for infinite time (say 3000)
+			//The Gitlab job will quit if it takes more time than default time (10 min)
+			for i := 0; i < 3000; i++ {
+				if string(runner.Status.Phase) != "Running" {
+					time.Sleep(1 * time.Second)
 					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-					fmt.Printf("The Runner pod is in %v State EXPERIMENT ENDS!...\n", runner.Status.Phase)
-					Expect(err).To(BeNil())
-					Expect(string(runner.Status.Phase)).To(Equal("Succeeded"))
-				}
-			} else {
-
-				//Fetching engine-runner pod
-				runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-				fmt.Printf("name : %v \n", runner.Name)
-				if string(runner.Status.Phase) != "Succeeded" {
-					EngineChaosDuration, _ := strconv.Atoi(ChaosDurationFromEngine)
-					fmt.Println("BRACE YOURSELF, EXPERIMENT BEGINS!")
-					time.Sleep(time.Duration(EngineChaosDuration+660) * time.Second)
-					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-					fmt.Printf("The Runner pod is in %v State EXPERIMENT ENDS!...\n", runner.Status.Phase)
-					Expect(err).To(BeNil())
-					Expect(string(runner.Status.Phase)).To(Equal("Succeeded"))
+					Expect(string(runner.Status.Phase)).NotTo(Or(Equal("Succeeded"), Equal("")))
+					fmt.Printf("The Runner pod is in %v State\n", runner.Status.Phase)
+				} else {
+					break
 				}
 			}
+			Expect(err).To(BeNil(), "Fail to get the runner pod")
+			Expect(string(runner.Status.Phase)).To(Equal("Running"))
+
+			//Fetch job pod name
+			By("Fetch Job pod name")
+			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
+			Expect(jobPodLogs).To(Equal(0), "Fail to wait for job completion")
+			Expect(err).To(BeNil(), "Fail to print the logs of the experiment")
+
+			//Running it for infinite time (say 3000 * 10)
+			//The Gitlab job will quit if it takes more time than default time (10 min)
+			By("Wait for engine to come in Succeeded sate")
+			runnerAfter, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+			for i := 0; i < 3000; i++ {
+				if string(runnerAfter.Status.Phase) != "Succeeded" {
+					time.Sleep(10 * time.Second)
+					runnerAfter, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+					fmt.Printf("Currently, the runner pod is in %v State, Please Wait ...\n", runnerAfter.Status.Phase)
+				} else {
+					break
+				}
+			}
+			Expect(err).To(BeNil())
+			Expect(string(runnerAfter.Status.Phase)).To(Equal("Succeeded"))
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
@@ -211,7 +216,6 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			podDetails.PodNamespace = chaosTypes.CspPodNs
 			podDetails.PodLabel = chaosTypes.CspPodLabels
 			resourceVersion, err := utils.CompareDeploymentResourceVersion(resourceVersionSumBefore, podDetails, client)
-			fmt.Println(resourceVersion)
 			Expect(resourceVersion).NotTo(Equal(0), "The Resource Version does not change")
 			Expect(err).To(BeNil(), "Fail to get the pods")
 			fmt.Println("Resource Version changed !!!")
