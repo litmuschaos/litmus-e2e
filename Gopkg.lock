@@ -70,8 +70,8 @@
 [[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
-  revision = "d23c5127dc24889085f8ccea5c9d560a57a879d8"
-  version = "v1.3.3"
+  revision = "5d5b4c10bd43f85e63bd9e4a3fa9b1ea2ef88af2"
+  version = "v1.3.4"
 
 [[projects]]
   name = "github.com/google/gofuzz"
@@ -167,7 +167,7 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","context/ctxhttp","html","html/atom","html/charset","http/httpguts","http2","http2/hpack","idna"]
-  revision = "0de0cce0169b09b364e001f108dc0399ea8630b3"
+  revision = "244492dfa37ae2ce87222fd06250a03160745faa"
 
 [[projects]]
   branch = "master"
@@ -179,7 +179,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "d5e6a3e2c0ae16fc7480523ebcb7fd4dd3215489"
+  revision = "2f85c7ec1e521e2590f5310d149c4152c7624dc8"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -197,7 +197,7 @@
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil","imports","internal/fastwalk","internal/gocommand","internal/gopathwalk","internal/imports"]
-  revision = "807dcd883420cac3466af9424a593f57de8033eb"
+  revision = "71482053b885ea3938876d1306ad8a1e4037f367"
 
 [[projects]]
   branch = "master"
@@ -281,7 +281,7 @@
   branch = "master"
   name = "k8s.io/utils"
   packages = ["integer"]
-  revision = "861946025e3491219eaccb1bf693e23df70c2fa8"
+  revision = "0a110f9eb7ab662220ed640640f50c4be9b6b485"
 
 [[projects]]
   name = "sigs.k8s.io/controller-runtime"
