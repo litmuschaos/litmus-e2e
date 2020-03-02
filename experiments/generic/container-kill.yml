@@ -6,21 +6,47 @@
     name: engine-nginx2     #engine name
     a_label: run=nginx
     e_name: container-kill
+    service_acc: container-kill-sa
 
 
   tasks:
 
-    - name: Installing container-kill Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml -n {{ a_ns }}
+    - name: Fetching rbac for container-kill
+      shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml 
       args:
         executable: /bin/bash
 
+    - name: Replace the namespace filed in rbac
+      shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml 
+      args:
+        executable: /bin/bash
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
+    
+    - name: Fetching chart of {{ e_name }}
+      shell: wget -O {{ e_name }}.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/experiment.yaml 
+      args:
+        executable: /bin/bash
+  
+    - name: Replace the image tag in chart
+      shell: sed -i 's#litmuschaos/ansible-runner:latest#litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
+      args:
+        executable: /bin/bash
+  
+    - name: Creating {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+     
     - template:
         src: ../../utils/chaosengine.j2
         dest: ../../utils/chaosengine.yml
 
-    - name: Create chaos-engine
-      shell: kubectl create -f ../../utils/chaosengine.yml
+    - name: apply chaos-engine
+      shell: kubectl apply -f ../../utils/chaosengine.yml
       args:
         executable: /bin/bash
 

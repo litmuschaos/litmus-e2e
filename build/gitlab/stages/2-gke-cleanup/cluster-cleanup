@@ -13,7 +13,7 @@ echo "cleanup"
 mkdir -p ~/logs
 cp .kube/clusters ~/logs
 cp .kube/zone ~/logs
-git clone https://github.com/litmuschaos/litmus-e2e.git 
+git clone https://github.com/litmuschaos/litmus-e2e.git -b ${CI_BUILD_REF_NAME} 
 cd litmus-e2e/build/gitlab/stages/
 echo "cleanup"
 ansible-playbook delete-gke-cluster.yml

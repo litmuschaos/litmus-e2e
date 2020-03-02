@@ -5,8 +5,40 @@
     name: engine-nginx8
     a_label: run=nginx
     e_name: node-drain
+    service_acc: node-drain-sa
+
 
   tasks: 
+
+    - name: Fetching rbac for node-drain
+      shell: wget -O {{ e_name }}-sa.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml 
+      args:
+        executable: /bin/bash
+
+    - name: Replace the namespace field in rbac
+      shell: sed -i 's#namespace{{ ":" }} default#namespace{{ ":" }} litmus#g' {{ e_name }}-sa.yaml
+      args:
+        executable: /bin/bash
+
+    - name: Creating rbac for {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}-sa.yaml 
+      args:
+        executable: /bin/bash
+
+    - name: Fetching chart of {{ e_name }}
+      shell: wget -O {{ e_name }}.yaml https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/experiment.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Replace the image tag in chart
+      shell: sed -i 's#litmuschaos/ansible-runner:latest#litmuschaos/ansible-runner:ci#g' {{ e_name }}.yaml 
+      args:
+        executable: /bin/bash
+    
+    - name: Creating {{ e_name }} experiment
+      shell: kubectl apply -f {{ e_name }}.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
 
     - name: Select a random node name of nginx deployment replicas
       shell: kubectl get po -n {{ a_ns }} -l {{ a_label }} -o jsonpath='{.items[0].spec.nodeName}'
@@ -22,17 +54,12 @@
       args:
         executable: /bin/bash
 
-    - name: Installing node-drain Experiment
-      shell: kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-drain/experiment.yaml -n {{ a_ns }}
-      args:
-        executable: /bin/bash
-
     - template:
         src: ../../utils/chaosengine.j2
         dest: ../../utils/chaosengine.yml
 
-    - name: Create chaos-engine
-      shell: kubectl create -f ../../utils/chaosengine.yml
+    - name: apply chaos-engine
+      shell: kubectl apply -f ../../utils/chaosengine.yml
       args:
         executable: /bin/bash
 
