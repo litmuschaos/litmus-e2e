@@ -28,11 +28,9 @@ type logWriter struct {
 func (w *logWriter) StartSpan(context.Context, *telemetry.Span)  {}
 func (w *logWriter) FinishSpan(context.Context, *telemetry.Span) {}
 func (w *logWriter) Log(ctx context.Context, event telemetry.Event) {
-	if event.Error == nil {
-		// we only log errors by default
+	if w.onlyErrors && event.Error == nil {
 		return
 	}
 	fmt.Fprintf(w.writer, "%v\n", event)
 }
 func (w *logWriter) Metric(context.Context, telemetry.MetricData) {}
-func (w *logWriter) Flush()                                       {}

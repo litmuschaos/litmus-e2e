@@ -17,15 +17,19 @@ import (
 
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus-e2e/pkg/utils"
+	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	restclient "k8s.io/client-go/rest"
 )
 
 var (
-	kubeconfig string
-	config     *restclient.Config
-	client     *kubernetes.Clientset
-	clientSet  *chaosClient.LitmuschaosV1alpha1Client
-	err        error
+	kubeconfig     string
+	config         *restclient.Config
+	client         *kubernetes.Clientset
+	clientSet      *chaosClient.LitmuschaosV1alpha1Client
+	err            error
+	engineName     = "engine4"
+	experimentName = "openebs-target-network-delay"
 )
 
 func TestChaos(t *testing.T) {
@@ -61,12 +65,12 @@ var _ = BeforeSuite(func() {
 	}
 
 	//Getting the Application Status
-	app, _ := client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
+	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("percona", metav1.GetOptions{})
 	count := 0
 	for app.Status.UnavailableReplicas != 0 {
 		if count < 50 {
 			fmt.Printf("Percona is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
-			app, _ = client.AppsV1().Deployments("litmus").Get("percona", metav1.GetOptions{})
+			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("percona", metav1.GetOptions{})
 			time.Sleep(10 * time.Second)
 			count++
 		} else {
@@ -84,32 +88,17 @@ var _ = Describe("BDD of openebs target network delay", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			//Fetching rbac file
-			By("Fetching rbac file for the experiment")
-			err = exec.Command("wget", "-O", "target-network-delay-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-delay/rbac.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
+			//Installing RBAC for the experiment
 
-			//Modify Namespace field of the rbac
-			By("Modify Namespace field of the rbac")
-			err = exec.Command("sed", "-i", `s/namespace: default/namespace: litmus/g`, "target-network-delay-sa.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			//Creating rbac file for the experiment
-			By("Creating rbac file for the experiment")
-			err = exec.Command("kubectl", "apply", "-f", "target-network-delay-sa.yaml").Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-delay/rbac.yaml"
+			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
+			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
+			Expect(err).To(BeNil(), "Fail to create RBAC")
+			fmt.Println("Rbac has been created successfully !!!")
 
 			//Creating Chaos Experiment
 			By("Creating Experiment")
+			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			err = exec.Command("wget", "-O", "target-network-delay-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-network-delay-ce.yaml").Run()
@@ -119,79 +108,81 @@ var _ = Describe("BDD of openebs target network delay", func() {
 
 			fmt.Println("Chaos Experiment Created Successfully")
 
-			//Creating chaosEngine
-			By("Creating ChaosEngine")
-			chaosEngine := &v1alpha1.ChaosEngine{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "engine4",
-					Namespace: "litmus",
-				},
-				Spec: v1alpha1.ChaosEngineSpec{
-					AnnotationCheck:  "false",
-					EngineState:      "active",
-					AuxiliaryAppInfo: "",
-					Appinfo: v1alpha1.ApplicationParams{
-						Appns:    "litmus",
-						Applabel: "name=percona",
-						AppKind:  "deployment",
-					},
-					ChaosServiceAccount: "target-network-delay-sa",
-					Components: v1alpha1.ComponentParams{
-						Runner: v1alpha1.RunnerInfo{
-							Image: "litmuschaos/chaos-runner:ci",
-							Type:  "go",
-						},
-					},
-					Monitoring:       false,
-					JobCleanUpPolicy: "delete",
-					Experiments: []v1alpha1.ExperimentList{
-						{
-							Name: "openebs-target-network-delay",
-							Spec: v1alpha1.ExperimentAttributes{
-								Components: v1alpha1.ExperimentComponents{
-									ENV: []v1alpha1.ExperimentENV{
-										{
-											Name:  "TARGET_CONTAINER",
-											Value: "cstor-istgt",
-										},
-										{
-											Name:  "APP_PVC",
-											Value: "percona-vol1-claim",
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			}
+			//Installing chaos engine for the experiment
+			//Fetching Engine file
+			By("Fetching ChaosEngine file for the experiment")
+			err = exec.Command("wget", "-O", "target-network-delay-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-network-delay/engine.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to fetch engine file")
+			//Modify chaos engine spec
+			//Modify Namespace,Name,AppNs,AppLabel of the engine
 
-			_, err = clientSet.ChaosEngines("litmus").Create(chaosEngine)
+			err = exec.Command("sed", "-i",
+				`s/namespace: default/namespace: litmus/g;
+			         s/name: target-chaos/name: engine4/g;
+					 s/appns: 'default'/appns: 'litmus'/g;
+					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;					 
+			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
+				"target-network-delay-ce.yaml").Run()
+
+			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
+			//Modify APP_PVC
+			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "target-network-delay-ce.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
+
+			//Creating ChaosEngine
+			By("Creating ChaosEngine")
+			err = exec.Command("kubectl", "apply", "-f", "target-network-delay-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			Expect(err).To(BeNil(), "Fail to create chaos engine")
 			if err != nil {
 				fmt.Println(err)
 			}
-			time.Sleep(5 * time.Second)
 
 			fmt.Println("Chaosengine created successfully...")
+			time.Sleep(2 * time.Second)
 
-			//Fetching engine-nginx-runner pod
-			runner, err := client.CoreV1().Pods("litmus").Get("engine4-runner", metav1.GetOptions{})
+			//Fetching the runner pod and Checking if it get in Running state or not
+			By("Wait for engine to come in running sate")
+			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
-			for i := 0; i < 30; i++ {
-				if string(runner.Status.Phase) != "Succeeded" {
+			//Running it for infinite time (say 3000 * 10)
+			//The Gitlab job will quit if it takes more time than default time (10 min)
+			for i := 0; i < 3000; i++ {
+				if string(runner.Status.Phase) != "Running" {
+					time.Sleep(1 * time.Second)
+					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+					Expect(string(runner.Status.Phase)).NotTo(Or(Equal("Succeeded"), Equal("")))
+					fmt.Printf("The Runner pod is in %v State\n", runner.Status.Phase)
+				} else {
+					break
+				}
+			}
+			Expect(err).To(BeNil(), "Fail to get the runner pod")
+			Expect(string(runner.Status.Phase)).To(Equal("Running"))
+
+			//Fetch job pod name
+			By("Fetch Job pod name")
+			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
+			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
+			Expect(err).To(BeNil(), "Fail to print the logs of the experiment")
+
+			//Running it for infinite time (say 3000 * 10)
+			//The Gitlab job will quit if it takes more time than default time (10 min)
+			By("Wait for engine to come in Succeeded sate")
+			runnerAfter, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+			for i := 0; i < 3000; i++ {
+				if string(runnerAfter.Status.Phase) != "Succeeded" {
 					time.Sleep(10 * time.Second)
-					runner, _ = client.CoreV1().Pods("litmus").Get("engine4-runner", metav1.GetOptions{})
-					fmt.Printf("Currently Runner is in %v State, Please Wait ...\n", runner.Status.Phase)
+					runnerAfter, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+					fmt.Printf("Currently, the runner pod is in %v State, Please Wait ...\n", runnerAfter.Status.Phase)
 				} else {
 					break
 				}
 			}
 			Expect(err).To(BeNil())
-			Expect(string(runner.Status.Phase)).To(Or(Equal("Running"), Equal("Succeeded")))
-
+			Expect(string(runnerAfter.Status.Phase)).To(Equal("Succeeded"))
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, _ := clientSet.ChaosResults("litmus").Get("engine4-openebs-target-network-delay", metav1.GetOptions{})
+			app, _ := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get("engine4-openebs-target-network-delay", metav1.GetOptions{})
 			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 		})
 	})

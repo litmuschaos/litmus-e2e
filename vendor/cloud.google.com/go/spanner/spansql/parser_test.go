@@ -70,6 +70,14 @@ func TestParseQuery(t *testing.T) {
 				},
 			},
 		},
+		{`SELECT * FROM Packages`,
+			Query{
+				Select: Select{
+					List: []Expr{Star},
+					From: []SelectFrom{{Table: "Packages"}},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		got, err := ParseQuery(test.in)
@@ -187,7 +195,7 @@ func TestParseExpr(t *testing.T) {
 		{`NULL`, Null},
 	}
 	for _, test := range tests {
-		p := newParser(test.in)
+		p := newParser("test-file", test.in)
 		got, err := p.parseExpr()
 		if err != nil {
 			t.Errorf("[%s]: %v", test.in, err)
@@ -205,13 +213,14 @@ func TestParseExpr(t *testing.T) {
 func TestParseDDL(t *testing.T) {
 	tests := []struct {
 		in   string
-		want DDL
+		want *DDL
 	}{
 		{`CREATE TABLE FooBar (
 			System STRING(MAX) NOT NULL,  # This is a comment.
 			RepoPath STRING(MAX) NOT NULL,  -- This is another comment.
 			Count INT64, /* This is a
-			              * multiline comment. */
+						  * multiline comment. */
+			UpdatedAt TIMESTAMP OPTIONS (allow_commit_timestamp = true),
 		) PRIMARY KEY(System, RepoPath);
 		CREATE UNIQUE INDEX MyFirstIndex ON FooBar (
 			Count DESC
@@ -230,33 +239,38 @@ func TestParseDDL(t *testing.T) {
 		DROP INDEX MyFirstIndex;
 		DROP TABLE FooBar;
 
+		-- This table has some commentary
+		-- that spans multiple lines.
 		CREATE TABLE NonScalars (
 			Dummy INT64 NOT NULL,
 			Ids ARRAY<INT64>,
 			Names ARRAY<STRING(MAX)>,
 		) PRIMARY KEY (Dummy);
-		`, DDL{List: []DDLStmt{
-			CreateTable{
+		`, &DDL{Filename: "filename", List: []DDLStmt{
+			&CreateTable{
 				Name: "FooBar",
 				Columns: []ColumnDef{
 					{Name: "System", Type: Type{Base: String, Len: MaxLen}, NotNull: true},
 					{Name: "RepoPath", Type: Type{Base: String, Len: MaxLen}, NotNull: true},
 					{Name: "Count", Type: Type{Base: Int64}},
+					{Name: "UpdatedAt", Type: Type{Base: Timestamp}, AllowCommitTimestamp: boolAddr(true)},
 				},
 				PrimaryKey: []KeyPart{
 					{Column: "System"},
 					{Column: "RepoPath"},
 				},
+				Position: Position{Line: 1},
 			},
-			CreateIndex{
+			&CreateIndex{
 				Name:       "MyFirstIndex",
 				Table:      "FooBar",
 				Columns:    []KeyPart{{Column: "Count", Desc: true}},
 				Unique:     true,
 				Storing:    []string{"Count"},
 				Interleave: "SomeTable",
+				Position:   Position{Line: 8},
 			},
-			CreateTable{
+			&CreateTable{
 				Name: "FooBarAux",
 				Columns: []ColumnDef{
 					{Name: "System", Type: Type{Base: String, Len: MaxLen}, NotNull: true},
@@ -272,15 +286,26 @@ func TestParseDDL(t *testing.T) {
 					Parent:   "FooBar",
 					OnDelete: CascadeOnDelete,
 				},
+				Position: Position{Line: 11},
 			},
-			AlterTable{Name: "FooBar", Alteration: AddColumn{
-				Def: ColumnDef{Name: "TZ", Type: Type{Base: Bytes, Len: 20}},
-			}},
-			AlterTable{Name: "FooBar", Alteration: DropColumn{Name: "TZ"}},
-			AlterTable{Name: "FooBar", Alteration: SetOnDelete{Action: NoActionOnDelete}},
-			DropIndex{Name: "MyFirstIndex"},
-			DropTable{Name: "FooBar"},
-			CreateTable{
+			&AlterTable{
+				Name:       "FooBar",
+				Alteration: AddColumn{Def: ColumnDef{Name: "TZ", Type: Type{Base: Bytes, Len: 20}}},
+				Position:   Position{Line: 18},
+			},
+			&AlterTable{
+				Name:       "FooBar",
+				Alteration: DropColumn{Name: "TZ"},
+				Position:   Position{Line: 19},
+			},
+			&AlterTable{
+				Name:       "FooBar",
+				Alteration: SetOnDelete{Action: NoActionOnDelete},
+				Position:   Position{Line: 20},
+			},
+			&DropIndex{Name: "MyFirstIndex", Position: Position{Line: 22}},
+			&DropTable{Name: "FooBar", Position: Position{Line: 23}},
+			&CreateTable{
 				Name: "NonScalars",
 				Columns: []ColumnDef{
 					{Name: "Dummy", Type: Type{Base: Int64}, NotNull: true},
@@ -288,25 +313,77 @@ func TestParseDDL(t *testing.T) {
 					{Name: "Names", Type: Type{Array: true, Base: String, Len: MaxLen}},
 				},
 				PrimaryKey: []KeyPart{{Column: "Dummy"}},
+				Position:   Position{Line: 27},
 			},
+		}, Comments: []*Comment{
+			{Marker: "#", Start: Position{Line: 2}, End: Position{Line: 2},
+				Text: []string{"This is a comment."}},
+			{Marker: "--", Start: Position{Line: 3}, End: Position{Line: 3},
+				Text: []string{"This is another comment."}},
+			{Marker: "/*", Start: Position{Line: 4}, End: Position{Line: 5},
+				Text: []string{" This is a", "\t\t\t\t\t\t  * multiline comment."}},
+			{Marker: "--", Start: Position{Line: 25}, End: Position{Line: 26},
+				Text: []string{"This table has some commentary", "that spans multiple lines."}},
 		}}},
 		// No trailing comma:
-		{`ALTER TABLE T ADD COLUMN C2 INT64`, DDL{List: []DDLStmt{
-			AlterTable{Name: "T", Alteration: AddColumn{
-				Def: ColumnDef{Name: "C2", Type: Type{Base: Int64}},
-			}},
+		{`ALTER TABLE T ADD COLUMN C2 INT64`, &DDL{Filename: "filename", List: []DDLStmt{
+			&AlterTable{
+				Name:       "T",
+				Alteration: AddColumn{Def: ColumnDef{Name: "C2", Type: Type{Base: Int64}}},
+				Position:   Position{Line: 1},
+			},
+		}}},
+		// Table and column names using reserved keywords.
+		{`CREATE TABLE ` + "`enum`" + ` (
+			` + "`With`" + ` STRING(MAX) NOT NULL,
+		) PRIMARY KEY(` + "`With`" + `);
+		`, &DDL{Filename: "filename", List: []DDLStmt{
+			&CreateTable{
+				Name: "enum",
+				Columns: []ColumnDef{
+					{Name: "With", Type: Type{Base: String, Len: MaxLen}, NotNull: true},
+				},
+				PrimaryKey: []KeyPart{
+					{Column: "With"},
+				},
+				Position: Position{Line: 1},
+			},
 		}}},
 	}
 	for _, test := range tests {
-		got, err := ParseDDL(test.in)
+		got, err := ParseDDL("filename", test.in)
 		if err != nil {
 			t.Errorf("ParseDDL(%q): %v", test.in, err)
 			continue
 		}
+		got.clearOffset()
 		if !reflect.DeepEqual(got, test.want) {
 			t.Errorf("ParseDDL(%q) incorrect.\n got %v\nwant %v", test.in, got, test.want)
 		}
 	}
+
+	// Check the comment discovey helpers on the first DDL.
+	ddl := tests[0].want
+	// The CreateTable for NonScalars has a leading comment.
+	found := false
+	for _, stmt := range ddl.List {
+		ct, ok := stmt.(*CreateTable)
+		if !ok || ct.Name != "NonScalars" {
+			continue
+		}
+		found = true
+		com := ddl.LeadingComment(ct)
+		if com == nil {
+			t.Errorf("No leading comment found for NonScalars")
+		} else if com.Text[0] != "This table has some commentary" {
+			t.Errorf("LeadingComment returned the wrong comment for NonScalars")
+		}
+	}
+	if !found {
+		t.Errorf("Test error: didn't find NonScalars node in DDL")
+	}
+	// Second field of FooBar (RepoPath) has an inline comment.
+	// TODO: Check this when more source positions are recorded.
 }
 
 func TestParseFailures(t *testing.T) {
@@ -349,8 +426,9 @@ func TestParseFailures(t *testing.T) {
 		{expr, `"foo" AND "bar"`, "logical operation on string literals"},
 	}
 	for _, test := range tests {
-		p := newParser(test.in)
-		if test.f(p) == nil && p.Rem() == "" {
+		p := newParser("f", test.in)
+		err := test.f(p)
+		if err == nil && p.Rem() == "" {
 			t.Errorf("%s: parsing [%s] succeeded, should have failed", test.desc, test.in)
 		}
 	}

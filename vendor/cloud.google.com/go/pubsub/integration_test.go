@@ -93,7 +93,6 @@ func integrationTestClient(ctx context.Context, t *testing.T) *Client {
 }
 
 func TestIntegration_All(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1633")
 	t.Parallel()
 	ctx := context.Background()
 	client := integrationTestClient(ctx, t)
@@ -346,7 +345,6 @@ func testIAM(ctx context.Context, h *iam.Handle, permission string) (msg string,
 }
 
 func TestIntegration_LargePublishSize(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1636")
 	ctx := context.Background()
 	client := integrationTestClient(ctx, t)
 	defer client.Close()
@@ -410,7 +408,6 @@ func TestIntegration_LargePublishSize(t *testing.T) {
 }
 
 func TestIntegration_CancelReceive(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1666")
 	t.Parallel()
 	ctx, cancel := context.WithCancel(context.Background())
 	client := integrationTestClient(ctx, t)
@@ -529,8 +526,6 @@ func findServiceAccountEmail(ctx context.Context, t *testing.T) string {
 }
 
 func TestIntegration_UpdateSubscription(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1643")
-
 	t.Parallel()
 	ctx := context.Background()
 
@@ -738,7 +733,6 @@ func TestIntegration_UpdateSubscription_ExpirationPolicy(t *testing.T) {
 // NOTE: This test should be skipped by open source contributors. It requires
 // whitelisting, a (gsuite) organization project, and specific permissions.
 func TestIntegration_UpdateTopicLabels(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1669")
 	t.Parallel()
 	ctx := context.Background()
 	client := integrationTestClient(ctx, t)
@@ -877,7 +871,6 @@ func TestIntegration_Errors(t *testing.T) {
 }
 
 func TestIntegration_MessageStoragePolicy_TopicLevel(t *testing.T) {
-	t.Skip("https://github.com/googleapis/google-cloud-go/issues/1599")
 	t.Parallel()
 	ctx := context.Background()
 	client := integrationTestClient(ctx, t)
@@ -951,6 +944,7 @@ func TestIntegration_MessageStoragePolicy_ProjectLevel(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Integration tests skipped in short mode")
 	}
+	t.Parallel()
 	ctx := context.Background()
 	// If a message storage policy is not set on a topic, the policy depends on the Resource Location
 	// Restriction which is specified on an organization level. The usual testing project is in the
@@ -1086,5 +1080,142 @@ func TestIntegration_CreateTopic_MessageStoragePolicy(t *testing.T) {
 	want := tc
 	if diff := testutil.Diff(got, want); diff != "" {
 		t.Fatalf("\ngot: - want: +\n%s", diff)
+	}
+}
+
+func TestIntegration_CreateSubscription_DeadLetterPolicy(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	client := integrationTestClient(ctx, t)
+	defer client.Close()
+
+	topic, err := client.CreateTopic(ctx, topicIDs.New())
+	if err != nil {
+		t.Fatalf("CreateTopic error: %v", err)
+	}
+	defer topic.Delete(ctx)
+	defer topic.Stop()
+
+	deadLetterTopic, err := client.CreateTopic(ctx, topicIDs.New())
+	if err != nil {
+		t.Fatalf("CreateTopic error: %v", err)
+	}
+	defer deadLetterTopic.Delete(ctx)
+	defer deadLetterTopic.Stop()
+
+	// We don't set MaxDeliveryAttempts in DeadLetterPolicy so that we can test
+	// that MaxDeliveryAttempts defaults properly to 5 if not set.
+	cfg := SubscriptionConfig{
+		Topic: topic,
+		DeadLetterPolicy: &DeadLetterPolicy{
+			DeadLetterTopic: deadLetterTopic.String(),
+		},
+	}
+	var sub *Subscription
+	if sub, err = client.CreateSubscription(ctx, subIDs.New(), cfg); err != nil {
+		t.Fatalf("CreateSub error: %v", err)
+	}
+	defer sub.Delete(ctx)
+
+	got, err := sub.Config(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := SubscriptionConfig{
+		Topic:               topic,
+		AckDeadline:         10 * time.Second,
+		RetainAckedMessages: false,
+		RetentionDuration:   defaultRetentionDuration,
+		ExpirationPolicy:    defaultExpirationPolicy,
+		DeadLetterPolicy: &DeadLetterPolicy{
+			DeadLetterTopic:     deadLetterTopic.String(),
+			MaxDeliveryAttempts: 5,
+		},
+	}
+	if diff := testutil.Diff(got, want); diff != "" {
+		t.Fatalf("SubsciptionConfig; got: - want: +\n%s", diff)
+	}
+
+	res := topic.Publish(ctx, &Message{
+		Data: []byte("failed message"),
+	})
+	if _, err := res.Get(ctx); err != nil {
+		t.Fatalf("Publish message error: %v", err)
+	}
+
+	ctx2, cancel := context.WithCancel(ctx)
+	numAttempts := 1
+	err = sub.Receive(ctx2, func(_ context.Context, m *Message) {
+		if numAttempts >= 5 {
+			cancel()
+			m.Ack()
+			return
+		}
+		if *m.DeliveryAttempt != numAttempts {
+			t.Fatalf("Message delivery attempt: %d does not match numAttempts: %d\n", m.DeliveryAttempt, numAttempts)
+		}
+		numAttempts++
+		m.Nack()
+	})
+	if err != nil {
+		t.Fatalf("Streaming pull error: %v\n", err)
+	}
+}
+
+// Test that the DeliveryAttempt field is nil when dead lettering is not enabled.
+func TestIntegration_DeadLetterPolicy_DeliveryAttempt(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	client := integrationTestClient(ctx, t)
+	defer client.Close()
+
+	topic, err := client.CreateTopic(ctx, topicIDs.New())
+	if err != nil {
+		t.Fatalf("CreateTopic error: %v", err)
+	}
+	defer topic.Delete(ctx)
+	defer topic.Stop()
+
+	cfg := SubscriptionConfig{
+		Topic: topic,
+	}
+	var sub *Subscription
+	if sub, err = client.CreateSubscription(ctx, subIDs.New(), cfg); err != nil {
+		t.Fatalf("CreateSub error: %v", err)
+	}
+	defer sub.Delete(ctx)
+
+	got, err := sub.Config(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := SubscriptionConfig{
+		Topic:               topic,
+		AckDeadline:         10 * time.Second,
+		RetainAckedMessages: false,
+		RetentionDuration:   defaultRetentionDuration,
+		ExpirationPolicy:    defaultExpirationPolicy,
+	}
+	if diff := testutil.Diff(got, want); diff != "" {
+		t.Fatalf("SubsciptionConfig; got: - want: +\n%s", diff)
+	}
+
+	res := topic.Publish(ctx, &Message{
+		Data: []byte("failed message"),
+	})
+	if _, err := res.Get(ctx); err != nil {
+		t.Fatalf("Publish message error: %v", err)
+	}
+
+	ctx2, cancel := context.WithCancel(ctx)
+	err = sub.Receive(ctx2, func(_ context.Context, m *Message) {
+		defer m.Ack()
+		defer cancel()
+		if m.DeliveryAttempt != nil {
+			t.Fatalf("DeliveryAttempt should be nil when dead lettering is disabled")
+		}
+	})
+	if err != nil {
+		t.Fatalf("Streaming pull error: %v\n", err)
 	}
 }

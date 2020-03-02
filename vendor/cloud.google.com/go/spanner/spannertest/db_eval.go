@@ -72,6 +72,30 @@ func (d *database) evalSelect(sel spansql.Select, params queryParams, aux []span
 
 	ri = &resultIter{}
 
+	// Handle SELECT DISTINCT on the way out.
+	if sel.Distinct {
+		defer func() {
+			if evalErr != nil {
+				return
+			}
+			// This is hilariously inefficient; O(N^2) in the number of returned rows.
+			// Some sort of hashing could be done to deduplicate instead.
+			// This also breaks on array/struct types.
+			for i := 0; i < len(ri.rows); i++ {
+				for j := i + 1; j < len(ri.rows); {
+					if rowCmp(ri.rows[i].data, ri.rows[j].data) != 0 {
+						// Distinct rows.
+						j++
+						continue
+					}
+					// Non-distinct rows.
+					copy(ri.rows[j:], ri.rows[j+1:])
+					ri.rows = ri.rows[:len(ri.rows)-1]
+				}
+			}
+		}()
+	}
+
 	// Handle COUNT(*) specially.
 	// TODO: Handle aggregation more generally.
 	if len(sel.List) == 1 && isCountStar(sel.List[0]) {
@@ -97,13 +121,21 @@ func (d *database) evalSelect(sel spansql.Select, params queryParams, aux []span
 		params: params,
 	}
 
-	for _, e := range sel.List {
-		ci, err := ec.colInfo(e)
-		if err != nil {
-			return nil, err
+	// Is this a `SELECT *` query?
+	selectStar := len(sel.List) == 1 && sel.List[0] == spansql.Star
+
+	if selectStar {
+		// Every column will appear in the output.
+		ri.Cols = append([]colInfo(nil), ec.table.cols...)
+	} else {
+		for _, e := range sel.List {
+			ci, err := ec.colInfo(e)
+			if err != nil {
+				return nil, err
+			}
+			// TODO: deal with ci.Name == ""?
+			ri.Cols = append(ri.Cols, ci)
 		}
-		// TODO: deal with ci.Name == ""?
-		ri.Cols = append(ri.Cols, ci)
 	}
 	for _, r := range t.rows {
 		ec.row = r
@@ -120,16 +152,27 @@ func (d *database) evalSelect(sel spansql.Select, params queryParams, aux []span
 		}
 
 		// Evaluate SELECT expression list on the row.
-		out, err := ec.evalExprList(sel.List)
-		if err != nil {
-			return nil, err
+		var res resultRow
+		if selectStar {
+			var out []interface{}
+			for i := range r {
+				out = append(out, r.copyDataElem(i))
+			}
+			res.data = out
+		} else {
+			out, err := ec.evalExprList(sel.List)
+			if err != nil {
+				return nil, err
+			}
+			res.data = out
 		}
 		a, err := ec.evalExprList(aux)
 		if err != nil {
 			return nil, err
 		}
+		res.aux = a
 
-		ri.rows = append(ri.rows, resultRow{data: out, aux: a})
+		ri.rows = append(ri.rows, res)
 	}
 
 	return ri, nil
@@ -253,6 +296,11 @@ func (ec evalContext) evalBoolExpr(be spansql.BoolExpr) (bool, error) {
 		default:
 			return false, fmt.Errorf("unhandled IsOp %T", rhs)
 		case spansql.BoolLiteral:
+			if lhs == nil {
+				// For `X IS TRUE`, X being NULL is okay, and this evaluates
+				// to false. Same goes for `X IS FALSE`.
+				lhs = !bool(rhs)
+			}
 			lhsBool, ok := lhs.(bool)
 			if !ok {
 				return false, fmt.Errorf("non-bool value %T on LHS for %s", lhs, be.SQL())
@@ -295,6 +343,8 @@ func (ec evalContext) evalExpr(e spansql.Expr) (interface{}, error) {
 	case spansql.Paren:
 		return ec.evalExpr(e.Expr)
 	case spansql.LogicalOp:
+		return ec.evalBoolExpr(e)
+	case spansql.ComparisonOp:
 		return ec.evalBoolExpr(e)
 	case spansql.IsOp:
 		return ec.evalBoolExpr(e)
@@ -391,7 +441,7 @@ func compareVals(x, y interface{}) int {
 		}
 		return 0
 	case string:
-		// This handles DATE too.
+		// This handles DATE and TIMESTAMP too.
 		return strings.Compare(x, y.(string))
 	}
 }

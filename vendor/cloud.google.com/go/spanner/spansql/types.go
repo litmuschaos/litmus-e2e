@@ -19,8 +19,12 @@ package spansql
 // This file holds the type definitions for the SQL dialect.
 
 import (
+	"fmt"
 	"math"
+	"sort"
 )
+
+// TODO: More Position fields throughout; maybe in Query/Select.
 
 // CreateTable represents a CREATE TABLE statement.
 // https://cloud.google.com/spanner/docs/data-definition-language#create_table
@@ -29,7 +33,14 @@ type CreateTable struct {
 	Columns    []ColumnDef
 	PrimaryKey []KeyPart
 	Interleave *Interleave
+
+	Position Position // position of the "CREATE" token
 }
+
+func (ct *CreateTable) String() string { return fmt.Sprintf("%#v", ct) }
+func (*CreateTable) isDDLStmt()        {}
+func (ct *CreateTable) Pos() Position  { return ct.Position }
+func (ct *CreateTable) clearOffset()   { ct.Position.Offset = 0 }
 
 // Interleave represents an interleave clause of a CREATE TABLE statement.
 type Interleave struct {
@@ -49,22 +60,54 @@ type CreateIndex struct {
 
 	Storing    []string
 	Interleave string
+
+	Position Position // position of the "CREATE" token
 }
+
+func (ci *CreateIndex) String() string { return fmt.Sprintf("%#v", ci) }
+func (*CreateIndex) isDDLStmt()        {}
+func (ci *CreateIndex) Pos() Position  { return ci.Position }
+func (ci *CreateIndex) clearOffset()   { ci.Position.Offset = 0 }
 
 // DropTable represents a DROP TABLE statement.
 // https://cloud.google.com/spanner/docs/data-definition-language#drop_table
-type DropTable struct{ Name string }
+type DropTable struct {
+	Name string
+
+	Position Position // position of the "DROP" token
+}
+
+func (dt *DropTable) String() string { return fmt.Sprintf("%#v", dt) }
+func (*DropTable) isDDLStmt()        {}
+func (dt *DropTable) Pos() Position  { return dt.Position }
+func (dt *DropTable) clearOffset()   { dt.Position.Offset = 0 }
 
 // DropIndex represents a DROP INDEX statement.
 // https://cloud.google.com/spanner/docs/data-definition-language#drop-index
-type DropIndex struct{ Name string }
+type DropIndex struct {
+	Name string
+
+	Position Position // position of the "DROP" token
+}
+
+func (di *DropIndex) String() string { return fmt.Sprintf("%#v", di) }
+func (*DropIndex) isDDLStmt()        {}
+func (di *DropIndex) Pos() Position  { return di.Position }
+func (di *DropIndex) clearOffset()   { di.Position.Offset = 0 }
 
 // AlterTable represents an ALTER TABLE statement.
 // https://cloud.google.com/spanner/docs/data-definition-language#alter_table
 type AlterTable struct {
 	Name       string
 	Alteration TableAlteration
+
+	Position Position // position of the "ALTER" token
 }
+
+func (at *AlterTable) String() string { return fmt.Sprintf("%#v", at) }
+func (*AlterTable) isDDLStmt()        {}
+func (at *AlterTable) Pos() Position  { return at.Position }
+func (at *AlterTable) clearOffset()   { at.Position.Offset = 0 }
 
 // TableAlteration is satisfied by AddColumn, DropColumn and SetOnDelete.
 type TableAlteration interface {
@@ -94,12 +137,32 @@ type AlterColumn struct {
 }
 */
 
+// Delete represents a DELETE statement.
+// https://cloud.google.com/spanner/docs/dml-syntax#delete-statement
+type Delete struct {
+	Table string
+	Where BoolExpr
+
+	// TODO: Alias
+}
+
+func (d *Delete) String() string { return fmt.Sprintf("%#v", d) }
+func (*Delete) isDMLStmt()       {}
+
+// TODO: Insert, Update.
+
 // ColumnDef represents a column definition as part of a CREATE TABLE
 // or ALTER TABLE statement.
 type ColumnDef struct {
 	Name    string
 	Type    Type
 	NotNull bool
+
+	// AllowCommitTimestamp represents a column OPTIONS.
+	// `true` if query is `OPTIONS (allow_commit_timestamp = true)`
+	// `false` if query is `OPTIONS (allow_commit_timestamp = null)`
+	// `nil` if there are no OPTIONS
+	AllowCommitTimestamp *bool
 }
 
 // Type represents a column type.
@@ -141,9 +204,10 @@ type Query struct {
 // Select represents a SELECT statement.
 // https://cloud.google.com/spanner/docs/query-syntax#select-list
 type Select struct {
-	List  []Expr
-	From  []SelectFrom
-	Where BoolExpr
+	Distinct bool
+	List     []Expr
+	From     []SelectFrom
+	Where    BoolExpr
 	// TODO: GroupBy, Having
 }
 
@@ -339,16 +403,104 @@ func (StarExpr) isExpr() {}
 // DDL represents a Data Definition Language (DDL) file.
 type DDL struct {
 	List []DDLStmt
+
+	Filename string // if known at parse time
+
+	Comments []*Comment // all comments, sorted by position
+}
+
+func (d *DDL) clearOffset() {
+	for _, stmt := range d.List {
+		stmt.clearOffset()
+	}
+	for _, c := range d.Comments {
+		c.clearOffset()
+	}
 }
 
 // DDLStmt is satisfied by a type that can appear in a DDL.
 type DDLStmt interface {
 	isDDLStmt()
 	SQL() string
+	Node
 }
 
-func (CreateTable) isDDLStmt() {}
-func (CreateIndex) isDDLStmt() {}
-func (AlterTable) isDDLStmt()  {}
-func (DropTable) isDDLStmt()   {}
-func (DropIndex) isDDLStmt()   {}
+// DMLStmt is satisfied by a type that is a DML statement.
+type DMLStmt interface {
+	isDMLStmt()
+	SQL() string
+}
+
+// Comment represents a comment.
+type Comment struct {
+	Marker string // opening marker; one of "#", "--", "/*"
+	// Start and End are the position of the opening and terminating marker.
+	Start, End Position
+	Text       []string
+}
+
+func (c *Comment) String() string { return fmt.Sprintf("%#v", c) }
+func (c *Comment) Pos() Position  { return c.Start }
+func (c *Comment) clearOffset()   { c.Start.Offset, c.End.Offset = 0, 0 }
+
+// Node is implemented by concrete types in this package that represent things
+// appearing in a DDL file.
+type Node interface {
+	Pos() Position
+	clearOffset()
+}
+
+// Position describes a source position in an input DDL file.
+// It is only valid if the line number is positive.
+type Position struct {
+	Line   int // 1-based line number
+	Offset int // 0-based byte offset
+}
+
+func (pos Position) IsValid() bool { return pos.Line > 0 }
+func (pos Position) String() string {
+	if pos.Line == 0 {
+		return ":<invalid>"
+	}
+	return fmt.Sprintf(":%d", pos.Line)
+}
+
+// LeadingComment returns the comment that immediately precedes a node,
+// or nil if there's no such comment.
+func (ddl *DDL) LeadingComment(n Node) *Comment {
+	// Get the comment whose End position is on the previous line.
+	lineEnd := n.Pos().Line - 1
+	ci := sort.Search(len(ddl.Comments), func(i int) bool {
+		return ddl.Comments[i].End.Line >= lineEnd
+	})
+	if ci >= len(ddl.Comments) || ddl.Comments[ci].End.Line != lineEnd {
+		return nil
+	}
+	return ddl.Comments[ci]
+}
+
+// InlineComment returns the comment on the same line as a node,
+// or nil if there's no inline comment.
+// The returned comment is guaranteed to be a single line.
+func (ddl *DDL) InlineComment(n Node) *Comment {
+	// TODO: Do we care about comments like this?
+	// 	string name = 1; /* foo
+	// 	bar */
+
+	pos := n.Pos()
+	ci := sort.Search(len(ddl.Comments), func(i int) bool {
+		return ddl.Comments[i].Start.Line >= pos.Line
+	})
+	if ci >= len(ddl.Comments) {
+		return nil
+	}
+	c := ddl.Comments[ci]
+	if c.Start.Line != pos.Line {
+		return nil
+	}
+	if c.Start != c.End || len(c.Text) != 1 {
+		// Multi-line comment; don't return it.
+		return nil
+	}
+	return c
+}

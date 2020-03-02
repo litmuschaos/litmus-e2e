@@ -178,7 +178,7 @@ func TestBatchCreateSessionsWithExceptions(t *testing.T) {
 			// Register the errors on the server.
 			errors := make([]error, numErrors+firstErrorAt)
 			for i := firstErrorAt; i < numErrors+firstErrorAt; i++ {
-				errors[i] = spannerErrorf(codes.FailedPrecondition, "session creation failed")
+				errors[i] = status.Errorf(codes.FailedPrecondition, "session creation failed")
 			}
 			server.TestSpanner.PutExecutionTime(MethodBatchCreateSession, SimulatedExecutionTime{
 				Errors: errors,
@@ -308,7 +308,7 @@ func TestBatchCreateSessions_WithTimeout(t *testing.T) {
 	}
 	for _, e := range consumer.errors {
 		if g, w := status.Code(e.err), codes.DeadlineExceeded; g != w {
-			t.Fatalf("Error code mismatch\ngot: %v\nwant: %v", g, w)
+			t.Fatalf("Error code mismatch\ngot: %v (%s)\nwant: %v", g, e.err, w)
 		}
 	}
 	client.Close()

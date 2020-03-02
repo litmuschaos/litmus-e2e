@@ -27,7 +27,7 @@ import (
 	"cloud.google.com/go/spanner/spansql"
 )
 
-var stdTestTable = spansql.CreateTable{
+var stdTestTable = &spansql.CreateTable{
 	Name: "Staff",
 	Columns: []spansql.ColumnDef{
 		{Name: "Tenure", Type: spansql.Type{Base: spansql.Int64}},
@@ -83,7 +83,8 @@ func TestTableData(t *testing.T) {
 	}
 
 	// Insert a subset of columns.
-	err := db.Insert("Staff", []string{"ID", "Name", "Tenure", "Height"}, []*structpb.ListValue{
+	tx := db.startTransaction()
+	err := db.Insert(tx, "Staff", []string{"ID", "Name", "Tenure", "Height"}, []*structpb.ListValue{
 		// int64 arrives as a decimal string.
 		listV(stringV("1"), stringV("Jack"), stringV("10"), floatV(1.85)),
 		listV(stringV("2"), stringV("Daniel"), stringV("11"), floatV(1.83)),
@@ -92,7 +93,7 @@ func TestTableData(t *testing.T) {
 		t.Fatalf("Inserting data: %v", err)
 	}
 	// Insert a different set of columns.
-	err = db.Insert("Staff", []string{"Name", "ID", "Cool", "Tenure", "Height"}, []*structpb.ListValue{
+	err = db.Insert(tx, "Staff", []string{"Name", "ID", "Cool", "Tenure", "Height"}, []*structpb.ListValue{
 		listV(stringV("Sam"), stringV("3"), boolV(false), stringV("9"), floatV(1.75)),
 		listV(stringV("Teal'c"), stringV("4"), boolV(true), stringV("8"), floatV(1.91)),
 		listV(stringV("George"), stringV("5"), nullV(), stringV("6"), floatV(1.73)),
@@ -102,17 +103,20 @@ func TestTableData(t *testing.T) {
 		t.Fatalf("Inserting more data: %v", err)
 	}
 	// Delete that last one.
-	err = db.Delete("Staff", []*structpb.ListValue{listV(stringV("Harry"), stringV("6"))}, nil, false)
+	err = db.Delete(tx, "Staff", []*structpb.ListValue{listV(stringV("Harry"), stringV("6"))}, nil, false)
 	if err != nil {
 		t.Fatalf("Deleting a row: %v", err)
 	}
 	// Turns out this guy isn't cool after all.
-	err = db.Update("Staff", []string{"Name", "ID", "Cool"}, []*structpb.ListValue{
+	err = db.Update(tx, "Staff", []string{"Name", "ID", "Cool"}, []*structpb.ListValue{
 		// Missing columns should be left alone.
 		listV(stringV("Daniel"), stringV("2"), boolV(false)),
 	})
 	if err != nil {
 		t.Fatalf("Updating a row: %v", err)
+	}
+	if _, err := tx.Commit(); err != nil {
+		t.Fatalf("Commiting changes: %v", err)
 	}
 
 	// Read some specific keys.
@@ -158,8 +162,8 @@ func TestTableData(t *testing.T) {
 		t.Errorf("ReadAll data wrong.\n got %v\nwant %v", all, wantAll)
 	}
 
-	// Add a DATE column, populate it with some data.
-	st = db.ApplyDDL(spansql.AlterTable{
+	// Add DATE and TIMESTAMP columns, and populate them with some data.
+	st = db.ApplyDDL(&spansql.AlterTable{
 		Name: "Staff",
 		Alteration: spansql.AddColumn{Def: spansql.ColumnDef{
 			Name: "FirstSeen",
@@ -169,18 +173,33 @@ func TestTableData(t *testing.T) {
 	if st.Code() != codes.OK {
 		t.Fatalf("Adding column: %v", st.Err())
 	}
-	err = db.Update("Staff", []string{"Name", "ID", "FirstSeen"}, []*structpb.ListValue{
-		listV(stringV("Jack"), stringV("1"), stringV("1994-10-28")),
-		listV(stringV("Daniel"), stringV("2"), stringV("1994-10-28")),
-		listV(stringV("George"), stringV("5"), stringV("1997-07-27")),
+	st = db.ApplyDDL(&spansql.AlterTable{
+		Name: "Staff",
+		Alteration: spansql.AddColumn{Def: spansql.ColumnDef{
+			Name: "To", // keyword; will need quoting in queries
+			Type: spansql.Type{Base: spansql.Timestamp},
+		}},
+	})
+	if st.Code() != codes.OK {
+		t.Fatalf("Adding column: %v", st.Err())
+	}
+	tx = db.startTransaction()
+	err = db.Update(tx, "Staff", []string{"Name", "ID", "FirstSeen", "To"}, []*structpb.ListValue{
+		listV(stringV("Jack"), stringV("1"), stringV("1994-10-28"), nullV()),
+		listV(stringV("Daniel"), stringV("2"), stringV("1994-10-28"), nullV()),
+		listV(stringV("George"), stringV("5"), stringV("1997-07-27"), stringV("2008-07-29T11:22:43Z")),
 	})
 	if err != nil {
 		t.Fatalf("Updating rows: %v", err)
 	}
+	if _, err := tx.Commit(); err != nil {
+		t.Fatalf("Commiting changes: %v", err)
+	}
 
 	// Add some more data, then delete it with a KeyRange.
 	// The queries below ensure that this was all deleted.
-	err = db.Insert("Staff", []string{"Name", "ID"}, []*structpb.ListValue{
+	tx = db.startTransaction()
+	err = db.Insert(tx, "Staff", []string{"Name", "ID"}, []*structpb.ListValue{
 		listV(stringV("01"), stringV("1")),
 		listV(stringV("03"), stringV("3")),
 		listV(stringV("06"), stringV("6")),
@@ -188,13 +207,73 @@ func TestTableData(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Inserting data: %v", err)
 	}
-	err = db.Delete("Staff", nil, keyRangeList{{
+	err = db.Delete(tx, "Staff", nil, keyRangeList{{
 		start:       listV(stringV("01"), stringV("1")),
 		startClosed: true,
 		end:         listV(stringV("9")),
 	}}, false)
 	if err != nil {
 		t.Fatalf("Deleting key range: %v", err)
+	}
+	if _, err := tx.Commit(); err != nil {
+		t.Fatalf("Commiting changes: %v", err)
+	}
+	// Re-add the data and delete with DML.
+	err = db.Insert(tx, "Staff", []string{"Name", "ID"}, []*structpb.ListValue{
+		listV(stringV("01"), stringV("1")),
+		listV(stringV("03"), stringV("3")),
+		listV(stringV("06"), stringV("6")),
+	})
+	if err != nil {
+		t.Fatalf("Inserting data: %v", err)
+	}
+	n, err := db.Execute(&spansql.Delete{
+		Table: "Staff",
+		Where: spansql.LogicalOp{
+			LHS: spansql.ComparisonOp{
+				LHS: spansql.ID("Name"),
+				Op:  spansql.Ge,
+				RHS: spansql.Param("min"),
+			},
+			Op: spansql.And,
+			RHS: spansql.ComparisonOp{
+				LHS: spansql.ID("Name"),
+				Op:  spansql.Lt,
+				RHS: spansql.Param("max"),
+			},
+		},
+	}, queryParams{
+		"min": "01",
+		"max": "07",
+	})
+	if err != nil {
+		t.Fatalf("Deleting with DML: %v", err)
+	}
+	if n != 3 {
+		t.Errorf("Deleting with DML affected %d rows, want 3", n)
+	}
+
+	// Add a BYTES column, and populate it with some data.
+	st = db.ApplyDDL(&spansql.AlterTable{
+		Name: "Staff",
+		Alteration: spansql.AddColumn{Def: spansql.ColumnDef{
+			Name: "RawBytes",
+			Type: spansql.Type{Base: spansql.Bytes, Len: spansql.MaxLen},
+		}},
+	})
+	if st.Code() != codes.OK {
+		t.Fatalf("Adding column: %v", st.Err())
+	}
+	tx = db.startTransaction()
+	err = db.Update(tx, "Staff", []string{"Name", "ID", "RawBytes"}, []*structpb.ListValue{
+		// bytes {0x01 0x00 0x01} encode as base-64 AQAB.
+		listV(stringV("Jack"), stringV("1"), stringV("AQAB")),
+	})
+	if err != nil {
+		t.Fatalf("Updating rows: %v", err)
+	}
+	if _, err := tx.Commit(); err != nil {
+		t.Fatalf("Commiting changes: %v", err)
 	}
 
 	// Do some complex queries.
@@ -207,6 +286,15 @@ func TestTableData(t *testing.T) {
 			`SELECT 17, "sweet", TRUE AND FALSE, NULL, B"hello"`,
 			nil,
 			[][]interface{}{{int64(17), "sweet", false, nil, []byte("hello")}},
+		},
+		// Check handling of NULL values for the IS operator.
+		// There was a bug that returned errors for some of these cases.
+		{
+			`SELECT @x IS TRUE, @x IS NOT TRUE, @x IS FALSE, @x IS NOT FALSE, @x IS NULL, @x IS NOT NULL`,
+			queryParams{"x": nil},
+			[][]interface{}{
+				{false, true, false, true, true, false},
+			},
 		},
 		{
 			`SELECT Name FROM Staff WHERE Cool`,
@@ -277,10 +365,46 @@ func TestTableData(t *testing.T) {
 			},
 		},
 		{
+			`SELECT * FROM Staff WHERE Name LIKE "S%"`,
+			nil,
+			[][]interface{}{
+				// These are returned in table column order.
+				// Note that the primary key columns get sorted first.
+				{"Sam", int64(3), int64(9), false, 1.75, nil, nil, nil},
+			},
+		},
+		{
 			`SELECT Name FROM Staff WHERE FirstSeen >= @min`,
 			queryParams{"min": "1996-01-01"},
 			[][]interface{}{
 				{"George"},
+			},
+		},
+		{
+			`SELECT RawBytes FROM Staff WHERE RawBytes IS NOT NULL`,
+			nil,
+			[][]interface{}{
+				{[]byte("\x01\x00\x01")},
+			},
+		},
+		{
+			// The keyword "To" needs quoting in queries.
+			"SELECT COUNT(*) FROM Staff WHERE `To` IS NOT NULL",
+			nil,
+			[][]interface{}{
+				{int64(1)},
+			},
+		},
+		{
+			`SELECT DISTINCT Cool, Tenure > 8 FROM Staff`,
+			nil,
+			[][]interface{}{
+				// The non-distinct results are be
+				//          [[false true] [<nil> false] [<nil> true] [false true] [true false]]
+				{false, true},
+				{nil, false},
+				{nil, true},
+				{true, false},
 			},
 		},
 	}

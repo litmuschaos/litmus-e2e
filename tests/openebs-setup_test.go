@@ -72,7 +72,7 @@ var _ = Describe("BDD of openebs cleanup", func() {
 			//Get OpenEBS Chaos Charts
 			var err error
 			By("Installing OpenEBS Charts")
-			err = exec.Command("wget", "https://openebs.github.io/charts/openebs-operator-1.2.0.yaml").Run()
+			err = exec.Command("wget", "-O", "operator.yaml", "https://openebs.github.io/charts/openebs-operator-1.2.0.yaml").Run()
 			Expect(err).To(BeNil(), "failed to install OpenEBS Charts")
 			if err != nil {
 				fmt.Println(err)
@@ -81,7 +81,7 @@ var _ = Describe("BDD of openebs cleanup", func() {
 
 			//Changing the required field
 			By("Changing the required field")
-			err = exec.Command("sed", "-i", `/name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL/{n;s/.*/          value: "true"/}`, "openebs-operator-1.2.0.yaml").Run()
+			err = exec.Command("sed", "-i", `/name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL/{n;s/.*/          value: "true"/}`, "operator.yaml").Run()
 			Expect(err).To(BeNil(), "failed to make changes in OpenEBS Charts")
 			if err != nil {
 				fmt.Println(err)
@@ -90,7 +90,7 @@ var _ = Describe("BDD of openebs cleanup", func() {
 
 			//Creating Pools
 			By("Creating OpenEBs Pool")
-			err = exec.Command("kubectl", "apply", "-f", "openebs-operator-1.2.0.yaml").Run()
+			err = exec.Command("kubectl", "apply", "-f", "operator.yaml").Run()
 			Expect(err).To(BeNil(), "failed to Create OpenEBS pool")
 			if err != nil {
 				fmt.Println(err)

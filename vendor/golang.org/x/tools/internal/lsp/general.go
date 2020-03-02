@@ -42,8 +42,8 @@ func (s *Server) initialize(ctx context.Context, params *protocol.ParamInitializ
 	if len(s.pendingFolders) == 0 {
 		if params.RootURI != "" {
 			s.pendingFolders = []protocol.WorkspaceFolder{{
-				URI:  params.RootURI,
-				Name: path.Base(params.RootURI),
+				URI:  string(params.RootURI),
+				Name: path.Base(params.RootURI.SpanURI().Filename()),
 			}}
 		} else {
 			// No folders and no root--we are in single file mode.
@@ -52,7 +52,7 @@ func (s *Server) initialize(ctx context.Context, params *protocol.ParamInitializ
 		}
 	}
 
-	var codeActionProvider interface{}
+	var codeActionProvider interface{} = true
 	if ca := params.Capabilities.TextDocument.CodeAction; len(ca.CodeActionLiteralSupport.CodeActionKind.ValueSet) > 0 {
 		// If the client has specified CodeActionLiteralSupport,
 		// send the code actions we support.
@@ -61,14 +61,12 @@ func (s *Server) initialize(ctx context.Context, params *protocol.ParamInitializ
 		codeActionProvider = &protocol.CodeActionOptions{
 			CodeActionKinds: s.getSupportedCodeActions(),
 		}
-	} else {
-		codeActionProvider = true
 	}
-	// This used to be interface{}, when r could be nil
-	var renameOpts protocol.RenameOptions
-	r := params.Capabilities.TextDocument.Rename
-	renameOpts = protocol.RenameOptions{
-		PrepareProvider: r.PrepareSupport,
+	var renameOpts interface{} = true
+	if r := params.Capabilities.TextDocument.Rename; r.PrepareSupport {
+		renameOpts = protocol.RenameOptions{
+			PrepareProvider: r.PrepareSupport,
+		}
 	}
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
@@ -81,6 +79,7 @@ func (s *Server) initialize(ctx context.Context, params *protocol.ParamInitializ
 			ImplementationProvider:     true,
 			DocumentFormattingProvider: true,
 			DocumentSymbolProvider:     true,
+			WorkspaceSymbolProvider:    true,
 			ExecuteCommandProvider: protocol.ExecuteCommandOptions{
 				Commands: options.SupportedCommands,
 			},
@@ -94,7 +93,7 @@ func (s *Server) initialize(ctx context.Context, params *protocol.ParamInitializ
 				TriggerCharacters: []string{"(", ","},
 			},
 			TextDocumentSync: &protocol.TextDocumentSyncOptions{
-				Change:    options.TextDocumentSyncKind,
+				Change:    protocol.Incremental,
 				OpenClose: true,
 				Save: protocol.SaveOptions{
 					IncludeText: false,
@@ -132,7 +131,7 @@ func (s *Server) initialized(ctx context.Context, params *protocol.InitializedPa
 		)
 	}
 
-	if options.WatchFileChanges && options.DynamicWatchedFilesSupported {
+	if options.DynamicWatchedFilesSupported {
 		registrations = append(registrations, protocol.Registration{
 			ID:     "workspace/didChangeWatchedFiles",
 			Method: "workspace/didChangeWatchedFiles",
@@ -166,13 +165,13 @@ func (s *Server) addFolders(ctx context.Context, folders []protocol.WorkspaceFol
 	viewErrors := make(map[span.URI]error)
 
 	for _, folder := range folders {
-		uri := span.NewURI(folder.URI)
-		view, workspacePackages, err := s.addView(ctx, folder.Name, span.NewURI(folder.URI))
+		uri := span.URIFromURI(folder.URI)
+		_, snapshot, err := s.addView(ctx, folder.Name, uri)
 		if err != nil {
 			viewErrors[uri] = err
 			continue
 		}
-		go s.diagnoseSnapshot(view.Snapshot(), workspacePackages)
+		go s.diagnoseDetached(snapshot)
 	}
 	if len(viewErrors) > 0 {
 		errMsg := fmt.Sprintf("Error loading workspace folders (expected %v, got %v)\n", len(folders), len(s.session.Views())-originalViews)
@@ -193,10 +192,10 @@ func (s *Server) fetchConfig(ctx context.Context, name string, folder span.URI, 
 	v := protocol.ParamConfiguration{
 		ConfigurationParams: protocol.ConfigurationParams{
 			Items: []protocol.ConfigurationItem{{
-				ScopeURI: protocol.NewURI(folder),
+				ScopeURI: string(folder),
 				Section:  "gopls",
 			}, {
-				ScopeURI: protocol.NewURI(folder),
+				ScopeURI: string(folder),
 				Section:  fmt.Sprintf("gopls-%s", name),
 			}},
 		},
@@ -235,25 +234,57 @@ func (s *Server) fetchConfig(ctx context.Context, name string, folder span.URI, 
 	return nil
 }
 
+// beginFileRequest checks preconditions for a file-oriented request and routes
+// it to a snapshot.
+// We don't want to return errors for benign conditions like wrong file type,
+// so callers should do if !ok { return err } rather than if err != nil.
+func (s *Server) beginFileRequest(pURI protocol.DocumentURI, expectKind source.FileKind) (source.Snapshot, source.FileHandle, bool, error) {
+	uri := pURI.SpanURI()
+	if !uri.IsFile() {
+		// Not a file URI. Stop processing the request, but don't return an error.
+		return nil, nil, false, nil
+	}
+	view, err := s.session.ViewOf(uri)
+	if err != nil {
+		return nil, nil, false, err
+	}
+	snapshot := view.Snapshot()
+	fh, err := snapshot.GetFile(uri)
+	if err != nil {
+		return nil, nil, false, err
+	}
+	if expectKind != source.UnknownKind && fh.Identity().Kind != expectKind {
+		// Wrong kind of file. Nothing to do.
+		return nil, nil, false, nil
+	}
+	return snapshot, fh, true, nil
+}
+
 func (s *Server) shutdown(ctx context.Context) error {
 	s.stateMu.Lock()
 	defer s.stateMu.Unlock()
 	if s.state < serverInitialized {
 		return jsonrpc2.NewErrorf(jsonrpc2.CodeInvalidRequest, "server not initialized")
 	}
-	// drop all the active views
-	s.session.Shutdown(ctx)
-	s.state = serverShutDown
+	if s.state != serverShutDown {
+		// drop all the active views
+		s.session.Shutdown(ctx)
+		s.state = serverShutDown
+	}
 	return nil
 }
+
+// ServerExitFunc is used to exit when requested by the client. It is mutable
+// for testing purposes.
+var ServerExitFunc = os.Exit
 
 func (s *Server) exit(ctx context.Context) error {
 	s.stateMu.Lock()
 	defer s.stateMu.Unlock()
 	if s.state != serverShutDown {
-		os.Exit(1)
+		ServerExitFunc(1)
 	}
-	os.Exit(0)
+	ServerExitFunc(0)
 	return nil
 }
 
