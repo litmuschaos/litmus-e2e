@@ -5,7 +5,7 @@ metadata:
   labels:
     run: liveness-app
   name: liveness-app
-  namespace: "{{ a_ns }}"
+  namespace: litmus
 spec:
   containers:
   - image: openebs/tests-custom-client:latest
@@ -26,6 +26,6 @@ spec:
       - name: PORT
         value: '80'
       - name: NAMESPACE
-        value: "{{ a_ns }}"
+        value: litmus
   dnsPolicy: ClusterFirst
   restartPolicy: Always
