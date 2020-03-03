@@ -124,6 +124,13 @@ var _ = Describe("BDD of openebs experiment", func() {
 			fmt.Println("Container StartedAt time before Chaos has been recorded")
 
 			//Installing RBAC for the experiment
+			//Fetching rbac file
+			By("Fetching rbac file for the experiment")
+			err = exec.Command("wget", "-O", "target-container-failure-sa.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/rbac.yaml").Run()
+			Expect(err).To(BeNil(), "failed to create rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
 
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-target-container-failure/rbac.yaml"
 			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)

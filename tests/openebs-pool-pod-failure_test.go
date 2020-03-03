@@ -109,8 +109,8 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			fmt.Println("PodIP of csp pod has been recorded")
 			fmt.Println("StartTime of csp pod has been recorded")
 
-			//Installing RBAC for the experiment
-
+			//Installing RBAC for the experiment  
+			//Fetching rbac file
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-pool-pod-failure/rbac.yaml"
 			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to create rbac file")

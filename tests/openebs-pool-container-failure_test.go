@@ -116,7 +116,7 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			fmt.Println("Container Restart count before chaos has been recorded")
 
 			//Installing RBAC for the experiment
-
+			//Fetching rbac file
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/openebs/openebs-pool-container-failure/rbac.yaml"
 			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
@@ -132,7 +132,6 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-ce.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-
 			fmt.Println("Chaos Experiment Created Successfully")
 
 			//Installing chaos engine for the experiment
