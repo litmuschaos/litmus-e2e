@@ -9,19 +9,16 @@ import (
 
 	"golang.org/x/tools/internal/lsp/protocol"
 	"golang.org/x/tools/internal/lsp/source"
-	"golang.org/x/tools/internal/span"
 )
 
 func (s *Server) formatting(ctx context.Context, params *protocol.DocumentFormattingParams) ([]protocol.TextEdit, error) {
-	uri := span.NewURI(params.TextDocument.URI)
-	view, err := s.session.ViewOf(uri)
+	snapshot, fh, ok, err := s.beginFileRequest(params.TextDocument.URI, source.Go)
+	if !ok {
+		return nil, err
+	}
+	edits, err := source.Format(ctx, snapshot, fh)
 	if err != nil {
 		return nil, err
 	}
-	snapshot := view.Snapshot()
-	f, err := view.GetFile(ctx, uri)
-	if err != nil {
-		return nil, err
-	}
-	return source.Format(ctx, snapshot, f)
+	return edits, nil
 }

@@ -106,10 +106,21 @@ func (od OnDelete) SQL() string {
 
 // TODO func (ac AlterColumn) SQL() string { }
 
+func (d *Delete) SQL() string {
+	return "DELETE FROM " + d.Table + " WHERE " + d.Where.SQL()
+}
+
 func (cd ColumnDef) SQL() string {
 	str := cd.Name + " " + cd.Type.SQL()
 	if cd.NotNull {
 		str += " NOT NULL"
+	}
+	if cd.Type.Base == Timestamp && cd.AllowCommitTimestamp != nil {
+		if *cd.AllowCommitTimestamp {
+			str += " OPTIONS (allow_commit_timestamp = true)"
+		} else {
+			str += " OPTIONS (allow_commit_timestamp = null)"
+		}
 	}
 	return str
 }
@@ -178,6 +189,9 @@ func (q Query) SQL() string {
 
 func (sel Select) SQL() string {
 	str := "SELECT "
+	if sel.Distinct {
+		str += "DISTINCT "
+	}
 	for i, e := range sel.List {
 		if i > 0 {
 			str += ", "
@@ -268,7 +282,19 @@ func (f Func) SQL() string {
 
 func (p Paren) SQL() string { return "(" + p.Expr.SQL() + ")" }
 
-func (id ID) SQL() string   { return string(id) }
+func (id ID) SQL() string {
+	// https://cloud.google.com/spanner/docs/lexical#identifiers
+
+	// TODO: If there are non-letters/numbers/underscores then this also needs quoting.
+
+	if IsKeyword(string(id)) {
+		// TODO: Escaping may be needed here.
+		return "`" + string(id) + "`"
+	}
+
+	return string(id)
+}
+
 func (p Param) SQL() string { return "@" + string(p) }
 
 func (b BoolLiteral) SQL() string {

@@ -23,9 +23,11 @@ package spannertest
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -39,6 +41,7 @@ import (
 
 type database struct {
 	mu      sync.Mutex
+	lastTS  time.Time // last commit timestamp
 	tables  map[string]*table
 	indexes map[string]struct{} // only record their existence
 }
@@ -62,6 +65,42 @@ type colInfo struct {
 	Type spansql.Type
 }
 
+// commitTimestampSentinel is a sentinel value for TIMESTAMP fields with allow_commit_timestamp=true.
+// It is accepted, but never stored.
+var commitTimestampSentinel = &struct{}{}
+
+// transaction records information about a running transaction.
+type transaction struct {
+	commitTimestamp time.Time
+}
+
+func (d *database) startTransaction() *transaction {
+	// Commit timestamps are only guaranteed to be unique
+	// when transactions write to overlapping sets of fields.
+	// This simulated database exceeds that guarantee.
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	const tsRes = 1 * time.Microsecond
+	now := time.Now().UTC().Truncate(tsRes)
+	if now.Equal(d.lastTS) {
+		now = now.Add(tsRes)
+	}
+	d.lastTS = now
+
+	return &transaction{
+		commitTimestamp: now,
+	}
+}
+
+func (tx *transaction) Commit() (time.Time, error) {
+	return tx.commitTimestamp, nil
+}
+
+func (tx *transaction) Rollback() {
+	// TODO: actually rollback
+}
+
 /*
 row represents a list of data elements.
 
@@ -72,7 +111,7 @@ The mapping between Spanner types and Go types internal to this package are:
 	STRING		string
 	BYTES		[]byte
 	DATE		string (RFC 3339 date; "YYYY-MM-DD")
-	TIMESTAMP	TODO
+	TIMESTAMP	string (RFC 3339 timestamp with zone; "YYYY-MM-DDTHH:MM:SSZ")
 	ARRAY<T>	[]T
 	STRUCT		TODO
 */
@@ -114,7 +153,7 @@ func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 	switch stmt := stmt.(type) {
 	default:
 		return status.Newf(codes.Unimplemented, "unhandled DDL statement type %T", stmt)
-	case spansql.CreateTable:
+	case *spansql.CreateTable:
 		if _, ok := d.tables[stmt.Name]; ok {
 			return status.Newf(codes.AlreadyExists, "table %s already exists", stmt.Name)
 		}
@@ -147,26 +186,26 @@ func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 		}
 		d.tables[stmt.Name] = t
 		return nil
-	case spansql.CreateIndex:
+	case *spansql.CreateIndex:
 		if _, ok := d.indexes[stmt.Name]; ok {
 			return status.Newf(codes.AlreadyExists, "index %s already exists", stmt.Name)
 		}
 		d.indexes[stmt.Name] = struct{}{}
 		return nil
-	case spansql.DropTable:
+	case *spansql.DropTable:
 		if _, ok := d.tables[stmt.Name]; !ok {
 			return status.Newf(codes.NotFound, "no table named %s", stmt.Name)
 		}
 		// TODO: check for indexes on this table.
 		delete(d.tables, stmt.Name)
 		return nil
-	case spansql.DropIndex:
+	case *spansql.DropIndex:
 		if _, ok := d.indexes[stmt.Name]; !ok {
 			return status.Newf(codes.NotFound, "no index named %s", stmt.Name)
 		}
 		delete(d.indexes, stmt.Name)
 		return nil
-	case spansql.AlterTable:
+	case *spansql.AlterTable:
 		t, ok := d.tables[stmt.Name]
 		if !ok {
 			return status.Newf(codes.NotFound, "no table named %s", stmt.Name)
@@ -199,7 +238,7 @@ func (d *database) table(tbl string) (*table, error) {
 }
 
 // writeValues executes a write option (Insert, Update, etc.).
-func (d *database) writeValues(tbl string, cols []string, values []*structpb.ListValue, f func(t *table, colIndexes []int, r row) error) error {
+func (d *database) writeValues(tx *transaction, tbl string, cols []string, values []*structpb.ListValue, f func(t *table, colIndexes []int, r row) error) error {
 	t, err := d.table(tbl)
 	if err != nil {
 		return err
@@ -237,10 +276,16 @@ func (d *database) writeValues(tbl string, cols []string, values []*structpb.Lis
 			if err != nil {
 				return err
 			}
+			if x == commitTimestampSentinel {
+				// Cloud Spanner commit timestamps have microsecond granularity.
+				x = tx.commitTimestamp.Format("2006-01-02T15:04:05.999999Z")
+			}
 
 			r[i] = x
 		}
 		// TODO: enforce NOT NULL?
+		// TODO: enforce that provided timestamp for commit_timestamp=true columns
+		// are not ahead of the transaction's commit timestamp.
 
 		if err := f(t, colIndexes, r); err != nil {
 			return err
@@ -250,8 +295,8 @@ func (d *database) writeValues(tbl string, cols []string, values []*structpb.Lis
 	return nil
 }
 
-func (d *database) Insert(tbl string, cols []string, values []*structpb.ListValue) error {
-	return d.writeValues(tbl, cols, values, func(t *table, colIndexes []int, r row) error {
+func (d *database) Insert(tx *transaction, tbl string, cols []string, values []*structpb.ListValue) error {
+	return d.writeValues(tx, tbl, cols, values, func(t *table, colIndexes []int, r row) error {
 		pk := r[:t.pkCols]
 		rowNum, found := t.rowForPK(pk)
 		if found {
@@ -262,8 +307,8 @@ func (d *database) Insert(tbl string, cols []string, values []*structpb.ListValu
 	})
 }
 
-func (d *database) Update(tbl string, cols []string, values []*structpb.ListValue) error {
-	return d.writeValues(tbl, cols, values, func(t *table, colIndexes []int, r row) error {
+func (d *database) Update(tx *transaction, tbl string, cols []string, values []*structpb.ListValue) error {
+	return d.writeValues(tx, tbl, cols, values, func(t *table, colIndexes []int, r row) error {
 		if t.pkCols == 0 {
 			return status.Errorf(codes.InvalidArgument, "cannot update table %s with no columns in primary key", tbl)
 		}
@@ -281,8 +326,8 @@ func (d *database) Update(tbl string, cols []string, values []*structpb.ListValu
 	})
 }
 
-func (d *database) InsertOrUpdate(tbl string, cols []string, values []*structpb.ListValue) error {
-	return d.writeValues(tbl, cols, values, func(t *table, colIndexes []int, r row) error {
+func (d *database) InsertOrUpdate(tx *transaction, tbl string, cols []string, values []*structpb.ListValue) error {
+	return d.writeValues(tx, tbl, cols, values, func(t *table, colIndexes []int, r row) error {
 		pk := r[:t.pkCols]
 		rowNum, found := t.rowForPK(pk)
 		if !found {
@@ -300,7 +345,7 @@ func (d *database) InsertOrUpdate(tbl string, cols []string, values []*structpb.
 
 // TODO: Replace
 
-func (d *database) Delete(table string, keys []*structpb.ListValue, keyRanges keyRangeList, all bool) error {
+func (d *database) Delete(tx *transaction, table string, keys []*structpb.ListValue, keyRanges keyRangeList, all bool) error {
 	t, err := d.table(table)
 	if err != nil {
 		return err
@@ -657,6 +702,12 @@ func valForType(v *structpb.Value, t spansql.Type) (interface{}, error) {
 		if ok {
 			return sv.StringValue, nil
 		}
+	case spansql.Bytes:
+		sv, ok := v.Kind.(*structpb.Value_StringValue)
+		if ok {
+			// The Spanner protocol encodes BYTES in base64.
+			return base64.StdEncoding.DecodeString(sv.StringValue)
+		}
 	case spansql.Date:
 		// The Spanner protocol encodes DATE in RFC 3339 date format.
 		sv, ok := v.Kind.(*structpb.Value_StringValue)
@@ -665,6 +716,20 @@ func valForType(v *structpb.Value, t spansql.Type) (interface{}, error) {
 			s := sv.StringValue
 			if _, err := time.Parse("2006-01-02", s); err != nil {
 				return nil, fmt.Errorf("bad DATE string %q: %v", s, err)
+			}
+			return s, nil
+		}
+	case spansql.Timestamp:
+		// The Spanner protocol encodes TIMESTAMP in RFC 3339 timestamp format with zone Z.
+		sv, ok := v.Kind.(*structpb.Value_StringValue)
+		if ok {
+			s := sv.StringValue
+			if strings.ToLower(s) == "spanner.commit_timestamp()" {
+				return commitTimestampSentinel, nil
+			}
+			// Store it internally as a string, but validate its value.
+			if _, err := time.Parse("2006-01-02T15:04:05.999999999Z", s); err != nil {
+				return nil, fmt.Errorf("bad TIMESTAMP string %q: %v", s, err)
 			}
 			return s, nil
 		}
@@ -698,3 +763,41 @@ func (r *keyRange) String() string {
 }
 
 type keyRangeList []*keyRange
+
+// Execute runs a DML statement.
+// It returns the number of affected rows.
+func (d *database) Execute(stmt spansql.DMLStmt, params queryParams) (int, error) { // TODO: return *status.Status instead?
+	switch stmt := stmt.(type) {
+	default:
+		return 0, status.Errorf(codes.Unimplemented, "unhandled DML statement type %T", stmt)
+	case *spansql.Delete:
+		t, err := d.table(stmt.Table)
+		if err != nil {
+			return 0, err
+		}
+
+		t.mu.Lock()
+		defer t.mu.Unlock()
+
+		n := 0
+		for i := 0; i < len(t.rows); {
+			ec := evalContext{
+				table:  t,
+				row:    t.rows[i],
+				params: params,
+			}
+			b, err := ec.evalBoolExpr(stmt.Where)
+			if err != nil {
+				return 0, err
+			}
+			if b {
+				copy(t.rows[i:], t.rows[i+1:])
+				t.rows = t.rows[:len(t.rows)-1]
+				n++
+				continue
+			}
+			i++
+		}
+		return n, nil
+	}
+}

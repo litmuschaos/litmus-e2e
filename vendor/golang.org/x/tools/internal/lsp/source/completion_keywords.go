@@ -4,8 +4,6 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/internal/lsp/protocol"
-
-	errors "golang.org/x/xerrors"
 )
 
 const (
@@ -36,70 +34,83 @@ const (
 	VAR         = "var"
 )
 
-// keyword looks at the current scope of an *ast.Ident and recommends keywords
-func (c *completer) keyword() error {
-	if _, ok := c.path[0].(*ast.Ident); !ok {
-		// TODO(golang/go#34009): Support keyword completion in any context
-		return errors.Errorf("keywords are currently only recommended for identifiers")
-	}
-	// Track which keywords we've already determined are in a valid scope
-	// Use score to order keywords by how close we are to where they are useful
-	valid := make(map[string]float64)
+// addKeywordCompletions offers keyword candidates appropriate at the position.
+func (c *completer) addKeywordCompletions() {
+	const keywordScore = 0.9
 
-	// only suggest keywords at the begnning of a statement
+	seen := make(map[string]bool)
+
+	// addKeywords dedupes and adds completion items for the specified
+	// keywords with the specified score.
+	addKeywords := func(score float64, kws ...string) {
+		for _, kw := range kws {
+			if seen[kw] {
+				continue
+			}
+			seen[kw] = true
+
+			if c.matcher.Score(kw) > 0 {
+				c.items = append(c.items, CompletionItem{
+					Label:      kw,
+					Kind:       protocol.KeywordCompletion,
+					InsertText: kw,
+					Score:      score,
+				})
+			}
+		}
+	}
+
+	// If we are at the file scope, only offer decl keywords. We don't
+	// get *ast.Idents at the file scope because non-keyword identifiers
+	// turn into *ast.BadDecl, not *ast.Ident.
+	if len(c.path) == 1 || isASTFile(c.path[1]) {
+		addKeywords(keywordScore, TYPE, CONST, VAR, FUNC, IMPORT)
+		return
+	} else if _, ok := c.path[0].(*ast.Ident); !ok {
+		// Otherwise only offer keywords if the client is completing an identifier.
+		return
+	}
+
+	// Only suggest keywords if we are beginning a statement.
 	switch c.path[1].(type) {
 	case *ast.BlockStmt, *ast.CommClause, *ast.CaseClause, *ast.ExprStmt:
 	default:
-		return nil
+		return
 	}
 
 	// Filter out keywords depending on scope
 	// Skip the first one because we want to look at the enclosing scopes
-	for _, n := range c.path[1:] {
+	path := c.path[1:]
+	for i, n := range path {
 		switch node := n.(type) {
 		case *ast.CaseClause:
 			// only recommend "fallthrough" and "break" within the bodies of a case clause
 			if c.pos > node.Colon {
-				valid[BREAK] = stdScore
-				// TODO: "fallthrough" is only valid in switch statements
-				valid[FALLTHROUGH] = stdScore
+				addKeywords(keywordScore, BREAK)
+				// "fallthrough" is only valid in switch statements.
+				// A case clause is always nested within a block statement in a switch statement,
+				// that block statement is nested within either a TypeSwitchStmt or a SwitchStmt.
+				if i+2 >= len(path) {
+					continue
+				}
+				if _, ok := path[i+2].(*ast.SwitchStmt); ok {
+					addKeywords(keywordScore, FALLTHROUGH)
+				}
 			}
 		case *ast.CommClause:
 			if c.pos > node.Colon {
-				valid[BREAK] = stdScore
+				addKeywords(keywordScore, BREAK)
 			}
 		case *ast.TypeSwitchStmt, *ast.SelectStmt, *ast.SwitchStmt:
-			valid[CASE] = stdScore + lowScore
-			valid[DEFAULT] = stdScore + lowScore
+			addKeywords(keywordScore+lowScore, CASE, DEFAULT)
 		case *ast.ForStmt:
-			valid[BREAK] = stdScore
-			valid[CONTINUE] = stdScore
+			addKeywords(keywordScore, BREAK, CONTINUE)
 		// This is a bit weak, functions allow for many keywords
 		case *ast.FuncDecl:
 			if node.Body != nil && c.pos > node.Body.Lbrace {
-				valid[DEFER] = stdScore - lowScore
-				valid[RETURN] = stdScore - lowScore
-				valid[FOR] = stdScore - lowScore
-				valid[GO] = stdScore - lowScore
-				valid[SWITCH] = stdScore - lowScore
-				valid[SELECT] = stdScore - lowScore
-				valid[IF] = stdScore - lowScore
-				valid[ELSE] = stdScore - lowScore
-				valid[VAR] = stdScore - lowScore
-				valid[CONST] = stdScore - lowScore
+				addKeywords(keywordScore-lowScore, DEFER, RETURN, FOR, GO, SWITCH, SELECT, IF, ELSE, VAR, CONST, GOTO, TYPE)
 			}
 		}
 	}
 
-	for ident, score := range valid {
-		if c.matcher.Score(ident) > 0 {
-			c.items = append(c.items, CompletionItem{
-				Label:      ident,
-				Kind:       protocol.KeywordCompletion,
-				InsertText: ident,
-				Score:      score,
-			})
-		}
-	}
-	return nil
 }
