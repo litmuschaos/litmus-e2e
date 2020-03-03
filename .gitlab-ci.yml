@@ -9,6 +9,15 @@ stages:
   - app-cleanup
   - cleanup
 
+.before_script_template:
+  before_script:
+
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+
 Cluster Setup:
 
   stage: setup
@@ -25,11 +34,13 @@ Cluster Setup:
 
 Litmus Infra Setup:
 
+  when: always
+  extends: .before_script_template
   stage: install
   tags:
     - litmus-build
   script:
-    - make install
+    - make build-litmus
 
   artifacts:
     when: always
@@ -38,11 +49,13 @@ Litmus Infra Setup:
     
 Deploy App:
 
+  when: always
+  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
   script:
-    - make deployapp
+    - make app-deploy
 
   artifacts:
     when: always
@@ -51,6 +64,8 @@ Deploy App:
 
 Liveness:
 
+  when: always
+  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
@@ -64,6 +79,8 @@ Liveness:
 
 Auxiliary App:
 
+  when: always
+  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
@@ -77,6 +94,8 @@ Auxiliary App:
 
 pod-delete:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -90,6 +109,8 @@ pod-delete:
 
 container-kill:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -103,6 +124,8 @@ container-kill:
 
 pod-network-latency:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -116,6 +139,8 @@ pod-network-latency:
 
 pod-network-loss:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -129,6 +154,8 @@ pod-network-loss:
 
 pod-network-corruption:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -142,6 +169,8 @@ pod-network-corruption:
 
 pod-cpu-hog:
 
+  when: always
+  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -155,6 +184,7 @@ pod-cpu-hog:
 
 node-cpu-hog:
 
+  extends: .before_script_template
   when: always
   stage: infra-experiment
   tags: 
@@ -169,6 +199,7 @@ node-cpu-hog:
 
 node-drain:
 
+  extends: .before_script_template
   when: always
   stage: infra-experiment
   tags:
@@ -183,6 +214,7 @@ node-drain:
 
 disk-fill:
 
+  extends: .before_script_template
   when: always
   stage: infra-experiment
   tags:
@@ -197,6 +229,7 @@ disk-fill:
 
 App Cleanup:
 
+  extends: .before_script_template
   when: always
   stage: app-cleanup
   tags: 
@@ -223,6 +256,3 @@ Cluster Cleanup:
     when: always
     paths:
       - .kube/
-
-
-
