@@ -26,6 +26,7 @@ var (
 	config     *restclient.Config
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
+	err        error
 )
 
 func TestChaos(t *testing.T) {
@@ -72,7 +73,6 @@ var _ = Describe("BDD of Application Cleanup", func() {
 		It("Should check for deletion of application, jobs and service", func() {
 
 			//Removing Application
-			var err error
 			By("Deleting Application,Service and PVC")
 			err = exec.Command("kubectl", "delete", "-f", "../nginx/nginx.yml").Run()
 			Expect(err).To(BeNil(), "failed to delete application and its components")
@@ -97,45 +97,6 @@ var _ = Describe("BDD of Application Cleanup", func() {
 			}
 
 			fmt.Printf("Application deleted successfully")
-
-			//Deleting All jobs
-			By("Deleting all jobs")
-			err = exec.Command("kubectl", "delete", "jobs", "-n", chaosTypes.ChaosNamespace, "--all").Run()
-			Expect(err).To(BeNil(), "failed to delete jobs")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Printf("Jobs deleted successfully")
-
-			//Deleting All engine
-			By("Deleting all jobs")
-			err = exec.Command("kubectl", "delete", "chaosengine", "-n", chaosTypes.ChaosNamespace, "--all").Run()
-			Expect(err).To(BeNil(), "failed to delete chaosengine")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Printf("engines deleted successfully")
-
-			//Deleting All experiment
-			By("Deleting all experiment")
-			err = exec.Command("kubectl", "delete", "chaosexperiment", "-n", chaosTypes.ChaosNamespace, "--all").Run()
-			Expect(err).To(BeNil(), "failed to delete chaosexperiment")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Printf("experiments deleted successfully")
-
-			//Deleting chaos namespace
-			By("Deleting chaos namespace")
-			err = exec.Command("kubectl", "delete", "ns", chaosTypes.ChaosNamespace).Run()
-			Expect(err).To(BeNil(), "failed to delete chaos namespace")
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Printf("chaosnamespace deleted successfully")
 
 		})
 	})
