@@ -26,6 +26,7 @@ var (
 	config     *restclient.Config
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
+	err        error
 )
 
 func TestChaos(t *testing.T) {
@@ -71,42 +72,21 @@ var _ = Describe("BDD of litmus installation", func() {
 
 		It("Should check for creation of Litmus", func() {
 
-			//Creating crds
-			var err error
-			By("Creating all crds")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create crds")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("crds installed successfully")
-
-			//Creating rbac for chaos-operator
-			By("Creating rbac for operator")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("rbac installed sucessfully")
-
-			//Creating Chaos-Operator
-			By("creating chaos-operator")
-			err = exec.Command("kubectl", "create", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create chaos-operator")
+			//Installing Litmus
+			By("Installing Litmus")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml").Run()
+			Expect(err).To(BeNil(), "Failed to install litmus")
 			if err != nil {
 				fmt.Println(err)
 			}
 
 			//Checking the status of operator
-			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get(chaosTypes.ChaosNamespace, metav1.GetOptions{})
+			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 			count := 0
 			for operator.Status.UnavailableReplicas != 0 {
 				if count < 50 {
 					fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
-					operator, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get(chaosTypes.ChaosNamespace, metav1.GetOptions{})
+					operator, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 					time.Sleep(5 * time.Second)
 					count++
 				} else {

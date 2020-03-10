@@ -26,6 +26,7 @@ var (
 	config     *restclient.Config
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
+	err        error
 )
 
 func TestChaos(t *testing.T) {
@@ -72,7 +73,6 @@ var _ = Describe("BDD of Application Deployment", func() {
 		It("Should check for creation of application", func() {
 
 			//Deploying nginx application
-			var err error
 			By("Deploying nginx Application")
 			err = exec.Command("kubectl", "apply", "-f", "../nginx/nginx.yml").Run()
 			Expect(err).To(BeNil(), "failed to create the application")
