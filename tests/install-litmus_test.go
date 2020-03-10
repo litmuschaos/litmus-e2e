@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -70,44 +71,22 @@ var _ = Describe("BDD of litmus installation", func() {
 
 		It("Should check for creation of Litmus", func() {
 
-			//Creating crds
+			//Installing Litmus
 			var err error
-			By("Creating all crds")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
+			By("Installing Litmus")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create crds")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			fmt.Println("crds installed successfully")
-
-			//Creating rbac for chaos-operator
-			By("Creating rbac for operator")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("rbac installed sucessfully")
-
-			//Creating Chaos operator
-			By("Creating Chaos Operator")
-			exec.Command("wget", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
-			exec.Command("sed", "-i", "s/operator:ci/operator:1.1.0/g", "operator.yaml").Run()
-			err = exec.Command("kubectl", "apply", "-f", "operator.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create operator")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			//Checking the status of operator
-			operator, _ := client.AppsV1().Deployments("litmus").Get("litmus", metav1.GetOptions{})
+			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 			count := 0
 			for operator.Status.UnavailableReplicas != 0 {
 				if count < 50 {
 					fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
-					operator, _ = client.AppsV1().Deployments("litmus").Get("litmus", metav1.GetOptions{})
+					operator, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 					time.Sleep(5 * time.Second)
 					count++
 				} else {
