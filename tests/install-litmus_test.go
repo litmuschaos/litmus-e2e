@@ -75,7 +75,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			//Installing Litmus
 			By("Installing Litmus")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml").Run()
-			Expect(err).To(BeNil(), "failed to create crds")
+			Expect(err).To(BeNil(), "Failed to install litmus")
 			if err != nil {
 				fmt.Println(err)
 			}
