@@ -26,6 +26,7 @@ var (
 	config     *restclient.Config
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
+	err        error
 )
 
 func TestChaos(t *testing.T) {
@@ -72,7 +73,6 @@ var _ = Describe("BDD of litmus installation", func() {
 		It("Should check for creation of Litmus", func() {
 
 			//Installing Litmus
-			var err error
 			By("Installing Litmus")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml").Run()
 			Expect(err).To(BeNil(), "failed to create crds")
