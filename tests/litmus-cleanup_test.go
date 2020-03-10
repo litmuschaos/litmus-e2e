@@ -24,6 +24,7 @@ var (
 	config     *restclient.Config
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
+	err        error
 )
 
 func TestChaos(t *testing.T) {
@@ -70,7 +71,6 @@ var _ = Describe("BDD of litmus cleanup", func() {
 		It("Should check for deletion of Litmus", func() {
 
 			//Deleting all chaosengines
-			var err error
 			By("Deleting all chaosengine")
 			err = exec.Command("kubectl", "delete", "chaosengine", "-n", chaosTypes.ChaosNamespace, "--all").Run()
 			Expect(err).To(BeNil(), "failed to delete chaosengine")

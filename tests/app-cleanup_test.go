@@ -70,10 +70,10 @@ var _ = Describe("BDD of Application Cleanup", func() {
 	// BDD TEST CASE 1
 	Context("Checking for the application", func() {
 
-		It("Should check for deletion of application, jobs and service", func() {
+		It("Should check for deletion of application", func() {
 
 			//Removing Application
-			By("Deleting Application,Service and PVC")
+			By("Deleting Application")
 			err = exec.Command("kubectl", "delete", "-f", "../nginx/nginx.yml").Run()
 			Expect(err).To(BeNil(), "failed to delete application and its components")
 			if err != nil {
