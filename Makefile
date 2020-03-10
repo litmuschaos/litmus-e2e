@@ -119,8 +119,4 @@ app-cleanup:
 	@echo "--------------------"
 	@echo "Deleting litmus"
 	@echo "--------------------"
-	@kubectl delete chaosengine -n litmus --all
-	@kubectl delete chaosexperiment -n litmus --all
-	@kubectl delete deploy -n litmus --all
-	@kubectl delete svc nginx -n litmus
 	@go test tests/litmus-cleanup_test.go -v -count=1
