@@ -20,8 +20,8 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -39,12 +39,29 @@ type Error struct {
 	err error
 	// Desc explains more details of the error.
 	Desc string
-	// trailers are the trailers returned in the response, if any.
-	trailers metadata.MD
 	// additionalInformation optionally contains any additional information
 	// about the error.
 	additionalInformation string
 }
+
+// TransactionOutcomeUnknownError is wrapped in a Spanner error when the error
+// occurred during a transaction, and the outcome of the transaction is
+// unknown as a result of the error. This could be the case if a timeout or
+// canceled error occurs after a Commit request has been sent, but before the
+// client has received a response from the server.
+type TransactionOutcomeUnknownError struct {
+	// err is the wrapped error that caused this TransactionOutcomeUnknownError
+	// error. The wrapped error can be read with the Unwrap method.
+	err error
+}
+
+const transactionOutcomeUnknownMsg = "transaction outcome unknown"
+
+// Error implements error.Error.
+func (*TransactionOutcomeUnknownError) Error() string { return transactionOutcomeUnknownMsg }
+
+// Unwrap returns the wrapped error (if any).
+func (e *TransactionOutcomeUnknownError) Unwrap() error { return e.err }
 
 // Error implements error.Error.
 func (e *Error) Error() string {
@@ -100,31 +117,41 @@ func spannerErrorf(code codes.Code, format string, args ...interface{}) error {
 
 // toSpannerError converts general Go error to *spanner.Error.
 func toSpannerError(err error) error {
-	return toSpannerErrorWithMetadata(err, nil)
+	return toSpannerErrorWithCommitInfo(err, false)
 }
 
-// toSpannerErrorWithMetadata converts general Go error and grpc trailers to
-// *spanner.Error.
+// toSpannerErrorWithCommitInfo converts general Go error to *spanner.Error
+// with additional information if the error occurred during a Commit request.
 //
-// Note: modifies original error if trailers aren't nil.
-func toSpannerErrorWithMetadata(err error, trailers metadata.MD) error {
+// If err is already a *spanner.Error, err is returned unmodified.
+func toSpannerErrorWithCommitInfo(err error, errorDuringCommit bool) error {
 	if err == nil {
 		return nil
 	}
 	var se *Error
 	if errorAs(err, &se) {
-		if trailers != nil {
-			se.trailers = metadata.Join(se.trailers, trailers)
-		}
 		return se
 	}
 	switch {
 	case err == context.DeadlineExceeded || err == context.Canceled:
-		return &Error{status.FromContextError(err).Code(), status.FromContextError(err).Err(), err.Error(), trailers, ""}
+		desc := err.Error()
+		wrapped := status.FromContextError(err).Err()
+		if errorDuringCommit {
+			desc = fmt.Sprintf("%s, %s", desc, transactionOutcomeUnknownMsg)
+			wrapped = &TransactionOutcomeUnknownError{err: wrapped}
+		}
+		return &Error{status.FromContextError(err).Code(), wrapped, desc, ""}
 	case status.Code(err) == codes.Unknown:
-		return &Error{codes.Unknown, err, err.Error(), trailers, ""}
+		return &Error{codes.Unknown, err, err.Error(), ""}
 	default:
-		return &Error{status.Convert(err).Code(), err, status.Convert(err).Message(), trailers, ""}
+		statusErr := status.Convert(err)
+		code, desc := statusErr.Code(), statusErr.Message()
+		wrapped := err
+		if errorDuringCommit && (code == codes.DeadlineExceeded || code == codes.Canceled) {
+			desc = fmt.Sprintf("%s, %s", desc, transactionOutcomeUnknownMsg)
+			wrapped = &TransactionOutcomeUnknownError{err: wrapped}
+		}
+		return &Error{code, wrapped, desc, ""}
 	}
 }
 
@@ -146,11 +173,24 @@ func ErrDesc(err error) string {
 	return se.Desc
 }
 
-// errTrailers extracts the grpc trailers if present from a Go error.
-func errTrailers(err error) metadata.MD {
+// extractResourceType extracts the resource type from any ResourceInfo detail
+// included in the error.
+func extractResourceType(err error) (string, bool) {
+	var s *status.Status
 	var se *Error
-	if !errorAs(err, &se) {
-		return nil
+	if errorAs(err, &se) {
+		// Unwrap statusError.
+		s = status.Convert(se.Unwrap())
+	} else {
+		s = status.Convert(err)
 	}
-	return se.trailers
+	if s == nil {
+		return "", false
+	}
+	for _, detail := range s.Details() {
+		if resourceInfo, ok := detail.(*errdetails.ResourceInfo); ok {
+			return resourceInfo.ResourceType, true
+		}
+	}
+	return "", false
 }

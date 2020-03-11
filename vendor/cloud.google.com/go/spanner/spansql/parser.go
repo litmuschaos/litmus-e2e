@@ -98,26 +98,14 @@ func ParseDDL(filename, s string) (*DDL, error) {
 	}
 
 	// Handle comments.
-	for len(p.comments) > 0 {
-		// Build up a single Comment covering adjacent comments.
-		n := 1
-		for ; n < len(p.comments); n++ {
-			if p.comments[n].start.Line != p.comments[n-1].end.Line+1 {
-				break
-			}
-			if p.comments[n].marker != p.comments[n-1].marker {
-				break
-			}
-		}
+	for _, com := range p.comments {
 		c := &Comment{
-			Marker: p.comments[0].marker,
-			Start:  p.comments[0].start,
-			End:    p.comments[n-1].end,
+			Marker:   com.marker,
+			Isolated: com.isolated,
+			Start:    com.start,
+			End:      com.end,
+			Text:     com.text,
 		}
-		for _, comm := range p.comments[:n] {
-			c.Text = append(c.Text, strings.Split(comm.text, "\n")...)
-		}
-		p.comments = p.comments[n:]
 
 		// Strip common whitespace prefix and any whitespace suffix.
 		// TODO: This is a bodgy implementation of Longest Common Prefix,
@@ -252,8 +240,9 @@ type parser struct {
 
 type comment struct {
 	marker     string // "#" or "--" or "/*"
-	text       string // may have \n chars
+	isolated   bool   // if it starts on its own line
 	start, end Position
+	text       []string
 }
 
 // Pos reports the position of the current token.
@@ -648,8 +637,20 @@ func (p *parser) consumeStringContent(delim string, raw, unicode bool, name stri
 }
 
 var operators = map[string]bool{
-	// TODO: There's duplication here with symbolicOperators,
-	// but this should go away with more bespoke handling inside parser.advance.
+	// Arithmetic operators.
+	"-":  true, // both unary and binary
+	"~":  true,
+	"*":  true,
+	"/":  true,
+	"||": true,
+	"+":  true,
+	"<<": true,
+	">>": true,
+	"&":  true,
+	"^":  true,
+	"|":  true,
+
+	// Comparison operators.
 	"<":  true,
 	"<=": true,
 	">":  true,
@@ -671,6 +672,12 @@ func isSpace(c byte) bool {
 
 // skipSpace skips past any space or comments.
 func (p *parser) skipSpace() bool {
+	initLine := p.line
+	// If we start capturing a comment in this method,
+	// this is set to its comment value. Multi-line comments
+	// are only joined during a single skipSpace invocation.
+	var com *comment
+
 	i := 0
 	for i < len(p.s) {
 		if isSpace(p.s[i]) {
@@ -697,24 +704,35 @@ func (p *parser) skipSpace() bool {
 			p.errorf("unterminated comment")
 			return false
 		}
-		c := comment{
-			marker: marker,
-			text:   p.s[i+len(marker) : i+ti],
-			start: Position{
-				Line:   p.line,
-				Offset: p.offset + i,
-			},
+		if com != nil && (com.end.Line+1 < p.line || com.marker != marker) {
+			// There's a previous comment, but there's an
+			// intervening blank line, or the marker changed.
+			// Terminate the previous comment.
+			com = nil
 		}
-		c.end = Position{
-			Line:   p.line + strings.Count(c.text, "\n"),
-			Offset: i + ti,
+		if com == nil {
+			// New comment.
+			p.comments = append(p.comments, comment{
+				marker:   marker,
+				isolated: (p.line != initLine) || p.line == 1,
+				start: Position{
+					Line:   p.line,
+					Offset: p.offset + i,
+				},
+			})
+			com = &p.comments[len(p.comments)-1]
 		}
-		p.comments = append(p.comments, c)
-		p.line = c.end.Line
+		textLines := strings.Split(p.s[i+len(marker):i+ti], "\n")
+		com.text = append(com.text, textLines...)
+		com.end = Position{
+			Line:   p.line + len(textLines) - 1,
+			Offset: p.offset + i + ti,
+		}
+		p.line = com.end.Line
 		if term == "\n" {
 			p.line++
 		}
-		i = c.end.Offset + len(term)
+		i += ti + len(term)
 	}
 	p.s = p.s[i:]
 	p.offset += i
@@ -790,14 +808,6 @@ func (p *parser) advance() {
 	}
 	if '0' <= p.s[0] && p.s[0] <= '9' {
 		p.consumeNumber()
-		return
-	}
-	// More single character symbols.
-	// These are deliberately below the numeric literal parsing.
-	switch p.s[0] {
-	case '-', '+':
-		p.cur.value, p.s = p.s[:1], p.s[1:]
-		p.offset++
 		return
 	}
 
@@ -1153,8 +1163,17 @@ func (p *parser) parseAlterTable() (*AlterTable, *parseError) {
 		}
 		a.Alteration = SetOnDelete{Action: od}
 		return a, nil
+	case "ALTER":
+		if err := p.expect("COLUMN"); err != nil {
+			return nil, err
+		}
+		cd, err := p.parseColumnDef()
+		if err != nil {
+			return nil, err
+		}
+		a.Alteration = AlterColumn{Def: cd}
+		return a, nil
 	}
-	// TODO: "ALTER"
 }
 
 func (p *parser) parseDMLStmt() (DMLStmt, *parseError) {
@@ -1203,7 +1222,7 @@ func (p *parser) parseColumnDef() (ColumnDef, *parseError) {
 		return ColumnDef{}, err
 	}
 
-	cd := ColumnDef{Name: name}
+	cd := ColumnDef{Name: name, Position: p.Pos()}
 
 	cd.Type, err = p.parseType()
 	if err != nil {
@@ -1469,18 +1488,11 @@ func (p *parser) parseSelect() (Select, *parseError) {
 	}
 
 	// Read expressions for the SELECT list.
-	for {
-		expr, err := p.parseExpr()
-		if err != nil {
-			return Select{}, err
-		}
-		sel.List = append(sel.List, expr)
-
-		if p.eat(",") {
-			continue
-		}
-		break
+	list, err := p.parseExprList()
+	if err != nil {
+		return Select{}, err
 	}
+	sel.List = list
 
 	if p.eat("FROM") {
 		for {
@@ -1512,7 +1524,15 @@ func (p *parser) parseSelect() (Select, *parseError) {
 		sel.Where = where
 	}
 
-	// TODO: GROUP BY, HAVING
+	if p.eat("GROUP", "BY") {
+		list, err := p.parseExprList()
+		if err != nil {
+			return Select{}, err
+		}
+		sel.GroupBy = list
+	}
+
+	// TODO: HAVING
 
 	return sel, nil
 }
@@ -1616,6 +1636,23 @@ func (p *parser) parseLimitCount() (Limit, *parseError) {
 
 func (p *parser) parseExprList() ([]Expr, *parseError) {
 	var list []Expr
+	for {
+		expr, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, expr)
+
+		if p.eat(",") {
+			continue
+		}
+		break
+	}
+	return list, nil
+}
+
+func (p *parser) parseParenExprList() ([]Expr, *parseError) {
+	var list []Expr
 	err := p.parseCommaList(func(p *parser) *parseError {
 		e, err := p.parseExpr()
 		if err != nil {
@@ -1642,10 +1679,9 @@ ascending order of precedence:
 	andParser
 	parseIsOp
 	parseComparisonOp
-	parseArithOp
+	parseArithOp: |, ^, &, << and >>, + and -, * and / and ||
+	parseUnaryArithOp: - and ~
 	parseLit
-
-TODO: there are more levels to break out, esp. in parseArithOp
 */
 
 func (p *parser) parseExpr() (Expr, *parseError) {
@@ -1721,7 +1757,30 @@ var (
 			return LogicalOp{LHS: lhs.(BoolExpr), Op: And, RHS: rhs.(BoolExpr)}
 		},
 	}
+
+	bitOrParser  = newBinArithParser("|", BitOr, bitXorParser.parse)
+	bitXorParser = newBinArithParser("^", BitXor, bitAndParser.parse)
+	bitAndParser = newBinArithParser("&", BitAnd, bitShrParser.parse)
+	bitShrParser = newBinArithParser(">>", BitShr, bitShlParser.parse)
+	bitShlParser = newBinArithParser("<<", BitShl, subParser.parse)
+	subParser    = newBinArithParser("-", Sub, addParser.parse)
+	addParser    = newBinArithParser("+", Add, concatParser.parse)
+	concatParser = newBinArithParser("||", Concat, divParser.parse)
+	divParser    = newBinArithParser("/", Div, mulParser.parse)
+	mulParser    = newBinArithParser("*", Mul, (*parser).parseUnaryArithOp)
 )
+
+func newBinArithParser(opStr string, op ArithOperator, nextPrec func(*parser) (Expr, *parseError)) binOpParser {
+	return binOpParser{
+		LHS: nextPrec,
+		RHS: nextPrec,
+		Op:  opStr,
+		// TODO: ArgCheck? numeric inputs only, except for ||.
+		Combiner: func(lhs, rhs Expr) Expr {
+			return ArithOp{LHS: lhs, Op: op, RHS: rhs}
+		},
+	}
+}
 
 func (p *parser) parseLogicalNot() (Expr, *parseError) {
 	if !p.eat("NOT") {
@@ -1846,38 +1905,29 @@ func (p *parser) parseComparisonOp() (Expr, *parseError) {
 }
 
 func (p *parser) parseArithOp() (Expr, *parseError) {
-	// TODO: actually parse arithmetic operations.
+	return bitOrParser.parse(p)
+}
 
-	if p.eat("(") {
-		e, err := p.parseExpr()
+var unaryArithOperators = map[string]ArithOperator{
+	"-": Neg,
+	"~": BitNot,
+}
+
+func (p *parser) parseUnaryArithOp() (Expr, *parseError) {
+	tok := p.next()
+	if tok.err != nil {
+		return nil, tok.err
+	}
+	if op, ok := unaryArithOperators[tok.value]; ok {
+		e, err := p.parseLit()
 		if err != nil {
 			return nil, err
 		}
-		if err := p.expect(")"); err != nil {
-			return nil, err
-		}
-		return Paren{Expr: e}, nil
+		return ArithOp{Op: op, RHS: e}, nil
 	}
+	p.back()
 
-	lit, err := p.parseLit()
-	if err != nil {
-		return nil, err
-	}
-
-	// If the literal was an identifier, and there's an open paren next,
-	// this is a function invocation.
-	if id, ok := lit.(ID); ok && p.sniff("(") {
-		list, err := p.parseExprList()
-		if err != nil {
-			return nil, err
-		}
-		return Func{
-			Name: string(id),
-			Args: list,
-		}, nil
-	}
-
-	return lit, nil
+	return p.parseLit()
 }
 
 func (p *parser) parseLit() (Expr, *parseError) {
@@ -1897,6 +1947,32 @@ func (p *parser) parseLit() (Expr, *parseError) {
 		return BytesLiteral(tok.string), nil
 	case quotedID: // Unquoted identifers are handled below.
 		return ID(tok.string), nil
+	}
+
+	// Handle parenthesized expressions.
+	if tok.value == "(" {
+		e, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+		if err := p.expect(")"); err != nil {
+			return nil, err
+		}
+		return Paren{Expr: e}, nil
+	}
+
+	// If the literal was an identifier, and there's an open paren next,
+	// this is a function invocation.
+	// TODO: Case-insensitivity.
+	if name := tok.value; funcs[name] && p.sniff("(") {
+		list, err := p.parseParenExprList()
+		if err != nil {
+			return nil, err
+		}
+		return Func{
+			Name: name,
+			Args: list,
+		}, nil
 	}
 
 	// Handle some reserved keywords and special tokens that become specific values.

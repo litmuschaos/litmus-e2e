@@ -44,6 +44,8 @@ type database struct {
 	lastTS  time.Time // last commit timestamp
 	tables  map[string]*table
 	indexes map[string]struct{} // only record their existence
+
+	rwMu sync.Mutex // held by read-write transactions
 }
 
 type table struct {
@@ -54,6 +56,7 @@ type table struct {
 	cols     []colInfo
 	colIndex map[string]int // col name to index
 	pkCols   int            // number of primary key columns (may be 0)
+	pkDesc   []bool         // whether each primary key column is in descending order
 
 	// Rows are stored in primary key order.
 	rows []row
@@ -61,8 +64,9 @@ type table struct {
 
 // colInfo represents information about a column in a table or result set.
 type colInfo struct {
-	Name string
-	Type spansql.Type
+	Name     string
+	Type     spansql.Type
+	AggIndex int // Index+1 of SELECT list for which this is an aggregate value.
 }
 
 // commitTimestampSentinel is a sentinel value for TIMESTAMP fields with allow_commit_timestamp=true.
@@ -70,34 +74,75 @@ type colInfo struct {
 var commitTimestampSentinel = &struct{}{}
 
 // transaction records information about a running transaction.
+// This is not safe for concurrent use.
 type transaction struct {
-	commitTimestamp time.Time
+	// readOnly is whether this transaction was constructed
+	// for read-only use, and should yield errors if used
+	// to perform a mutation.
+	readOnly bool
+
+	d               *database
+	commitTimestamp time.Time // not set if readOnly
+	unlock          func()    // may be nil
 }
 
-func (d *database) startTransaction() *transaction {
+func (d *database) NewReadOnlyTransaction() *transaction {
+	return &transaction{
+		readOnly: true,
+	}
+}
+
+func (d *database) NewTransaction() *transaction {
+	return &transaction{
+		d: d,
+	}
+}
+
+// Start starts the transaction and commits to a specific commit timestamp.
+// This also locks out any other read-write transaction on this database
+// until Commit/Rollback are called.
+func (tx *transaction) Start() {
 	// Commit timestamps are only guaranteed to be unique
 	// when transactions write to overlapping sets of fields.
 	// This simulated database exceeds that guarantee.
-	d.mu.Lock()
-	defer d.mu.Unlock()
 
+	// Grab rwMu for the duration of this transaction.
+	// Take it before d.mu so we don't hold that lock
+	// while waiting for d.rwMu, which is held for longer.
+	tx.d.rwMu.Lock()
+
+	tx.d.mu.Lock()
 	const tsRes = 1 * time.Microsecond
 	now := time.Now().UTC().Truncate(tsRes)
-	if now.Equal(d.lastTS) {
-		now = now.Add(tsRes)
+	if !now.After(tx.d.lastTS) {
+		now = tx.d.lastTS.Add(tsRes)
 	}
-	d.lastTS = now
+	tx.d.lastTS = now
+	tx.d.mu.Unlock()
 
-	return &transaction{
-		commitTimestamp: now,
+	tx.commitTimestamp = now
+	tx.unlock = tx.d.rwMu.Unlock
+}
+
+func (tx *transaction) checkMutable() error {
+	if tx.readOnly {
+		// TODO: is this the right status?
+		return status.Errorf(codes.InvalidArgument, "transaction is read-only")
 	}
+	return nil
 }
 
 func (tx *transaction) Commit() (time.Time, error) {
+	if tx.unlock != nil {
+		tx.unlock()
+	}
 	return tx.commitTimestamp, nil
 }
 
 func (tx *transaction) Rollback() {
+	if tx.unlock != nil {
+		tx.unlock()
+	}
 	// TODO: actually rollback
 }
 
@@ -138,6 +183,12 @@ func (r row) copyData(indexes []int) row {
 	return dst
 }
 
+func (d *database) LastCommitTimestamp() time.Time {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.lastTS
+}
+
 func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -157,13 +208,18 @@ func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 		if _, ok := d.tables[stmt.Name]; ok {
 			return status.Newf(codes.AlreadyExists, "table %s already exists", stmt.Name)
 		}
+		if len(stmt.PrimaryKey) == 0 {
+			return status.Newf(codes.InvalidArgument, "table %s has no primary key", stmt.Name)
+		}
 
 		// TODO: check stmt.Interleave details.
 
 		// Move primary keys first, preserving their order.
 		pk := make(map[string]int)
+		var pkDesc []bool
 		for i, kp := range stmt.PrimaryKey {
 			pk[kp.Column] = -1000 + i
+			pkDesc = append(pkDesc, kp.Desc)
 		}
 		sort.SliceStable(stmt.Columns, func(i, j int) bool {
 			a, b := pk[stmt.Columns[i].Name], pk[stmt.Columns[j].Name]
@@ -173,9 +229,10 @@ func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 		t := &table{
 			colIndex: make(map[string]int),
 			pkCols:   len(pk),
+			pkDesc:   pkDesc,
 		}
 		for _, cd := range stmt.Columns {
-			if st := t.addColumn(cd); st.Code() != codes.OK {
+			if st := t.addColumn(cd, true); st.Code() != codes.OK {
 				return st
 			}
 		}
@@ -214,10 +271,12 @@ func (d *database) ApplyDDL(stmt spansql.DDLStmt) *status.Status {
 		default:
 			return status.Newf(codes.Unimplemented, "unhandled DDL table alteration type %T", alt)
 		case spansql.AddColumn:
-			if alt.Def.NotNull {
-				return status.Newf(codes.InvalidArgument, "new non-key columns cannot be NOT NULL")
+			if st := t.addColumn(alt.Def, false); st.Code() != codes.OK {
+				return st
 			}
-			if st := t.addColumn(alt.Def); st.Code() != codes.OK {
+			return nil
+		case spansql.AlterColumn:
+			if st := t.alterColumn(alt.Def); st.Code() != codes.OK {
 				return st
 			}
 			return nil
@@ -239,6 +298,10 @@ func (d *database) table(tbl string) (*table, error) {
 
 // writeValues executes a write option (Insert, Update, etc.).
 func (d *database) writeValues(tx *transaction, tbl string, cols []string, values []*structpb.ListValue, f func(t *table, colIndexes []int, r row) error) error {
+	if err := tx.checkMutable(); err != nil {
+		return err
+	}
+
 	t, err := d.table(tbl)
 	if err != nil {
 		return err
@@ -346,6 +409,10 @@ func (d *database) InsertOrUpdate(tx *transaction, tbl string, cols []string, va
 // TODO: Replace
 
 func (d *database) Delete(tx *transaction, table string, keys []*structpb.ListValue, keyRanges keyRangeList, all bool) error {
+	if err := tx.checkMutable(); err != nil {
+		return err
+	}
+
 	t, err := d.table(table)
 	if err != nil {
 		return err
@@ -391,41 +458,8 @@ func (d *database) Delete(tx *transaction, table string, keys []*structpb.ListVa
 	return nil
 }
 
-// resultIter is returned by reads and queries.
-// Use its Next method to iterate over the result rows.
-type resultIter struct {
-	// Cols is the metadata about the returned data.
-	Cols []colInfo
-
-	// rows holds the result data itself.
-	rows []resultRow
-}
-
-type resultRow struct {
-	data []interface{}
-
-	// aux is any auxiliary values evaluated for the row.
-	// When a query has an ORDER BY clause, this will contain the values for those expressions.
-	aux []interface{}
-}
-
-func (ri *resultIter) Next() ([]interface{}, bool) {
-	if len(ri.rows) == 0 {
-		return nil, false
-	}
-	res := ri.rows[0]
-	ri.rows = ri.rows[1:]
-	return res.data, true
-}
-
-func (ri *resultIter) add(src row, colIndexes []int) {
-	ri.rows = append(ri.rows, resultRow{
-		data: src.copyData(colIndexes),
-	})
-}
-
 // readTable executes a read option (Read, ReadAll).
-func (d *database) readTable(table string, cols []string, f func(*table, *resultIter, []int) error) (*resultIter, error) {
+func (d *database) readTable(table string, cols []string, f func(*table, *rawIter, []int) error) (*rawIter, error) {
 	t, err := d.table(table)
 	if err != nil {
 		return nil, err
@@ -439,15 +473,22 @@ func (d *database) readTable(table string, cols []string, f func(*table, *result
 		return nil, err
 	}
 
-	ri := &resultIter{}
+	ri := &rawIter{}
 	for _, i := range colIndexes {
-		ri.Cols = append(ri.Cols, t.cols[i])
+		ri.cols = append(ri.cols, t.cols[i])
 	}
 	return ri, f(t, ri, colIndexes)
 }
 
-func (d *database) Read(tbl string, cols []string, keys []*structpb.ListValue, limit int64) (*resultIter, error) {
-	return d.readTable(tbl, cols, func(t *table, ri *resultIter, colIndexes []int) error {
+func (d *database) Read(tbl string, cols []string, keys []*structpb.ListValue, keyRanges keyRangeList, limit int64) (rowIter, error) {
+	return d.readTable(tbl, cols, func(t *table, ri *rawIter, colIndexes []int) error {
+		// "If the same key is specified multiple times in the set (for
+		// example if two ranges, two keys, or a key and a range
+		// overlap), Cloud Spanner behaves as if the key were only
+		// specified once."
+		done := make(map[int]bool) // row numbers we've included in ri.
+
+		// Specific keys.
 		for _, key := range keys {
 			pk, err := t.primaryKey(key.Values)
 			if err != nil {
@@ -458,17 +499,46 @@ func (d *database) Read(tbl string, cols []string, keys []*structpb.ListValue, l
 			if !found {
 				continue
 			}
+			if done[rowNum] {
+				continue
+			}
+			done[rowNum] = true
 			ri.add(t.rows[rowNum], colIndexes)
 			if limit > 0 && len(ri.rows) >= int(limit) {
-				break
+				return nil
 			}
 		}
+
+		// Key ranges.
+		for _, r := range keyRanges {
+			var err error
+			r.startKey, err = t.primaryKeyPrefix(r.start.Values)
+			if err != nil {
+				return err
+			}
+			r.endKey, err = t.primaryKeyPrefix(r.end.Values)
+			if err != nil {
+				return err
+			}
+			startRow, endRow := t.findRange(r)
+			for rowNum := startRow; rowNum < endRow; rowNum++ {
+				if done[rowNum] {
+					continue
+				}
+				done[rowNum] = true
+				ri.add(t.rows[rowNum], colIndexes)
+				if limit > 0 && len(ri.rows) >= int(limit) {
+					return nil
+				}
+			}
+		}
+
 		return nil
 	})
 }
 
-func (d *database) ReadAll(tbl string, cols []string, limit int64) (*resultIter, error) {
-	return d.readTable(tbl, cols, func(t *table, ri *resultIter, colIndexes []int) error {
+func (d *database) ReadAll(tbl string, cols []string, limit int64) (*rawIter, error) {
+	return d.readTable(tbl, cols, func(t *table, ri *rawIter, colIndexes []int) error {
 		for _, r := range t.rows {
 			ri.add(r, colIndexes)
 			if limit > 0 && len(ri.rows) >= int(limit) {
@@ -479,57 +549,11 @@ func (d *database) ReadAll(tbl string, cols []string, limit int64) (*resultIter,
 	})
 }
 
-type queryParams map[string]interface{}
-
-func (d *database) Query(q spansql.Query, params queryParams) (*resultIter, error) {
-	// If there's an ORDER BY clause, prepare the list of auxiliary data we need.
-	// This is provided to evalSelect to evaluate with each row.
-	var aux []spansql.Expr
-	var desc []bool
-	if len(q.Order) > 0 {
-		if len(q.Select.From) == 0 {
-			return nil, fmt.Errorf("ORDER BY doesn't work without a table")
-		}
-
-		for _, o := range q.Order {
-			aux = append(aux, o.Expr)
-			desc = append(desc, o.Desc)
-		}
+func (t *table) addColumn(cd spansql.ColumnDef, newTable bool) *status.Status {
+	if !newTable && cd.NotNull {
+		return status.Newf(codes.InvalidArgument, "new non-key columns cannot be NOT NULL")
 	}
 
-	ri, err := d.evalSelect(q.Select, params, aux)
-	if err != nil {
-		return nil, err
-	}
-	if len(q.Order) > 0 {
-		sort.Slice(ri.rows, func(one, two int) bool {
-			r1, r2 := ri.rows[one], ri.rows[two]
-			for i := range r1.aux {
-				cmp := compareVals(r1.aux[i], r2.aux[i])
-				if desc[i] {
-					cmp = -cmp
-				}
-				if cmp == 0 {
-					continue
-				}
-				return cmp < 0
-			}
-			return false
-		})
-	}
-	if q.Limit != nil {
-		lim, err := evalLimit(q.Limit, params)
-		if err != nil {
-			return nil, err
-		}
-		if n := int(lim); n < len(ri.rows) {
-			ri.rows = ri.rows[:n]
-		}
-	}
-	return ri, nil
-}
-
-func (t *table) addColumn(cd spansql.ColumnDef) *status.Status {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -552,6 +576,58 @@ func (t *table) addColumn(cd spansql.ColumnDef) *status.Status {
 	return nil
 }
 
+func (t *table) alterColumn(cd spansql.ColumnDef) *status.Status {
+	// Supported changes here are:
+	//	Add NOT NULL to a non-key column, excluding ARRAY columns.
+	//	Remove NOT NULL from a non-key column.
+	//	Change a STRING column to a BYTES column or a BYTES column to a STRING column.
+	//	Increase or decrease the length limit for a STRING or BYTES type (including to MAX).
+	//	Enable or disable commit timestamps in value and primary key columns.
+	// https://cloud.google.com/spanner/docs/schema-updates#supported-updates
+
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	ci, ok := t.colIndex[cd.Name]
+	if !ok {
+		// TODO: What's the right response code?
+		return status.Newf(codes.InvalidArgument, "unknown column %q", cd.Name)
+	}
+
+	// Check and make type transformations.
+	oldT, newT := t.cols[ci].Type, cd.Type
+	stringOrBytes := func(bt spansql.TypeBase) bool { return bt == spansql.String || bt == spansql.Bytes }
+
+	// If the only change is adding NOT NULL, this is okay except for primary key columns and array types.
+	// We don't track whether commit timestamps are permitted on a per-column basis, so that's ignored.
+	// TODO: Do this when we track NOT NULL-ness.
+
+	// Change between STRING and BYTES is fine, as is increasing/decreasing the length limit.
+	// TODO: This should permit array conversions too.
+	if stringOrBytes(oldT.Base) && stringOrBytes(newT.Base) && !oldT.Array && !newT.Array {
+		// TODO: Validate data; length limit changes should be rejected if they'd lead to data loss, for instance.
+		var conv func(x interface{}) interface{}
+		if oldT.Base == spansql.Bytes && newT.Base == spansql.String {
+			conv = func(x interface{}) interface{} { return string(x.([]byte)) }
+		} else if oldT.Base == spansql.String && newT.Base == spansql.Bytes {
+			conv = func(x interface{}) interface{} { return []byte(x.(string)) }
+		}
+		if conv != nil {
+			for _, row := range t.rows {
+				if row[ci] != nil { // NULL stays as NULL.
+					row[ci] = conv(row[ci])
+				}
+			}
+		}
+		t.cols[ci].Type = newT
+		return nil
+	}
+
+	// TODO: Support other alterations.
+
+	return status.Newf(codes.InvalidArgument, "unsupported ALTER COLUMN %s", cd.SQL())
+}
+
 func (t *table) insertRow(rowNum int, r row) {
 	t.rows = append(t.rows, nil)
 	copy(t.rows[rowNum+1:], t.rows[rowNum:])
@@ -562,25 +638,22 @@ func (t *table) insertRow(rowNum int, r row) {
 // reporting it as a half-open interval.
 // r.startKey and r.endKey should be populated.
 func (t *table) findRange(r *keyRange) (int, int) {
-	// TODO: This is incorrect for primary keys with descending order.
-	// It might be sufficient for the caller to switch start/end in that case.
-
 	// startRow is the first row matching the range.
 	startRow := sort.Search(len(t.rows), func(i int) bool {
-		return rowCmp(r.startKey, t.rows[i][:t.pkCols]) <= 0
+		return rowCmp(r.startKey, t.rows[i][:t.pkCols], t.pkDesc) <= 0
 	})
 	if startRow == len(t.rows) {
 		return startRow, startRow
 	}
-	if !r.startClosed && rowCmp(r.startKey, t.rows[startRow][:t.pkCols]) == 0 {
+	if !r.startClosed && rowCmp(r.startKey, t.rows[startRow][:t.pkCols], t.pkDesc) == 0 {
 		startRow++
 	}
 
 	// endRow is one more than the last row matching the range.
 	endRow := sort.Search(len(t.rows), func(i int) bool {
-		return rowCmp(r.endKey, t.rows[i][:t.pkCols]) < 0
+		return rowCmp(r.endKey, t.rows[i][:t.pkCols], t.pkDesc) < 0
 	})
-	if !r.endClosed && rowCmp(r.endKey, t.rows[endRow-1][:t.pkCols]) == 0 {
+	if !r.endClosed && rowCmp(r.endKey, t.rows[endRow-1][:t.pkCols], t.pkDesc) == 0 {
 		endRow--
 	}
 
@@ -634,24 +707,39 @@ func (t *table) rowForPK(pk []interface{}) (row int, found bool) {
 	}
 
 	i := sort.Search(len(t.rows), func(i int) bool {
-		return rowCmp(pk, t.rows[i][:t.pkCols]) <= 0
+		return rowCmp(pk, t.rows[i][:t.pkCols], t.pkDesc) <= 0
 	})
 	if i == len(t.rows) {
 		return i, false
 	}
-	return i, rowCmp(pk, t.rows[i][:t.pkCols]) == 0
+	return i, rowEqual(pk, t.rows[i][:t.pkCols])
 }
 
 // rowCmp compares two rows, returning -1/0/+1.
+// The desc arg indicates whether each column is in a descending order.
 // This is used for primary key matching and so doesn't support array/struct types.
 // a is permitted to be shorter than b.
-func rowCmp(a, b []interface{}) int {
+func rowCmp(a, b []interface{}, desc []bool) int {
 	for i := 0; i < len(a); i++ {
 		if cmp := compareVals(a[i], b[i]); cmp != 0 {
+			if desc[i] {
+				cmp = -cmp
+			}
 			return cmp
 		}
 	}
 	return 0
+}
+
+// rowEqual reports whether two rows are equal.
+// This doesn't support array/struct types.
+func rowEqual(a, b []interface{}) bool {
+	for i := 0; i < len(a); i++ {
+		if compareVals(a[i], b[i]) != 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func valForType(v *structpb.Value, t spansql.Type) (interface{}, error) {
@@ -782,7 +870,7 @@ func (d *database) Execute(stmt spansql.DMLStmt, params queryParams) (int, error
 		n := 0
 		for i := 0; i < len(t.rows); {
 			ec := evalContext{
-				table:  t,
+				cols:   t.cols,
 				row:    t.rows[i],
 				params: params,
 			}
