@@ -17,8 +17,6 @@
 // Package instance is an auto-generated package for the
 // Cloud Spanner Instance Admin API.
 //
-//   NOTE: This package is in alpha. It is not stable, and is likely to change.
-//
 // Use of Context
 //
 // The ctx passed to NewClient is used for authentication requests and
@@ -40,7 +38,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-const versionClient = "20200212"
+const versionClient = "20200305"
 
 func insertMetadata(ctx context.Context, mds ...metadata.MD) context.Context {
 	out, _ := metadata.FromOutgoingContext(ctx)
