@@ -93,7 +93,7 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-      //Getting the Sum of Resource Version and storing PodIP before Chaos
+			//Getting the Sum of Resource Version and storing PodIP before Chaos
 			target, err := client.CoreV1().Pods(chaosTypes.TargetPodNs).List(metav1.ListOptions{LabelSelector: chaosTypes.TargetPodLabels})
 			Expect(err).To(BeNil(), "fail to get target pods")
 			for i, podSpec := range target.Items {
@@ -185,32 +185,18 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
 			Expect(string(runner.Status.Phase)).To(Equal("Running"))
 
-			//Fetch job pod name
-			By("Fetch Job pod name")
+			//Waiting for experiment job to get completed
+			//Also print the logs of the job
+			By("Waiting for job completion")
 			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to print the logs of the experiment")
 
-			//Running it for infinite time (say 3000 * 10)
-			//The Gitlab job will quit if it takes more time than default time (10 min)
-			By("Wait for engine to come in Succeeded sate")
-			runnerAfter, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-			for i := 0; i < 3000; i++ {
-				if string(runnerAfter.Status.Phase) != "Succeeded" {
-					time.Sleep(10 * time.Second)
-					runnerAfter, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-					fmt.Printf("Currently, the runner pod is in %v State, Please Wait ...\n", runnerAfter.Status.Phase)
-				} else {
-					break
-				}
-			}
-			Expect(err).To(BeNil())
-			Expect(string(runnerAfter.Status.Phase)).To(Equal("Succeeded"))
-
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, _ := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get("engine6-openebs-target-pod-failure", metav1.GetOptions{})
-			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			Expect(err).To(BeNil(), "Fail to get chaosresult")
 		})
 	})
 
