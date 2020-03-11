@@ -157,26 +157,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
-			//Running it for infinite time (say 30000s)
-			//The Gitlab job will quit if it takes more time than default time (10 min)
-			By("Wait for engine to come in Succeeded sate")
-			runnerAfter, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-			for i := 0; i < 3000; i++ {
-				if string(runnerAfter.Status.Phase) != "Succeeded" {
-					time.Sleep(10 * time.Second)
-					runnerAfter, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-					fmt.Printf("Currently, the runner pod is in %v State, Please Wait ...\n", runnerAfter.Status.Phase)
-				} else {
-					break
-				}
-			}
-			Expect(err).To(BeNil())
-			Expect(string(runnerAfter.Status.Phase)).To(Equal("Succeeded"))
-
-			//Checking the chaosresult
-			By("Checking the chaosresult")
-			app, _ := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			//Waiting for experiment job to get completed
+			//Also Printing the logs of the experiment
+			By("Waiting for job completion")
+			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			Expect(err).To(BeNil(), "Fail to get the chaos result")
 
 		})
 	})
