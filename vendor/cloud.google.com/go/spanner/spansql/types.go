@@ -40,7 +40,13 @@ type CreateTable struct {
 func (ct *CreateTable) String() string { return fmt.Sprintf("%#v", ct) }
 func (*CreateTable) isDDLStmt()        {}
 func (ct *CreateTable) Pos() Position  { return ct.Position }
-func (ct *CreateTable) clearOffset()   { ct.Position.Offset = 0 }
+func (ct *CreateTable) clearOffset() {
+	for i := range ct.Columns {
+		// Mutate in place.
+		ct.Columns[i].clearOffset()
+	}
+	ct.Position.Offset = 0
+}
 
 // Interleave represents an interleave clause of a CREATE TABLE statement.
 type Interleave struct {
@@ -107,7 +113,17 @@ type AlterTable struct {
 func (at *AlterTable) String() string { return fmt.Sprintf("%#v", at) }
 func (*AlterTable) isDDLStmt()        {}
 func (at *AlterTable) Pos() Position  { return at.Position }
-func (at *AlterTable) clearOffset()   { at.Position.Offset = 0 }
+func (at *AlterTable) clearOffset() {
+	switch alt := at.Alteration.(type) {
+	case AddColumn:
+		alt.Def.clearOffset()
+		at.Alteration = alt
+	case AlterColumn:
+		alt.Def.clearOffset()
+		at.Alteration = alt
+	}
+	at.Position.Offset = 0
+}
 
 // TableAlteration is satisfied by AddColumn, DropColumn and SetOnDelete.
 type TableAlteration interface {
@@ -118,12 +134,12 @@ type TableAlteration interface {
 func (AddColumn) isTableAlteration()   {}
 func (DropColumn) isTableAlteration()  {}
 func (SetOnDelete) isTableAlteration() {}
-
-//func (AlterColumn) isTableAlteration() {}
+func (AlterColumn) isTableAlteration() {}
 
 type AddColumn struct{ Def ColumnDef }
 type DropColumn struct{ Name string }
 type SetOnDelete struct{ Action OnDelete }
+type AlterColumn struct{ Def ColumnDef }
 
 type OnDelete int
 
@@ -131,11 +147,6 @@ const (
 	NoActionOnDelete OnDelete = iota
 	CascadeOnDelete
 )
-
-/* TODO
-type AlterColumn struct {
-}
-*/
 
 // Delete represents a DELETE statement.
 // https://cloud.google.com/spanner/docs/dml-syntax#delete-statement
@@ -163,7 +174,12 @@ type ColumnDef struct {
 	// `false` if query is `OPTIONS (allow_commit_timestamp = null)`
 	// `nil` if there are no OPTIONS
 	AllowCommitTimestamp *bool
+
+	Position Position // position of the column name
 }
+
+func (cd ColumnDef) Pos() Position { return cd.Position }
+func (cd *ColumnDef) clearOffset() { cd.Position.Offset = 0 }
 
 // Type represents a column type.
 type Type struct {
@@ -208,7 +224,8 @@ type Select struct {
 	List     []Expr
 	From     []SelectFrom
 	Where    BoolExpr
-	// TODO: GroupBy, Having
+	GroupBy  []Expr
+	// TODO: Having
 }
 
 type SelectFrom struct {
@@ -257,9 +274,33 @@ type Limit interface {
 	SQL() string
 }
 
+type ArithOp struct {
+	Op       ArithOperator
+	LHS, RHS Expr // only RHS is set for Neg, BitNot
+}
+
+func (ArithOp) isExpr() {}
+
+type ArithOperator int
+
+const (
+	Neg    ArithOperator = iota // unary -
+	BitNot                      // unary ~
+	Mul                         // *
+	Div                         // /
+	Concat                      // ||
+	Add                         // +
+	Sub                         // -
+	BitShl                      // <<
+	BitShr                      // >>
+	BitAnd                      // &
+	BitXor                      // ^
+	BitOr                       // |
+)
+
 type LogicalOp struct {
 	Op       LogicalOperator
-	LHS, RHS BoolExpr // only RHS is set for Not
+	LHS, RHS BoolExpr // only RHS is set for Neg, BitNot
 }
 
 func (LogicalOp) isBoolExpr() {}
@@ -421,6 +462,7 @@ func (d *DDL) clearOffset() {
 // DDLStmt is satisfied by a type that can appear in a DDL.
 type DDLStmt interface {
 	isDDLStmt()
+	clearOffset()
 	SQL() string
 	Node
 }
@@ -433,7 +475,8 @@ type DMLStmt interface {
 
 // Comment represents a comment.
 type Comment struct {
-	Marker string // opening marker; one of "#", "--", "/*"
+	Marker   string // Opening marker; one of "#", "--", "/*".
+	Isolated bool   // Whether this comment is on its own line.
 	// Start and End are the position of the opening and terminating marker.
 	Start, End Position
 	Text       []string
@@ -447,7 +490,10 @@ func (c *Comment) clearOffset()   { c.Start.Offset, c.End.Offset = 0, 0 }
 // appearing in a DDL file.
 type Node interface {
 	Pos() Position
-	clearOffset()
+	// clearOffset() is not included here because some types like ColumnDef
+	// have the method on their pointer type rather than their natural value type.
+	// This method is only invoked from within this package, so it isn't
+	// important to enforce such things.
 }
 
 // Position describes a source position in an input DDL file.
@@ -476,6 +522,10 @@ func (ddl *DDL) LeadingComment(n Node) *Comment {
 	if ci >= len(ddl.Comments) || ddl.Comments[ci].End.Line != lineEnd {
 		return nil
 	}
+	if !ddl.Comments[ci].Isolated {
+		// This is an inline comment for a previous node.
+		return nil
+	}
 	return ddl.Comments[ci]
 }
 
@@ -498,7 +548,7 @@ func (ddl *DDL) InlineComment(n Node) *Comment {
 	if c.Start.Line != pos.Line {
 		return nil
 	}
-	if c.Start != c.End || len(c.Text) != 1 {
+	if c.Start.Line != c.End.Line || len(c.Text) != 1 {
 		// Multi-line comment; don't return it.
 		return nil
 	}
