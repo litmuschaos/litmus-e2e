@@ -113,6 +113,14 @@ disk-fill:
 	@echo "--------------------------------"
 	@go test tests/disk-fill_test.go -v -count=1
 
+.PHONY: node-memory-hog
+node-memory-hog:
+
+	@echo "----------------------------------"
+	@echo "Running node-memory-hog experiment"
+	@echo "----------------------------------"
+	@go test tests/node-memory-hog_test.go -v -count=1
+
 .PHONY: app-cleanup
 app-cleanup:
 
