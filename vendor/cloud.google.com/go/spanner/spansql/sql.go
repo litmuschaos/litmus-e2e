@@ -104,7 +104,9 @@ func (od OnDelete) SQL() string {
 	panic("unknown OnDelete")
 }
 
-// TODO func (ac AlterColumn) SQL() string { }
+func (ac AlterColumn) SQL() string {
+	return "ALTER COLUMN " + ac.Def.SQL()
+}
 
 func (d *Delete) SQL() string {
 	return "DELETE FROM " + d.Table + " WHERE " + d.Where.SQL()
@@ -210,6 +212,15 @@ func (sel Select) SQL() string {
 	if sel.Where != nil {
 		str += " WHERE " + sel.Where.SQL()
 	}
+	if len(sel.GroupBy) > 0 {
+		str += " GROUP BY "
+		for i, gb := range sel.GroupBy {
+			if i > 0 {
+				str += ", "
+			}
+			str += gb.SQL()
+		}
+	}
 	return str
 }
 
@@ -219,6 +230,36 @@ func (o Order) SQL() string {
 		str += " DESC"
 	}
 	return str
+}
+
+var arithOps = map[ArithOperator]string{
+	// Binary operators only; unary operators are handled first.
+	Mul:    "*",
+	Div:    "/",
+	Concat: "||",
+	Add:    "+",
+	Sub:    "-",
+	BitShl: "<<",
+	BitShr: ">>",
+	BitAnd: "&",
+	BitXor: "^",
+	BitOr:  "|",
+}
+
+func (ao ArithOp) SQL() string {
+	// Extra parens inserted to ensure the correct precedence.
+
+	switch ao.Op {
+	case Neg:
+		return "-(" + ao.RHS.SQL() + ")"
+	case BitNot:
+		return "~(" + ao.RHS.SQL() + ")"
+	}
+	op, ok := arithOps[ao.Op]
+	if !ok {
+		panic("unknown ArithOp")
+	}
+	return "(" + ao.LHS.SQL() + ")" + op + "(" + ao.RHS.SQL() + ")"
 }
 
 func (lo LogicalOp) SQL() string {

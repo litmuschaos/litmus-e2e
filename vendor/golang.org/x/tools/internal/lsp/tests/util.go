@@ -197,7 +197,7 @@ func DiffDiagnostics(uri span.URI, want, got []source.Diagnostic) string {
 	return ""
 }
 
-func summarizeDiagnostics(i int, uri span.URI, want []source.Diagnostic, got []source.Diagnostic, reason string, args ...interface{}) string {
+func summarizeDiagnostics(i int, uri span.URI, want, got []source.Diagnostic, reason string, args ...interface{}) string {
 	msg := &bytes.Buffer{}
 	fmt.Fprint(msg, "diagnostics failed")
 	if i >= 0 {
@@ -428,14 +428,16 @@ func CheckCompletionOrder(want, got []protocol.CompletionItem, strictScores bool
 func DiffSnippets(want string, got *protocol.CompletionItem) string {
 	if want == "" {
 		if got != nil {
-			return fmt.Sprintf("expected no snippet but got %s", got.TextEdit.NewText)
+			x := got.TextEdit
+			return fmt.Sprintf("expected no snippet but got %s", x.NewText)
 		}
 	} else {
 		if got == nil {
 			return fmt.Sprintf("couldn't find completion matching %q", want)
 		}
-		if want != got.TextEdit.NewText {
-			return fmt.Sprintf("expected snippet %q, got %q", want, got.TextEdit.NewText)
+		x := got.TextEdit
+		if want != x.NewText {
+			return fmt.Sprintf("expected snippet %q, got %q", want, x.NewText)
 		}
 	}
 	return ""

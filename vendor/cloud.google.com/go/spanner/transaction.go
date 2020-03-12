@@ -24,12 +24,9 @@ import (
 
 	"cloud.google.com/go/internal/trace"
 	vkit "cloud.google.com/go/spanner/apiv1"
-	"github.com/googleapis/gax-go/v2"
 	"google.golang.org/api/iterator"
 	sppb "google.golang.org/genproto/googleapis/spanner/v1"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 )
 
 // transactionID stores a transaction ID which uniquely identifies a transaction
@@ -909,16 +906,15 @@ func (t *ReadWriteTransaction) commit(ctx context.Context) (time.Time, error) {
 		return ts, errSessionClosed(t.sh)
 	}
 
-	var trailer metadata.MD
 	res, e := client.Commit(contextWithOutgoingMetadata(ctx, t.sh.getMetadata()), &sppb.CommitRequest{
 		Session: sid,
 		Transaction: &sppb.CommitRequest_TransactionId{
 			TransactionId: t.tx,
 		},
 		Mutations: mPb,
-	}, gax.WithGRPCOptions(grpc.Trailer(&trailer)))
+	})
 	if e != nil {
-		return ts, toSpannerErrorWithMetadata(e, trailer)
+		return ts, toSpannerErrorWithCommitInfo(e, true)
 	}
 	if tstamp := res.GetCommitTimestamp(); tstamp != nil {
 		ts = time.Unix(tstamp.Seconds, int64(tstamp.Nanos))
@@ -954,12 +950,14 @@ func (t *ReadWriteTransaction) rollback(ctx context.Context) {
 // runInTransaction executes f under a read-write transaction context.
 func (t *ReadWriteTransaction) runInTransaction(ctx context.Context, f func(context.Context, *ReadWriteTransaction) error) (time.Time, error) {
 	var (
-		ts  time.Time
-		err error
+		ts              time.Time
+		err             error
+		errDuringCommit bool
 	)
 	if err = f(context.WithValue(ctx, transactionInProgressKey{}, 1), t); err == nil {
 		// Try to commit if transaction body returns no error.
 		ts, err = t.commit(ctx)
+		errDuringCommit = err != nil
 	}
 	if err != nil {
 		if isAbortErr(err) {
@@ -972,9 +970,15 @@ func (t *ReadWriteTransaction) runInTransaction(ctx context.Context, f func(cont
 			t.sh.destroy()
 			return ts, err
 		}
-		// Not going to commit, according to API spec, should rollback the
-		// transaction.
-		t.rollback(ctx)
+		// Rollback the transaction unless the error occurred during the
+		// commit. Executing a rollback after a commit has failed will
+		// otherwise cause an error. Note that transient errors, such as
+		// UNAVAILABLE, are already handled in the gRPC layer and do not show
+		// up here. Context errors (deadline exceeded / canceled) during
+		// commits are also not rolled back.
+		if !errDuringCommit {
+			t.rollback(ctx)
+		}
 		return ts, err
 	}
 	// err == nil, return commit timestamp.
@@ -1006,7 +1010,6 @@ func (t *writeOnlyTransaction) applyAtLeastOnce(ctx context.Context, ms ...*Muta
 		return ts, err
 	}
 
-	var trailers metadata.MD
 	// Retry-loop for aborted transactions.
 	// TODO: Replace with generic retryer.
 	for {
@@ -1018,6 +1021,7 @@ func (t *writeOnlyTransaction) applyAtLeastOnce(ctx context.Context, ms ...*Muta
 				// creations/retrivals.
 				return ts, err
 			}
+			defer sh.recycle()
 		}
 		res, err := sh.getClient().Commit(contextWithOutgoingMetadata(ctx, sh.getMetadata()), &sppb.CommitRequest{
 			Session: sh.getID(),
@@ -1029,22 +1033,19 @@ func (t *writeOnlyTransaction) applyAtLeastOnce(ctx context.Context, ms ...*Muta
 				},
 			},
 			Mutations: mPb,
-		}, gax.WithGRPCOptions(grpc.Trailer(&trailers)))
+		})
 		if err != nil && !isAbortErr(err) {
 			if isSessionNotFoundError(err) {
 				// Discard the bad session.
 				sh.destroy()
 			}
-			return ts, toSpannerError(err)
+			return ts, toSpannerErrorWithCommitInfo(err, true)
 		} else if err == nil {
 			if tstamp := res.GetCommitTimestamp(); tstamp != nil {
 				ts = time.Unix(tstamp.Seconds, int64(tstamp.Nanos))
 			}
 			break
 		}
-	}
-	if sh != nil {
-		sh.recycle()
 	}
 	return ts, toSpannerError(err)
 }
