@@ -1,4 +1,6 @@
 # litmus-e2e
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e?ref=badge_shield)
+
 This repository contains the Gitlab e2e pipeline with BDD tests for Generic experiments of litmus. An auxiliary application is deployed in the scope of different scenarios and the chaos is performed on that application then in the cleanup stage it is removed successfully.
 ## Here are the different stages of the Gitlab pipeline:
 
@@ -160,3 +162,7 @@ Gets deleted and <b>new one</b> gets created with:-<i><br>
 </td>
 </tr>
 </table>
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e?ref=badge_large)
