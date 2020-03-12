@@ -1,56 +1,44 @@
 # Makefile for building litmus-e2e
 
-.PHONY: install
-install:
+.PHONY: build-litmus
+build-litmus:
 
-	@echo "-------------------"
-	@echo "Installing Litmus"
-	@echo "-------------------"
-	@echo "Creatign crds"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-	@echo "Creating rbac for chaos-operator"
-	@kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml
-	@echo "Creating chaos-operator"
-	@wget https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml
-	@sed -i 's/operator:ci/operator:latest/g' operator.yaml 
-	@kubectl apply -f operator.yaml
-	@echo "Litmus installed successfully"
+	@echo "------------"
+	@echo "Build Litmus"
+	@echo "------------"
+	@go test tests/install-litmus_test.go -v -count=1
 
+.PHONY: app-deploy
+app-deploy:
 
-.PHONY: deployapp
-deployapp:
-
-	@echo "--------------------"
-	@echo "Deploying app"
-	@echo "--------------------"
-	@ansible-playbook nginx/deployment/app_deploy.yml -vv
-	@kubectl get deploy nginx -n litmus
-	@kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n litmus
+	@echo "---------------------"
+	@echo "Deploying Application"
+	@echo "---------------------"
+	@go test tests/app-deploy_test.go -v -count=1
 
 .PHONY: liveness
 liveness:
 
-	@echo "-------------------"
-	@echo "Checking liveness"
-	@echo "-------------------"
-	@ansible-playbook nginx/liveness/liveness.yml -vv
-	@kubectl get pods -n litmus
+	@echo "---------------------"
+	@echo "Deploying Application"
+	@echo "---------------------"
+	@go test tests/app-liveness_test.go -v -count=1
 
 .PHONY: auxiliary-app
 auxiliary-app:
 
-	@echo "------------------------"
+	@echo "-----------------------"
 	@echo "Deploying Auxiliary App"
-	@echo "------------------------"
-	@kubectl run aux-app --image=nginx -n litmus
-	
+	@echo "-----------------------"
+	@go test tests/auxiliary-app_test.go -v -count=1
+
 .PHONY: pod-delete
 pod-delete:
 
 	@echo "-------------------------------"
 	@echo "Running pod-delete experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-delete.yml -vv
+	@go test tests/pod-delete_test.go -v -count=1
 
 .PHONY: container-kill
 container-kill:
@@ -58,7 +46,7 @@ container-kill:
 	@echo "-------------------------------"
 	@echo "Running container-kill experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/container-kill.yml -vv
+	@go test tests/container-kill_test.go -v -count=1
 
 .PHONY: pod-network-latency
 pod-network-latency:
@@ -66,7 +54,15 @@ pod-network-latency:
 	@echo "-------------------------------"
 	@echo "Running pod-network-latency experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-latency.yml -vv
+	@go test tests/pod-network-latency_test.go -v -count=1
+
+.PHONY: pod-network-latency
+pod-network-latency:
+
+	@echo "-------------------------------"
+	@echo "Running pod-network-latency experiment"
+	@echo "--------------------------------"
+	@go test tests/pod-network-latency_test.go -v -count=1
 
 .PHONY: pod-network-loss
 pod-network-loss:
@@ -74,7 +70,8 @@ pod-network-loss:
 	@echo "-------------------------------"
 	@echo "Running pod-network-loss experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-loss.yml -vv
+	@go test tests/pod-network-loss_test.go -v -count=1
+
 
 .PHONY: pod-network-corruption
 pod-network-corruption:
@@ -82,7 +79,7 @@ pod-network-corruption:
 	@echo "-------------------------------"
 	@echo "Running pod-network-corruption experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-network-corruption.yml -vv
+	@go test tests/pod-network-corruption_test.go -v -count=1
 
 .PHONY: pod-cpu-hog
 pod-cpu-hog:
@@ -90,7 +87,7 @@ pod-cpu-hog:
 	@echo "-------------------------------"
 	@echo "Running pod-cpu-hog experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/generic/pod-cpu-hog.yml -vv
+	@go test tests/pod-cpu-hog_test.go -v -count=1
 
 .PHONY: node-cpu-hog
 node-cpu-hog:
@@ -98,7 +95,7 @@ node-cpu-hog:
 	@echo "-------------------------------"
 	@echo "Running node-cpu-hog experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/infra/node-cpu-hog.yml -vv
+	@go test tests/node-cpu-hog_test.go -v -count=1
 
 .PHONY: node-drain
 node-drain:
@@ -106,7 +103,7 @@ node-drain:
 	@echo "---------------------------------"
 	@echo "Running node-drain experiment"
 	@echo "---------------------------------"
-	@ansible-playbook experiments/infra/node-drain.yml -vv
+	@go test tests/node-drain_test.go -v -count=1
 
 .PHONY: disk-fill
 disk-fill:
@@ -114,7 +111,7 @@ disk-fill:
 	@echo "--------------------------------"
 	@echo "Running disk-fill experiment"
 	@echo "--------------------------------"
-	@ansible-playbook experiments/infra/disk-fill.yml -vv
+	@go test tests/disk-fill_test.go -v -count=1
 
 .PHONY: app-cleanup
 app-cleanup:
@@ -122,9 +119,4 @@ app-cleanup:
 	@echo "--------------------"
 	@echo "Deleting litmus"
 	@echo "--------------------"
-	@kubectl delete chaosengine -n litmus --all
-	@kubectl delete chaosexperiment -n litmus --all
-	@kubectl delete deploy -n litmus --all
-	@kubectl delete svc nginx -n litmus
-	@kubectl delete -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml
-	@kubectl delete -f https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml
+	@go test tests/litmus-cleanup_test.go -v -count=1
