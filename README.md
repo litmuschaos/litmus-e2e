@@ -1,5 +1,5 @@
 ## litmus-e2e
-This repository contains the Gitlab e2e pipeline with BDD and other positive and negative test cases for Generic experiments of litmus. An auxiliary application is deployed in the scope of different scenarios and the chaos is performed on that application then in the cleanup stage it is removed successfully.
+This repository contains the Gitlab e2e pipeline with BDD and other positive and negative test cases for Kubernetes experiments of litmus. An auxiliary application is deployed in the scope of different scenarios and the chaos is performed on that application then in the cleanup stage it is removed successfully.
 # Here are the different stages of the Gitlab pipeline:
 
 <table style="width:100%">
@@ -20,7 +20,7 @@ This repository contains the Gitlab e2e pipeline with BDD and other positive and
     <td>This is the application deployment stage. The application under chaos is deployed and the liveness test for the application is also performed in this stage.</td>
   </tr>
     <tr>
-    <td>Generic-experiment</td>
+    <td>kubernetes-experiment</td>
     <td>This stage includes the creation of experiments,engine and positive and negative test cases for the experiments.</td>
   </tr>
     <tr>
