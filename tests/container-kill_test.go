@@ -96,12 +96,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml").Run()
+			Expect(err).To(BeNil(), "fail get chaos experiment")
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "container-kill.yaml").Run()
+			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
+			err = exec.Command("kubectl", "apply", "-f", "container-kill.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			fmt.Println("Chaos Experiment Created Successfully")
 
 			//Installing chaos engine for the experiment
