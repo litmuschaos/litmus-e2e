@@ -88,7 +88,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		It("Should check for creation of runner pod", func() {
 
 			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kubernets/pod-delete/rbac.yaml"
 			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
 			Expect(err).To(BeNil(), "Fail to create RBAC")
@@ -96,7 +96,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/kubernets/pod-delete/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			if err != nil {
 				fmt.Println(err)
@@ -106,7 +106,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for the experiment")
-			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml").Run()
+			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kubernets/pod-delete/engine.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to fetch engine file")
 			//Modify chaos engine spec
 			//Modify Namespace,Name,AppNs,AppLabel of the engine

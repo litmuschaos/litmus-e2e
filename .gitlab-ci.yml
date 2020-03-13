@@ -3,7 +3,7 @@ stages:
   - setup
   - install
   - deploy
-  - generic-experiment
+  - kubernets-experiment
   - infra-experiment
   - push
   - app-cleanup
@@ -96,7 +96,7 @@ pod-delete:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
@@ -111,7 +111,7 @@ container-kill:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
@@ -126,7 +126,7 @@ pod-network-latency:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
@@ -141,7 +141,7 @@ pod-network-loss:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
@@ -156,7 +156,7 @@ pod-network-corruption:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
@@ -171,7 +171,7 @@ pod-cpu-hog:
 
   when: always
   extends: .before_script_template
-  stage: generic-experiment
+  stage: kubernets-experiment
   tags:
     - litmus-build
   script:
