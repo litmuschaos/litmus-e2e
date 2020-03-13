@@ -72,21 +72,37 @@ var _ = Describe("BDD of litmus installation", func() {
 
 		It("Should check for creation of Litmus", func() {
 
-			//Installing Litmus
-			By("Installing Litmus")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-ci.yaml").Run()
-			Expect(err).To(BeNil(), "Failed to install litmus")
+			//Installing Crds
+			By("Installing crds")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
+			Expect(err).To(BeNil(), "Failed to install crds")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Installing Rbac
+			By("Installing rbac")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
+			Expect(err).To(BeNil(), "Failed to install rbac")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Installing operator
+			By("Installing operator")
+			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
+			Expect(err).To(BeNil(), "Failed to install operator")
 			if err != nil {
 				fmt.Println(err)
 			}
 
 			//Checking the status of operator
-			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
+			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
 			count := 0
 			for operator.Status.UnavailableReplicas != 0 {
 				if count < 50 {
 					fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
-					operator, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
+					operator, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
 					time.Sleep(5 * time.Second)
 					count++
 				} else {
