@@ -166,7 +166,7 @@ OpenEBS Target Network Loss:
     paths:
       - .kube/
 
-OpenEBS Control Plane Validation:
+OpenEBS Control Plane Chaos:
 
   when: always
   extends: .before_script_template
@@ -174,7 +174,7 @@ OpenEBS Control Plane Validation:
   tags:
     - litmus-openebs
   script:
-    - make openebs-control-plane-validation
+    - make openebs-control-plane-chaos
 
   artifacts:
     when: always
