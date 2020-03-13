@@ -18,12 +18,9 @@ import (
 	"golang.org/x/tools/internal/lsp/telemetry"
 	"golang.org/x/tools/internal/memoize"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/trace"
+	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
-
-// Limits the number of parallel parser calls per process.
-var parseLimit = make(chan struct{}, 20)
 
 // parseKey uniquely identifies a parsed Go file.
 type parseKey struct {
@@ -109,7 +106,7 @@ func hashParseKeys(phs []source.ParseGoHandle) string {
 }
 
 func parseGo(ctx context.Context, fset *token.FileSet, fh source.FileHandle, mode source.ParseMode) *parseGoData {
-	ctx, done := trace.StartSpan(ctx, "cache.parseGo", telemetry.File.Of(fh.Identity().URI.Filename()))
+	ctx, done := event.StartSpan(ctx, "cache.parseGo", telemetry.File.Of(fh.Identity().URI.Filename()))
 	defer done()
 
 	if fh.Identity().Kind != source.Go {
@@ -119,8 +116,7 @@ func parseGo(ctx context.Context, fset *token.FileSet, fh source.FileHandle, mod
 	if err != nil {
 		return &parseGoData{err: err}
 	}
-	parseLimit <- struct{}{}
-	defer func() { <-parseLimit }()
+
 	parserMode := parser.AllErrors | parser.ParseComments
 	if mode == source.ParseHeader {
 		parserMode = parser.ImportsOnly | parser.ParseComments

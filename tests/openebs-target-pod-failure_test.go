@@ -167,7 +167,7 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 			time.Sleep(2 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
-			By("Wait for engine to come in running sate")
+			By("Wait for chaso-runner  to come in running sate")
 			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
 			//Running it for infinite time (say 3000 * 10)

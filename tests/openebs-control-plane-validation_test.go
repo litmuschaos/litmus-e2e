@@ -116,7 +116,7 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 			// Checking the chaosresult
 			By("Checking the chaosresult")
 			app, _ := clientSet.ChaosResults("openebs").Get("control-plane-chaos-openebs-control-plane-validation", metav1.GetOptions{})
-			Expect(string(app.Spec.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass in chaosresult")
+			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass in chaosresult")
 		})
 	})
 

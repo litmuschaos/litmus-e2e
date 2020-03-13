@@ -2,27 +2,23 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package trace adds support for telemetry tracing.
-package trace
+package event
 
 import (
 	"context"
 	"time"
-
-	"golang.org/x/tools/internal/telemetry"
-	"golang.org/x/tools/internal/telemetry/export"
 )
 
-func StartSpan(ctx context.Context, name string, tags ...telemetry.Tag) (context.Context, func()) {
-	ctx = export.ProcessEvent(ctx, telemetry.Event{
-		Type:    telemetry.EventStartSpan,
+func StartSpan(ctx context.Context, name string, tags ...Tag) (context.Context, func()) {
+	ctx = ProcessEvent(ctx, Event{
+		Type:    StartSpanType,
 		Message: name,
 		At:      time.Now(),
 		Tags:    tags,
 	})
 	return ctx, func() {
-		export.ProcessEvent(ctx, telemetry.Event{
-			Type: telemetry.EventEndSpan,
+		ProcessEvent(ctx, Event{
+			Type: EndSpanType,
 			At:   time.Now(),
 		})
 	}
@@ -31,8 +27,8 @@ func StartSpan(ctx context.Context, name string, tags ...telemetry.Tag) (context
 // Detach returns a context without an associated span.
 // This allows the creation of spans that are not children of the current span.
 func Detach(ctx context.Context) context.Context {
-	return export.ProcessEvent(ctx, telemetry.Event{
-		Type: telemetry.EventDetach,
+	return ProcessEvent(ctx, Event{
+		Type: DetachType,
 		At:   time.Now(),
 	})
 }
