@@ -140,12 +140,11 @@ var _ = Describe("BDD of openebs experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
-			err = exec.Command("wget", "-O", "target-container-failure-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "target-container-failure-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-container-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-container-failure-ce.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "target-container-failure-exp.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "target-container-failure-ce.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "target-container-failure-exp.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 
 			fmt.Println("Chaos Experiment Created Successfully")
