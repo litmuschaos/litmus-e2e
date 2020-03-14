@@ -27,6 +27,7 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
+	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "node-drain"
 	engineName     = "engine7"
 )
@@ -111,9 +112,9 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "node-drain.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-drain/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "node-drain.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "node-drain.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "node-drain.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "node-drain.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Chaos Experiment Created Successfully")
 

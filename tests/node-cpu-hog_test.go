@@ -27,6 +27,7 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
+	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "node-cpu-hog"
 	engineName     = "engine6"
 )
@@ -98,7 +99,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "node-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-cpu-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "node-cpu-hog.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+chaosTypes.ChaosNamespace+`/g`, "node-cpu-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "node-cpu-hog.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
