@@ -148,7 +148,7 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
 
 			//Modify APP_PVC
-			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "pool-container-failure-ce.yaml").Run()
+			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "pool-pod-failure-ce.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
 
 			//Creating ChaosEngine
