@@ -27,6 +27,7 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
+	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "disk-fill"
 	engineName     = "engine8"
 )
@@ -96,12 +97,12 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("wget", "-O", "disk-fill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml").Run()
+			Expect(err).To(BeNil(), "fail get chaos experiment")
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "disk-fill.yaml").Run()
+			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
+			err = exec.Command("kubectl", "apply", "-f", "disk-fill.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			fmt.Println("Chaos Experiment Created Successfully")
 
 			//Installing chaos engine for the experiment

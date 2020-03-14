@@ -227,6 +227,21 @@ disk-fill:
     paths:
       - .kube/
 
+node-memory-hog:
+
+  extends: .before_script_template
+  when: always
+  stage: infra-experiment
+  tags:
+    - litmus-build
+  script:
+    - make node-memory-hog
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/      
+
 App Cleanup:
 
   extends: .before_script_template
