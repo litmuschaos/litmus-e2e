@@ -34,6 +34,7 @@ var (
 	startTimeBefore [3]*metav1.Time
 	image_tag       = os.Getenv("IMAGE_TAG")
 	engineName      = "engine1"
+	image_tag       = os.Getenv("IMAGE_TAG")
 	experimentName  = "openebs-pool-pod-failure"
 )
 
@@ -123,9 +124,9 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			Expect(err).To(BeNil(), "Fail to create chaos experiment")
 			err = exec.Command("wget", "-O", "pool-pod-failure-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-pod-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "pool-pod-failure-exp.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "pool-pod-failure-ce.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pool-pod-failure-exp.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "pool-pod-failure-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 
 			fmt.Println("Chaos Experiment Created Successfully")
@@ -145,11 +146,8 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;					 
 			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
 				"pool-pod-failure-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
 
-			//Modify APP_PVC
-			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "pool-pod-failure-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
+			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
