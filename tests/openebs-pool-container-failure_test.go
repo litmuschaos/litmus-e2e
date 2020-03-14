@@ -29,6 +29,7 @@ var (
 	clientSet         *chaosClient.LitmuschaosV1alpha1Client
 	err               error
 	containerIdBefore [9]string
+	image_tag         = os.Getenv("IMAGE_TAG")
 	experimentName    = "openebs-pool-container-failure"
 	engineName        = "engine"
 )
@@ -128,9 +129,9 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			err = exec.Command("kubectl", "apply", "-f", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			err = exec.Command("wget", "-O", "pool-container-failure-ce.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "pool-container-failure-ce.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`ci/g`, "pool-container-failure-ce.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-ce.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Chaos Experiment Created Successfully")
 
@@ -151,9 +152,6 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 				"pool-container-failure-ce.yaml").Run()
 
 			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
-			//Modify APP_PVC
-			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "pool-container-failure-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
