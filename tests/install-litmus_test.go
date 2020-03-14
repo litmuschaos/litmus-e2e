@@ -27,7 +27,7 @@ var (
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
 	err        error
-)
+	image_tag  = os.Getenv("IMAGE_TAG")
 
 func TestChaos(t *testing.T) {
 
@@ -80,6 +80,8 @@ var _ = Describe("BDD of litmus installation", func() {
 				fmt.Println(err)
 			}
 
+			fmt.Println("crds Installed successfully")
+
 			//Installing Rbac
 			By("Installing rbac")
 			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
@@ -88,10 +90,21 @@ var _ = Describe("BDD of litmus installation", func() {
 				fmt.Println(err)
 			}
 
+			fmt.Println("rbac Installed successfully")
+			fmt.Printf("Installing operator with image tag: %v \n", image_tag)
+
 			//Installing operator
 			By("Installing operator")
-			err = exec.Command("kubectl", "apply", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
-			Expect(err).To(BeNil(), "Failed to install operator")
+			err = exec.Command("wget", "-O", "openebs-operator.yml", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
+			Expect(err).To(BeNil(), "Failed to Fetch operator manifest")
+			err = exec.Command("sed", "-i",
+				`s/chaos-operator:ci/chaos-operator:`+image_tag+`/g;
+				 s/#  value: "litmuschaos\/chaos-runner:ci"/  value: "litmuschaos\/chaos-runner:`+image_tag+`"/g;
+			     s/#- name: CHAOS_RUNNER_IMAGE/- name: CHAOS_RUNNER_IMAGE/g`,
+				"openebs-operator.yml").Run()
+			Expect(err).To(BeNil(), "Failed to edit operator manifest")
+			err = exec.Command("kubectl", "apply", "-f", "openebs-operator.yml").Run()
+			Expect(err).To(BeNil(), "Failed to create chaos operator")
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -110,7 +123,7 @@ var _ = Describe("BDD of litmus installation", func() {
 				}
 			}
 
-			fmt.Println("chaos-operator created successfully")
+			fmt.Println("Chaos Operator created successfully")
 			fmt.Println("Litmus installed successfully")
 		})
 	})
