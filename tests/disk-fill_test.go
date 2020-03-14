@@ -99,9 +99,9 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "disk-fill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+chaosTypes.ChaosNamespace+`/g`, "disk-fill.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "disk-fill.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "disk-fill.yaml", "-n", "litmus").Run()
+			err = exec.Command("kubectl", "apply", "-f", "disk-fill.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Chaos Experiment Created Successfully")
 
@@ -121,10 +121,6 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
 				experimentName+"-ce.yaml").Run()
-
-			//Modify FORCE
-			err = exec.Command("sed", "-i", `/name: FORCE/{n;s/.*/              value: ""/}`, experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify fORCE field of chaos engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
