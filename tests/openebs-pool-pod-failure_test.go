@@ -33,6 +33,7 @@ var (
 	podIpBefore     [3]string
 	startTimeBefore [3]*metav1.Time
 	engineName      = "engine1"
+	image_tag       = os.Getenv("IMAGE_TAG")
 	experimentName  = "openebs-pool-pod-failure"
 )
 
@@ -122,7 +123,7 @@ var _ = Describe("BDD test for openebs pool pod failure experiment", func() {
 			Expect(err).To(BeNil(), "Fail to create chaos experiment")
 			err = exec.Command("wget", "-O", "pool-pod-failure-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-pod-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:ci/g`, "pool-pod-failure-exp.yaml").Run()
+			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "pool-pod-failure-exp.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pool-pod-failure-exp.yaml", "-n", "litmus").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
