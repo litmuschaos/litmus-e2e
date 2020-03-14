@@ -123,7 +123,7 @@ var _ = Describe("BDD of litmus installation", func() {
 					Fail("Operator is not in Ready state Time Out")
 				}
 			}
-			fmt.Println("Chaos Operator created successfully"
+			fmt.Println("Chaos Operator created successfully")
 			fmt.Println("Litmus installed successfully")
 		})
 	})
