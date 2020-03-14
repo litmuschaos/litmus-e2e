@@ -149,8 +149,11 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
 				"pool-container-failure-ce.yaml").Run()
-
 			Expect(err).To(BeNil(), "Fail to change the fields of the engine")
+
+			//Modify APP_PVC
+			err = exec.Command("sed", "-i", `/name: APP_PVC/{n;s/.*/              value: "percona-vol1-claim"/}`, "pool-container-failure-ce.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to Modify APP PVC name in engine spec")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
