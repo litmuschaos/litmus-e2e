@@ -28,6 +28,7 @@ var (
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
 	err        error
 	image_tag  = os.Getenv("IMAGE_TAG")
+)
 
 func TestChaos(t *testing.T) {
 

@@ -16,6 +16,18 @@ import (
 // JobLogs The feature of the function is to wait for the job to get completed and then print the logs of the Job Pod.
 func JobLogs(experimentName string, engineName string, client *kubernetes.Clientset) (int, error) {
 
+	//Waiting for Job Creation
+	for i := 0; i < 10; i++ {
+		job, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
+		Expect(err).To(BeNil(), "Fail to get the job in running state")
+		if int(len(job.Items)) == 0 {
+			fmt.Println("Waiting for Job creation")
+			time.Sleep(10 * time.Second)
+		} else {
+			break
+		}
+
+	}
 	// Getting the list of job pods for the experiment
 	job, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 	if err != nil {
