@@ -121,20 +121,9 @@ OpenEBS Pool Pod Failure:
     paths:
       - .kube/
 
-OpenEBS Target Container Failure:
-  
-  when: always
-  extends: .before_script_template
-  stage: experiment
-  tags:
-    - litmus-openebs
-  script:
-    - make openebs-target-container-failure
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+## Using Gitlab template for openebs pool container failure experiment
+include:
+  - local: .gitlab/ci/openebs-pool-container-failure.gitlab-ci.yml
 
 OpenEBS Target Network Delay:
   

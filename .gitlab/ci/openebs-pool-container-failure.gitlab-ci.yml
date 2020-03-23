@@ -1,0 +1,23 @@
+.before_script_template:
+  before_script:
+
+    - export GOPATH=$HOME/go
+    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
+    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+
+OpenEBS Pool Container Failure:
+  
+  when: always
+  extends: .before_script_template
+  stage: experiment
+  tags:
+    - litmus-openebs
+  script:
+    - make openebs-pool-container-failure
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
