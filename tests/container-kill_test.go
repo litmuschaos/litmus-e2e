@@ -165,6 +165,10 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 
+			//Updating the result table
+			By("Updating the result table")
+			err = exec.Command("python3", "result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", app.Status.ExperimentStatus.Verdict, "--time_stamp", "1:1:1", "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", "Container-Kill").Run()
+			Expect(err).To(BeNil(), "Fail to update the resutl table")
 		})
 	})
 
