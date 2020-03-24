@@ -34,8 +34,8 @@ token = args.token
 test_name = args.test_name
 
 github_token = Github(token)
-repo = github_token.get_repo("litmuschaos/litmus-e2e")
-contents = repo.get_contents("/stages/"+stage+"/"+test_name+".md")
+repo = github_token.get_repo("uditgaurav/litmuschaos")
+contents = repo.get_contents("README.md")
 file = repo.get_contents(contents.path)
 file_path = contents.path
 file_content=str(file.decoded_content)
