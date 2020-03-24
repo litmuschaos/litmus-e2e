@@ -30,6 +30,9 @@ var (
 	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "container-kill"
 	engineName     = "engine1"
+	//Getting the jobs details for readme updation
+	jobid = os.Getenv("CI_JOB_ID")
+	token = os.Getenv("GITHUB_TOKEN")
 )
 
 func TestChaos(t *testing.T) {
@@ -162,12 +165,13 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Checking the chaosresult
 			By("Checking the chaosresult")
 			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			testVerdict := string(app.Status.ExperimentStatus.Verdict)
+			Expect(testVerdict).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 
 			//Updating the result table
 			By("Updating the result table")
-			err = exec.Command("python3", "../result_update.py", "--job_id", "3298", "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", "Pass", "--time_stamp", "1:1:1", "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", "Container-Kill").Run()
+			err = exec.Command("python3", "../result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", "1:1:1", "--token", token, "--test_name", "Container-Kill").Run()
 			Expect(err).To(BeNil(), "Fail to update the resutl table")
 		})
 	})
