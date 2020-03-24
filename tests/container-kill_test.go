@@ -171,8 +171,9 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Updating the result table
 			By("Updating the result table")
-			err = exec.Command("python3", "../result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", "1:1:1", "--token", token, "--test_name", "Container-Kill").Run()
-			Expect(err).To(BeNil(), "Fail to update the resutl table")
+			dt := time.Now()
+                        err = exec.Command("python3", "../result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", dt.String(), "--token", token, "--test_name", "Container-Kill").Run()
+                        Expect(err).To(BeNil(), "Fail to update the resutl table")
 		})
 	})
 
