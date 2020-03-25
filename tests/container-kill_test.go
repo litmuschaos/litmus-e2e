@@ -31,7 +31,6 @@ var (
 	experimentName = "container-kill"
 	engineName     = "engine1"
 	//Getting the jobs details for readme updation
-	jobid = os.Getenv("CI_JOB_ID")
 	token = os.Getenv("GITHUB_TOKEN")
 )
 
@@ -171,9 +170,13 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Updating the result table
 			By("Updating the result table")
+			//Getting the jobid
+			err = exec.Command("jobid=$(echo $CI_JOB_ID)").Run()
+			//Getting
 			dt := time.Now()
-                        err = exec.Command("python3", "../result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", dt.String(), "--token", token, "--test_name", "Container-Kill").Run()
-                        Expect(err).To(BeNil(), "Fail to update the resutl table")
+			fmt.Println("The job_id for the job will be", jobid)
+			err = exec.Command("python3", "../utils/result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", dt.String(), "--token", token, "--test_name", "Container-Kill").Run()
+			Expect(err).To(BeNil(), "Fail to update the resutl table")
 		})
 	})
 
