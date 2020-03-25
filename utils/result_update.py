@@ -35,12 +35,12 @@ test_name = args.test_name
 
 github_token = Github(token)
 repo = github_token.get_repo("uditgaurav/litmuschaos")
-contents = repo.get_contents("README.md")
-file = repo.get_contents(contents.path)
+b= repo.get_branch(branch="baseline")
+contents = repo.get_contents("README.md", "baseline")
+file = repo.get_contents(contents.path, "baseline")
 file_path = contents.path
 file_content=str(file.decoded_content)
 content_list = file_content.split('\n')
-
 # Number of retries 
 file_update_retries = 5
 
@@ -49,7 +49,7 @@ job_url ="<a href= \"https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/{0
 
 def fetch_file_content():
     # fetching file contents of github file_path readme.md
-    file = repo.get_contents(file_path)
+    file = repo.get_contents(file_path, "baseline")
     file_content=str(file.decoded_content, 'utf-8')
     content_list = file_content.split('\n')
 
@@ -85,7 +85,7 @@ print("Trying to update readme.md file at path: {}".format(file_path))
 try:
     print("README.md content update try: {}".format(try_count))
     try_count += 1
-    repo.update_file(file_path, commit_message, updated_file_content, file.sha)
+    repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="baseline")
     print("Readme.md updated successfully")
 except github.GithubException as e:
     exception = e
@@ -102,7 +102,7 @@ except github.GithubException as e:
        file,updated_file_content = fetch_file_content()
        try_count += 1
        # retry committing readme.md file 
-       repo.update_file(file_path, commit_message, updated_file_content, file.sha)
+       repo.update_file(file_path, commit_message, updated_file_content, file.sha, branch="baseline")
        print("Readme.md updated successfully")
        # exit the loop as file updated successfully
        break
