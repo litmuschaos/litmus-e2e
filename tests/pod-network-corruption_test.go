@@ -164,5 +164,17 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 		})
 	})
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
 
+		It("Should check for the result updation", func() {
+
+			//Updating the result table
+			By("Updating the result table")
+			pipelineResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
+			Expect(pipelineResult).NotTo(Equal("1"), "Failed  to update the job result in a table")
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
+		})
+	})
 })
