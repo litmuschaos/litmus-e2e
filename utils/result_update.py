@@ -36,7 +36,7 @@ test_name = args.test_name
 github_token = Github(token)
 repo = github_token.get_repo("uditgaurav/litmuschaos")
 b= repo.get_branch(branch="baseline")
-contents = repo.get_contents("README.md", "baseline")
+contents = repo.get_contents("tools/README.md", "baseline")
 file = repo.get_contents(contents.path, "baseline")
 file_path = contents.path
 file_content=str(file.decoded_content)

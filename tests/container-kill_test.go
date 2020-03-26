@@ -30,9 +30,6 @@ var (
 	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "container-kill"
 	engineName     = "engine1"
-	//Getting the jobs details for readme updation
-	token = os.Getenv("GITHUB_TOKEN")
-	jobid = os.Getenv("CI_JOB_ID")
 )
 
 func TestChaos(t *testing.T) {
@@ -171,20 +168,17 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		})
 	})
 
-	// BDD for pipeline result update 
+	// BDD for pipeline result update
 	Context("Check for the result update", func() {
 
 		It("Should check for the result updation", func() {
-			
+
 			//Updating the result table
 			By("Updating the result table")
-			dt := time.Now()
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			testVerdict := string(app.Status.ExperimentStatus.Verdict)
-			fmt.Println("The job_id for the job will be", jobid)
-			fmt.Println("The testVerdict for the experiment will be", testVerdict)
-			err = exec.Command("python3", "../utils/result_update.py", "--job_id", jobid, "--stage", "Generic Experiment", "--test_desc", "Container-Kill Experiment", "--test_result", testVerdict, "--time_stamp", (dt.Format(time.ANSIC)), "--token", token, "--test_name", "Container-Kill").Run()
-			Expect(err).To(BeNil(), "Fail to update the resutl table")
+			jobResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
+			Expect(jobResult).NotTo(Equal("1"), "Failed  to update the job result in a table")
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
 		})
 	})
 
