@@ -106,7 +106,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			err = exec.Command("kubectl", "apply", "-f", "openebs-operator.yml").Run()
 			Expect(err).To(BeNil(), "Failed to create chaos operator")
 
-			fmt.Println("Runner Image:", chaosTypes.RunnerRepoName, "/", chaosTypes.RunnerRepoName, ":", chaosTypes.RunnerImageTag)
+			fmt.Println("Runner Image:", chaosTypes.RunnerRepoName, "/", chaosTypes.RunnerImage, ":", chaosTypes.RunnerImageTag)
 
 			//Checking the status of operator
 			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
