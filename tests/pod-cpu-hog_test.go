@@ -27,7 +27,6 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "pod-cpu-hog"
 	engineName     = "engine5"
 )
@@ -99,11 +98,11 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "pod-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "pod-cpu-hog.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-cpu-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pod-cpu-hog.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully")
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
