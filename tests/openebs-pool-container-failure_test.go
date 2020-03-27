@@ -160,15 +160,19 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Fail to create chaos engine")
 			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("ChaosEngine created successfully...")
-			time.Sleep(2 * time.Second)
-
-			//Fetching the runner pod and Checking if it get in Running state or not
-			By("Wait for chaso-runner to come in running sate")
-			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
+				fmt.Println(err)	// BDD for pipeline result update
+				Context("Check for the result update", func() {
+			
+					It("Should check for the result updation", func() {
+			
+						//Updating the result table
+						By("Updating the result table")
+						pipelineResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
+						Expect(pipelineResult).NotTo(Equal("1"), "Failed  to update the job result in a table")
+						Expect(err).To(BeNil(), "Fail run the script for result updation")
+						fmt.Println("Result updated successfully !!!")
+					})
+				})aosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
 			//Running it for infinite time (say 3000 * 10)
 			//The Gitlab job will quit if it takes more time than default time (10 min)
@@ -246,5 +250,17 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 
 		})
 	})
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
 
+		It("Should check for the result updation", func() {
+
+			//Updating the result table
+			By("Updating the result table")
+			pipelineResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
+			Expect(pipelineResult).NotTo(Equal("1"), "Failed  to update the job result in a table")
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
+		})
+	})
 })
