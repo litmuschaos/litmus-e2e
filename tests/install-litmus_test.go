@@ -99,7 +99,7 @@ var _ = Describe("BDD of litmus installation", func() {
 			Expect(err).To(BeNil(), "Failed to Fetch operator manifest")
 			err = exec.Command("sed", "-i",
 				`s/litmuschaos\/chaos-operator:ci/`+chaosTypes.OperatorRepoName+`\/`+chaosTypes.OperatorImage+`:`+chaosTypes.OperatorImageTag+`/g;
-				 s/#  value: "litmuschaos\/chaos-runner:ci"/  value: "`+chaosTypes.RunnerRepoName+`\/`+chaosTypes.RunnerRepoName+`:`+chaosTypes.RunnerImageTag+`"/g;
+				 s/#  value: "litmuschaos\/chaos-runner:ci"/  value: "`+chaosTypes.RunnerRepoName+`\/`+chaosTypes.RunnerImage+`:`+chaosTypes.RunnerImageTag+`"/g;
 			     s/#- name: CHAOS_RUNNER_IMAGE/- name: CHAOS_RUNNER_IMAGE/g`,
 				"openebs-operator.yml").Run()
 			Expect(err).To(BeNil(), "Failed to edit operator manifest")
