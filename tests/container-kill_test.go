@@ -27,7 +27,7 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	image_tag      = os.Getenv("IMAGE_TAG")
+	image_tag      = "latest"
 	experimentName = "container-kill"
 	engineName     = "engine1"
 )
@@ -90,7 +90,8 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Installing RBAC for the experiment
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml"
-			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
+			rbacNamespace := chaosTypes.ChaosNamespace
+			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
 			Expect(err).To(BeNil(), "Fail to create RBAC")
 			fmt.Println("Rbac has been created successfully !!!")
