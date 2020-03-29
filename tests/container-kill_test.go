@@ -28,7 +28,7 @@ var (
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
 	experimentName = "container-kill"
-	engineName     = "engine1"
+	     = "engine1"
 )
 
 func TestChaos(t *testing.T) {
@@ -68,7 +68,7 @@ var _ = BeforeSuite(func() {
 	count := 0
 	for app.Status.UnavailableReplicas != 0 {
 		if count < 50 {
-			fmt.Printf("Percona Application is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
+			fmt.Printf("Application is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
 			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("nginx", metav1.GetOptions{})
 			time.Sleep(10 * time.Second)
 			count++
@@ -79,7 +79,7 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests for openebs pool container failure
+//BDD Tests for pod-delete experiment
 var _ = Describe("BDD of pod-delete experiment", func() {
 
 	// BDD TEST CASE 1
@@ -89,8 +89,9 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Installing RBAC for the experiment
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml"
-			installrbac, err := utils.InstallRbac(rbacPath, experimentName, client)
-			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
+			rbacNamespace := chaosTypes.ChaosNamespace
+			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
+			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
 			Expect(err).To(BeNil(), "Fail to create RBAC")
 			fmt.Println("Rbac has been created successfully !!!")
 
@@ -114,7 +115,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			err = exec.Command("sed", "-i",
 				`s/namespace: default/namespace: litmus/g;
-			         s/name: nginx-chaos/name: engine1/g;
+			         s/name: nginx-chaos/name: `+engineName+`/g;
 					 s/appns: 'default'/appns: 'litmus'/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
@@ -133,34 +134,23 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			time.Sleep(2 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
-			By("Wait for engine to come in running sate")
-			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-			fmt.Printf("name : %v \n", runner.Name)
-			//Running it for infinite time (say 3000 * 10)
-			//The Gitlab job will quit if it takes more time than default time (10 min)
-			for i := 0; i < 3000; i++ {
-				if string(runner.Status.Phase) != "Running" {
-					time.Sleep(1 * time.Second)
-					runner, _ = client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-					Expect(string(runner.Status.Phase)).NotTo(Or(Equal("Succeeded"), Equal("")))
-					fmt.Printf("The Runner pod is in %v State \n", runner.Status.Phase)
-				} else {
-					break
-				}
-			}
+			By("Wait for runner pod to come in running sate")
+			runnerNamespace := chaosTypes.ChaosNamespace
+			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
+			Expect(runnerPodStatus).NotTo(Equal("1"), "Runner pod failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			Expect(string(runner.Status.Phase)).To(Equal("Running"))
+			fmt.Println("Runner pod for is in Running state")
 
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
 			By("Waiting for job completion")
-			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
+			jobPodLogs, err := utils.JobLogs(experimentName, , client)
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(+"-"+experimentName, metav1.GetOptions{})
 			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 
