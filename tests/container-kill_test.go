@@ -28,7 +28,7 @@ var (
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
 	experimentName = "container-kill"
-	     = "engine1"
+	engineName     = "engine1"
 )
 
 func TestChaos(t *testing.T) {
@@ -144,7 +144,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
 			By("Waiting for job completion")
-			jobPodLogs, err := utils.JobLogs(experimentName, , client)
+			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
