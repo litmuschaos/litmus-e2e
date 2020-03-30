@@ -11,7 +11,6 @@ import (
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/gomega"
-	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -88,26 +87,22 @@ func JobLogs(experimentName string, engineName string, client *kubernetes.Client
 	return 0, nil
 }
 
-//UpdateResultTable will update the result of pipelines in a table by calling a python script result_update.py
-func UpdateResultTable(experimentName string, engineName string, clientSet *chaosClient.LitmuschaosV1alpha1Client) (int, error) {
+//UpdateResultTable will update the result of pipelines in a table on github using python update script
+func UpdateResultTable(experimentName string, testVerdict string, engineName string, clientSet *chaosClient.LitmuschaosV1alpha1Client) error {
 
 	//Updating the result table
-	dt := time.Now()
-	app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+	fmt.Println("The job_id for the job is:", os.Getenv("CI_JOB_ID"))
+	fmt.Println("The testVerdict for the experiment is:", testVerdict)
+	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--stage", "Experiment", "--test_desc", experimentName, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC)), "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", experimentName)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err = cmd.Run()
 	if err != nil {
-		return 0, errors.Wrap(err, "Fail to get the chaosresult while updating the result in a table.")
+		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+		return err
 	}
-	testVerdict := string(app.Status.ExperimentStatus.Verdict)
-	fmt.Println("The job_id for the job will be", os.Getenv("CI_JOB_ID"))
-	fmt.Println("The testVerdict for the experiment will be", testVerdict)
-	cmd := exec.Command("python3", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--stage", "Experiment", "--test_desc", experimentName, "--test_result", testVerdict, "--time_stamp", (dt.Format(time.ANSIC)), "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", experimentName)
-	out, err := cmd.Output()
-
-	if err != nil {
-		println(err.Error())
-		return 1, err
-	}
-	fmt.Println(string(out))
-
-	return 0, nil
+	fmt.Println("Result: " + out.String())
+	return nil
 }
