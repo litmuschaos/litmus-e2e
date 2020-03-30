@@ -150,7 +150,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(+"-"+experimentName, metav1.GetOptions{})
+			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
 			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 
