@@ -61,4 +61,3 @@
         - fail:
             msg: "The cluster deletion failed"
           when: true
-

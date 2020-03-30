@@ -92,6 +92,21 @@ Auxiliary App:
     paths:
       - .kube/
 
+coredns-pod-delete:
+
+  when: always
+  extends: .before_script_template
+  stage: generic-experiment
+  tags:
+    - litmus-build
+  script:
+    - make coredns-pod-delete
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+      
 pod-delete:
 
   when: always

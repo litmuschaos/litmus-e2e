@@ -95,4 +95,3 @@
         - fail:
             msg: "The cluster creation failed"
           when: true
-

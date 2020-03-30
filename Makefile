@@ -128,3 +128,11 @@ app-cleanup:
 	@echo "Deleting litmus"
 	@echo "--------------------"
 	@go test tests/litmus-cleanup_test.go -v -count=1
+
+.PHONY: coredns-pod-delete
+coredns-pod-delete:
+
+	@echo "--------------------"
+	@echo "Running coreDNS pod delete experiment"
+	@echo "--------------------"
+	@go test tests/coredns-pod-delete_test.go -v -count=1
