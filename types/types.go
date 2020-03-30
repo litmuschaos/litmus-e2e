@@ -1,27 +1,42 @@
 package tests
 
 import (
+	"os"
+
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 )
 
 var (
 
-	// Namespace where the chaos will be performed
+	// ChaosNamespace where the chaos will be performed
 	ChaosNamespace = "litmus"
-
-	// Namespace where the csp pods are deployed
+	// CspPodNs where the csp pods are deployed
 	CspPodNs = "openebs"
-
-	//Label of the CSP Pods
+	//CspPodLabels of the CSP Pods
 	CspPodLabels = "app=cstor-pool"
-
-	//Namespace where target pod is deployed
+	//TargetPodNs Namespace where target pod is deployed
 	TargetPodNs = "openebs"
-
-	//Label of the target pod
+	//TargetPodLabels Label of the target pod
 	TargetPodLabels = "openebs.io/target=cstor-target"
-
-	//Chaos Duration of the Experiment
+	//ExperimentRepoName of the image to be used in experiment
+	ExperimentRepoName = os.Getenv("EXPERIMENT_REPO_NAME")
+	//OperatorRepoName of the image to be used in operator
+	OperatorRepoName = os.Getenv("OPERATOR_REPO_NAME")
+	//RunnerRepoName of the image to be used in runner
+	RunnerRepoName = os.Getenv("RUNNER_REPO_NAME")
+	//RunnerImage name
+	RunnerImage = os.Getenv("RUNNER_IMAGE")
+	//OperatorImage name
+	OperatorImage = os.Getenv("OPERATOR_IMAGE")
+	//ExperimentImage name
+	ExperimentImage = os.Getenv("EXPERIMENT_IMAGE")
+	//ExperimentImageTag "latest or ci"
+	ExperimentImageTag = os.Getenv("EXPERIMENT_IMAGE_TAG")
+	//OperatorImageTag "latest or ci"
+	OperatorImageTag = os.Getenv("OPERATOR_IMAGE_TAG")
+	//RunnerImageTag "latest or ci"
+	RunnerImageTag = os.Getenv("RUNNER_IMAGE_TAG")
+	//ChaosDuration of the Experiment
 	ChaosDuration = ""
 )
 

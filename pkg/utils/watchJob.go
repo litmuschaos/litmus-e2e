@@ -11,6 +11,7 @@ import (
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/gomega"
+	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -87,13 +88,15 @@ func JobLogs(experimentName string, engineName string, client *kubernetes.Client
 	return 0, nil
 }
 
-//ResultUpdate will update the result of pipelines in a table by calling a python script result_update.py
-func ResultUpdate(experimentName string, engineName string, clientSet *chaosClient.LitmuschaosV1alpha1Client) (int, error) {
+//UpdateResultTable will update the result of pipelines in a table by calling a python script result_update.py
+func UpdateResultTable(experimentName string, engineName string, clientSet *chaosClient.LitmuschaosV1alpha1Client) (int, error) {
 
 	//Updating the result table
 	dt := time.Now()
 	app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-	Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+	if err != nil {
+		return 0, errors.Wrap(err, "Fail to get the chaosresult while updating the result in a table.")
+	}
 	testVerdict := string(app.Status.ExperimentStatus.Verdict)
 	fmt.Println("The job_id for the job will be", os.Getenv("CI_JOB_ID"))
 	fmt.Println("The testVerdict for the experiment will be", testVerdict)
