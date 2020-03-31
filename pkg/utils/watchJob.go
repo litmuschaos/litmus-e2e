@@ -9,7 +9,6 @@ import (
 	"time"
 
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/gomega"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,11 +16,11 @@ import (
 )
 
 // JobLogs The feature of the function is to wait for the job to get completed and then print the logs of the Job Pod.
-func JobLogs(experimentName string, engineName string, client *kubernetes.Clientset) (int, error) {
+func JobLogs(experimentName string, jobNamespace string, engineName string, client *kubernetes.Clientset) (int, error) {
 
 	//Waiting for Job Creation
 	for i := 0; i < 10; i++ {
-		job, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
+		job, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 		Expect(err).To(BeNil(), "Fail to get the job in running state")
 		if int(len(job.Items)) == 0 {
 			fmt.Println("Waiting for Job creation")
@@ -32,7 +31,7 @@ func JobLogs(experimentName string, engineName string, client *kubernetes.Client
 
 	}
 	// Getting the list of job pods for the experiment
-	job, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
+	job, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 	if err != nil {
 		return 1, err
 	}
@@ -44,7 +43,7 @@ func JobLogs(experimentName string, engineName string, client *kubernetes.Client
 			if string(podList.Status.Phase) != "Succeeded" {
 				time.Sleep(10 * time.Second)
 				//Getting the jobList again after waiting 10s
-				jobPod, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
+				jobPod, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 				if err != nil {
 					return 1, err
 				}
@@ -74,7 +73,7 @@ func JobLogs(experimentName string, engineName string, client *kubernetes.Client
 		jobPodName := (pod.Name)
 		fmt.Printf("JobPodName : %v \n\n\n", jobPodName)
 		// After the Job gets completed further commands will print the logs.
-		req := client.CoreV1().Pods(chaosTypes.ChaosNamespace).GetLogs(jobPodName, &v1.PodLogOptions{})
+		req := client.CoreV1().Pods(jobNamespace).GetLogs(jobPodName, &v1.PodLogOptions{})
 		readCloser, err := req.Stream()
 		if err != nil {
 			fmt.Println("Error2: ", err)

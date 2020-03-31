@@ -5,7 +5,7 @@ stages:
   - deploy
   - generic-experiment
   - infra-experiment
-  - push
+  - component checks
   - app-cleanup
   - cleanup
 
@@ -240,8 +240,23 @@ node-memory-hog:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
 
+admin-mode-check:
+
+  extends: .before_script_template
+  when: always
+  stage: component checks
+  tags:
+    - litmus-build
+  script:
+    - make admin-mode-check
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/ 
+      
 App Cleanup:
 
   extends: .before_script_template

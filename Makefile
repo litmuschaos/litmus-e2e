@@ -121,6 +121,14 @@ node-memory-hog:
 	@echo "----------------------------------"
 	@go test tests/node-memory-hog_test.go -v -count=1
 
+.PHONY: admin-mode-check
+admin-mode-check:
+
+	@echo "------------------------"
+	@echo "Running Admin Mode Check"
+	@echo "------------------------"
+	@go test tests/admin-mode_test.go -v -count=1	
+
 .PHONY: app-cleanup
 app-cleanup:
 
