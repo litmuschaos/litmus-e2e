@@ -41,7 +41,10 @@ Litmus Infra Setup:
     - litmus-build
   script:
     - make build-litmus
-node-memory-hog experiment
+
+  artifacts:
+    when: always
+    paths:
       - .kube/
     
 Deploy App:

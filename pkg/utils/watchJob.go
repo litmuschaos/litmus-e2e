@@ -8,11 +8,7 @@ import (
 	"os/exec"
 	"time"
 
-<<<<<<< HEAD
-=======
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
->>>>>>> 4133c55a142d831cd89736f72275a0df85950b7a
 	. "github.com/onsi/gomega"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
