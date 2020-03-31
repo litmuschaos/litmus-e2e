@@ -27,7 +27,6 @@ var (
 	client     *kubernetes.Clientset
 	clientSet  *chaosClient.LitmuschaosV1alpha1Client
 	err        error
-	image_tag  = os.Getenv("IMAGE_TAG")
 )
 
 func TestChaos(t *testing.T) {
@@ -92,23 +91,22 @@ var _ = Describe("BDD of litmus installation", func() {
 			}
 
 			fmt.Println("rbac Installed successfully")
-			fmt.Printf("Installing operator with image tag: %v \n", image_tag)
+			fmt.Println("Installing Operator with image:", chaosTypes.OperatorRepoName, "/", chaosTypes.OperatorImage, ":", chaosTypes.OperatorImageTag)
 
 			//Installing operator
 			By("Installing operator")
 			err = exec.Command("wget", "-O", "openebs-operator.yml", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/operator.yaml").Run()
 			Expect(err).To(BeNil(), "Failed to Fetch operator manifest")
 			err = exec.Command("sed", "-i",
-				`s/chaos-operator:ci/chaos-operator:`+image_tag+`/g;
-				 s/#  value: "litmuschaos\/chaos-runner:ci"/  value: "litmuschaos\/chaos-runner:`+image_tag+`"/g;
+				`s/litmuschaos\/chaos-operator:ci/`+chaosTypes.OperatorRepoName+`\/`+chaosTypes.OperatorImage+`:`+chaosTypes.OperatorImageTag+`/g;
+				 s/#  value: "litmuschaos\/chaos-runner:ci"/  value: "`+chaosTypes.RunnerRepoName+`\/`+chaosTypes.RunnerImage+`:`+chaosTypes.RunnerImageTag+`"/g;
 			     s/#- name: CHAOS_RUNNER_IMAGE/- name: CHAOS_RUNNER_IMAGE/g`,
 				"openebs-operator.yml").Run()
 			Expect(err).To(BeNil(), "Failed to edit operator manifest")
 			err = exec.Command("kubectl", "apply", "-f", "openebs-operator.yml").Run()
 			Expect(err).To(BeNil(), "Failed to create chaos operator")
-			if err != nil {
-				fmt.Println(err)
-			}
+
+			fmt.Println("Runner Image:", chaosTypes.RunnerRepoName, "/", chaosTypes.RunnerImage, ":", chaosTypes.RunnerImageTag)
 
 			//Checking the status of operator
 			operator, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
@@ -123,7 +121,6 @@ var _ = Describe("BDD of litmus installation", func() {
 					Fail("Operator is not in Ready state Time Out")
 				}
 			}
-
 			fmt.Println("Chaos Operator created successfully")
 			fmt.Println("Litmus installed successfully")
 		})

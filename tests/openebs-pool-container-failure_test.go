@@ -29,7 +29,6 @@ var (
 	clientSet         *chaosClient.LitmuschaosV1alpha1Client
 	err               error
 	containerIdBefore [9]string
-	image_tag         = os.Getenv("IMAGE_TAG")
 	experimentName    = "openebs-pool-container-failure"
 	engineName        = "engine"
 )
@@ -128,11 +127,11 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "pool-container-failure-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-pool-container-failure/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "pool-container-failure-exp.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pool-container-failure-exp.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-exp.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully")
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
