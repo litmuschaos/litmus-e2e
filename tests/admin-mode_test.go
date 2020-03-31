@@ -98,7 +98,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			Expect(err).To(BeNil(), "Failed to create deployment")
 			fmt.Println("Test Application is created")
 
-			//Removing pod delete Experiment if it allready exists in litmus ns
+			//Removing pod delete Experiment if it already exists in litmus ns
 			By("Experiment Cleanup")
 			err = exec.Command("kubectl", "delete", "chaosexperiment", "pod-delete", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Failed to delete chaosexperiment")
