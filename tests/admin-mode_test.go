@@ -66,13 +66,13 @@ var _ = BeforeSuite(func() {
 
 	//Checking the status of operator which is already installed and running
 	operator, err := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
-	Expect(err).To(BeNil(), "Fail to get operator")
+	Expect(err).To(BeNil(), "Failed to get operator")
 	count := 0
 	for operator.Status.UnavailableReplicas != 0 {
 		if count < 50 {
 			fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
 			operator, err = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
-			Expect(err).To(BeNil(), "Fail to get operator")
+			Expect(err).To(BeNil(), "Failed to get operator")
 			time.Sleep(5 * time.Second)
 			count++
 		} else {
@@ -119,18 +119,18 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Creating Chaos-Experiment for pod delete
 			By("Creating Experiment for pod delete")
 			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
-			Expect(err).To(BeNil(), "fail get chaos experiment")
+			Expect(err).To(BeNil(), "fail to get chaos experiment")
 			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
-			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
+			Expect(err).To(BeNil(), "Failed to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", "test").Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			Expect(err).To(BeNil(), "Failed to create chaos experiment")
 			fmt.Println("Pod delete Chaos Experiment Created Successfully")
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for pod delete experiment")
 			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to fetch engine file for pod delete")
+			Expect(err).To(BeNil(), "Failed to fetch engine file for pod delete")
 
 			//Modify chaos engine spec
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
@@ -144,12 +144,12 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 				experimentName+"-ce.yaml").Run()
 			//Modify FORCE
 			err = exec.Command("sed", "-i", `/name: FORCE/{n;s/.*/              value: ""/}`, experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify FORCE field of chaos engine")
+			Expect(err).To(BeNil(), "Failed to Modify FORCE field of chaos engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to create chaos engine")
+			Expect(err).To(BeNil(), "Failed to create chaos engine")
 			fmt.Println("ChaosEngine for pod delete created successfully")
 			time.Sleep(2 * time.Second)
 
@@ -157,8 +157,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Wait for runner pod to come in running sate")
 			runnerNamespace := "test"
 			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
-			Expect(runnerPodStatus).NotTo(Equal("1"), "Failed to get in running state")
-			Expect(err).To(BeNil(), "Fail to get the runner pod")
+			Expect(runnerPodStatus).NotTo(Equal("1"), "Faileded to get in running state")
+			Expect(err).To(BeNil(), "Failed to get the runner pod")
 			fmt.Println("Runner pod for pod delete is in Running state")
 
 			//Waiting for experiment job to get completed
@@ -166,14 +166,14 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Waiting for job completion")
 			jobNamespace := "test"
 			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
-			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
-			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
+			Expect(jobPodLogs).To(Equal(0), "Failed to print the logs of the experiment")
+			Expect(err).To(BeNil(), "Failed to get the experiment job pod")
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, err := clientSet.ChaosResults("test").Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
-			Expect(err).To(BeNil(), "Fail to get chaosresult")
+			chaosResult, err := clientSet.ChaosResults("test").Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			Expect(err).To(BeNil(), "Failed to get chaosresult")
 		})
 	})
 	// BDD for pipeline result update
@@ -184,10 +184,10 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Updating the result table
 			By("Updating the result table")
 			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+			Expect(err).To(BeNil(), "Failed to get the chaosresult while updating the result in a table")
 			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
 			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
-			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			Expect(err).To(BeNil(), "Failed run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
 		})
 	})
