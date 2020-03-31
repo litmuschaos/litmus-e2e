@@ -103,7 +103,7 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", experimentName+"-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-control-plane-chaos/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "container-kill.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, experimentName+"-exp.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-exp.yaml", "-n", "openebs").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
