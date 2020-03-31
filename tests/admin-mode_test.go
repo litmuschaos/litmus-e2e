@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"testing"
@@ -28,7 +29,7 @@ var (
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
 	experimentName = "pod-delete"
-	engineName     = "engine"
+	engineName     = "adminengine"
 )
 
 func TestChaos(t *testing.T) {
@@ -63,100 +64,117 @@ var _ = BeforeSuite(func() {
 		fmt.Println(err)
 	}
 
-	//Getting the Application Status
-	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("nginx", metav1.GetOptions{})
+	//Checking the status of operator which is already installed and running
+	operator, err := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
+	Expect(err).To(BeNil(), "Fail to get operator")
 	count := 0
-	for app.Status.UnavailableReplicas != 0 {
+	for operator.Status.UnavailableReplicas != 0 {
 		if count < 50 {
-			fmt.Printf("Application is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
-			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("nginx", metav1.GetOptions{})
-			time.Sleep(10 * time.Second)
+			fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
+			operator, err = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("litmus", metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get operator")
+			time.Sleep(5 * time.Second)
 			count++
 		} else {
-			Fail("Application fails to get in ready state")
+			Fail("Operator is not in Ready state Time Out")
 		}
 	}
-
+	fmt.Println("Chaos Operator is up and Running")
 })
 
-//BDD Tests for pod-delete experiment
-var _ = Describe("BDD of pod-delete experiment", func() {
+//BDD Tests for testing admin mode functionality
+//Checking for the creation of runner pod for application in same namespace
+var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 	// BDD TEST CASE 1
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"
-			rbacNamespace := chaosTypes.ChaosNamespace
-			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
-			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
+			//Create Namespace for the test
+			By("Creating namespace for the test")
+			cmd := exec.Command("kubectl", "create", "ns", "test")
+			cmd.Stderr = os.Stderr
+			err := cmd.Run()
+			if err != nil {
+				log.Fatalf("cmd.Run() failed with %s\n", err)
+			}
+
+			//Creating application for pod-delete in test namespace
+			By("Creating first deployment for pod-delete chaos")
+			err = exec.Command("kubectl", "run", "adminapp", "--image=nginx").Run()
+			Expect(err).To(BeNil(), "Failed to create deployment")
+			fmt.Println("Test Application is created")
+
+			//Installing RBAC for first experiment that is pod-delete
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-admin-rbac.yaml"
+			err = exec.Command("wget", "-O", experimentName+"-sa.yaml", rbacPath).Run()
+			Expect(err).To(BeNil(), "Fail to fetch rbac")
+			err = exec.Command("sed", "-i", `s/namespace: litmus/namespace: test/g`, experimentName+"-sa.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to modify rbac")
+			err = exec.Command("kubectl", "apply", "-f", experimentName+"-sa.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to create RBAC")
 			fmt.Println("Rbac has been created successfully !!!")
 
-			//Creating Chaos-Experiment
-			By("Creating Experiment")
+			//Creating Chaos-Experiment for pod delete
+			By("Creating Experiment for pod delete")
 			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", "test").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			fmt.Println("Pod delete Chaos Experiment Created Successfully")
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
-			By("Fetching engine file for the experiment")
+			By("Fetching engine file for pod delete experiment")
 			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to fetch engine file")
+			Expect(err).To(BeNil(), "Fail to fetch engine file for pod delete")
+
 			//Modify chaos engine spec
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
-
 			err = exec.Command("sed", "-i",
-				`s/namespace: default/namespace: litmus/g;
-			         s/name: nginx-chaos/name: `+engineName+`/g;
-					 s/appns: 'default'/appns: 'litmus'/g;
-					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
-					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
-			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
+				`s/name: nginx-chaos/name: `+engineName+`/g;
+				 s/namespace: default/namespace: test/g;
+				 s/chaosServiceAccount: pod-delete-sa/chaosServiceAccount: litmus-admin/g;
+				 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
+				 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
+			     s/applabel: 'app=nginx'/applabel: 'run=adminapp'/g`,
 				experimentName+"-ce.yaml").Run()
-
 			//Modify FORCE
 			err = exec.Command("sed", "-i", `/name: FORCE/{n;s/.*/              value: ""/}`, experimentName+"-ce.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to Modify FORCE field of chaos engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
-			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to create chaos engine")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("ChaosEngine created successfully...")
+			fmt.Println("ChaosEngine for pod delete created successfully")
 			time.Sleep(2 * time.Second)
 
-			//Fetching the runner pod and Checking if it get in Running state or not
+			//Fetching the runner pod and Checking if it gets in Running state or not
 			By("Wait for runner pod to come in running sate")
-			runnerNamespace := chaosTypes.ChaosNamespace
+			runnerNamespace := "test"
 			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
-			Expect(runnerPodStatus).NotTo(Equal("1"), "Runner pod failed to get in running state")
+			Expect(runnerPodStatus).NotTo(Equal("1"), "Failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			fmt.Println("Runner pod for is in Running state")
+			fmt.Println("Runner pod for pod delete is in Running state")
 
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
 			By("Waiting for job completion")
-			jobNamespace := chaosTypes.ChaosNamespace
-			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
+			jobNamespace := "test"
+			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
+			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			app, err := clientSet.ChaosResults("test").Get(engineName+"-"+experimentName, metav1.GetOptions{})
 			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 		})
 	})
+
 })

@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"os"
-
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 )
 
@@ -19,23 +17,23 @@ var (
 	//TargetPodLabels Label of the target pod
 	TargetPodLabels = "openebs.io/target=cstor-target"
 	//ExperimentRepoName of the image to be used in experiment
-	ExperimentRepoName = os.Getenv("EXPERIMENT_REPO_NAME")
+	ExperimentRepoName = "litmuschaos"
 	//OperatorRepoName of the image to be used in operator
-	OperatorRepoName = os.Getenv("OPERATOR_REPO_NAME")
+	OperatorRepoName = "litmuschaos"
 	//RunnerRepoName of the image to be used in runner
-	RunnerRepoName = os.Getenv("RUNNER_REPO_NAME")
+	RunnerRepoName = "litmuschaos"
 	//RunnerImage name
-	RunnerImage = os.Getenv("RUNNER_IMAGE")
+	RunnerImage = "chaos-runner"
 	//OperatorImage name
-	OperatorImage = os.Getenv("OPERATOR_IMAGE")
+	OperatorImage = "chaos-operator"
 	//ExperimentImage name
-	ExperimentImage = os.Getenv("EXPERIMENT_IMAGE")
+	ExperimentImage = "ansible-runner"
 	//ExperimentImageTag "latest or ci"
-	ExperimentImageTag = os.Getenv("EXPERIMENT_IMAGE_TAG")
+	ExperimentImageTag = "ci"
 	//OperatorImageTag "latest or ci"
-	OperatorImageTag = os.Getenv("OPERATOR_IMAGE_TAG")
+	OperatorImageTag = "ci"
 	//RunnerImageTag "latest or ci"
-	RunnerImageTag = os.Getenv("RUNNER_IMAGE_TAG")
+	RunnerImageTag = "ci"
 	//ChaosDuration of the Experiment
 	ChaosDuration = ""
 )
