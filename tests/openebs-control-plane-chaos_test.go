@@ -21,6 +21,7 @@ import (
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/utils"
+	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	restclient "k8s.io/client-go/rest"
 )
 
@@ -30,7 +31,6 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	image_tag      = os.Getenv("IMAGE_TAG")
 	experimentName = "openebs-control-plane-chaos"
 	engineName     = "engine2"
 )
@@ -103,11 +103,11 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", experimentName+"-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-control-plane-chaos/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, experimentName+"-exp.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "container-kill.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-exp.yaml", "-n", "openebs").Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully")
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file

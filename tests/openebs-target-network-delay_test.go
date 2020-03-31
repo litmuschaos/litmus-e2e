@@ -28,7 +28,6 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	image_tag      = os.Getenv("IMAGE_TAG")
 	engineName     = "engine4"
 	experimentName = "openebs-target-network-delay"
 )
@@ -101,12 +100,12 @@ var _ = Describe("BDD of openebs target network delay", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "target-network-delay-exp.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/openebs/openebs-target-network-delay/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "target-network-delay-exp.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "container-kill.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "target-network-delay-exp.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 
-			fmt.Println("Chaos Experiment Created Successfully")
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching Engine file
