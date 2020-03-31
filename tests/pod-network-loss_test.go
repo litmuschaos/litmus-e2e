@@ -144,7 +144,8 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			//Fetch job pod name
 			By("Fetch Job pod name")
 			jobNamespace := chaosTypes.ChaosNamespace
-			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
+			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
+			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
 			//Waiting for experiment job to get completed
