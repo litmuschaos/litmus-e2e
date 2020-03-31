@@ -5,7 +5,7 @@ stages:
   - deploy
   - generic-experiment
   - infra-experiment
-  - push
+  - parallel experiments
   - app-cleanup
   - cleanup
 
@@ -240,7 +240,22 @@ node-memory-hog:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
+      
+operator reconcile check:
+
+  extends: .before_script_template
+  when: always
+  stage: parallel experiments
+  tags:
+    - litmus-build
+  script:
+    - make operator-reconcile-resiliency-check
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/  
 
 App Cleanup:
 
