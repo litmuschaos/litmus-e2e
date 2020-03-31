@@ -180,8 +180,10 @@ var _ = Describe("BDD of openebs target network delay", func() {
 
 			//Updating the result table
 			By("Updating the result table")
-			pipelineResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
-			Expect(pipelineResult).NotTo(Equal("1"), "Failed  to update the job result in a table")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
 		})
