@@ -101,12 +101,12 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			}
 
 			//Creating application for pod-delete in test namespace
-			By("Creating first deployment for pod-delete chaos")
+			By("Creating deployment for pod-delete chaos")
 			err = exec.Command("kubectl", "run", "adminapp", "--image=nginx").Run()
 			Expect(err).To(BeNil(), "Failed to create deployment")
 			fmt.Println("Test Application is created")
 
-			//Installing RBAC for first experiment that is pod-delete
+			//Installing RBAC for experiment that is pod-delete
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-admin-rbac.yaml"
 			err = exec.Command("wget", "-O", experimentName+"-sa.yaml", rbacPath).Run()
 			Expect(err).To(BeNil(), "Fail to fetch rbac")
@@ -176,5 +176,19 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 		})
 	})
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
 
+		It("Should check for the result updation", func() {
+
+			//Updating the result table
+			By("Updating the result table")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
+		})
+	})
 })
