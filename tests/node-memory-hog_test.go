@@ -145,7 +145,8 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			//Also Printing the logs of the experiment
 			By("Waiting for job completion")
 			jobNamespace := chaosTypes.ChaosNamespace
-			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
+			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
+			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
 			//Checking the chaosresult
