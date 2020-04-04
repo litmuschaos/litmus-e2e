@@ -144,7 +144,8 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
 			By("Waiting for job completion")
-			jobPodLogs, err := utils.JobLogs(experimentName, engineName, client)
+			jobNamespace := chaosTypes.ChaosNamespace
+			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
@@ -157,4 +158,19 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		})
 	})
 
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
+
+		It("Should check for the result updation", func() {
+
+			//Updating the result table
+			By("Updating the result table")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
+		})
+	})
 })
