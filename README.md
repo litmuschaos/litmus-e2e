@@ -41,7 +41,7 @@ This repository contains the Gitlab e2e pipeline with BDD tests for Generic expe
 
 ## How to view the details of the last few pipeline runs?
 To view the details of the last few pipeline runs:
-- Switch to baseline branch
+- Switch to `baseline` branch
 - Select one of the two `generic-staging` or `openebs-staging` to see the GitLab job details of the Generic pipeline and OpenEBs pipeline respectively.
 - The table contains the Job ID, Description of the test, Execution time and Result of the test. 
 - You can visit the job details by clicking on Job ID which will take you to the job description at `gitlab.mayadata.io`. 
