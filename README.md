@@ -39,6 +39,13 @@ This repository contains the Gitlab e2e pipeline with BDD tests for Generic expe
   </tr>
 </table>
 
+## How to view the details of the last few pipeline runs?
+To view the details of the last few pipeline runs:
+- Switch to `baseline` branch
+- Select one of the two `generic-staging` or `openebs-staging` to see the GitLab job details of the Generic pipeline and OpenEBs pipeline respectively.
+- The table contains the Job ID, Description of the test, Execution time and Result of the test. 
+- You can visit the job details by clicking on Job ID which will take you to the job description at `gitlab.mayadata.io`. 
+
 # Litmus-OpenEBS E2E 
 This repository contains the Gitlab e2e pipeline with BDD and other test cases for OpenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
 ## Here are the different stages of the Gitlab pipeline:
