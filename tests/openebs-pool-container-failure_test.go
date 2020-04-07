@@ -158,15 +158,13 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", "pool-container-failure-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Fail to create chaos engine")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			fmt.Println("ChaosEngine created successfully...")
 			time.Sleep(2 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
+			By("Updating the result table")
 			By("Wait for chaso-runner to come in running sate")
+			pipelineResult, err := utils.ResultUpdate(experimentName, engineName, clientSet)
 			runner, err := client.CoreV1().Pods(chaosTypes.ChaosNamespace).Get(engineName+"-runner", metav1.GetOptions{})
 			fmt.Printf("name : %v \n", runner.Name)
 			//Running it for infinite time (say 3000 * 10)
@@ -245,5 +243,19 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 
 		})
 	})
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
 
+		It("Should check for the result updation", func() {
+
+			//Updating the result table
+			By("Updating the result table")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
+			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
+			Expect(err).To(BeNil(), "Fail run the script for result updation")
+			fmt.Println("Result updated successfully !!!")
+		})
+	})
 })
