@@ -30,8 +30,7 @@ var (
 	err             error
 	experimentName1 = "pod-delete"
 	experimentName2 = "container-kill"
-	engineName1     = "testengine1"
-	engineName2     = "testengine2"
+	engineName      = "testengine"
 )
 
 func TestChaos(t *testing.T) {
@@ -150,7 +149,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
 
 			err = exec.Command("sed", "-i",
-				`s/name: nginx-chaos/name: `+engineName1+`/g;
+				`s/name: nginx-chaos/name: `+engineName+`/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			         s/applabel: 'app=nginx'/applabel: 'run=testapp1'/g`,
@@ -169,7 +168,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching the runner pod and Checking if it gets in Running state or not
 			By("Wait for runner pod to come in running sate")
 			runnerNamespace1 := "default"
-			runnerPodStatus1, err := utils.RunnerPodStatus(runnerNamespace1, engineName1, client)
+			runnerPodStatus1, err := utils.RunnerPodStatus(runnerNamespace1, engineName, client)
 			Expect(runnerPodStatus1).NotTo(Equal("1"), "Failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
 			fmt.Println("Runner pod for pod delete is in Running state")
@@ -183,7 +182,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
 
 			err = exec.Command("sed", "-i",
-				`s/name: nginx-chaos/name: `+engineName2+`/g;
+				`s/name: nginx-chaos/name: `+engineName+`/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			         s/applabel: 'app=nginx'/applabel: 'run=testapp2'/g`,
@@ -199,7 +198,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching the runner pod and Checking if it gets in Running state or not
 			By("Wait for runner pod to come in running sate")
 			runnerNamespace2 := "default"
-			runnerPodStatus2, err := utils.RunnerPodStatus(runnerNamespace2, engineName2, client)
+			runnerPodStatus2, err := utils.RunnerPodStatus(runnerNamespace2, engineName, client)
 			Expect(runnerPodStatus2).NotTo(Equal("1"), "Failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
 			fmt.Println("Runner pod for container kill is in Running state")
