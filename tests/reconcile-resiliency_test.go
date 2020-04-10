@@ -220,7 +220,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Getting the components in chaosNamespace namespace")
 			out2, err2 := exec.Command("kubectl", "get", "pods", "-n", chaosTypes.ChaosNamespace).Output()
 			if err != nil {
-				log.Fatal(err1)
+				log.Fatal(err2)
 			}
 			fmt.Printf("The output is: %s\n", out2)
 		})
