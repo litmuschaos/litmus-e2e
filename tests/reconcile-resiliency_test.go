@@ -210,19 +210,19 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Visualising the components at default namespace
 			By("Getting the components in default namespace")
-			out, err1 := exec.Command("kubectl", "get", "pods").Output()
+			out1, err1 := exec.Command("kubectl", "get", "pods").Output()
 			if err != nil {
 				log.Fatal(err1)
 			}
-			fmt.Printf("The output is: %s\n", out)
+			fmt.Printf("The output is: %s\n", out1)
 
 			//Visualising the components at chaosNamespace namespace
 			By("Getting the components in chaosNamespace namespace")
-			out, err1 := exec.Command("kubectl", "get", "pods", "-n", chaosTypes.ChaosNamespace).Output()
+			out2, err2 := exec.Command("kubectl", "get", "pods", "-n", chaosTypes.ChaosNamespace).Output()
 			if err != nil {
 				log.Fatal(err1)
 			}
-			fmt.Printf("The output is: %s\n", out)
+			fmt.Printf("The output is: %s\n", out2)
 		})
 	})
 })
