@@ -121,6 +121,14 @@ node-memory-hog:
 	@echo "----------------------------------"
 	@go test tests/node-memory-hog_test.go -v -count=1
 
+.PHONY:  operator-reconcile-resiliency-check
+ operator-reconcile-resiliency-check:
+
+	@echo "--------------------------------------------"
+	@echo "Running  Operator Reconcile Resiliency Check"
+	@echo "--------------------------------------------"
+	@go test tests/reconcile-resiliency_test.go -v -count=1	
+
 .PHONY: admin-mode-check
 admin-mode-check:
 

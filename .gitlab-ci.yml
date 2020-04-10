@@ -255,8 +255,23 @@ admin-mode-check:
   artifacts:
     when: always
     paths:
-      - .kube/ 
+      - .kube/      
       
+operator reconcile check:
+
+  extends: .before_script_template
+  when: always
+  stage: component checks
+  tags:
+    - litmus-build
+  script:
+    - make operator-reconcile-resiliency-check
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/  
+
 App Cleanup:
 
   extends: .before_script_template
