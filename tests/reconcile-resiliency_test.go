@@ -98,9 +98,9 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			Expect(err).To(BeNil(), "Failed to create testapp1 deployment")
 			fmt.Println("Test Application testapp1 is created")
 
-			//Creating Second application for container-kill in default namespace
+			//Creating Second application for container-kill in test-1 namespace
 			By("Creating second deployment for container-kill chaos")
-			err = exec.Command("kubectl", "run", "testapp2", "--image=nginx").Run()
+			err = exec.Command("kubectl", "run", "testapp2", "--image=nginx", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Failed to create testapp2 deployment")
 			fmt.Println("Test Application testapp2 is created")
 
@@ -114,7 +114,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing RBAC for second experiment that is container-kill
 			rbacPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml"
-			rbacNamespace = "default"
+			rbacNamespace = chaosTypes.ChaosNamespace
 			installrbac, err = utils.InstallRbac(rbacPath, rbacNamespace, experimentName2, client)
 			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
 			Expect(err).To(BeNil(), "Fail to create RBAC")
@@ -134,13 +134,16 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Creating Experiment for container kill")
 			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "container-kill.yaml").Run()
+			err = exec.Command("sed", "-i",
+				`s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g;
+			     s/name: container-kill/name: container-kill-test/g`,
+				"container-kill.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "container-kill.yaml").Run()
+			err = exec.Command("kubectl", "apply", "-f", "container-kill.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Container kill Chaos Experiment Created Successfully")
 
-			//Installing chaos engine for the experiment
+			//Installing chaos engine for pod-delete experiment
 			//Fetching engine file
 			By("Fetching engine file for pod delete experiment")
 			err = exec.Command("wget", "-O", experimentName1+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml").Run()
@@ -185,7 +188,9 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 				`s/name: nginx-chaos/name: `+engineName+`/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
-			         s/applabel: 'app=nginx'/applabel: 'run=testapp2'/g`,
+					 s/name: container-kill/name: container-kill-test/g;
+					 s/namespace: default/namespace: `+chaosTypes.ChaosNamespace+`/g;
+					 s/applabel: 'app=nginx'/applabel: 'run=testapp2'/g`,
 				experimentName2+"-ce.yaml").Run()
 
 			//Creating ChaosEngine
@@ -197,15 +202,23 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Fetching the runner pod and Checking if it gets in Running state or not
 			By("Wait for runner pod to come in running sate")
-			runnerNamespace2 := "default"
+			runnerNamespace2 := chaosTypes.ChaosNamespace
 			runnerPodStatus2, err := utils.RunnerPodStatus(runnerNamespace2, engineName, client)
 			Expect(runnerPodStatus2).NotTo(Equal("1"), "Failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
 			fmt.Println("Runner pod for container kill is in Running state")
 
-			//Visualising the components
+			//Visualising the components at default namespace
 			By("Getting the components in default namespace")
 			out, err1 := exec.Command("kubectl", "get", "pods").Output()
+			if err != nil {
+				log.Fatal(err1)
+			}
+			fmt.Printf("The output is: %s\n", out)
+
+			//Visualising the components at chaosNamespace namespace
+			By("Getting the components in chaosNamespace namespace")
+			out, err1 := exec.Command("kubectl", "get", "pods", "-n", chaosTypes.ChaosNamespace).Output()
 			if err != nil {
 				log.Fatal(err1)
 			}
