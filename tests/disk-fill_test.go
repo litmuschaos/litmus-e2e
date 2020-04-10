@@ -122,10 +122,6 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
 				experimentName+"-ce.yaml").Run()
 
-			//Modify FORCE
-			err = exec.Command("sed", "-i", `/name: FORCE/{n;s/.*/              value: ""/}`, experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify fORCE field of chaos engine")
-
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()

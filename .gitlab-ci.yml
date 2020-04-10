@@ -182,6 +182,21 @@ pod-cpu-hog:
     paths:
       - .kube/
 
+pod-memory-hog:
+
+  extends: .before_script_template
+  when: always
+  stage: generic-experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-memory-hog
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/      
+
 node-cpu-hog:
 
   extends: .before_script_template
