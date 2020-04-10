@@ -28,7 +28,7 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	experimentName = "pod-delete"
+	experimentName = "pod-delete-admin-test"
 	engineName     = "adminengine"
 )
 
@@ -98,38 +98,28 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			Expect(err).To(BeNil(), "Failed to create deployment")
 			fmt.Println("Test Application is created")
 
-			//Removing pod delete Experiment if it already exists in litmus ns
-			By("Experiment Cleanup")
-			err = exec.Command("kubectl", "delete", "chaosexperiment", "pod-delete", "-n", chaosTypes.ChaosNamespace).Run()
-			Expect(err).To(BeNil(), "Failed to delete chaosexperiment")
-			fmt.Println("Chaos experiment deleted successfully")
-
-			//Removing engine chaosengines in litmus namespace
-			By("Experiment Cleanup")
-			err = exec.Command("kubectl", "delete", "chaosengine", "engine", "-n", chaosTypes.ChaosNamespace).Run()
-			Expect(err).To(BeNil(), "Failed to delete chaosengine")
-			fmt.Println("chaos engine deleted successfully")
-
 			//Installing RBAC for experiment that is pod-delete
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-admin-rbac.yaml"
-			err = exec.Command("wget", "-O", experimentName+"-sa.yaml", rbacPath).Run()
+			err = exec.Command("wget", "-O", "admin-rbac-sa.yaml", rbacPath).Run()
 			Expect(err).To(BeNil(), "Fail to fetch rbac")
 			err = exec.Command("sed", "-i",
-				`s/namespace: litmus/namespace: `+chaosTypes.ChaosNamespace+`/g;
-			     s/name: litmus-admin/name: admin-rbac/g`,
-				experimentName+"-sa.yaml").Run()
+				`s/namespace: litmus/namespace: `+chaosTypes.ChaosNamespace+`/g`,
+				"admin-rbac-sa.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to modify rbac")
-			err = exec.Command("kubectl", "apply", "-f", experimentName+"-sa.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "admin-rbac-sa.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Fail to create RBAC")
 			fmt.Println("Rbac has been created successfully !!!")
 
 			//Creating Chaos-Experiment for pod delete
 			By("Creating Experiment for pod delete")
-			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "admin-pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail to get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
+			err = exec.Command("sed", "-i",
+				`s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g;
+			     s/name: pod-delete/name: `+experimentName+`/g`,
+				"admin-pod-delete.yaml").Run()
 			Expect(err).To(BeNil(), "Failed to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "admin-pod-delete.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Failed to create chaos experiment")
 			fmt.Println("Pod delete Chaos Experiment Created Successfully")
 
@@ -143,8 +133,9 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
 			err = exec.Command("sed", "-i",
 				`s/name: nginx-chaos/name: `+engineName+`/g;
-			     s/namespace: default/namespace: `+chaosTypes.ChaosNamespace+`/g;
-			     s/chaosServiceAccount: pod-delete-sa/chaosServiceAccount: admin-rbac/g;
+				 s/namespace: default/namespace: `+chaosTypes.ChaosNamespace+`/g;
+				 s/chaosServiceAccount: pod-delete-sa/chaosServiceAccount: litmus-admin/g;
+				 s/name: pod-delete/name: `+experimentName+`/g;
 			     s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 			     s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			     s/applabel: 'app=nginx'/applabel: 'run=adminapp'/g`,
@@ -176,7 +167,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+"pod-delete", metav1.GetOptions{})
 			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Failed to get chaosresult")
 		})
@@ -199,23 +190,25 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing RBAC for experiment that is pod-delete
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-admin-rbac.yaml"
-			err = exec.Command("wget", "-O", experimentName+"-sa.yaml", rbacPath).Run()
+			err = exec.Command("wget", "-O", "admin-pod-delete-sa.yaml", rbacPath).Run()
 			Expect(err).To(BeNil(), "Fail to fetch rbac")
 			err = exec.Command("sed", "-i",
-				`s/namespace: litmus/namespace: test/g;
-			     s/name: litmus-admin/name: admin-rbac/g`,
-				experimentName+"-sa.yaml").Run()
-			err = exec.Command("kubectl", "apply", "-f", experimentName+"-sa.yaml").Run()
+				`s/namespace: litmus/namespace: test/g`,
+				"admin-pod-delete-sa.yaml").Run()
+			err = exec.Command("kubectl", "apply", "-f", "admin-pod-delete-sa.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to create RBAC")
 			fmt.Println("Rbac has been created successfully !!!")
 
 			//Creating Chaos-Experiment for pod delete
 			By("Creating Experiment for pod delete")
-			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "admin-pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail to get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
+			err = exec.Command("sed", "-i",
+				`s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g;
+			     s/name: pod-delete/name: `+experimentName+`/g`,
+				"admin-pod-delete.yaml").Run()
 			Expect(err).To(BeNil(), "Failed to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", "test").Run()
+			err = exec.Command("kubectl", "apply", "-f", "admin-pod-delete.yaml", "-n", "test").Run()
 			Expect(err).To(BeNil(), "Failed to create chaos experiment")
 			fmt.Println("Pod delete Chaos Experiment Created Successfully")
 
@@ -230,7 +223,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			err = exec.Command("sed", "-i",
 				`s/name: nginx-chaos/name: `+engineName+`/g;
 				 s/namespace: default/namespace: test/g;
-				 s/chaosServiceAccount: pod-delete-sa/chaosServiceAccount: admin-rbac/g;
+				 s/name: pod-delete/name: `+experimentName+`/g;
+				 s/chaosServiceAccount: pod-delete-sa/chaosServiceAccount: litmus-admin/g;
 				 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 				 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			     s/applabel: 'app=nginx'/applabel: 'run=adminapp'/g`,
@@ -250,7 +244,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Wait for runner pod to come in running sate")
 			runnerNamespace := "test"
 			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
-			Expect(runnerPodStatus).NotTo(Equal("1"), "Faileded to get in running state")
+			Expect(runnerPodStatus).NotTo(Equal("1"), "Failed to get the runner pod in running state")
 			Expect(err).To(BeNil(), "Failed to get the runner pod")
 			fmt.Println("Runner pod for pod delete is in Running state")
 
@@ -264,7 +258,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			chaosResult, err := clientSet.ChaosResults("test").Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			chaosResult, err := clientSet.ChaosResults("test").Get(engineName+"-"+"pod-delete", metav1.GetOptions{})
 			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
 			Expect(err).To(BeNil(), "Failed to get chaosresult")
 		})
