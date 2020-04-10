@@ -121,6 +121,14 @@ node-memory-hog:
 	@echo "----------------------------------"
 	@go test tests/node-memory-hog_test.go -v -count=1
 
+.PHONY: pod-memory-hog
+pod-memory-hog:
+
+	@echo "---------------------------------"
+	@echo "Running pod-memory-hog experiment"
+	@echo "---------------------------------"
+	@go test tests/pod-memory-hog_test.go -v -count=1	
+
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
 

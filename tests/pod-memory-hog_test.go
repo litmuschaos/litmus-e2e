@@ -27,8 +27,8 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	experimentName = "pod-cpu-hog"
-	engineName     = "engine5"
+	experimentName = "pod-memory-hog"
+	engineName     = "engine10"
 )
 
 func TestChaos(t *testing.T) {
@@ -79,8 +79,8 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests for pod-cpu-hog experiment
-var _ = Describe("BDD of pod-cpu-hog experiment", func() {
+//BDD Tests for pod-memory-hog experiment
+var _ = Describe("BDD of pod-memory-hog experiment", func() {
 
 	// BDD TEST CASE 1
 	Context("Check for litmus components", func() {
@@ -88,7 +88,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 		It("Should check for creation of runner pod", func() {
 
 			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-cpu-hog/rbac.yaml"
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog/rbac.yaml"
 			rbacNamespace := chaosTypes.ChaosNamespace
 			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
@@ -97,18 +97,18 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "pod-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pod-memory-hog.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-memory-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-cpu-hog.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-memory-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pod-cpu-hog.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "pod-memory-hog.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for the experiment")
-			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-cpu-hog/engine.yaml").Run()
+			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog/engine.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to fetch engine file")
 			//Modify chaos engine spec
 			//Modify Namespace,Name,AppNs,AppLabel of the engine

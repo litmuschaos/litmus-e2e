@@ -19,16 +19,19 @@ var (
 	//TargetPodLabels Label of the target pod
 	TargetPodLabels = "openebs.io/target=cstor-target"
 	//ExperimentRepoName of the image to be used in experiment
+	// default: "litmuschaos"
 	ExperimentRepoName = os.Getenv("EXPERIMENT_REPO_NAME")
 	//OperatorRepoName of the image to be used in operator
+	// default: "litmuschaos"
 	OperatorRepoName = os.Getenv("OPERATOR_REPO_NAME")
 	//RunnerRepoName of the image to be used in runner
+	// default: "litmuschaos"
 	RunnerRepoName = os.Getenv("RUNNER_REPO_NAME")
-	//RunnerImage name
+	//RunnerImage name default: "chaos-runner"
 	RunnerImage = os.Getenv("RUNNER_IMAGE")
-	//OperatorImage name
+	//OperatorImage name default: "chaos-operator"
 	OperatorImage = os.Getenv("OPERATOR_IMAGE")
-	//ExperimentImage name
+	//ExperimentImage name default: "ansible-runner"
 	ExperimentImage = os.Getenv("EXPERIMENT_IMAGE")
 	//ExperimentImageTag "latest or ci"
 	ExperimentImageTag = os.Getenv("EXPERIMENT_IMAGE_TAG")
