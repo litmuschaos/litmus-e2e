@@ -135,6 +135,10 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
 				experimentName+"-ce.yaml").Run()
 
+			//Modify NODE NAME
+			err = exec.Command("sed", "-i", `/name: APP_NODE/{n;s/.*/              value: `+nodeName+"/}", experimentName+"-ce.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to Modify Node name field of chaos engine")
+
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
