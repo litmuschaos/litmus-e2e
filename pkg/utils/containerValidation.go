@@ -1,15 +1,17 @@
-package utils
+package container
 
 import (
 	"reflect"
 
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
+	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-// CompareContainerID here we are comparing the containerIDs before chaos and after chaos
+// CompareContainerID function is used to compare the containerIDs before chaos and after chaos
 // ContainerID before chaos has to be recorded in the BDD only and passed here as an argument
 // In this function we are getting containerID after chaos and checking if it changed or not.
 // If the containerID will change then it will return true else false value.
@@ -22,7 +24,7 @@ func CompareContainerID(containerIDBefore [9]string, podDetails chaosTypes.PodDe
 	// Getting the list of pods with given label and namespace
 	podList, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return false, err
+		return true, errors.Wrapf(err, "Unable to get the list of pods for comparing its container IDs, due to:%v", err)
 	}
 	// Iterating over all pods
 	for _, pod := range podList.Items {
@@ -41,7 +43,7 @@ func CompareContainerID(containerIDBefore [9]string, podDetails chaosTypes.PodDe
 	return containerIDChanged, nil
 }
 
-// In this function we are comparing the containerRestartCount before chaos and after chaos
+// CompareContainerRestartCount is comparing the containerRestartCount before chaos and after chaos
 // ContainerRestartCount before chaos has to be recorded in the form of map in BDD only and
 // Passed as an argument here along with the container name.In this function we are getting
 // containerRestartCount after chaos and checking if it is changed or not. If the restart
@@ -54,7 +56,7 @@ func CompareContainerRestartCount(containerDetailsBefore map[string][]interface{
 	// Getting the list of pods with given label and namespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return true, err
+		return true, errors.Wrapf(err, "Unable to get the list of pods for comparing container restart count, due to:%v", err)
 	}
 	// Iterating over all pods
 	for _, podList := range pod.Items {
@@ -67,7 +69,7 @@ func CompareContainerRestartCount(containerDetailsBefore map[string][]interface{
 	return (reflect.DeepEqual(containerDetailsBefore[containerName], containerDetailsAfter[containerName])), nil
 }
 
-// In this function we are comparing the container Started At time's before chaos and after chaos
+// CompareStartedAt is comparing the container Started At time's before chaos and after chaos
 // container Start At Time before chaos has to be recorded in the BDD only and passed here as
 // an argument. In this function we are getting container Start At Time after chaos and checking
 // if it is changed or not. If it is changed then retun true else return false.
@@ -78,7 +80,7 @@ func CompareStartedAt(startedAtBefore [9]metav1.Time, podDetails chaosTypes.PodD
 	podLabel := podDetails.PodNamespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return false, err
+		return true, errors.Wrapf(err, "Unable to get the list of pods for comparing startedAt time, due to:%v", err)
 	}
 	for i, podList := range pod.Items {
 		startedAtAfter[i] = (podList.Status.ContainerStatuses[i].State.Running.StartedAt)

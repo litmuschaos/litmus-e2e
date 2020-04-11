@@ -1,10 +1,10 @@
-package utils
+package status
 
 import (
 	"fmt"
 	"time"
 
-	. "github.com/onsi/gomega"
+	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -15,7 +15,7 @@ func RunnerPodStatus(runnerNamespace string, engineName string, client *kubernet
 	//Fetching the runner pod and Checking if it gets in Running state or not
 	runner, err := client.CoreV1().Pods(runnerNamespace).Get(engineName+"-runner", metav1.GetOptions{})
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrapf(err, "Fail to get the runner pod status, due to:%v", err)
 	}
 	fmt.Printf("name : %v \n", runner.Name)
 	//Running it for infinite time (say 3000 * 10)
@@ -24,15 +24,19 @@ func RunnerPodStatus(runnerNamespace string, engineName string, client *kubernet
 		if string(runner.Status.Phase) != "Running" {
 			time.Sleep(1 * time.Second)
 			runner, err = client.CoreV1().Pods(runnerNamespace).Get(engineName+"-runner", metav1.GetOptions{})
-			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			Expect(string(runner.Status.Phase)).NotTo(Or(Equal("Succeeded"), Equal("")))
+			if err != nil {
+				return 0, errors.Wrapf(err, "Fail to get the runner pod status after sleep, due to:%v", err)
+			}
+			if runner.Status.Phase == "Succeeded" || runner.Status.Phase == "" {
+				return 1, nil
+			}
 			fmt.Printf("The Runner pod is in %v State \n", runner.Status.Phase)
 		} else {
 			break
 		}
 	}
-
-	Expect(string(runner.Status.Phase)).To(Equal("Running"))
-
+	if runner.Status.Phase != "Running" {
+		return 1, nil
+	}
 	return 0, nil
 }

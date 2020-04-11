@@ -19,6 +19,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog"
 )
 
 var (
@@ -88,53 +89,45 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		It("Should check for creation of runner pod", func() {
 
 			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"
-			rbacNamespace := chaosTypes.ChaosNamespace
-			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
-			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
+			err := utils.InstallRbac(chaosTypes.PodDeleteRbacPath, chaosTypes.ChaosNamespace, experimentName, client)
 			Expect(err).To(BeNil(), "Fail to create RBAC")
-			fmt.Println("Rbac has been created successfully !!!")
+			klog.Info("Rbac has been created successfully !!!")
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
-			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
-			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = utils.DownloadFile(experimentName+".yaml", chaosTypes.PodDeleteExperimentPath)
+			Expect(err).To(BeNil(), "fail to fetch chaos experiment file")
+			err = utils.EditFile(experimentName+".yaml", "litmuschaos/ansible-runner:latest", chaosTypes.ExperimentRepoName+`/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag)
+			Expect(err).To(BeNil(), "Failed to update image name")
+			err = exec.Command("kubectl", "apply", "-f", experimentName+".yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			klog.Info("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for the experiment")
-			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml").Run()
+			err = utils.DownloadFile(experimentName+"-ce.yaml", chaosTypes.PodDeleteEnginePath)
 			Expect(err).To(BeNil(), "Fail to fetch engine file")
+
 			//Modify chaos engine spec
-			//Modify Namespace,Name,AppNs,AppLabel of the engine
-
-			err = exec.Command("sed", "-i",
-				`s/namespace: default/namespace: litmus/g;
-			         s/name: nginx-chaos/name: `+engineName+`/g;
-					 s/appns: 'default'/appns: 'litmus'/g;
-					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
-					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
-			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
-				experimentName+"-ce.yaml").Run()
-
-			//Modify FORCE
-			err = exec.Command("sed", "-i", `/name: FORCE/{n;s/.*/              value: ""/}`, experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify FORCE field of chaos engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "namespace: default", "namespace: "+chaosTypes.ChaosNamespace)
+			Expect(err).To(BeNil(), "Failed to update namespace in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "name: nginx-chaos", "name: "+engineName)
+			Expect(err).To(BeNil(), "Failed to update engine name in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "appns: 'default'", "appns: "+chaosTypes.ChaosNamespace)
+			Expect(err).To(BeNil(), "Failed to update application namespace in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: 'retain'")
+			Expect(err).To(BeNil(), "Failed to update jobCleanupPolicy in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: 'false'")
+			Expect(err).To(BeNil(), "Failed to update AnnotationCheck in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: 'run=nginx'")
+			Expect(err).To(BeNil(), "Failed to update AnnotationCheck in engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Fail to create chaos engine")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("ChaosEngine created successfully...")
+			klog.Info("ChaosEngine created successfully...")
 			time.Sleep(2 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
@@ -143,7 +136,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
 			Expect(runnerPodStatus).NotTo(Equal("1"), "Runner pod failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			fmt.Println("Runner pod for is in Running state")
+			klog.Info("Runner pod for is in Running state")
 
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
@@ -172,7 +165,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
 			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
-			fmt.Println("Result updated successfully !!!")
+			klog.Info("Result updated successfully !!!")
 		})
 	})
 })

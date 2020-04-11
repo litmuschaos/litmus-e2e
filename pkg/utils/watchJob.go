@@ -1,4 +1,4 @@
-package utils
+package job
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"time"
 
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	. "github.com/onsi/gomega"
+	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -21,7 +21,9 @@ func JobLogs(experimentName string, jobNamespace string, engineName string, clie
 	//Waiting for Job Creation
 	for i := 0; i < 10; i++ {
 		job, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
-		Expect(err).To(BeNil(), "Fail to get the job in running state")
+		if err != nil {
+			return 0, errors.Wrapf(err, "Fail to get the job in running state, due to:%v", err)
+		}
 		if int(len(job.Items)) == 0 {
 			fmt.Println("Waiting for Job creation")
 			time.Sleep(10 * time.Second)
@@ -33,7 +35,7 @@ func JobLogs(experimentName string, jobNamespace string, engineName string, clie
 	// Getting the list of job pods for the experiment
 	job, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 	if err != nil {
-		return 1, err
+		return 0, errors.Wrapf(err, "Fail to get the job pod list, due to:%v", err)
 	}
 	// Getting the pod from the list of pods
 	for _, podList := range job.Items {
@@ -45,7 +47,7 @@ func JobLogs(experimentName string, jobNamespace string, engineName string, clie
 				//Getting the jobList again after waiting 10s
 				jobPod, err := client.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + experimentName})
 				if err != nil {
-					return 1, err
+					return 0, errors.Wrapf(err, "Fail to get the job pod list after wait, due to:%v", err)
 				}
 				flag := true
 				//Getting the pod from jobList after 10s of wait
@@ -54,7 +56,9 @@ func JobLogs(experimentName string, jobNamespace string, engineName string, clie
 						fmt.Printf("Currently, the experiment job pod is in %v State, Please Wait for its completion\n", jobList.Status.Phase)
 					} else {
 						flag = false
-						Expect(string(jobList.Status.Phase)).To(Equal("Succeeded"))
+						if jobList.Status.Phase != "Succeeded" {
+							return 1, nil
+						}
 						break
 					}
 				}

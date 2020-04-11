@@ -1,4 +1,4 @@
-package utils
+package chaos
 
 import (
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"

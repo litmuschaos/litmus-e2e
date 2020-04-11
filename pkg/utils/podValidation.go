@@ -1,15 +1,16 @@
-package utils
+package pod
 
 import (
 	"strconv"
 
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
+	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-// In this function we are comparing the Resourse Version of pods before chaos and after chaos
+// CompareDeploymentResourceVersion is comparing the Resourse Version of pods before chaos and after chaos
 // The sum of Resource Version before chaos has been recorded in the BDD only and passed here
 // as an argument. In this function we are getting the sum of Resourse Version of the pod after
 // chaos and checking if the different is 0 or not. If the difference of sum of resource version
@@ -22,7 +23,7 @@ func CompareDeploymentResourceVersion(resourceVersionSumBefore int, podDetails c
 	// Getting the list of pods with given label and namespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrapf(err, "Fail to get the list of pods for comparing Deployment resource version, due to:%v", err)
 	}
 	for _, podList := range pod.Items {
 		rv, _ := strconv.Atoi(podList.ResourceVersion)
@@ -32,33 +33,33 @@ func CompareDeploymentResourceVersion(resourceVersionSumBefore int, podDetails c
 	return (resourceVersionSumAfter - resourceVersionSumBefore), nil
 }
 
-// In this function we are comparing the PodIPs before chaos and after chaos
+// ComparePodIP is comparing the PodIPs before chaos and after chaos
 // PodIPs before chaos has to be recorded in the BDD only and passed here as
 // an argument. In this function we are getting podIP after chaos and checking
 // if it is changed or not. If it is changed then retun true else return false.
-func ComparePodIP(podIpBefore [3]string, podDetails chaosTypes.PodDetails, client *kubernetes.Clientset) (bool, error) {
+func ComparePodIP(podIPBefore [3]string, podDetails chaosTypes.PodDetails, client *kubernetes.Clientset) (bool, error) {
 
-	var podIpAfter [3]string
-	podIpChanged := false
+	var podIPAfter [3]string
+	podIPChanged := false
 	podNS := podDetails.PodName
 	podLabel := podDetails.PodNamespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return false, err
+		return true, errors.Wrapf(err, "Fail to get the list of pods for comparing Pod IP, due to:%v", err)
 	}
 	for i, podList := range pod.Items {
-		podIpAfter[i] = podList.Status.PodIP
+		podIPAfter[i] = podList.Status.PodIP
 	}
-	for i := range podIpBefore {
-		if podIpBefore[i] != podIpAfter[i] {
-			podIpChanged = true
+	for i := range podIPBefore {
+		if podIPBefore[i] != podIPAfter[i] {
+			podIPChanged = true
 		}
 	}
 
-	return podIpChanged, nil
+	return podIPChanged, nil
 }
 
-// In this function we are comparing the PodNames before chaos and after chaos
+// ComparePodName is comparing the PodNames before chaos and after chaos
 // PodNames before chaos has to be recorded in the BDD only and passed here as
 // an argument. In this function we are getting podNames after chaos and checking
 // if it is changed or not. If it is changed then retun true else return false.
@@ -70,7 +71,7 @@ func ComparePodName(podNameBefore [3]string, podDetails chaosTypes.PodDetails, c
 	podLabel := podDetails.PodNamespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return false, err
+		return true, errors.Wrapf(err, "Fail to get the list of pods for comparing Pod Name, due to:%v", err)
 	}
 	for i, podList := range pod.Items {
 		podNameAfter[i] = podList.Name
@@ -85,7 +86,7 @@ func ComparePodName(podNameBefore [3]string, podDetails chaosTypes.PodDetails, c
 	return podNameChanged, nil
 }
 
-// In this function we are comparing the Resourse Version of containers before chaos and after chaos
+// ComparePodResourceVersion is comparing the Resourse Version of containers before chaos and after chaos
 // The sum of Resource Version before chaos has been recorded in the BDD only and passed here
 // as an argument. In this function we are getting the sum of Resourse Version of the containers after
 // chaos and checking if the different is 0 or not. If the difference of sum of resource version
@@ -98,7 +99,7 @@ func ComparePodResourceVersion(resourceVersionSumBefore int, podDetails chaosTyp
 	// Getting the list of pods with given label and namespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrapf(err, "Fail to get the list of pods for comparing Pod resource Version, due to:%v", err)
 	}
 	for _, podList := range pod.Items {
 		rv, _ := strconv.Atoi(podList.ResourceVersion)
@@ -108,7 +109,7 @@ func ComparePodResourceVersion(resourceVersionSumBefore int, podDetails chaosTyp
 	return (resourceVersionSumAfter - resourceVersionSumBefore), nil
 }
 
-// In this function we are comparing the Pod Start Time's before chaos and after chaos
+// ComparePodStartTime is comparing the Pod Start Time's before chaos and after chaos
 // Pod Start Time's before chaos has to be recorded in the BDD only and passed here as
 // an argument. In this function we are getting pod Start Time after chaos and checking
 // if it is changed or not. If it is changed then retun true else return false.
@@ -120,7 +121,7 @@ func ComparePodStartTime(startTimeBefore [3]*metav1.Time, podDetails chaosTypes.
 	podLabel := podDetails.PodNamespace
 	pod, err := client.CoreV1().Pods(podNS).List(metav1.ListOptions{LabelSelector: podLabel})
 	if err != nil {
-		return false, err
+		return true, errors.Wrapf(err, "Fail to get the list of pods for comparing Pod start time, due to:%v", err)
 	}
 	for i, podList := range pod.Items {
 		startTimeAfter[i] = podList.Status.StartTime

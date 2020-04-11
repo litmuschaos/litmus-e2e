@@ -41,6 +41,45 @@ var (
 	RunnerImageTag = os.Getenv("RUNNER_IMAGE_TAG")
 	//ChaosDuration of the Experiment
 	ChaosDuration = ""
+
+	//rbacPath of different chaos experiments
+	PodDeleteRbacPath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"
+	ContainerKillRbacPath        = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml"
+	DiskFillRbacPath             = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/rbac.yaml"
+	NodeCPUHogRbacPath           = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/rbac.yaml"
+	NodeDrainRbacPath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml"
+	NodeMemoryHogRbacPath        = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-memory-hog/rbac.yaml"
+	PodCPUHogRbacPath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-cpu-hog/rbac.yaml"
+	PodMemoryHogRbacPath         = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog/rbac.yaml"
+	PodNetworkCorruptionRbacPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-corruption/rbac.yaml"
+	PodNetworkLatencyRbacPath    = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-latency/rbac.yaml"
+	PodNetworkLossRbacPath       = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-loss/rbac.yaml"
+
+	//experimentPath of different chaosexperiments
+	PodDeleteExperimentPath            = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml"
+	ContainerKillExperimentPath        = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml"
+	DiskFillExperimentPath             = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/disk-fill/experiment.yaml"
+	NodeCPUHogExperimentPath           = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-cpu-hog/experiment.yaml"
+	NodeDrainExperimentPath            = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-drain/experiment.yaml"
+	NodeMemoryHogExperimentPath        = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/node-memory-hog/experiment.yaml"
+	PodCPUHogExperimentPath            = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml"
+	PodMemoryHogExperimentPath         = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-memory-hog/experiment.yaml"
+	PodNetworkCorruptionExperimentPath = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-corruption/experiment.yaml"
+	PodNetworkLatencyExperimentPath    = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-latency/experiment.yaml"
+	PodNetworkLossExperimentPath       = "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-loss/experiment.yaml"
+
+	//enginePath of different chaosengines
+	PodDeleteEnginePath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml"
+	ContainerKillEnginePath        = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/engine.yaml"
+	DiskFillEnginePath             = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/engine.yaml"
+	NodeCPUHogEnginePath           = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/engine.yaml"
+	NodeDrainEnginePath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/engine.yaml"
+	NodeMemoryHogEnginePath        = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-memory-hog/engine.yaml"
+	PodCPUHogEnginePath            = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-cpu-hog/engine.yaml"
+	PodMemoryHogEnginePath         = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog/engine.yaml"
+	PodNetworkCorruptionEnginePath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-corruption/engine.yaml"
+	PodNetworkLatencyEnginePath    = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-latency/engine.yaml"
+	PodNetworkLossEnginePath       = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-loss/engine.yaml"
 )
 
 // EngineDetails struct is for collecting all the engine-related details
