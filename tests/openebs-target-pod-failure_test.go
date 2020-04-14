@@ -193,9 +193,10 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 
 			//Checking the chaosresult
 			By("Checking the chaosresult")
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			fmt.Println("Chaos Result Verdict is: ", chaosResult.Status.ExperimentStatus.Verdict)
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
+			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Chaos Result Verdict is not Pass")
 		})
 	})
 
@@ -245,7 +246,19 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 			fmt.Println("target pod PodIP Changed !!!")
 
 		})
+	// BDD for checking chaosengine Verdict
+	Context("Check for chaos engine verdict", func() {
+
+		It("Should check for the verdict of experiment", func() {
+
+			By("Checking the Verdict of Chaos Experiment")
+			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosengine")
+			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
+			Expect(string(chaosEngine.Status.Experiments[0].Verdict)).To(Equal("Pass"), "Chaos Engine Verdict is not Pass")
+		})
 	})
+
 	// BDD for pipeline result update
 	Context("Check for the result update", func() {
 
@@ -253,9 +266,9 @@ var _ = Describe("BDD of openebs target pod failure experiment", func() {
 
 			//Updating the result table
 			By("Updating the result table")
-			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
-			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosengine while updating the result in a table")
+			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
 			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
