@@ -63,7 +63,7 @@ Build OpenEBS:
     paths:
       - .kube/
 
-Deployment App:
+App Deploy:
 
   when: always
   extends: .before_script_template
