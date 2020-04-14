@@ -141,22 +141,36 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
 			fmt.Println("Runner pod for is in Running state")
 
-			//Fetch job pod name
-			By("Fetch Job pod name")
+			//Waiting for experiment job to get completed
+			//Also Printing the logs of the experiment
+			By("Waiting for job completion")
 			jobNamespace := chaosTypes.ChaosNamespace
 			jobPodLogs, err := utils.JobLogs(experimentName, jobNamespace, engineName, client)
 			Expect(jobPodLogs).To(Equal(0), "Fail to print the logs of the experiment")
 			Expect(err).To(BeNil(), "Fail to get the experiment job pod")
 
-			//Waiting for experiment job to get completed
-			//Also Printing the logs of the experiment
-			By("Waiting for job completion")
-			app, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(string(app.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Verdict is not pass chaosresult")
-			Expect(err).To(BeNil(), "Fail to get the chaos result")
+			//Checking the chaosresult
+			By("Checking the chaosresult")
+			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
+			fmt.Println("Chaos Result Verdict is: ", chaosResult.Status.ExperimentStatus.Verdict)
+			Expect(err).To(BeNil(), "Fail to get chaosresult")
+			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Chaos Result Verdict is not Pass")
 
 		})
 	})
+	// BDD for checking chaosengine Verdict
+	Context("Check for chaos engine verdict", func() {
+
+		It("Should check for the verdict of experiment", func() {
+
+			By("Checking the Verdict of Chaos Experiment")
+			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosengine")
+			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
+			Expect(string(chaosEngine.Status.Experiments[0].Verdict)).To(Equal("Pass"), "Chaos Engine Verdict is not Pass")
+		})
+	})
+
 	// BDD for pipeline result update
 	Context("Check for the result update", func() {
 
@@ -164,9 +178,9 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 			//Updating the result table
 			By("Updating the result table")
-			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			Expect(err).To(BeNil(), "Fail to get the chaosresult while updating the result in a table")
-			testVerdict := string(chaosResult.Status.ExperimentStatus.Verdict)
+			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
+			Expect(err).To(BeNil(), "Fail to get the chaosengine while updating the result in a table")
+			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
 			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
