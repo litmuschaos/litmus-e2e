@@ -3,8 +3,10 @@ stages:
 
   - cluster setup
   - Infra setup
+  - Application Setup
   - experiment
   - Infra cleanup
+  - Application Cleanup
   - cluster cleanup
   
 .before_script_template:
@@ -61,11 +63,11 @@ Build OpenEBS:
     paths:
       - .kube/
 
-App Deploy:
+Deployment App:
 
   when: always
   extends: .before_script_template
-  stage: Infra setup
+  stage: Application Setup
   tags:
     - litmus-openebs
   script:
@@ -185,7 +187,7 @@ Application Cleanup:
   
   when: always
   extends: .before_script_template
-  stage: Infra cleanup
+  stage: Application Cleanup
   tags:
     - litmus-openebs
   script:
