@@ -201,7 +201,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Creating Chaos-Experiment for pod delete
 			By("Creating Experiment for pod delete")
-			err = exec.Command("wget", "-O", "admin-pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "admin-pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-delete/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail to get chaos experiment")
 			err = exec.Command("sed", "-i",
 				`s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g;
