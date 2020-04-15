@@ -122,7 +122,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Creating Chaos-Experiment for pod delete
 			By("Creating Experiment for pod delete")
-			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-delete/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-delete/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-delete.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
@@ -132,7 +132,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Creating Chaos-Experiment for container kill
 			By("Creating Experiment for container kill")
-			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i",
 				`s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g;

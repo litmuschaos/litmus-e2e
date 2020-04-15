@@ -95,7 +95,7 @@ var _ = Describe("BDD of pod-network-corruption experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "pod-network-corruption.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-network-corruption/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pod-network-corruption.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-network-corruption.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
