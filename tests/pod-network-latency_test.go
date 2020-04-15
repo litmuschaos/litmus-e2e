@@ -62,7 +62,6 @@ var _ = BeforeSuite(func() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	"k8s.io/klog"
 
 	//Getting the Application Status
 	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("nginx", metav1.GetOptions{})
@@ -165,6 +164,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 		It("Should check for the verdict of experiment", func() {
 
 			By("Checking the Verdict of Chaos Experiment")
+			time.Sleep(10 * time.Second)
 			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine")
 			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
