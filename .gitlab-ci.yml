@@ -5,8 +5,8 @@ stages:
   - Infra setup
   - Application Setup
   - experiment
-  - Infra cleanup
   - Application Cleanup
+  - Infra cleanup
   - cluster cleanup
   
 .before_script_template:
