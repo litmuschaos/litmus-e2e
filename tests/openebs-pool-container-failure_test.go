@@ -143,7 +143,7 @@ var _ = Describe("BDD of openebs pool container failure experiment", func() {
 
 			err = exec.Command("sed", "-i",
 				`s/namespace: default/namespace: litmus/g;
-			         s/name: target-chaos/name: engine/g;
+			         s/name: pool-chaos/name: engine/g;
 					 s/appns: 'default'/appns: 'litmus'/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 			         s/applabel: 'app=nginx'/applabel: 'name=percona'/g`,
