@@ -97,7 +97,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "pod-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/pod-cpu-hog/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pod-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-cpu-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
