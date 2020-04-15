@@ -223,7 +223,7 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 		It("Should check for the verdict of experiment", func() {
 
 			By("Checking the Verdict of Chaos Experiment")
-			time.Sleep(5 * time.Second)
+			time.Sleep(10 * time.Second)
 			chaosEngine, err := clientSet.ChaosEngines("openebs").Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine")
 			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
