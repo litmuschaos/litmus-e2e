@@ -7,7 +7,7 @@ echo $current_time
 printf "***Checking the cluster is Engaged or not*****\n\n"
 
 ##Conneting to the Cluster
-state="sshpass -p udit@1658 ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'ls | grep litmus-e2e'"
+state="sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls | grep litmus-e2e'"
 cluster_state=$(eval $state)
 
 echo "Cluster state is: $cluster_state"
@@ -30,16 +30,16 @@ echo "*****************************Checking the Cluster's Health****************
 echo "************    Checking for the number of nodes in ready state      **************"
 
 ##Number of nodes in the cluster
-ready_nodes=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 kubectl get nodes --no-headers | grep -v NotReady | wc -l)
+ready_nodes=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get nodes --no-headers | grep -v NotReady | wc -l)
 
 
-# git_token=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'cat ~/.profile | grep github_token | cut -d= -f2')
+# git_token=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cat ~/.profile | grep github_token | cut -d= -f2')
 # gittoken=$(echo $git_token | tr -d '"')
 
 echo "Checking for the pending Certificates"
 
 # ##Certificates check
-# cert=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 oc get csr -no-headers | grep Pending | wc -l)
+# cert=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port oc get csr -no-headers | grep Pending | wc -l)
 # if [ "$cert" -gt 0 ]; then
 # echo "Openshift CSR's are pending kindly approve it and take snapshot"
 # exit;
@@ -52,19 +52,19 @@ echo "Number of nodes in ready state is $ready_nodes"
 echo "******Cluster is in Healthy state****"
 
 echo "************* Dumping cluster state ********"
-sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 kubectl get nodes
-sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 kubectl get pod --all-namespaces
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get nodes
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get pod --all-namespaces
 
 echo "**************    Cloning litmus-e2e repo         *************"
-sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'git clone https://github.com/litmuschaos/litmus-e2e.git'
-# sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Pass '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
-sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'git clone https://github.com/litmuschaos/litmus-e2e.git'
+# sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Pass '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port
 else
 echo "All nodes are not ready"
 echo "******Cluster is in Unhealthy state*******"
 echo "cloning e2e-openshift repo*************"
-sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'git clone https://github.com/mayadata-io/litmus-e2e.git'
-# sshpass -p $pass ssh -o StrictHostKeyChecking=no udit@106.51.78.18 -p 1658 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Fail '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'git clone https://github.com/mayadata-io/litmus-e2e.git'
+# sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Fail '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
 exit;
 fi
 
