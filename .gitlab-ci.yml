@@ -18,14 +18,28 @@ stages:
     - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
     - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
 
+# Cluster Setup:
+
+#   stage: setup
+#   tags:
+#     - litmus-build
+#   script: 
+#     - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
+#     - ./build/gitlab/stages/1-gke-setup/cluster-setup
+
+#   artifacts:
+#     when: always
+#     paths:
+#       - .kube/
+
 Cluster Setup:
 
   stage: setup
   tags:
     - litmus-build
   script: 
-    - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
-    - ./build/gitlab/stages/1-gke-setup/cluster-setup
+    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
+    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
 
   artifacts:
     when: always
@@ -257,17 +271,17 @@ App Cleanup:
     paths:
       - .kube/
 
-Cluster Cleanup:
+# Cluster Cleanup:
 
-  when: always
-  stage: cleanup
-  tags:
-    - litmus-build
-  script: 
-    - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
-    - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
+#   when: always
+#   stage: cleanup
+#   tags:
+#     - litmus-build
+#   script: 
+#     - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
+#     - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
 
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+#   artifacts:
+#     when: always
+#     paths:
+#       - .kube/
