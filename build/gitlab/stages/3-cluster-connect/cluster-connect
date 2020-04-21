@@ -58,7 +58,6 @@ sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get 
 echo "**************    Cloning litmus-e2e repo         *************"
 sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'git clone https://github.com/litmuschaos/litmus-e2e.git'
 # sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Pass '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
-sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port
 else
 echo "All nodes are not ready"
 echo "******Cluster is in Unhealthy state*******"
