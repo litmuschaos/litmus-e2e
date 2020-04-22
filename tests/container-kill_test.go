@@ -97,7 +97,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos?file=charts/generic/container-kill/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "container-kill.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
 			err = exec.Command("sed", "-i", `s/ansible-runner:latest/ansible-runner:`+image_tag+`/g`, "container-kill.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")

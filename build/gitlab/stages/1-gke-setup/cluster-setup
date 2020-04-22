@@ -1,26 +1,73 @@
 #!/bin/bash
-set -e
+
+time="$(TZ=IST date)"
+current_time=$time
+echo $current_time
 path=$(pwd)
-echo $SDK_TOKEN > key.json
-gcloud auth activate-service-account --key-file=key.json
-gcloud config set project ${PROJECT_NAME}
-export GOOGLE_APPLICATION_CREDENTIALS="$path/key.json"
-export GCP_SERVICE_ACCOUNT_FILE="$path/key.json"
-export GKEUSER=`echo $GKE_USER`
 
-git clone https://github.com/litmuschaos/litmus-e2e.git -b ${CI_BUILD_REF_NAME} 
-cd litmus-e2e/build/gitlab/stages/
+printf "***Checking the cluster is Engaged or not*****\n\n"
 
-truncate -s 0 ~/logs/clusters
-truncate -s 0 ~/logs/zone
+##Conneting to the Cluster
+state="sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls | grep litmus-e2e'"
+cluster_state=$(eval $state)
 
-echo "creating cluster"
+echo "Cluster state is: $cluster_state"
 
-ansible-playbook create-gke-cluster.yml -vv --extra-vars "project=${PROJECT_NAME}"
+##Checking if the cluster was cleanup perfectly in its last runs
+while [ "${cluster_state}" == "litmus-e2e" ]; do
+  echo "********Cluster is Engaged***********"
+  wait=1
+  cluster_state=$(eval $state)
+  sleep 30
+done
+
+if [ "$wait" == "1" ]; then
+echo "waiting for 120s"
+sleep 120
+fi  
+
+echo "*****************************Checking the Cluster's Health***********************\n"
+
+echo "************    Checking for the number of nodes in ready state      **************"
+
+##Number of nodes in the cluster
+ready_nodes=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get nodes --no-headers | grep -v NotReady | wc -l)
+
+
+# git_token=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cat ~/.profile | grep github_token | cut -d= -f2')
+# gittoken=$(echo $git_token | tr -d '"')
+
+echo "Checking for the pending Certificates"
+
+# ##Certificates check
+# cert=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port oc get csr -no-headers | grep Pending | wc -l)
+# if [ "$cert" -gt 0 ]; then
+# echo "Openshift CSR's are pending kindly approve it and take snapshot"
+# exit;
+# fi
+
+if [ "$ready_nodes" -eq 4 ]; then
+
+echo "Number of nodes in ready state is $ready_nodes"
+
+echo "******Cluster is in Healthy state****"
+
+echo "************* Dumping cluster state ********"
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get nodes
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port kubectl get pod --all-namespaces
+
+echo "**************    Cloning litmus-e2e repo         *************"
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'git clone https://github.com/litmuschaos/litmus-e2e.git'
+# sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Pass '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
+config=$(sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cat ~/.kube/config')
 mkdir $path/.kube
-cat ~/.kube/config > $path/.kube/config
-cat ~/.kube/config > $path/.kube/admin.conf
-cat ~/logs/clusters > $path/.kube/clusters
-cat ~/logs/zone > $path/.kube/zone
-
-kubectl get nodes
+echo "$config" > "$path/.kube/config"
+echo "$config" > "$path/.kube/admin.conf"
+else
+echo "All nodes are not ready"
+echo "******Cluster is in Unhealthy state*******"
+echo "cloning e2e-openshift repo*************"
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'git clone https://github.com/mayadata-io/litmus-e2e.git'
+# sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'python3 e2e-openshift/Openshift-EE/utils/result/result_update.py '"'$CI_JOB_ID'"' PCZD 1-cluster-setup "Configure OpenShift cluster" Fail '"'$CI_PIPELINE_ID'"' '"'$current_time'"' '"'$CI_COMMIT_SHA'"' '"'$gittoken'"'' '"'$RELEASE_TAG'"'
+exit;
+fi

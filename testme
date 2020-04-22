@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port -t "export ten1=$a;\
+export twenty2=$b;\
+export thirty7=$c;bash"

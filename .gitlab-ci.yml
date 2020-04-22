@@ -12,11 +12,15 @@ stages:
 .before_script_template:
   before_script:
 
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
+    - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'export GOPATH=$HOME/go'
+    - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'pwd'
+    - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls'
+    - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin'
+    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'mkdir -p $HOME/go/src/github.com/${REPONAME} && cd $HOME/go/src/github.com/${REPONAME} && git clone https://github.com/litmuschaos/litmus-e2e.git -b generic-staging'
+    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'rsync -az --delete ${HOME}/go/src/github.com/${REPONAME}/${IMAGENAME}'
+    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}'
+    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls'
+    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'pwd'
 
 # Cluster Setup:
 
@@ -32,7 +36,7 @@ stages:
 #     paths:
 #       - .kube/
 
-Cluster Setup:
+Cluster Connect:
 
   stage: setup
   tags:
@@ -69,7 +73,7 @@ Deploy App:
   tags:
     - litmus-build
   script:
-    - make app-deploy
+    - make app-deploy 
 
   artifacts:
     when: always
@@ -206,11 +210,6 @@ node-cpu-hog:
   script:
     - make node-cpu-hog
 
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
 node-drain:
 
   extends: .before_script_template
@@ -264,7 +263,22 @@ App Cleanup:
   tags: 
     - litmus-build
   script:
-    - make app-cleanup 
+    - make app-cleanup
+    
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+Cluster Disconnect:
+
+  when: always
+  stage: cleanup
+  tags:
+    - litmus-build
+  script: 
+    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
 
   artifacts:
     when: always
