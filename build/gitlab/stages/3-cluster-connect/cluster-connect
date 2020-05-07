@@ -7,13 +7,11 @@ path=$(pwd)
 
 printf "***Conneting to the Cluster*****\n\n"
 
-##Conneting to the Cluster
-go="sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls | grep go'"
-if [ -z "$go" ] 
-then
-  echo "GO is not setup. please setup GO first"
-  exit 1;
-fi
+##Checking the Cluster Connection 
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls'
+##Setup GOPATH
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'mkdir -p go/src/github.com/litmuschaos'
+echo "Go path created"
 
 #Checking Cluster's Health 
 echo "*****************************Checking the Cluster's Health*************************"
