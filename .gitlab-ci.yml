@@ -9,23 +9,14 @@ stages:
   - app-cleanup
   - cleanup
 
-.before_script_template:
-  before_script:
-
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-
-Cluster Setup:
+Cluster Connect:
 
   stage: setup
   tags:
     - litmus-build
   script: 
-    - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
-    - ./build/gitlab/stages/1-gke-setup/cluster-setup
+    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
+    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
 
   artifacts:
     when: always
@@ -35,7 +26,6 @@ Cluster Setup:
 Litmus Infra Setup:
 
   when: always
-  extends: .before_script_template
   stage: install
   tags:
     - litmus-build
@@ -50,7 +40,6 @@ Litmus Infra Setup:
 Deploy App:
 
   when: always
-  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
@@ -65,7 +54,6 @@ Deploy App:
 Liveness:
 
   when: always
-  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
@@ -80,7 +68,6 @@ Liveness:
 Auxiliary App:
 
   when: always
-  extends: .before_script_template
   stage: deploy
   tags:
     - litmus-build
@@ -95,7 +82,6 @@ Auxiliary App:
 pod-delete:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -110,7 +96,6 @@ pod-delete:
 container-kill:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -125,7 +110,6 @@ container-kill:
 pod-network-latency:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -140,7 +124,6 @@ pod-network-latency:
 pod-network-loss:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -155,7 +138,6 @@ pod-network-loss:
 pod-network-corruption:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -170,7 +152,6 @@ pod-network-corruption:
 pod-cpu-hog:
 
   when: always
-  extends: .before_script_template
   stage: generic-experiment
   tags:
     - litmus-build
@@ -184,7 +165,7 @@ pod-cpu-hog:
 
 pod-memory-hog:
 
-  extends: .before_script_template
+
   when: always
   stage: generic-experiment
   tags:
@@ -199,7 +180,7 @@ pod-memory-hog:
 
 node-cpu-hog:
 
-  extends: .before_script_template
+
   when: always
   stage: infra-experiment
   tags: 
@@ -214,7 +195,7 @@ node-cpu-hog:
 
 node-drain:
 
-  extends: .before_script_template
+
   when: always
   stage: infra-experiment
   tags:
@@ -229,7 +210,7 @@ node-drain:
 
 disk-fill:
 
-  extends: .before_script_template
+
   when: always
   stage: infra-experiment
   tags:
@@ -244,7 +225,7 @@ disk-fill:
 
 node-memory-hog:
 
-  extends: .before_script_template
+
   when: always
   stage: infra-experiment
   tags:
@@ -259,7 +240,7 @@ node-memory-hog:
 
 admin-mode-check:
 
-  extends: .before_script_template
+
   when: always
   stage: component checks
   tags:
@@ -274,7 +255,7 @@ admin-mode-check:
       
 operator reconcile check:
 
-  extends: .before_script_template
+
   when: always
   stage: component checks
   tags:
@@ -289,7 +270,7 @@ operator reconcile check:
 
 App Cleanup:
 
-  extends: .before_script_template
+
   when: always
   stage: app-cleanup
   tags: 
@@ -302,15 +283,15 @@ App Cleanup:
     paths:
       - .kube/
 
-Cluster Cleanup:
+Cluster Disconnect:
 
   when: always
   stage: cleanup
   tags:
     - litmus-build
   script: 
-    - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
-    - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
+    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
 
   artifacts:
     when: always
