@@ -8,40 +8,26 @@ stages:
   - Application Cleanup
   - Infra cleanup
   - cluster cleanup
-  
-.before_script_template:
-  before_script:
 
-    - export GOPATH=$HOME/go
-    - export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    - mkdir -p $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-    - rsync -az --delete ${CI_PROJECT_DIR}/ ${GOPATH}/src/github.com/${REPONAME}/${IMAGENAME}/ #CI_PROJECT_DIR is full path where project is cloned
-    - cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}
-
-Cluster Setup:
-
+Cluster Connect:
   stage: cluster setup
   tags:
     - litmus-openebs
   script: 
-    - chmod 755 ./build/gitlab/stages/1-gke-setup/cluster-setup
-    - ./build/gitlab/stages/1-gke-setup/cluster-setup
-
+    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
+    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
   artifacts:
     when: always
     paths:
       - .kube/
 
 Build Litmus:
-
   when: always
-  extends: .before_script_template
   stage: Infra setup
   tags:
     - litmus-openebs
   script:
     - make build-litmus
-
   artifacts:
     when: always
     paths:
@@ -49,165 +35,132 @@ Build Litmus:
 
   
 Build OpenEBS:
-  
   when: always
-  extends: .before_script_template
   stage: Infra setup
   tags:
     - litmus-openebs
   script:
     - make build-openebs
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 App Deploy:
-
   when: always
-  extends: .before_script_template
   stage: Application Setup
   tags:
     - litmus-openebs
   script:
     - make app-deploy
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Target Pod Failure:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-target-pod-failure
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Pool Container Failure:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-pool-container-failure
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Pool Pod Failure:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-pool-pod-failure
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Target Container Failure:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-target-container-failure
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Target Network Delay:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-target-network-delay
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Target Network Loss:
-  
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-target-network-loss
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 OpenEBS Control Plane Chaos:
-
   when: always
-  extends: .before_script_template
   stage: experiment
   tags:
     - litmus-openebs
   script:
     - make openebs-control-plane-chaos
-
   artifacts:
     when: always
     paths:
       - .kube/
 
 Application Cleanup:
-  
   when: always
-  extends: .before_script_template
   stage: Application Cleanup
   tags:
     - litmus-openebs
   script:
     - make app-cleanup
-    
   artifacts:
     when: always
     paths:
       - .kube/
 
 Litmus Cleanup:
-  
   when: always
-  extends: .before_script_template
   stage: Infra cleanup
   tags:
     - litmus-openebs
   script:
     - make litmus-cleanup
-    
   artifacts:
     when: always
     paths:
@@ -215,30 +168,25 @@ Litmus Cleanup:
     
 
 OpenEBS Cleanup:
-  
   when: always
-  extends: .before_script_template
   stage: Infra cleanup
   tags:
     - litmus-openebs
   script:
     - make openebs-cleanup
-    
   artifacts:
     when: always
     paths:
       - .kube/
 
-Cluster Cleanup:
-
+Cluster Disconnect:
   when: always
   stage: cluster cleanup
   tags:
     - litmus-openebs
-  script:
-    - chmod 755 ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
-    - ./build/gitlab/stages/2-gke-cleanup/cluster-cleanup
-
+  script: 
+    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
   artifacts:
     when: always
     paths:

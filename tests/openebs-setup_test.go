@@ -72,7 +72,7 @@ var _ = Describe("BDD of openebs cleanup", func() {
 			//Get OpenEBS Chaos Charts
 			var err error
 			By("Installing OpenEBS Charts")
-			err = exec.Command("wget", "-O", "operator.yaml", "https://openebs.github.io/charts/openebs-operator-1.2.0.yaml").Run()
+			err = exec.Command("wget", "-O", "operator.yaml", "https://openebs.github.io/charts/openebs-operator-1.7.0.yaml").Run()
 			Expect(err).To(BeNil(), "failed to install OpenEBS Charts")
 			if err != nil {
 				fmt.Println(err)
@@ -83,10 +83,11 @@ var _ = Describe("BDD of openebs cleanup", func() {
 			By("Changing the required field")
 			err = exec.Command("sed", "-i", `/name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL/{n;s/.*/          value: "true"/}`, "operator.yaml").Run()
 			Expect(err).To(BeNil(), "failed to make changes in OpenEBS Charts")
-			if err != nil {
-				fmt.Println(err)
-			}
 			fmt.Println("Edit the required fields in chaos charts")
+			//Changing the sparse count
+			err = exec.Command("sed", "-i", `/name: SPARSE_FILE_COUNT/{n;s/.*/          value: "1"/}`, "operator.yaml").Run()
+			Expect(err).To(BeNil(), "failed to make changes in OpenEBS Charts")
+			fmt.Println("Edit the sparse count in chaos charts")
 
 			//Creating Pools
 			By("Creating OpenEBs Pool")
