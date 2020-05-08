@@ -132,7 +132,7 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 				fmt.Println(err)
 			}
 			fmt.Println("ChaosEngine created successfully...")
-			time.Sleep(2 * time.Second)
+			time.Sleep(10 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
 			By("Wait for chaos-runner to come in running sate")
