@@ -107,9 +107,23 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			if err != nil {
 				fmt.Println(err)
 			}
-
 			fmt.Println("rbac deleted sucessfully")
 
+			//Delete test deployments from default namespace
+			By("Delete test deployments")
+			err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp").Run()
+			Expect(err).To(BeNil(), "fail to delete test deployment from default namespace")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//Delete test namespace
+			By("Delete test namespace")
+			err = exec.Command("kubectl", "delete", "ns", "test").Run()
+			Expect(err).To(BeNil(), "Fail to delete test namespace")
+			if err != nil {
+				fmt.Println(err)
+			}
 		})
 
 	})
