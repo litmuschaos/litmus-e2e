@@ -5,12 +5,16 @@ current_time=$time
 echo $current_time
 path=$(pwd)
 
+#Removing the litmus cloned directory
+echo "Removing the litmus cloned directory"
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'rm -rf /home/udit/go/src/github.com/litmuschaos/litmus-e2e'
+
 printf "***Checking if the cluster is ready to disconnect*****\n\n"
 
+sleep 30
 ##Checking if the cluster is ready to disconnect
-sleep 15
-litmus_ns="sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'kubectl get ns litmus --no-headers | awk '{print $1}''"
-if [ -n "$litmus_ns" ]; then
+litmus_ns="sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'kubectl get ns litmus -o jsonpath='{.metadata.name}''"
+if [ "$litmus_ns" = "litmus-e2e" ]; then
   echo "Please Delete Litmus Namespace"
   exit 1;
 fi
@@ -28,7 +32,3 @@ else
 echo "Cluster is not Healthy"
 exit 1;
 fi
-
-#Removing the litmus cloned directory
-echo "Removing the litmus cloned directory"
-sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'rm -rf /home/udit/go/src/github.com/litmuschaos/litmus-e2e'
