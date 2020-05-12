@@ -115,7 +115,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			err = exec.Command("sed", "-i",
 				`s/namespace: default/namespace: litmus/g;
-			         s/name:  nginx-network-chaos/name: `+engineName+`/g;
+			         s/name: nginx-network-chaos/name: `+engineName+`/g;
 					 s/appns: 'default'/appns: 'litmus'/g;
 					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
