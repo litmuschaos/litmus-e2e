@@ -16,11 +16,6 @@ stages:
     - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'pwd'
     - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls'
     - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin'
-    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'mkdir -p $HOME/go/src/github.com/${REPONAME} && cd $HOME/go/src/github.com/${REPONAME} && git clone https://github.com/litmuschaos/litmus-e2e.git -b generic-staging'
-    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'rsync -az --delete ${HOME}/go/src/github.com/${REPONAME}/${IMAGENAME}'
-    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cd $HOME/go/src/github.com/${REPONAME}/${IMAGENAME}'
-    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'ls'
-    # - sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'pwd'
 
 # Cluster Setup:
 
@@ -53,6 +48,7 @@ Cluster Connect:
 Litmus Infra Setup:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: install
   tags:
@@ -68,6 +64,7 @@ Litmus Infra Setup:
 Deploy App:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: deploy
   tags:
@@ -83,6 +80,7 @@ Deploy App:
 Liveness:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: deploy
   tags:
@@ -98,6 +96,7 @@ Liveness:
 Auxiliary App:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: deploy
   tags:
@@ -113,6 +112,7 @@ Auxiliary App:
 pod-delete:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: generic-experiment
   tags:
@@ -128,6 +128,7 @@ pod-delete:
 container-kill:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   extends: .before_script_template
   stage: generic-experiment
   tags:

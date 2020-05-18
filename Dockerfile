@@ -5,8 +5,8 @@ RUN apt-get update && apt-get install -y git && \
     apt-get install -y ssh && \
     apt install ssh rsync
 
-RUN export GOPATH=$HOME/go
-RUN export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+ENV GOPATH=/home/udit/go
+ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 ARG KUBECTL_VERSION=1.17.0
 
 RUN apt-get update && apt-get install -y python-pip && \
@@ -24,11 +24,10 @@ RUN python3 -m pip install pygithub
 ADD https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 
-COPY README.md /
 COPY build ./build
-COPY Gopkg.lock /
-COPY Gopkg.toml /
-COPY Makefile /
+COPY Gopkg.lock ./Gopkg.lock
+COPY Gopkg.lock ./Gopkg.toml
+COPY Makefile ./
 COPY nginx ./nginx
 COPY pkg ./pkg
 COPY result_update.py /

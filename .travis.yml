@@ -1,0 +1,25 @@
+sudo: required
+dist: xenial
+env:
+  global:
+    - TRIVYARCH="64bit"
+
+services:
+  - docker
+language: go
+go:
+  - 1.13.1
+
+addons:
+  apt:
+    update: true
+
+script:
+  # Installing and configuring dependencies
+  - make deps
+  # Build
+  - make build
+
+after_success:
+  #Push Image
+  - make push
