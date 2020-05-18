@@ -20,7 +20,7 @@ build-litmus:
 	@echo "Build Litmus"
 	@echo "------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt " export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \
      go test $(TESTPATH)/install-litmus_test.go -v -count=1"
 
 .PHONY: app-deploy
@@ -30,7 +30,7 @@ app-deploy:
 	@echo "Deploying Application"
 	@echo "---------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "go test $(TESTPATH)/app-deploy_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/app-deploy_test.go -v -count=1"
 
 .PHONY: liveness
 liveness:
@@ -39,7 +39,7 @@ liveness:
 	@echo "Deploying Application"
 	@echo "---------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-     "go test $(TESTPATH)/app-liveness_test.go -v -count=1"
+     "export CGO_ENABLED=0 && go test $(TESTPATH)/app-liveness_test.go -v -count=1"
 
 .PHONY: auxiliary-app
 auxiliary-app:
@@ -48,7 +48,7 @@ auxiliary-app:
 	@echo "Deploying Auxiliary App"
 	@echo "-----------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "go test $(TESTPATH)/auxiliary-app_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/auxiliary-app_test.go -v -count=1"
 
 .PHONY: pod-delete
 pod-delete:
@@ -57,7 +57,7 @@ pod-delete:
 	@echo "Running pod-delete experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-delete_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-delete_test.go -v -count=1"
 
 .PHONY: container-kill
 container-kill:
@@ -66,7 +66,7 @@ container-kill:
 	@echo "Running container-kill experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/container-kill_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/container-kill_test.go -v -count=1"
 
 .PHONY: pod-network-latency
 pod-network-latency:
@@ -75,7 +75,7 @@ pod-network-latency:
 	@echo "Running pod-network-latency experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN};go test $(TESTPATH)/pod-network-latency_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && GITHUB_TOKEN=${GITHUB_TOKEN};go test $(TESTPATH)/pod-network-latency_test.go -v -count=1"
 
 .PHONY: pod-network-loss
 pod-network-loss:
@@ -84,7 +84,7 @@ pod-network-loss:
 	@echo "Running pod-network-loss experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-network-loss_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-network-loss_test.go -v -count=1"
 
 
 .PHONY: pod-network-corruption
@@ -94,7 +94,7 @@ pod-network-corruption:
 	@echo "Running pod-network-corruption experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-network-corruption_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-network-corruption_test.go -v -count=1"
 
 .PHONY: pod-cpu-hog
 pod-cpu-hog:
@@ -103,7 +103,7 @@ pod-cpu-hog:
 	@echo "Running pod-cpu-hog experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-cpu-hog_test.go -v -count=1'
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/pod-cpu-hog_test.go -v -count=1'
 
 .PHONY: node-cpu-hog
 node-cpu-hog:
@@ -112,7 +112,7 @@ node-cpu-hog:
 	@echo "Running node-cpu-hog experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-cpu-hog_test.go -v -count=1"
+	 export CGO_ENABLED=0 &&  export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-cpu-hog_test.go -v -count=1"
 
 .PHONY: node-drain
 node-drain:
@@ -121,7 +121,7 @@ node-drain:
 	@echo "Running node-drain experiment"
 	@echo "---------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-drain_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-drain_test.go -v -count=1"
 
 .PHONY: disk-fill
 disk-fill:
@@ -130,7 +130,7 @@ disk-fill:
 	@echo "Running disk-fill experiment"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/disk-fill_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/disk-fill_test.go -v -count=1"
 
 .PHONY: node-memory-hog
 node-memory-hog:
@@ -139,7 +139,7 @@ node-memory-hog:
 	@echo "Running node-memory-hog experiment"
 	@echo "----------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt "export IMAGE_TAG=${IMAGE_TAG} && \
-	 export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-memory-hog_test.go -v -count=1"
+	 export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/node-memory-hog_test.go -v -count=1"
 
 .PHONY: app-cleanup
 app-cleanup:
@@ -148,7 +148,7 @@ app-cleanup:
 	@echo "Deleting litmus"
 	@echo "--------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "go test $(TESTPATH)/litmus-cleanup_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/litmus-cleanup_test.go -v -count=1"
 
 .PHONY: deps
 deps: _build_check_docker godeps docker-build

@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y build-essential && \
     apt-get install -y ssh && \
     apt install ssh rsync
 
+ENV CGO_ENABLED 0
+ENV GO111MODULE=on
 ENV GOPATH=/home/udit/go
 ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 ARG KUBECTL_VERSION=1.17.0
