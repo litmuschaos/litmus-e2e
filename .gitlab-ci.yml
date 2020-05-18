@@ -11,6 +11,7 @@ stages:
 
 Cluster Connect:
 
+  image: litmuschaos/litmus-e2e:latest
   stage: setup
   tags:
     - litmus-build
@@ -26,6 +27,7 @@ Cluster Connect:
 Litmus Infra Setup:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: install
   tags:
     - litmus-build
@@ -40,6 +42,7 @@ Litmus Infra Setup:
 Deploy App:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -54,6 +57,7 @@ Deploy App:
 Liveness:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -68,6 +72,7 @@ Liveness:
 Auxiliary App:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -82,6 +87,7 @@ Auxiliary App:
 pod-delete:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -96,6 +102,7 @@ pod-delete:
 container-kill:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -110,6 +117,7 @@ container-kill:
 pod-network-latency:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -124,6 +132,7 @@ pod-network-latency:
 pod-network-loss:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -138,6 +147,7 @@ pod-network-loss:
 pod-network-corruption:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -152,6 +162,7 @@ pod-network-corruption:
 pod-cpu-hog:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -167,6 +178,7 @@ pod-memory-hog:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
   tags:
     - litmus-build
@@ -182,6 +194,7 @@ node-cpu-hog:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
   tags: 
     - litmus-build
@@ -197,6 +210,7 @@ node-drain:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
   tags:
     - litmus-build
@@ -212,6 +226,7 @@ disk-fill:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
   tags:
     - litmus-build
@@ -227,6 +242,7 @@ node-memory-hog:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
   tags:
     - litmus-build
@@ -242,6 +258,7 @@ admin-mode-check:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: component checks
   tags:
     - litmus-build
@@ -257,6 +274,7 @@ operator reconcile check:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: component checks
   tags:
     - litmus-build
@@ -272,6 +290,7 @@ App Cleanup:
 
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: app-cleanup
   tags: 
     - litmus-build
@@ -286,6 +305,7 @@ App Cleanup:
 Cluster Disconnect:
 
   when: always
+  image: litmuschaos/litmus-e2e:latest
   stage: cleanup
   tags:
     - litmus-build
