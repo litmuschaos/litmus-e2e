@@ -183,4 +183,4 @@ docker-push:
 	@echo "---------------------------"
 	@echo "--> Push chaos-ci-lib image" 
 	@echo "---------------------------"
-	REPONAME="mayadata-io" IMGNAME="chaos-ci-lib" IMGTAG="ci" ./build/push	 
+	REPONAME="litmuschaos" IMGNAME="litmus-openebs-tests" IMGTAG="ci" ./build/push 
