@@ -33,7 +33,7 @@ if [ -n "$litmus_exist" ]; then
     echo "Litmus already exist please cleanup the last session"
     exit 1;
 else
-sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cd /home/udit/go/src/github.com/litmuschaos && git clone https://github.com/litmuschaos/litmus-e2e.git -b generic'
+sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'cd /home/udit/go/src/github.com/litmuschaos && git clone https://github.com/litmuschaos/litmus-e2e.git -b generic-staging'
 fi
 else
 	echo "The cluster is not in Ready state"
