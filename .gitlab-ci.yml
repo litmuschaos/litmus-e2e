@@ -10,10 +10,11 @@ stages:
   - cluster cleanup
 
 Cluster Connect:
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: cluster setup
   tags:
     - litmus-openebs
-  script: 
+  script:
     - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
     - ./build/gitlab/stages/3-cluster-connect/cluster-connect
   artifacts:
@@ -23,6 +24,7 @@ Cluster Connect:
 
 Build Litmus:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Infra setup
   tags:
     - litmus-openebs
@@ -36,6 +38,7 @@ Build Litmus:
   
 Build OpenEBS:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Infra setup
   tags:
     - litmus-openebs
@@ -48,6 +51,7 @@ Build OpenEBS:
 
 App Deploy:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Application Setup
   tags:
     - litmus-openebs
@@ -60,6 +64,7 @@ App Deploy:
 
 OpenEBS Target Pod Failure:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -72,6 +77,7 @@ OpenEBS Target Pod Failure:
 
 OpenEBS Pool Container Failure:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -84,6 +90,7 @@ OpenEBS Pool Container Failure:
 
 OpenEBS Pool Pod Failure:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -96,6 +103,7 @@ OpenEBS Pool Pod Failure:
 
 OpenEBS Target Container Failure:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -108,6 +116,7 @@ OpenEBS Target Container Failure:
 
 OpenEBS Target Network Delay:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest  
   stage: experiment
   tags:
     - litmus-openebs
@@ -120,6 +129,7 @@ OpenEBS Target Network Delay:
 
 OpenEBS Target Network Loss:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -132,6 +142,7 @@ OpenEBS Target Network Loss:
 
 OpenEBS Control Plane Chaos:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
   tags:
     - litmus-openebs
@@ -144,6 +155,7 @@ OpenEBS Control Plane Chaos:
 
 Application Cleanup:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Application Cleanup
   tags:
     - litmus-openebs
@@ -156,6 +168,7 @@ Application Cleanup:
 
 Litmus Cleanup:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Infra cleanup
   tags:
     - litmus-openebs
@@ -169,6 +182,7 @@ Litmus Cleanup:
 
 OpenEBS Cleanup:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: Infra cleanup
   tags:
     - litmus-openebs
@@ -181,6 +195,7 @@ OpenEBS Cleanup:
 
 Cluster Disconnect:
   when: always
+  image: litmuschaos/litmus-openebs-tests:latest
   stage: cluster cleanup
   tags:
     - litmus-openebs

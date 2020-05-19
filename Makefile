@@ -1,4 +1,16 @@
 # Makefile for building litmus-e2e
+# Reference Guide - https://www.gnu.org/software/make/manual/make.html
+
+IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
+
+# list only our namespaced directories
+PACKAGES = $(shell go list ./... | grep -v '/vendor/')
+
+# docker info
+DOCKER_REPO ?= litmuschaos
+DOCKER_IMAGE ?= litmus-openebs-tests
+DOCKER_TAG ?= ci
+
 TESTPATH ?= /home/udit/go/src/github.com/litmuschaos/litmus-e2e/tests
 
 .PHONY: build-litmus
@@ -8,7 +20,7 @@ build-litmus:
 	@echo "Build Litmus"
 	@echo "------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export OPERATOR_REPO_NAME=${OPERATOR_REPO_NAME} && export RUNNER_REPO_NAME=${RUNNER_REPO_NAME} && export RUNNER_IMAGE=${RUNNER_IMAGE} && \
 	 export OPERATOR_IMAGE=${OPERATOR_IMAGE} && export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} && \
 	 export OPERATOR_IMAGE_TAG=${OPERATOR_IMAGE_TAG} && export RUNNER_IMAGE_TAG=${RUNNER_IMAGE_TAG} && \
@@ -22,7 +34,7 @@ build-openebs:
 	@echo "Build OpenEBS"
 	@echo "-------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 go test $(TESTPATH)/openebs-setup_test.go -v -count=1
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/openebs-setup_test.go -v -count=1"
 
 .PHONY: app-deploy
 app-deploy:
@@ -31,7 +43,7 @@ app-deploy:
 	@echo "Deploying Application"
 	@echo "---------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	go test $(TESTPATH)/app-deploy_test.go -v -count=1
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/app-deploy_test.go -v -count=1"
 
 .PHONY: openebs-target-pod-failure
 openebs-target-pod-failure:
@@ -40,8 +52,8 @@ openebs-target-pod-failure:
 	@echo "Running OpenEBS Target Pod Failure"
 	@echo "----------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
-	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-target-pod-failure_test.go -v -count=1"
 
 .PHONY: openebs-pool-container-failure
@@ -51,8 +63,8 @@ openebs-pool-container-failure:
 	@echo "Running OpenEBS Pool Container Failure"
 	@echo "--------------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt\
-	  "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
-	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-pool-container-failure_test.go -v -count=1"
 
 .PHONY: openebs-pool-pod-failure
@@ -62,7 +74,7 @@ openebs-pool-pod-failure:
 	@echo "Running OpenEBS Pool Pod Failure"
 	@echo "--------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	  "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-pool-pod-failure_test.go -v -count=1 -timeout=20m"
 
@@ -73,7 +85,7 @@ openebs-target-container-failure:
 	@echo "Running OpenEBS Target Container Failure"
 	@echo "----------------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	  "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-target-container-failure_test.go -v -count=1"
 
@@ -84,7 +96,7 @@ openebs-target-network-delay:
 	@echo "Running OpenEBS Target Network Delay"
 	@echo "-------------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-target-network-delay_test.go -v -count=1"
 
@@ -96,7 +108,7 @@ openebs-target-network-loss:
 	@echo "Running OpenEBS Target Network Loss"
 	@echo "-----------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-target-network-loss_test.go -v -count=1"
 
@@ -107,7 +119,7 @@ openebs-control-plane-chaos:
 	@echo "Running OpenEBS Control Plane Chaos"
 	@echo "-----------------------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	  go test $(TESTPATH)/openebs-control-plane-chaos_test.go -v -count=1"
 
@@ -118,7 +130,7 @@ app-cleanup:
 	@echo "Application Cleanup"
 	@echo "-------------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "go test $(TESTPATH)/app-cleanup_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/app-cleanup_test.go -v -count=1"
 
 
 .PHONY: litmus-cleanup
@@ -128,7 +140,7 @@ litmus-cleanup:
 	@echo "Litmus Cleanup"
 	@echo "--------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 "export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	  go test $(TESTPATH)/litmus-cleanup_test.go -v -count=1"
 
 
@@ -139,5 +151,36 @@ openebs-cleanup:
 	@echo "OpenEBS Cleanup"
 	@echo "---------------"
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
-	 "go test $(TESTPATH)/openebs-cleanup_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/openebs-cleanup_test.go -v -count=1"
 
+.PHONY: deps
+deps: _build_check_docker godeps docker-build
+
+_build_check_docker:
+	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \
+		then echo "" \
+		&& echo "ERROR:\tdocker is not installed. Please install it before build." \
+		&& echo "" \
+		&& exit 1; \
+		fi;
+
+godeps:
+	@echo "INFO:\tverifying dependencies for chaos-ci-lib build ..."
+	@go get -u -v golang.org/x/lint/golint
+	@go get -u -v golang.org/x/tools/cmd/goimports
+
+docker-build: 
+	@echo "----------------------------"
+	@echo "--> Build chaos-ci-lib image" 
+	@echo "----------------------------"
+	# Dockerfile available in the repo root
+	sudo docker build . -f Dockerfile -t $(DOCKER_REPO)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+
+.PHONY: push
+push: docker-push
+
+docker-push:
+	@echo "---------------------------"
+	@echo "--> Push chaos-ci-lib image" 
+	@echo "---------------------------"
+	REPONAME="litmuschaos" IMGNAME="litmus-openebs-tests" IMGTAG="ci" ./build/push 
