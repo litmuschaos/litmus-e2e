@@ -1,4 +1,8 @@
 ---
+include:
+  - remote: sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'https://raw.githubusercontent.com/mayadata-io/gitlab-remote-templates/master/templates/pod-delete-template.yml'
+
+---
 stages:
   - setup
   - install
@@ -109,21 +113,32 @@ Auxiliary App:
     paths:
       - .kube/
 
-pod-delete:
+# pod-delete:
 
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  extends: .before_script_template
-  stage: generic-experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-delete
+#   when: always
+#   image: litmuschaos/litmus-e2e:latest
+#   extends: .before_script_template
+#   stage: generic-experiment
+#   tags:
+#     - litmus-build
+#   script:
+#     - make pod-delete
 
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+#   artifacts:
+#     when: always
+#     paths:
+#       - .kube/
+
+Pod Delete Chaos:
+  stage: chaosInject
+  extends: .pod_delete_template
+  before_script:
+  variables:
+    APP_NS: litmus
+    APP_LABEL: "run=nginx"
+    APP_KIND: deployment
+    TARGET_CONTAINER: nginx
+
 
 container-kill:
 
