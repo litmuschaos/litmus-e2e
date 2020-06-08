@@ -1,8 +1,9 @@
 ---
 include:
-  - remote: sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port 'https://raw.githubusercontent.com/mayadata-io/gitlab-remote-templates/master/templates/pod-delete-template.yml'
+  - remote: sshpass -p $pass ssh -o StrictHostKeyChecking=no $user@$ip -p $port -tt " export IMAGE_TAG=${IMAGE_TAG} && \
+    export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \
+    "https://raw.githubusercontent.com/mayadata-io/gitlab-remote-templates/master/templates/pod-delete-template.yml"
 
----
 stages:
   - setup
   - install
