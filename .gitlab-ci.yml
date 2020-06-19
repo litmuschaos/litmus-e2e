@@ -115,7 +115,7 @@ container-kill:
       - .kube/
 
 pod-network-latency:
-
+  
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -176,7 +176,6 @@ pod-cpu-hog:
 
 pod-memory-hog:
 
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -191,7 +190,6 @@ pod-memory-hog:
       - .kube/      
 
 node-cpu-hog:
-
 
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -208,7 +206,6 @@ node-cpu-hog:
 
 node-drain:
 
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
@@ -223,7 +220,6 @@ node-drain:
       - .kube/
 
 disk-fill:
-
 
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -240,7 +236,6 @@ disk-fill:
 
 node-memory-hog:
 
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
@@ -253,6 +248,22 @@ node-memory-hog:
     when: always
     paths:
       - .kube/
+
+
+kubelet-service-kill:
+
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: infra-experiment
+  tags:
+    - litmus-build
+  script:
+    - make kubelet-service-kill
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/      
 
 admin-mode-check:
 
