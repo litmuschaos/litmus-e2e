@@ -176,6 +176,17 @@ pod-memory-hog:
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/pod-memory-hog_test.go -v -count=1"
 
+.PHONY: kubelet-service-kill
+kubelet-service-kill:
+
+	@echo "---------------------------------"
+	@echo "Running kubelet-service-kill experiment"
+	@echo "---------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
+	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 go test $(TESTPATH)/pod-memory-hog_test.go -v -count=1"	 
+
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
 
