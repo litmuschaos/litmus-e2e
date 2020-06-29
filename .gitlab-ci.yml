@@ -267,7 +267,6 @@ kubelet-service-kill:
 
 admin-mode-check:
 
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: component checks
@@ -283,7 +282,6 @@ admin-mode-check:
       
 operator reconcile check:
 
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: component checks
@@ -298,7 +296,6 @@ operator reconcile check:
       - .kube/  
 
 App Cleanup:
-
 
   when: always
   image: litmuschaos/litmus-e2e:latest
