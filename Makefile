@@ -11,7 +11,7 @@ DOCKER_REPO ?= litmuschaos
 DOCKER_IMAGE ?= litmus-e2e
 DOCKER_TAG ?= ci
 
-TESTPATH ?= /home/udit/go/src/github.com/litmuschaos/litmus-e2e/tests
+TESTPATH ?= /home/udit/go/src/github.com/litmuschaos/litmus-e2e
 
 
 .PHONY: build-litmus
@@ -25,7 +25,7 @@ build-litmus:
 	 export OPERATOR_REPO_NAME=${OPERATOR_REPO_NAME} && export RUNNER_REPO_NAME=${RUNNER_REPO_NAME} && export RUNNER_IMAGE=${RUNNER_IMAGE} && \
 	 export OPERATOR_IMAGE=${OPERATOR_IMAGE} && export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} && \
 	 export OPERATOR_IMAGE_TAG=${OPERATOR_IMAGE_TAG} && export RUNNER_IMAGE_TAG=${RUNNER_IMAGE_TAG} && \
-	 go test $(TESTPATH)/install-litmus_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/install-litmus_test.go -v -count=1"
 
 .PHONY: app-deploy
 app-deploy:
@@ -34,7 +34,7 @@ app-deploy:
 	@echo "Deploying Application"
 	@echo "---------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "export CGO_ENABLED=0 && go test $(TESTPATH)/app-deploy_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/app-deploy_test.go -v -count=1"
 
 .PHONY: liveness
 liveness:
@@ -43,7 +43,7 @@ liveness:
 	@echo "Deploying Application"
 	@echo "---------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-     "export CGO_ENABLED=0 && go test $(TESTPATH)/app-liveness_test.go -v -count=1"
+     "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/app-liveness_test.go -v -count=1"
 
 .PHONY: auxiliary-app
 auxiliary-app:
@@ -52,7 +52,7 @@ auxiliary-app:
 	@echo "Deploying Auxiliary App"
 	@echo "-----------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "export CGO_ENABLED=0 && go test $(TESTPATH)/auxiliary-app_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/auxiliary-app_test.go -v -count=1"
 
 .PHONY: pod-delete
 pod-delete:
@@ -63,7 +63,7 @@ pod-delete:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-delete_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-delete_test.go -v -count=1"
 
 .PHONY: container-kill
 container-kill:
@@ -74,7 +74,7 @@ container-kill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/container-kill_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/container-kill_test.go -v -count=1"
 
 .PHONY: pod-network-latency
 pod-network-latency:
@@ -85,7 +85,7 @@ pod-network-latency:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-network-latency_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-network-latency_test.go -v -count=1"
 
 .PHONY: pod-network-loss
 pod-network-loss:
@@ -96,7 +96,7 @@ pod-network-loss:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-network-loss_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-network-loss_test.go -v -count=1"
 
 
 .PHONY: pod-network-corruption
@@ -108,7 +108,7 @@ pod-network-corruption:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-network-corruption_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-network-corruption_test.go -v -count=1"
 
 .PHONY: pod-cpu-hog
 pod-cpu-hog:
@@ -119,7 +119,7 @@ pod-cpu-hog:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-cpu-hog_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-cpu-hog_test.go -v -count=1"
 
 .PHONY: node-cpu-hog
 node-cpu-hog:
@@ -130,7 +130,7 @@ node-cpu-hog:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/node-cpu-hog_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/node-cpu-hog_test.go -v -count=1"
 
 .PHONY: node-drain
 node-drain:
@@ -141,7 +141,7 @@ node-drain:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/node-drain_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/node-drain_test.go -v -count=1"
 
 .PHONY: disk-fill
 disk-fill:
@@ -152,7 +152,7 @@ disk-fill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/disk-fill_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/disk-fill_test.go -v -count=1"
 
 .PHONY: node-memory-hog
 node-memory-hog:
@@ -163,7 +163,7 @@ node-memory-hog:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/node-memory-hog_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/node-memory-hog_test.go -v -count=1"
 
 .PHONY: pod-memory-hog
 pod-memory-hog:
@@ -174,7 +174,7 @@ pod-memory-hog:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-memory-hog_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"
 
 .PHONY: kubelet-service-kill
 kubelet-service-kill:
@@ -185,7 +185,7 @@ kubelet-service-kill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/pod-memory-hog_test.go -v -count=1"	 
+	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"	 
 
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
@@ -196,7 +196,7 @@ kubelet-service-kill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/reconcile-resiliency_test.go -v -count=1"
+	 go test $(TESTPATH)/operator/reconcile-resiliency_test.go -v -count=1"
 
 .PHONY: admin-mode-check
 admin-mode-check:
@@ -207,7 +207,7 @@ admin-mode-check:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/admin-mode_test.go -v -count=1"	
+	 go test $(TESTPATH)/operator/admin-mode_test.go -v -count=1"	
 
 .PHONY: app-cleanup
 app-cleanup:
@@ -216,7 +216,7 @@ app-cleanup:
 	@echo "Deleting litmus"
 	@echo "--------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "export CGO_ENABLED=0 && go test $(TESTPATH)/litmus-cleanup_test.go -v -count=1"
+	 "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/litmus-cleanup_test.go -v -count=1"
 
 .PHONY: deps
 deps: _build_check_docker godeps docker-build

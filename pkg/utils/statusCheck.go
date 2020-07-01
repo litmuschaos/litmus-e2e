@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/gomega"
+	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/klog"
 )
 
 //RunnerPodStatus will check the status of runner pod and waits for it to come in running state
@@ -35,4 +38,21 @@ func RunnerPodStatus(runnerNamespace string, engineName string, client *kubernet
 	Expect(string(runner.Status.Phase)).To(Equal("Running"))
 
 	return 0, nil
+}
+
+//DeploymentRunningStatus checks running status of deployment for a certain delay and retries
+func DeploymentRunningStatus(namespace, deploymentName string) error {
+	sampleApp, _ := chaosTypes.Client.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+	count := 0
+	for sampleApp.Status.UnavailableReplicas != 0 {
+		if count < 20 {
+			klog.Infof("Application is Creating, Currently Unavaliable Count is: %v \n", sampleApp.Status.UnavailableReplicas)
+			sampleApp, _ = chaosTypes.Client.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			time.Sleep(5 * time.Second)
+			count++
+		} else {
+			return errors.Wrapf(err, "%v deployment fail to get in Running state, due to:%v", deploymentName, err)
+		}
+	}
+	return nil
 }
