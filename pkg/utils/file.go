@@ -80,3 +80,5 @@ func DownloadFile(filepath string, url string) error {
 	}
 	return nil
 }
+
+func Int32Ptr(i int32) *int32 { return &i }

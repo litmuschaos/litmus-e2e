@@ -14,6 +14,8 @@ import (
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	appv1 "k8s.io/api/apps/v1"
+	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	scheme "k8s.io/client-go/kubernetes/scheme"
@@ -73,9 +75,55 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Creating application for pod-delete in default namespace
 			By("Creating deployment for pod-delete chaos")
-			err = exec.Command("kubectl", "run", "adminapp", "--image=nginx").Run()
-			Expect(err).To(BeNil(), "Failed to create deployment")
-			klog.Info("Test Application is created")
+
+			adminapp := &appv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "adminapp",
+				},
+				Spec: appv1.DeploymentSpec{
+					Replicas: utils.Int32Ptr(1),
+					Selector: &metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							"run": "adminapp",
+						},
+					},
+					Template: apiv1.PodTemplateSpec{
+						ObjectMeta: metav1.ObjectMeta{
+							Labels: map[string]string{
+								"run": "adminapp",
+							},
+						},
+						Spec: apiv1.PodSpec{
+							Containers: []apiv1.Container{
+								{
+									Name:  "adminapp",
+									Image: "nginx:1.12",
+									Ports: []apiv1.ContainerPort{
+										{
+											Name:          "http",
+											Protocol:      apiv1.ProtocolTCP,
+											ContainerPort: 80,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+			_, err := chaosTypes.Client.AppsV1().Deployments("default").Create(adminapp)
+			if err != nil {
+				klog.Infoln("adminapp deployment is not created and error is ", err)
+				Fail("Fail to create adminapp deployment")
+			}
+			klog.Info("adminapp deployment is created")
+
+			//Waiting for deployment to get ready
+			err = utils.DeploymentRunningStatus("default", "adminapp")
+			if err != nil {
+				klog.Infof("Timeout, %v", err)
+				os.Exit(1)
+			}
 
 			//Installing RBAC for experiment that is pod-delete
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-admin-rbac.yaml"

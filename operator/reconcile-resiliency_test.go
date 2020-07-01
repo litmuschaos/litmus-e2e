@@ -3,6 +3,7 @@ package operator
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"testing"
 	"time"
@@ -13,6 +14,9 @@ import (
 	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	appv1 "k8s.io/api/apps/v1"
+	apiv1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	scheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -63,15 +67,105 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			var engineName = "testengine"
 			//Creating first application for pod-delete in default namespace
 			By("Creating first deployment for pod-delete chaos")
-			err = exec.Command("kubectl", "run", "testapp1", "--image=nginx").Run()
-			Expect(err).To(BeNil(), "Failed to create testapp1 deployment")
-			klog.Info("Test Application testapp1 is created")
+			testapp1 := &appv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testapp1",
+				},
+				Spec: appv1.DeploymentSpec{
+					Replicas: utils.Int32Ptr(1),
+					Selector: &metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							"run": "testapp1",
+						},
+					},
+					Template: apiv1.PodTemplateSpec{
+						ObjectMeta: metav1.ObjectMeta{
+							Labels: map[string]string{
+								"run": "testapp1",
+							},
+						},
+						Spec: apiv1.PodSpec{
+							Containers: []apiv1.Container{
+								{
+									Name:  "testapp1",
+									Image: "nginx:1.12",
+									Ports: []apiv1.ContainerPort{
+										{
+											Name:          "http",
+											Protocol:      apiv1.ProtocolTCP,
+											ContainerPort: 80,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+			_, err = chaosTypes.Client.AppsV1().Deployments("default").Create(testapp1)
+			if err != nil {
+				klog.Infoln("testapp1 deployment is not created and error is ", err)
+				Fail("Fail to create testapp1 deployment")
+			}
+			klog.Info("testapp1 deployment is created")
+
+			//Waiting for deployment to get ready
+			err = utils.DeploymentRunningStatus("default", "testapp1")
+			if err != nil {
+				klog.Infof("Timeout, %v", err)
+				os.Exit(1)
+			}
 
 			//Creating Second application for container-kill in test-1 namespace
 			By("Creating second deployment for container-kill chaos")
-			err = exec.Command("kubectl", "run", "testapp2", "--image=nginx", "-n", chaosTypes.ChaosNamespace).Run()
-			Expect(err).To(BeNil(), "Failed to create testapp2 deployment")
-			klog.Info("Test Application testapp2 is created")
+			testapp2 := &appv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testapp2",
+				},
+				Spec: appv1.DeploymentSpec{
+					Replicas: utils.Int32Ptr(1),
+					Selector: &metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							"run": "testapp2",
+						},
+					},
+					Template: apiv1.PodTemplateSpec{
+						ObjectMeta: metav1.ObjectMeta{
+							Labels: map[string]string{
+								"run": "testapp2",
+							},
+						},
+						Spec: apiv1.PodSpec{
+							Containers: []apiv1.Container{
+								{
+									Name:  "testapp2",
+									Image: "nginx:1.12",
+									Ports: []apiv1.ContainerPort{
+										{
+											Name:          "http",
+											Protocol:      apiv1.ProtocolTCP,
+											ContainerPort: 80,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+			_, err = chaosTypes.Client.AppsV1().Deployments("default").Create(testapp2)
+			if err != nil {
+				klog.Infoln("testapp2 deployment is not created and error is ", err)
+				Fail("Fail to create testapp2 deployment")
+			}
+			klog.Info("testapp2 deployment is created")
+
+			//Waiting for deployment to get ready
+			err = utils.DeploymentRunningStatus("default", "testapp2")
+			if err != nil {
+				klog.Infof("Timeout, %v", err)
+				os.Exit(1)
+			}
 
 			//Installing RBAC for first experiment that is pod-delete
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"

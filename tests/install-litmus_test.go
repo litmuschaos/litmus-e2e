@@ -81,6 +81,8 @@ var _ = Describe("BDD of Litmus installation", func() {
 			klog.Info("Updating Operator Image")
 			err = utils.EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+utils.GetEnv("OPERATOR_IMAGE", "litmuschaos/chaos-operator:latest"))
 			Expect(err).To(BeNil(), "Failed to update the operator image")
+			err = utils.EditKeyValue("install-litmus.yaml", "  - chaos-operator", "imagePullPolicy: Always", "imagePullPolicy: "+utils.GetEnv("IMAGE_PULL_POLICY", "Always"))
+			Expect(err).To(BeNil(), "Failed to update the image pull policy")
 			klog.Info("Updating Runner Image")
 			err = utils.EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos/chaos-runner:latest\"", "value: '"+utils.GetEnv("RUNNER_IMAGE", "litmuschaos/chaos-runner:latest")+"'")
 			Expect(err).To(BeNil(), "Failed to update chaos interval")
@@ -89,18 +91,18 @@ var _ = Describe("BDD of Litmus installation", func() {
 			cmd.Stderr = &stderr
 			err = cmd.Run()
 			if err != nil {
-				fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+				klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 				fmt.Println(err)
 				Fail("Fail to install litmus")
 			}
-			fmt.Println("Result: " + out.String())
+			klog.Infof("Result: " + out.String())
 
 			//Checking the status of operator
 			operator, _ := chaosTypes.Client.AppsV1().Deployments(utils.GetEnv("APP_NS", "default")).Get("chaos-operator-ce", metav1.GetOptions{})
 			count := 0
 			for operator.Status.UnavailableReplicas != 0 {
 				if count < 50 {
-					fmt.Printf("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
+					klog.Infof("Unavaliable Count: %v \n", operator.Status.UnavailableReplicas)
 					operator, _ = chaosTypes.Client.AppsV1().Deployments(utils.GetEnv("APP_NS", "default")).Get("chaos-operator-ce", metav1.GetOptions{})
 					time.Sleep(5 * time.Second)
 					count++
