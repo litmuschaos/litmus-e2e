@@ -187,7 +187,22 @@ pod-memory-hog:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
+
+pod-network-duplication:
+
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: generic-experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-network-duplication
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/ 
 
 node-cpu-hog:
 

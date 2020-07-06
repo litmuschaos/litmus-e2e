@@ -19,6 +19,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog"
 )
 
 var (
@@ -27,8 +28,8 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	experimentName = "node-drain"
-	engineName     = "engine7"
+	experimentName = "pod-network-duplication"
+	engineName     = "engine12"
 )
 
 func TestChaos(t *testing.T) {
@@ -79,76 +80,62 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests for node-drain experiment
-var _ = Describe("BDD of node-drain experiment", func() {
-
-	// BDD TEST CASE 1
+//BDD Tests for pod-network-duplication experiment
+var _ = Describe("BDD of pod-network-duplication experiment", func() {
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			//Get a single node name
-			nodes, err := client.CoreV1().Nodes().List(metav1.ListOptions{})
-			Expect(err).To(BeNil(), "fail to get the nodes")
-			nodeName := nodes.Items[0].Name
-
-			//Cordon node
-			By("Cordoning node")
-			err = exec.Command("kubectl", "cordon", nodeName).Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml"
+			rbacPath := "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-duplication/rbac.yaml"
 			rbacNamespace := chaosTypes.ChaosNamespace
 			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
 			Expect(err).To(BeNil(), "Fail to create RBAC")
-			fmt.Println("Rbac has been created successfully !!!")
+			klog.Info("Rbac has been created successfully !!!")
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "node-drain.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-drain/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "pod-network-duplication.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-duplication/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "node-drain.yaml").Run()
-			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "node-drain.yaml", "-n", chaosTypes.ChaosNamespace).Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			err = utils.DownloadFile("pod-network-duplication.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-duplication/experiment.yaml")
+			Expect(err).To(BeNil(), "Fail to fetch chaosexperiment file")
+			err = utils.EditFile("pod-network-duplication.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+utils.GetEnv("GOEXPERIMENT_IMAGE", "litmuschaos/go-runner:ci"))
+			Expect(err).To(BeNil(), "Failed to update the experiment image")
+			err = exec.Command("kubectl", "apply", "-f", "pod-network-duplication.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			Expect(err).To(BeNil(), "Failed to create chaos experiment")
+			klog.Info("Chaos Experiment Created Successfully with image =", utils.GetEnv("GOEXPERIMENT_IMAGE", "litmuschaos/go-runner:ci"))
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for the experiment")
-			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/engine.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to fetch engine file")
-			//Modify chaos engine spec
-			//Modify Namespace,Name,AppNs,AppLabel of the engine
-
-			err = exec.Command("sed", "-i",
-				`s/namespace: default/namespace: litmus/g;
-			         s/name: nginx-chaos/name: `+engineName+`/g;
-					 s/appns: 'default'/appns: 'litmus'/g;
-					 s/jobCleanUpPolicy: 'delete'/jobCleanUpPolicy: 'retain'/g;
-					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
-			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
-				experimentName+"-ce.yaml").Run()
-
-			//Modify NODE NAME
-			err = exec.Command("sed", "-i", `/name: APP_NODE/{n;s/.*/              value: `+nodeName+"/}", experimentName+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to Modify Node name field of chaos engine")
+			//Download engine file
+			err = utils.DownloadFile(experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-duplication/engine.yaml")
+			Expect(err).To(BeNil(), "Fail to fetch engine file for pod network duplication")
+			//Modify the downloaded file
+			err = utils.EditFile(experimentName+"-ce.yaml", "namespace: default", "namespace: "+chaosTypes.ChaosNamespace)
+			Expect(err).To(BeNil(), "Failed to update namespace in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+engineName)
+			Expect(err).To(BeNil(), "Failed to update engine name in chaosengine file")
+			err = utils.EditFile(experimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: 'false'")
+			Expect(err).To(BeNil(), "Failed to update AnnotationCheck in engine")
+			err = utils.EditFile(experimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: 'retain'")
+			Expect(err).To(BeNil(), "Failed to update jobCleanUpPolicy in chaosengine file")
+			err = utils.EditFile(experimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: 'run=nginx'")
+			Expect(err).To(BeNil(), "Failed to update application label in chaosengine file")
+			err = utils.EditFile(experimentName+"-ce.yaml", "appns: 'default'", "appns: '"+chaosTypes.ChaosNamespace+"'")
+			Expect(err).To(BeNil(), "Failed to update application namespace in chaosengine file")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
 			err = exec.Command("kubectl", "apply", "-f", experimentName+"-ce.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "Fail to create chaos engine")
 			if err != nil {
-				fmt.Println(err)
+				klog.Info(err)
 			}
 
-			fmt.Println("ChaosEngine created successfully...")
-			time.Sleep(2 * time.Second)
+			klog.Info("ChaosEngine created successfully...")
+			time.Sleep(5 * time.Second)
 
 			//Fetching the runner pod and Checking if it get in Running state or not
 			By("Wait for runner pod to come in running sate")
@@ -156,7 +143,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			runnerPodStatus, err := utils.RunnerPodStatus(runnerNamespace, engineName, client)
 			Expect(runnerPodStatus).NotTo(Equal("1"), "Runner pod failed to get in running state")
 			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			fmt.Println("Runner pod for is in Running state")
+			klog.Info("Runner pod for is in Running state")
 
 			//Waiting for experiment job to get completed
 			//Also Printing the logs of the experiment
@@ -169,7 +156,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			//Checking the chaosresult
 			By("Checking the chaosresult")
 			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			fmt.Println("Chaos Result Verdict is: ", chaosResult.Status.ExperimentStatus.Verdict)
+			klog.Info("Chaos Result Verdict is : ", chaosResult.Status.ExperimentStatus.Verdict)
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Chaos Result Verdict is not Pass")
 
@@ -184,7 +171,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			time.Sleep(10 * time.Second)
 			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine")
-			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
+			klog.Info("Chaos Engine Verdict is : ", chaosEngine.Status.Experiments[0].Verdict)
 			Expect(string(chaosEngine.Status.Experiments[0].Verdict)).To(Equal("Pass"), "Chaos Engine Verdict is not Pass")
 		})
 	})
@@ -201,7 +188,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
 			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
-			fmt.Println("Result updated successfully !!!")
+			klog.Info("Result updated successfully !!!")
 		})
 	})
 })

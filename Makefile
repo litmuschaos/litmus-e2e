@@ -62,7 +62,7 @@ pod-delete:
 	@echo "--------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
-	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/tests/pod-delete_test.go -v -count=1"
 
 .PHONY: container-kill
@@ -118,7 +118,7 @@ pod-cpu-hog:
 	@echo "--------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
-	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/tests/pod-cpu-hog_test.go -v -count=1"
 
 .PHONY: node-cpu-hog
@@ -173,19 +173,29 @@ pod-memory-hog:
 	@echo "---------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
-	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
+	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"
 
 .PHONY: kubelet-service-kill
 kubelet-service-kill:
 
-	@echo "---------------------------------"
+	@echo "---------------------------------------"
 	@echo "Running kubelet-service-kill experiment"
-	@echo "---------------------------------"
+	@echo "---------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"	 
+	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"
+
+.PHONY: pod-network-duplication
+pod-network-duplication:
+
+	@echo "------------------------------------------"
+	@echo "Running pod-network-duplication experiment"
+	@echo "------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \ export GOEXPERIMENT_IMAGE=${GOEXPERIMENT_IMAGE} &&  \
+	 go test $(TESTPATH)/tests/pod-network-duplication_test.go -v -count=1"	  
 
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
