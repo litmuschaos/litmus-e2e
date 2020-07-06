@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+
+    - name: Get Current Date and Time
+      shell: date +"%m-%d-%y,time=%T"
+      register: date
+
+    - name: Write to file baseline_image
+      lineinfile:
+        path: ./baseline
+        create: yes
+        state: present
+        insertbefore: BOF
+        line:  'date={{date.stdout}},repo={{repo}},branch={{branch}},commit={{commit}}'
