@@ -20,4 +20,5 @@
  
 | Job ID |   Test Description         | Execution Time |Test Result   |
  |---------|---------------------------| --------------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/168468">168468</a>           |  Pod Delete test fails the application pod           | Tue Jul  7 12:14:54 2020  | Pass |
  |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/"></a>   |  Pod Delete test fails the application pod           |  Tue Jul  7 11:55:39 2020     |Pass  |
