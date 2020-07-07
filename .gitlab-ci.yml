@@ -193,6 +193,19 @@ OpenEBS Cleanup:
     paths:
       - .kube/
 
+Pipeline Status Check:
+  when: always
+  image: litmuschaos/litmus-openebs-tests:latest
+  stage: Infra cleanup
+  tags:
+    - litmus-build
+  script:
+    - make pipeline-status-update
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
 Cluster Disconnect:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
