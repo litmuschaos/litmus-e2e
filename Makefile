@@ -185,7 +185,7 @@ kubelet-service-kill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"	 
+	 go test $(TESTPATH)/tests/kubelet-service-kill_test.go -v -count=1"	 
 
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
