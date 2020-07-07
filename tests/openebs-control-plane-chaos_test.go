@@ -241,7 +241,7 @@ var _ = Describe("BDD of openebs control plane chaos experiment", func() {
 			chaosEngine, err := clientSet.ChaosEngines("openebs").Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine while updating the result in a table")
 			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
-			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
+			err = utils.UpdateResultTable("OpenEBS control plane chaos test the control plane component", testVerdict, engineName, clientSet)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
 		})
