@@ -87,12 +87,12 @@ func JobLogs(experimentName string, jobNamespace string, engineName string, clie
 }
 
 //UpdateResultTable will update the result of pipelines in a table on github using python update script
-func UpdateResultTable(experimentName string, testVerdict string, engineName string, clientSet *chaosClient.LitmuschaosV1alpha1Client) error {
+func UpdateResultTable(clientSet *chaosClient.LitmuschaosV1alpha1Client, experimentDetails, testVerdict, engineName, experimentName string) error {
 
 	//Updating the result table
 	fmt.Println("The job_id for the job is:", os.Getenv("CI_JOB_ID"))
 	fmt.Println("The testVerdict for the experiment is:", testVerdict)
-	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--stage", "Experiment", "--test_desc", experimentName, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC)), "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", experimentName)
+	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--stage", "Experiment", "--test_desc", experimentDetails, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC)), "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", experimentName)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
