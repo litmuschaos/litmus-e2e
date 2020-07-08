@@ -6,11 +6,11 @@ stages:
   - generic-experiment
   - infra-experiment
   - component checks
+  - e2e-metrics
   - app-cleanup
   - cleanup
 
 Cluster Connect:
-
   image: litmuschaos/litmus-e2e:latest
   stage: setup
   tags:
@@ -25,7 +25,6 @@ Cluster Connect:
       - .kube/
 
 Litmus Infra Setup:
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: install
@@ -40,7 +39,6 @@ Litmus Infra Setup:
       - .kube/
     
 Deploy App:
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: deploy
@@ -55,7 +53,6 @@ Deploy App:
       - .kube/
 
 Liveness:
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: deploy
@@ -70,7 +67,6 @@ Liveness:
       - .kube/
 
 Auxiliary App:
-
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: deploy
@@ -84,8 +80,7 @@ Auxiliary App:
     paths:
       - .kube/
 
-pod-delete:
-
+TCID-VMWx-GENERIC-APP-POD-DELETE:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -99,8 +94,7 @@ pod-delete:
     paths:
       - .kube/
 
-container-kill:
-
+TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -114,53 +108,7 @@ container-kill:
     paths:
       - .kube/
 
-pod-network-latency:
-  
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-latency
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-network-loss:
-
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-loss
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-network-corruption:
-
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-corruption
-
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-pod-cpu-hog:
-
+TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -174,8 +122,7 @@ pod-cpu-hog:
     paths:
       - .kube/
 
-pod-memory-hog:
-
+TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -187,40 +134,51 @@ pod-memory-hog:
   artifacts:
     when: always
     paths:
-      - .kube/      
-
-node-cpu-hog:
-
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
-  tags: 
-    - litmus-build
-  script:
-    - make node-cpu-hog
-
-  artifacts:
-    when: always
-    paths:
       - .kube/
 
-node-drain:
-
+TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: generic-experiment
   tags:
     - litmus-build
   script:
-    - make node-drain
+    - make pod-network-corruption
 
   artifacts:
     when: always
     paths:
       - .kube/
 
-disk-fill:
+TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: generic-experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-network-latency
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: generic-experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-network-loss
+
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+TCID-VMWx-GENERIC-APP-DISK-FILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
@@ -234,8 +192,21 @@ disk-fill:
     paths:
       - .kube/
 
-node-memory-hog:
+TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: infra-experiment
+  tags: 
+    - litmus-build
+  script:
+    - make node-cpu-hog
 
+  artifacts:
+    when: always
+    paths:
+      - .kube/      
+
+TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
@@ -249,9 +220,21 @@ node-memory-hog:
     paths:
       - .kube/
 
+TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: infra-experiment
+  tags:
+    - litmus-build
+  script:
+    - make node-drain
 
-kubelet-service-kill:
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
+TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: infra-experiment
@@ -263,10 +246,23 @@ kubelet-service-kill:
   artifacts:
     when: always
     paths:
+      - .kube/            
+
+TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: component checks
+  tags:
+    - litmus-build
+  script:
+    - make operator-reconcile-resiliency-check
+
+  artifacts:
+    when: always
+    paths:
       - .kube/      
 
-admin-mode-check:
-
+TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: component checks
@@ -279,21 +275,21 @@ admin-mode-check:
     when: always
     paths:
       - .kube/      
-      
-operator reconcile check:
+
+e2e-metric:
 
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: component checks
+  stage: e2e-metrics
   tags:
     - litmus-build
   script:
-    - make operator-reconcile-resiliency-check
+    - make e2e-metrics
 
   artifacts:
     when: always
     paths:
-      - .kube/  
+      - .kube/
 
 App Cleanup:
 

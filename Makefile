@@ -209,6 +209,17 @@ admin-mode-check:
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/operator/admin-mode_test.go -v -count=1"	
 
+
+.PHONY: e2e-metrics
+e2e-metrics:
+
+	@echo "----------------------------"
+	@echo "Pipeline Coverage Percentage"
+	@echo "----------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "export CI_JOB_ID=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && bash metrics/e2e-metrics"
+
+
 .PHONY: app-cleanup
 app-cleanup:
 
