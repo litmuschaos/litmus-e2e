@@ -1,0 +1,32 @@
+#!/bin/bash
+
+time="$(TZ=IST date)"
+current_time=$time
+echo $current_time
+path=$(pwd)
+
+#Removing the litmus cloned directory
+echo "Removing the litmus cloned directory"
+sshpass -p $litmus_pass ssh -o StrictHostKeyChecking=no $litmus_user@$litmus_ip -p $port 'rm -rf /home/udit/go/src/github.com/litmuschaos/litmus-e2e'
+
+printf "***Checking if the cluster is ready to disconnect*****\n\n"
+##Checking if the cluster is ready to disconnect
+litmus_ns="sshpass -p $litmus_pass ssh -o StrictHostKeyChecking=no $litmus_user@$litmus_ip -p $port 'kubectl get ns litmus -o jsonpath='{.metadata.name}''"
+if [  "$litmus_ns" = "litmus-e2e" ]; then
+  echo "Please Delete Litmus Namespace"
+  exit 1;
+fi
+
+#Checking Cluster's Health 
+echo "*****************************Checking the Cluster's Health*************************"
+echo "************    Checking for the number of nodes in ready state      **************"
+
+##Number of nodes in the cluster
+ready_nodes=$(sshpass -p $litmus_pass ssh -o StrictHostKeyChecking=no $litmus_user@$litmus_ip -p $port kubectl get nodes --no-headers | grep -v NotReady | wc -l)
+echo "Number of nodes in ready state is $ready_nodes"
+if [ "$ready_nodes" -eq 4 ]; then
+    printf "Cluster is up and running with $ready_nodes nodes\n"
+else
+echo "Cluster is not Healthy"
+exit 1;
+fi
