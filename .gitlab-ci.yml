@@ -325,3 +325,16 @@ Cluster Disconnect:
     when: always
     paths:
       - .kube/
+
+Pipeline Status Check:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: cleanup
+  tags:
+    - litmus-build
+  script:
+    - make pipeline-status-update
+  artifacts:
+    when: always
+    paths:
+      - .kube/  
