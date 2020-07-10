@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-describe("Testing the Rechablity of Workflow page",()=>{
+describe("Testing the accessibility of Workflow page",()=>{
     
     it("Visiting the workflow page",()=>{
         cy.visit("/workflow");

@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-describe("Testing the Rechablity of Login page",()=>{
+describe("Testing the accessibility of Login page",()=>{
     
     it("Visiting the Login Page",()=>{
         cy.visit("/login");
