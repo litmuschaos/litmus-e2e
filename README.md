@@ -1,11 +1,10 @@
 # LitmusChaos E2E
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e?ref=badge_shield)
 
-This repository contains the Gitlab e2e pipeline with BDD tests for Generic experiments of litmus. An auxiliary application is deployed in the scope of different scenarios and the chaos is performed on that application then in the cleanup stage it is removed successfully.
+This repository contains the Litmus E2E pipelines for testing the chaos and litmus components. It includes BDDs for all litmus and openebs experiments and tests for the litmus portal.
 
 ## Branch Details
-
-<table style="width:100%">
+<table>
   <tr>
     <th>Branch</th>
     <th>Description</th>
@@ -16,12 +15,18 @@ This repository contains the Gitlab e2e pipeline with BDD tests for Generic expe
   </tr>
   <tr>
     <td>openebs</td>
-    <td>It contains the test cases (GO BDDs) for Litmus OpenEBS experiment which includes different OpenEBS control plane and data tests. 
+    <td>It contains the test cases (GO BDDs) for Litmus OpenEBS experiment which includes different OpenEBS control plane and data plane tests. 
   </tr>
   <tr>
     <td>litmus-portal</td>
     <td>It contains different test cases for litmus portal</td>
   </tr>
+</table>
+
+## How to view the details of the last few pipeline runs?
+To view the details of the last few pipelines runs:
+- Choose the above directory whose pipeline details you want.
+- Inside it contains the details of the job in each folder and pipeline details in README.md. 
 
 ## Generic E2E pipeline:
 
@@ -34,8 +39,8 @@ The Generic pipeline covers the test for litmus generic experiments which includ
     <th>Description</th>
   </tr>
   <tr>
-    <td>Setup</td>
-    <td>In this stage, the gke cluster is set up with the given value of nodes.</td>
+    <td>Cluster Connect</td>
+    <td>This stage is used for connecting to the OnPrem cluster which is a 4 node cluster(1 master and 3 worker) and clone the litmus-e2e folder</td>
   </tr>
   <tr>
     <td>Install</td>
@@ -64,17 +69,12 @@ The Generic pipeline covers the test for litmus generic experiments which includ
   </tr>
     <tr>
     <td>Cleanup</td>
-    <td>In this stage, the cluster along with VPC Network gets deleted.</td>
+    <td>In this stage, the litmus repo is removed and cluster gets disconnected.</td>
   </tr>
 </table>
 
-## How to view the details of the last few pipeline runs?
-To view the details of the last few pipeline runs:
-- Choose the above directory whose pipeline details you want.
-- Inside it contains the jobs details in each folder and pipeline details in README.md. 
-
 # OpenEBS E2E Pipeline
-It contains the Gitlab e2e pipeline with BDD and other test cases for OpenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
+It contains the openebs e2e BDDs for OenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
 
 ### Different Stages:
 <table style="width:100%">
@@ -83,8 +83,8 @@ It contains the Gitlab e2e pipeline with BDD and other test cases for OpenEBS ex
     <th>Description</th>
   </tr>
   <tr>
-    <td>Cluster Setup</td>
-    <td>In this stage, the gke cluster is set up with the given value specifications.</td>
+    <td>Cluster Connect</td>
+    <td>This stage is used for connecting to the OnPrem cluster which is a 4 node cluster(1 master and 3 worker) and clone the litmus-e2e folder</td>
   </tr>
   <tr>
     <td>Infra setup</td>
@@ -108,10 +108,31 @@ It contains the Gitlab e2e pipeline with BDD and other test cases for OpenEBS ex
   </tr>  
    <tr>
     <td>Cluster Cleanup</td>
-    <td>In this stage, the cluster is removed successfully</td>
+    <td>In this stage, the litmus-e2e repo is removed and cluster gets disconnected.</td>
   </tr>
 </table>
 
+# Litmus Portal E2E Pipeline
+It contains the test cases for litmus portal different e2e BDDs for OenEBS experiments.
+<table>
+  <tr>
+    <th>Stages</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Cluster Connect</td>
+    <td>This stage is used for connecting to the OnPrem cluster which is a 4 node cluster(1 master and 3 worker) and clone the litmus-e2e folder</td>
+  </tr>
+  <tr>
+    <td>Cypress tests</td>
+    <td>This stage deals with the cypress test for litmuschaos</td>
+  </tr>
+  </tr>  
+   <tr>
+    <td>Cluster Cleanup</td>
+    <td>In this stage, the litmus-e2e repo is removed and cluster gets disconnected.</td>
+  </tr>
+</table>
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e?ref=badge_large)
