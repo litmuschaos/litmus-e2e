@@ -28,7 +28,7 @@ To view the details of the last few pipelines runs:
 - Choose the above directory whose pipeline details you want.
 - Inside it contains the details of the job in each folder and pipeline details in README.md. 
 
-## Generic E2E pipeline:
+# Generic E2E Pipeline:
 
 The Generic pipeline covers the test for litmus generic experiments which include some before and after chaos validation and performance checks for different litmus components.
 
@@ -114,6 +114,8 @@ It contains the openebs e2e BDDs for OenEBS experiments. A stateful application 
 
 # Litmus Portal E2E Pipeline
 It contains the test cases for litmus portal different e2e BDDs for OenEBS experiments.
+
+### Different Stages:
 <table>
   <tr>
     <th>Stages</th>

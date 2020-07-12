@@ -15,9 +15,5 @@
  </tr>
  </table
 
-***Latest Pipeline Status***</u><br><br>
-[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
-
-
 ### Pipeline Runs
 
