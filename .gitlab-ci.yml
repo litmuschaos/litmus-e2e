@@ -189,8 +189,7 @@ pod-memory-hog:
     paths:
       - .kube/
 
-pod-network-duplication:
-
+TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: generic-experiment
@@ -198,7 +197,6 @@ pod-network-duplication:
     - litmus-build
   script:
     - make pod-network-duplication
-
   artifacts:
     when: always
     paths:
@@ -340,3 +338,16 @@ Cluster Disconnect:
     when: always
     paths:
       - .kube/
+
+Pipeline Status Check:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: cleanup
+  tags:
+    - litmus-build
+  script:
+    - make pipeline-status-update
+  artifacts:
+    when: always
+    paths:
+      - .kube/  

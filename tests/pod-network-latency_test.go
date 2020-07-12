@@ -182,7 +182,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine while updating the result in a table")
 			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
-			err = utils.UpdateResultTable(experimentName, testVerdict, engineName, clientSet)
+			err = utils.UpdateResultTable(clientSet, "Inject Network Latency Into Application Pod", testVerdict, engineName, experimentName)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
 		})

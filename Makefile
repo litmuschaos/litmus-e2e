@@ -185,7 +185,7 @@ kubelet-service-kill:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"
+	 go test $(TESTPATH)/tests/kubelet-service-kill_test.go -v -count=1"
 
 .PHONY: pod-network-duplication
 pod-network-duplication:
@@ -196,6 +196,7 @@ pod-network-duplication:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \ export GOEXPERIMENT_IMAGE=${GOEXPERIMENT_IMAGE} &&  \
 	 go test $(TESTPATH)/tests/pod-network-duplication_test.go -v -count=1"	  
+
 
 .PHONY:  operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
@@ -227,6 +228,17 @@ app-cleanup:
 	@echo "--------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/litmus-cleanup_test.go -v -count=1"
+
+.PHONY: pipeline-status-update
+pipeline-status-update:
+
+	@echo "------------------------"
+	@echo "Updating Pipeline Status"
+	@echo "------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "export CGO_ENABLED=0 && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} && \
+	  export JOB_NUMBER=${JOB_NUMBER} && export TOTAL_JOBS=${TOTAL_JOBS} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/tests/litmus-cleanup_test.go -v -count=1"
+
 
 .PHONY: deps
 deps: _build_check_docker godeps docker-build

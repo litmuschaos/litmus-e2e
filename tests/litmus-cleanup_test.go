@@ -111,7 +111,7 @@ var _ = Describe("BDD of litmus cleanup", func() {
 
 			//Delete test deployments from default namespace
 			By("Delete test deployments")
-			err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp").Run()
+			err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()
 			Expect(err).To(BeNil(), "fail to delete test deployment from default namespace")
 			if err != nil {
 				fmt.Println(err)
