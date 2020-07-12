@@ -15,10 +15,9 @@
  </tr>
  </table>
 
+***Latest Pipeline Status***</u><br><br>
+[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
+
+
 ### Pipeline Runs
 
-
-| Job ID |   Test Description         | Execution Time |Test Result   |
- |---------|---------------------------| --------------|--------|
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/171894">171894</a>           |  Kills the kubelet service on the application node.           | Fri Jul 10 00:14:50 2020  | Pass |
- |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/168935">168935</a>   |  Kills the kubelet service on the application node.           |  Wed Jul  8 00:33:40 2020     |Pass  |

@@ -15,14 +15,9 @@
  </tr>
  </table>
 
+***Latest Pipeline Status***</u><br><br>
+[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
+
+
  ### Pipeline Runs
 
- 
-| Job ID |   Test Description         | Execution Time |Test Result   |
- |---------|---------------------------| --------------|--------|
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/171883">171883</a>           |  Pod Delete test fails the application pod           | Thu Jul  9 23:46:55 2020  | Pass |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/171847">171847</a>           |  Pod Delete test fails the application pod           | Thu Jul  9 23:13:55 2020  | Pass |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/168924">168924</a>           |  Pod Delete test fails the application pod           | Wed Jul  8 00:04:38 2020  | Pass |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/168512">168512</a>           |  Pod Delete test fails the application pod           | Tue Jul  7 14:11:57 2020  | Pass |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/168468">168468</a>           |  Pod Delete test fails the application pod           | Tue Jul  7 12:14:54 2020  | Pass |
- |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/"></a>   |  Pod Delete test fails the application pod           |  Tue Jul  7 11:55:39 2020     |Pass  |
