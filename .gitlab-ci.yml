@@ -300,7 +300,7 @@ App Cleanup:
 Pipeline Status Check:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: cleanup
+  stage: app-cleanup
   tags:
     - litmus-build
   script:
