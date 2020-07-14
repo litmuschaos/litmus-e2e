@@ -17,3 +17,7 @@
 
 ### Pipeline Runs
 
+
+| Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
+ |---------|---------------------------| --------------|--------|--------|
+ |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174727">174727</a>   |  Inject Network Latency Into Application Pod           |  Tue Jul 14 15:05:28 2020(IST)     |latest  |Passed :smiley:  |
