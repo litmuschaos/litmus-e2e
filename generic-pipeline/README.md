@@ -18,3 +18,7 @@
 
 
 ### Pipeline Runs
+
+| Pipeline ID |   Execution Time        | Release Version |
+|---------|---------------------------| --------------|
+|    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11872">11872</a>   |  Tue Jul 14 23:56:41 2020(IST)           |  latest     |
