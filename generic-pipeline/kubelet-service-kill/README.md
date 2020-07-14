@@ -17,3 +17,7 @@
 
 ### Pipeline Runs
 
+
+| Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
+ |---------|---------------------------| --------------|--------|--------|
+ |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174733">174733</a>   |  Kills the kubelet service on the application node.           |  Tue Jul 14 15:19:11 2020(IST)     |latest  |Passed :smiley:  |
