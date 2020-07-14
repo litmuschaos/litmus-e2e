@@ -99,11 +99,11 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "pod-network-loss.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-loss/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-network-loss.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/go-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.GOExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-network-loss.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pod-network-loss.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.GOExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file

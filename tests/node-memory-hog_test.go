@@ -99,11 +99,11 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "node-memory-hog.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-memory-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "node-memory-hog.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/go-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.GOExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "node-memory-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "node-memory-hog.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.GOExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
