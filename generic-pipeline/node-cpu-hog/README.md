@@ -20,4 +20,5 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174811">174811</a>           |  Exhaust CPU resources on the Kubernetes Node           | Tue Jul 14 17:47:30 2020(IST)  | latest | Passed :smiley: |
  |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174730">174730</a>   |  Exhaust CPU resources on the Kubernetes Node           |  Tue Jul 14 15:12:24 2020(IST)     |latest  |Passed :smiley:  |
