@@ -17,3 +17,7 @@
 
  ### Pipeline Runs
 
+
+| Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
+ |---------|---------------------------| --------------|--------|--------|
+ |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174722">174722</a>   |  Pod Delete test fails the application pod           |  Tue Jul 14 14:56:27 2020(IST)     |latest  |Passed :smiley:  |
