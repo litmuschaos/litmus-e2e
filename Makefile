@@ -217,7 +217,7 @@ e2e-metrics:
 	@echo "Pipeline Coverage Percentage"
 	@echo "----------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "export CI_JOB_ID=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && bash metrics/e2e-metrics"
+	 "export CI_JOB_ID=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && cd $(TESTPATH) && bash metrics/e2e-metrics"
 
 
 .PHONY: app-cleanup
@@ -237,7 +237,7 @@ pipeline-status-update:
 	@echo "------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "export CGO_ENABLED=0 && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} && \
-	  export JOB_NUMBER=${JOB_NUMBER} && export TOTAL_JOBS=${TOTAL_JOBS} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/tests/pipeline_update_test.go -v -count=1"
+	  export JOB_NUMBER=${JOB_NUMBER} && export TOTAL_JOBS=${TOTAL_JOBS} && export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/tests/pipeline-update_test.go -v -count=1"
 
 
 .PHONY: deps
