@@ -5,6 +5,7 @@ stages:
   - Infra setup
   - Application Setup
   - experiment
+  - e2e-metrics
   - Application Cleanup
   - Infra cleanup
   - cluster cleanup
@@ -62,7 +63,7 @@ App Deploy:
     paths:
       - .kube/
 
-OpenEBS Target Pod Failure:
+TCID-VMWx-OPENEBS-APP-OPENEBS-TARGET-POD-FAILURE:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -75,7 +76,7 @@ OpenEBS Target Pod Failure:
     paths:
       - .kube/
 
-OpenEBS Pool Container Failure:
+TCID-VMWx-OPENEBS-APP-OPENEBS-POOL-CONTAINER-FAILURE:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -88,7 +89,7 @@ OpenEBS Pool Container Failure:
     paths:
       - .kube/
 
-OpenEBS Pool Pod Failure:
+TCID-VMWx-OPENEBS-APP-OPENEBS-POOL-POD-FAILURE:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -101,7 +102,7 @@ OpenEBS Pool Pod Failure:
     paths:
       - .kube/
 
-OpenEBS Target Container Failure:
+TCID-VMWx-OPENEBS-APP-OPENEBS-TARGET-CONTAINER-FAILURE:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -114,7 +115,7 @@ OpenEBS Target Container Failure:
     paths:
       - .kube/
 
-OpenEBS Target Network Delay:
+TCID-VMWx-OPENEBS-APP-OPENEBS-TARGET-NETWORK-DELAY:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest  
   stage: experiment
@@ -127,7 +128,7 @@ OpenEBS Target Network Delay:
     paths:
       - .kube/
 
-OpenEBS Target Network Loss:
+TCID-VMWx-OPENEBS-APP-OPENEBS-TARGET-NETWORK-LOSS:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -140,7 +141,7 @@ OpenEBS Target Network Loss:
     paths:
       - .kube/
 
-OpenEBS Control Plane Chaos:
+TCID-VMWx-OPENEBS-APP-OPENEBS-CONTROL-PLANE-CHAOS:
   when: always
   image: litmuschaos/litmus-openebs-tests:latest
   stage: experiment
@@ -148,6 +149,19 @@ OpenEBS Control Plane Chaos:
     - litmus-openebs
   script:
     - make openebs-control-plane-chaos
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+e2e-metric:
+  when: always
+  image: litmuschaos/litmus-openebs-tests:latest
+  stage: e2e-metrics
+  tags:
+    - litmus-build
+  script:
+    - make e2e-metrics
   artifacts:
     when: always
     paths:
