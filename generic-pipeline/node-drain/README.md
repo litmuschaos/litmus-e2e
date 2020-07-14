@@ -17,3 +17,7 @@
 
  ### Pipeline Runs
 
+
+| Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
+ |---------|---------------------------| --------------|--------|--------|
+ |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/174732">174732</a>   |  Drain the node where application pod is scheduled.           |  Tue Jul 14 15:16:15 2020(IST)     |latest  |Awaited :cold_sweat:  |
