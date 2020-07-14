@@ -17,3 +17,7 @@
 
 ### Pipeline Runs
 
+
+| Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
+ |---------|---------------------------| --------------|--------|--------|
+ |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/175292">175292</a>   |  Injects chaos to disrupt network connectivity of pod           |  Tue Jul 14 22:59:50 2020(IST)     |  |Passed :smiley:  |
