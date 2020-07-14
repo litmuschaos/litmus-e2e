@@ -37,6 +37,8 @@ var (
 	OperatorImage = os.Getenv("OPERATOR_IMAGE")
 	//ExperimentImage name default: "ansible-runner"
 	ExperimentImage = os.Getenv("EXPERIMENT_IMAGE")
+	//GOExperimentImage name default: "go-runner"
+	GOExperimentImage = os.Getenv("GO_EXPERIMENT_IMAGE")
 	//ExperimentImageTag "latest or ci"
 	ExperimentImageTag = os.Getenv("EXPERIMENT_IMAGE_TAG")
 	//OperatorImageTag "latest or ci"

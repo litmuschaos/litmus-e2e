@@ -63,14 +63,14 @@ var _ = BeforeSuite(func() {
 		fmt.Println(err)
 	}
 
-	//Getting the Application Status
+	//Getting the Chaos Operator Status
 	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 	count := 0
 	for app.Status.UnavailableReplicas != 0 {
-		if count < 50 {
-			fmt.Printf("Application is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
+		if count < 10 {
+			fmt.Printf("Operator is not in ready state, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
 			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
-			time.Sleep(10 * time.Second)
+			time.Sleep(5 * time.Second)
 			count++
 		} else {
 			Fail("Application fails to get in ready state")

@@ -67,10 +67,10 @@ var _ = BeforeSuite(func() {
 	app, _ := client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
 	count := 0
 	for app.Status.UnavailableReplicas != 0 {
-		if count < 50 {
-			fmt.Printf("Application is Creating, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
+		if count < 10 {
+			fmt.Printf("Operator is not in ready state, Currently Unavaliable Count is: %v \n", app.Status.UnavailableReplicas)
 			app, _ = client.AppsV1().Deployments(chaosTypes.ChaosNamespace).Get("chaos-operator-ce", metav1.GetOptions{})
-			time.Sleep(10 * time.Second)
+			time.Sleep(5 * time.Second)
 			count++
 		} else {
 			Fail("Application fails to get in ready state")
@@ -99,11 +99,11 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			By("Creating Experiment")
 			err = exec.Command("wget", "-O", "pod-cpu-hog.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-hog/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/ansible-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.ExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-cpu-hog.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/go-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.GOExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "pod-cpu-hog.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "pod-cpu-hog.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.ExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.GOExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
