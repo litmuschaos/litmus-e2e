@@ -9,15 +9,6 @@ describe("Testing the 404 route functionality",()=>{
         cy.get('[data-cy=loginButton]').click()
     })
 
-    // context("Testing Routes after 5 mins of logging in",()=>{
-    //     ["workflow","home","community"].map((page)=>{
-    //         it("Visiting the "+page+" page",()=>{
-    //             cy.clearCookies();
-    //             cy.visit("/"+page);
-    //         })
-    //     })
-    // })
-
     context("Testing Routes after clearing cookies",()=>{
         ["workflow","home","community"].map((page)=>{
             it("Visiting the "+page+" page",()=>{
