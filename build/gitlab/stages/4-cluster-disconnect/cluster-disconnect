@@ -7,7 +7,7 @@ path=$(pwd)
 
 #Removing the litmus cloned directory
 echo "Removing the litmus cloned directory"
-sshpass -p $portal_pass ssh -o StrictHostKeyChecking=no $portal_user@$litmus_ip -p $port 'rm -rf /home/udit/go/src/github.com/litmuschaos/litmus-e2e'
+sshpass -p $portal_pass ssh -o StrictHostKeyChecking=no $portal_user@$litmus_ip -p $port 'rm -rf /home/udit1/go/src/github.com/litmuschaos/litmus-e2e'
 
 printf "***Checking if the cluster is ready to disconnect*****\n\n"
 ##Checking if the cluster is ready to disconnect
