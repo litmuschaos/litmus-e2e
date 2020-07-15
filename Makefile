@@ -187,6 +187,16 @@ kubelet-service-kill:
 	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
 	 go test $(TESTPATH)/tests/kubelet-service-kill_test.go -v -count=1"
 
+.PHONY: node-taint
+node-taint:
+
+	@echo "---------------------------------------"
+	@echo "Running node-taint experiment"
+	@echo "---------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export GOEXPERIMENT_IMAGE=${GOEXPERIMENT_IMAGE} &&  \
+	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && go test $(TESTPATH)/tests/node-taint_test.go -v -count=1"
+
 .PHONY: pod-network-duplication
 pod-network-duplication:
 

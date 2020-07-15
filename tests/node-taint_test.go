@@ -27,8 +27,8 @@ var (
 	client         *kubernetes.Clientset
 	clientSet      *chaosClient.LitmuschaosV1alpha1Client
 	err            error
-	experimentName = "node-drain"
-	engineName     = "engine7"
+	experimentName = "node-taint"
+	engineName     = "engine13"
 )
 
 func TestChaos(t *testing.T) {
@@ -79,10 +79,8 @@ var _ = BeforeSuite(func() {
 
 })
 
-//BDD Tests for node-drain experiment
-var _ = Describe("BDD of node-drain experiment", func() {
-
-	// BDD TEST CASE 1
+//BDD Tests for node-taint experiment
+var _ = Describe("BDD of node-taint experiment", func() {
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
@@ -95,13 +93,13 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			//Cordon node
 			By("Cordoning node")
 			err = exec.Command("kubectl", "cordon", nodeName).Run()
-			Expect(err).To(BeNil(), "fail to create chaos experiment")
+			Expect(err).To(BeNil(), "failed to cordon the application node")
 			if err != nil {
 				fmt.Println(err)
 			}
 
 			//Installing RBAC for the experiment
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml"
+			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-taint/rbac.yaml"
 			rbacNamespace := chaosTypes.ChaosNamespace
 			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName, client)
 			Expect(installrbac).To(Equal(0), "Fail to edit rbac file")
@@ -110,18 +108,18 @@ var _ = Describe("BDD of node-drain experiment", func() {
 
 			//Creating Chaos-Experiment
 			By("Creating Experiment")
-			err = exec.Command("wget", "-O", "node-drain.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-drain/experiment.yaml").Run()
+			err = exec.Command("wget", "-O", "node-taint.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-taint/experiment.yaml").Run()
 			Expect(err).To(BeNil(), "fail get chaos experiment")
-			err = exec.Command("sed", "-i", `s/litmuschaos\/go-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.GOExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "node-drain.yaml").Run()
+			err = exec.Command("sed", "-i", `s/litmuschaos\/go-runner:latest/`+chaosTypes.ExperimentRepoName+`\/`+chaosTypes.GOExperimentImage+`:`+chaosTypes.ExperimentImageTag+`/g`, "node-taint.yaml").Run()
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
-			err = exec.Command("kubectl", "apply", "-f", "node-drain.yaml", "-n", chaosTypes.ChaosNamespace).Run()
+			err = exec.Command("kubectl", "apply", "-f", "node-taint.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
 			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.GOExperimentImage, ":", chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
 			By("Fetching engine file for the experiment")
-			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/engine.yaml").Run()
+			err = exec.Command("wget", "-O", experimentName+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-taint/engine.yaml").Run()
 			Expect(err).To(BeNil(), "Fail to fetch engine file")
 			//Modify chaos engine spec
 			//Modify Namespace,Name,AppNs,AppLabel of the engine
@@ -169,7 +167,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			//Checking the chaosresult
 			By("Checking the chaosresult")
 			chaosResult, err := clientSet.ChaosResults(chaosTypes.ChaosNamespace).Get(engineName+"-"+experimentName, metav1.GetOptions{})
-			fmt.Println("Chaos Result Verdict is: ", chaosResult.Status.ExperimentStatus.Verdict)
+			fmt.Println("Chaos Result Verdict is : ", chaosResult.Status.ExperimentStatus.Verdict)
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Chaos Result Verdict is not Pass")
 
@@ -192,7 +190,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			time.Sleep(10 * time.Second)
 			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine")
-			fmt.Println("Chaos Engine Verdict is: ", chaosEngine.Status.Experiments[0].Verdict)
+			fmt.Println("Chaos Engine Verdict is : ", chaosEngine.Status.Experiments[0].Verdict)
 			Expect(string(chaosEngine.Status.Experiments[0].Verdict)).To(Equal("Pass"), "Chaos Engine Verdict is not Pass")
 		})
 	})
@@ -207,7 +205,7 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			chaosEngine, err := clientSet.ChaosEngines(chaosTypes.ChaosNamespace).Get(engineName, metav1.GetOptions{})
 			Expect(err).To(BeNil(), "Fail to get the chaosengine while updating the result in a table")
 			testVerdict := string(chaosEngine.Status.Experiments[0].Verdict)
-			err = utils.UpdateResultTable(clientSet, "Drain the node where application pod is scheduled.", testVerdict, engineName, experimentName)
+			err = utils.UpdateResultTable(clientSet, "Inject Node Taint Into Application Node", testVerdict, engineName, experimentName)
 			Expect(err).To(BeNil(), "Fail run the script for result updation")
 			fmt.Println("Result updated successfully !!!")
 		})

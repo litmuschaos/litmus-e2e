@@ -241,6 +241,19 @@ TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   artifacts:
     when: always
     paths:
+      - .kube/ 
+
+TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: infra-experiment
+  tags:
+    - litmus-build
+  script:
+    - make node-taint
+  artifacts:
+    when: always
+    paths:
       - .kube/            
 
 TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
