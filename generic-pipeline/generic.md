@@ -6,7 +6,7 @@ filename: generic
 
 # **Generic E2E Pipeline Execution Details**
 
-***Latest Pipeline Status***
+**Latest Pipeline Status**
 
 [![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
 
@@ -41,6 +41,7 @@ filename: generic
 - [TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-memory-hog/README.md)
 - [TCID-VMWx-GENERIC-INFRA-NODE-DRAIN](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-drain/README.md)
 - [TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/kubelet-service-kill/README.md)
+- [TCID-VMWx-GENERIC-INFRA-NODE-TAINT](https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint)
 - [TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY]()
 - [TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE]()
 

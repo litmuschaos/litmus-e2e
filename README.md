@@ -1,6 +1,13 @@
 # LitmusChaos E2E
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus-e2e?ref=badge_shield)
 
+[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
+
+[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/openebs/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/openebs)
+
+[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/litmus-portal/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/litmus-portal)
+
+
 This repository contains the Litmus E2E pipelines for testing the chaos and litmus components. It includes BDDs for all litmus and openebs experiments and tests for the litmus portal.
 
 ## Branch Details
