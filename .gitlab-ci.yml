@@ -1,14 +1,26 @@
 ---
 stages:
   - setup
-  - Sample-Test
+  - cypress-test
   - cleanup
+
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/CypressE2E/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/CypressE2E/cache/Cypress"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - CypressE2E/.npm
+    - CypressE2E/cache/Cypress
+    - CypressE2E/node_modules
 
 Cluster Connect:
   stage: setup
   tags:
     - litmus-portal
-  script: 
+  script:
     - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
     - ./build/gitlab/stages/3-cluster-connect/cluster-connect
   artifacts:
@@ -16,17 +28,28 @@ Cluster Connect:
     paths:
       - .kube/
 
-Sample Test:
+Cypress-e2e:
   when: always
-  stage: Sample-Test
+  image: cypress/base:10
+  stage: cypress-test
   tags:
     - litmus-portal
   script:
-    - make sample-test
+    - cd CypressE2E && npm ci
+    - cd ../ && git clone -b litmus-portal https://github.com/litmuschaos/litmus.git
+    - cd litmus/litmus-portal/frontend && npm i
+    - CHOKIDAR_USEPOLLING=1 npm start &
+    - cd ../../../CypressE2E
+    - npm test
   artifacts:
     when: always
     paths:
+      - CypressE2E/cypress/screenshots
+      - CypressE2E/cypress/videos
       - .kube/
+    reports:
+      junit:
+        - results/TEST-*.xml
 
 Cluster Disconnect:
   when: always
@@ -39,5 +62,5 @@ Cluster Disconnect:
   artifacts:
     when: always
     paths:
-      - .kube/  
+      - .kube/
 

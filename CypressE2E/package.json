@@ -1,0 +1,19 @@
+{
+  "name": "cypresse2e",
+  "version": "1.0.0",
+  "description": "Package for Testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "wait-on http://localhost:3000 && cypress run"
+  },
+  "keywords": [
+    "Testing",
+    "E2E"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^4.10.0",
+    "wait-on": "^5.1.0"
+  }
+}
