@@ -11,6 +11,20 @@ filename: generic
 [![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
 
 
+<table>
+<tr>
+<th> Name </th>
+<th> Description </th>
+<th> Documentation Link </th>
+</tr>
+<tr>
+ <td> Generic Experiment</td>
+ <td> It will test all the LitmusChaos experiments which can be used to inject chaos into containerized applications. These tests can be further classified into application level and node level based on their effect.</td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/getstarted/"> Here </a> </td>
+</tr>
+</table>
+
+
 # **Pipeline Jobs**
 
 - [TCID-VMWx-GENERIC-APP-POD-DELETE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-delete/README.md)
