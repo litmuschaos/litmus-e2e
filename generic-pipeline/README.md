@@ -21,6 +21,7 @@
 
 | Pipeline ID |   Execution Time        | Release Version |
 |---------|---------------------------| --------------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11890">11890</a>           |  Wed Jul 15 11:56:48 2020(IST)           | ci  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11882">11882</a>           |  Wed Jul 15 04:01:41 2020(IST)           | ci  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11881">11881</a>           |  Wed Jul 15 02:26:04 2020(IST)           | latest  |
 |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11872">11872</a>   |  Tue Jul 14 23:56:41 2020(IST)           |  latest     |
