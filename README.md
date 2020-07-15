@@ -74,7 +74,7 @@ The Generic pipeline covers the test for litmus generic experiments which includ
 </table>
 
 # OpenEBS E2E Pipeline
-It contains the openebs e2e BDDs for OenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
+It contains the openebs e2e BDDs for OpenEBS experiments. A stateful application (percona) deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components using the same application. In the end, The application, litmus, and OpenEBS are removed successfully.
 
 ### Different Stages:
 <table style="width:100%">
@@ -113,7 +113,7 @@ It contains the openebs e2e BDDs for OenEBS experiments. A stateful application 
 </table>
 
 # Litmus Portal E2E Pipeline
-It contains the test cases for litmus portal different e2e BDDs for OenEBS experiments.
+It contains the test cases for litmus portal different e2e BDDs for OpenEBS experiments.
 
 ### Different Stages:
 <table>
