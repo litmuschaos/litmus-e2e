@@ -144,7 +144,7 @@ spec:
       test/feature: "Generic-Infra"
       test/tags: "node, taint"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint"
-      test/status: "Not Done"
+      test/status: "Done"
 
   # ----------------------------------------------------------
   # LitmusChaos Operator BDDs
