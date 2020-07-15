@@ -4,6 +4,9 @@ import (
 	"os"
 
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"k8s.io/client-go/kubernetes"
+	restclient "k8s.io/client-go/rest"
 )
 
 var (
@@ -38,6 +41,15 @@ var (
 	RunnerImageTag = os.Getenv("RUNNER_IMAGE_TAG")
 	//ChaosDuration of the Experiment
 	ChaosDuration = ""
+
+	Kubeconfig string
+	Config     *restclient.Config
+	Client     *kubernetes.Clientset
+	ClientSet  *chaosClient.LitmuschaosV1alpha1Client
+	//InstallLitmus : Path to create operator
+	InstallLitmus = "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml"
+	//LitmusCrd : Path to litmus crds
+	LitmusCrd = "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml"
 )
 
 // EngineDetails struct is for collecting all the engine-related details

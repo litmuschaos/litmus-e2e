@@ -163,6 +163,16 @@ openebs-cleanup:
 	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
 	 "export CGO_ENABLED=0 && go test $(TESTPATH)/tests/openebs-cleanup_test.go -v -count=1"
 
+.PHONY: pipeline-status-update
+pipeline-status-update:
+
+	@echo "------------------------"
+	@echo "Updating Pipeline Status"
+	@echo "------------------------"
+	@sshpass -p ${pass} ssh -o StrictHostKeyChecking=no ${user}@${ip} -p ${port} -tt \
+	 "export CGO_ENABLED=0 && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} && \
+	  export GITHUB_TOKEN=${GITHUB_TOKEN} && go test $(TESTPATH)/tests/pipeline-status-update_test.go -v -count=1"
+
 .PHONY: deps
 deps: _build_check_docker godeps docker-build
 
