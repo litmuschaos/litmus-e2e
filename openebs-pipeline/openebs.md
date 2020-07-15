@@ -6,7 +6,7 @@ filename: openebs
 
 # **OpenEBS E2E Pipeline Execution Details**
 
-***Latest Pipeline Status***
+**Latest Pipeline Status**
 
 [![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/openebs/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/openebs)
 
