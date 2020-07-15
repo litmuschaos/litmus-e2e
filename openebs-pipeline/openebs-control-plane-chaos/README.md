@@ -32,5 +32,6 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177440">177440</a>           |  OpenEBS control plane chaos test the control plane component           | Thu Jul 16 03:12:32 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177316">177316</a>           |  OpenEBS control plane chaos test the control plane component           | Wed Jul 15 20:50:22 2020(IST)  | latest | Passed :smiley: |
  |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177016">177016</a>   |  OpenEBS control plane chaos test the control plane component           |  Wed Jul 15 16:14:47 2020(IST)     |latest  |Passed :smiley:  |
