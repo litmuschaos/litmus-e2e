@@ -89,18 +89,18 @@ TCID-VMWx-OPENEBS-APP-OPENEBS-POOL-CONTAINER-FAILURE:
     paths:
       - .kube/
 
-TCID-VMWx-OPENEBS-APP-OPENEBS-POOL-POD-FAILURE:
-  when: always
-  image: litmuschaos/litmus-openebs-tests:latest
-  stage: experiment
-  tags:
-    - litmus-openebs
-  script:
-    - make openebs-pool-pod-failure
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+# TCID-VMWx-OPENEBS-APP-OPENEBS-POOL-POD-FAILURE:
+#   when: always
+#   image: litmuschaos/litmus-openebs-tests:latest
+#   stage: experiment
+#   tags:
+#     - litmus-openebs
+#   script:
+#     - make openebs-pool-pod-failure
+#   artifacts:
+#     when: always
+#     paths:
+#       - .kube/
 
 TCID-VMWx-OPENEBS-APP-OPENEBS-TARGET-CONTAINER-FAILURE:
   when: always
