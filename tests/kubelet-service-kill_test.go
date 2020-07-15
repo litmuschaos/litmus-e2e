@@ -87,6 +87,19 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
+			//Get a single node name
+			nodes, err := client.CoreV1().Nodes().List(metav1.ListOptions{})
+			Expect(err).To(BeNil(), "fail to get the nodes")
+			nodeName := nodes.Items[0].Name
+
+			//Cordon node
+			By("Cordoning node")
+			err = exec.Command("kubectl", "cordon", nodeName).Run()
+			Expect(err).To(BeNil(), "failed to cordon the application node")
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			//Installing RBAC for the experiment
 			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/kubelet-service-kill/rbac.yaml"
 			rbacNamespace := chaosTypes.ChaosNamespace
@@ -103,7 +116,7 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			Expect(err).To(BeNil(), "fail to edit chaos experiment yaml")
 			err = exec.Command("kubectl", "apply", "-f", "kubelet-service-kill.yaml", "-n", chaosTypes.ChaosNamespace).Run()
 			Expect(err).To(BeNil(), "fail to create chaos experiment")
-			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName, "/", chaosTypes.GOExperimentImage, ":", chaosTypes.ExperimentImageTag)
+			fmt.Println("Chaos Experiment Created Successfully with image =", chaosTypes.ExperimentRepoName+"/"+chaosTypes.GOExperimentImage+":"+chaosTypes.ExperimentImageTag)
 
 			//Installing chaos engine for the experiment
 			//Fetching engine file
@@ -121,6 +134,10 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 					 s/annotationCheck: 'true'/annotationCheck: 'false'/g;
 			         s/applabel: 'app=nginx'/applabel: 'run=nginx'/g`,
 				experimentName+"-ce.yaml").Run()
+
+			//Modify NODE NAME
+			err = exec.Command("sed", "-i", `/name: APP_NODE/{n;s/.*/              value: `+nodeName+"/}", experimentName+"-ce.yaml").Run()
+			Expect(err).To(BeNil(), "Fail to Modify Node name field of chaos engine")
 
 			//Creating ChaosEngine
 			By("Creating ChaosEngine")
@@ -155,6 +172,14 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			fmt.Println("Chaos Result Verdict is: ", chaosResult.Status.ExperimentStatus.Verdict)
 			Expect(err).To(BeNil(), "Fail to get chaosresult")
 			Expect(string(chaosResult.Status.ExperimentStatus.Verdict)).To(Equal("Pass"), "Chaos Result Verdict is not Pass")
+
+			//Uncordon node
+			By("Uncordoning node")
+			err = exec.Command("kubectl", "uncordon", nodeName).Run()
+			Expect(err).To(BeNil(), "fail to uncordon the application node")
+			if err != nil {
+				fmt.Println(err)
+			}
 
 		})
 	})
