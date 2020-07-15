@@ -31,7 +31,7 @@ token = args.token
 github_token = Github(token)
 repo = github_token.get_repo("litmuschaos/litmus-e2e")
 b= repo.get_branch(branch="master")
-contents = repo.get_contents("generic-pipeline/README.md", "master")
+contents = repo.get_contents("generic-pipeline/generic.md", "master")
 file = repo.get_contents(contents.path, "master")
 file_path = contents.path
 file_content=str(file.decoded_content)
