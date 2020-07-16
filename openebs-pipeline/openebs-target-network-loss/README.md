@@ -20,6 +20,7 @@
  
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/178406">178406</a>           |  OpenEBS Target Network Loss           | Fri Jul 17 03:09:26 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177439">177439</a>           |  OpenEBS Target Network Loss           | Thu Jul 16 03:08:29 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177315">177315</a>           |  OpenEBS Target Network Loss           | Wed Jul 15 20:45:57 2020(IST)  | latest | Passed :smiley: |
  |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177015">177015</a>   |  OpenEBS Target Network Loss           |  Wed Jul 15 16:30:43 2020(IST)     |latest  |Passed :smiley:  |
