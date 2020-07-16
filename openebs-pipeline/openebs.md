@@ -40,6 +40,7 @@ filename: openebs
 
 | Pipeline ID |   Execution Time        | Release Version |
 |---------|---------------------------| --------------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11952">11952</a>           |  Fri Jul 17 03:15:21 2020(IST)           | latest  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11923">11923</a>           |  Thu Jul 16 03:14:22 2020(IST)           | latest  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11916">11916</a>           |  Wed Jul 15 20:52:31 2020(IST)           | latest  |
 |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11904">11904</a>   |  Wed Jul 15 16:37:16 2020(IST)           |  latest     |
