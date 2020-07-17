@@ -13,6 +13,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--pipeline_id",
        help="gitlab pipeline id to create gitlab pipeline_url")
 
+parser.add_argument("--coverage",
+       help="getting the pipeline coverage")
+
 parser.add_argument("--tag",
        help="gitlab pipeline release tag")
 
@@ -24,6 +27,7 @@ parser.add_argument("--token",
 
 args = parser.parse_args()
 pipeline_id = args.pipeline_id
+coverage = args.coverage
 tag = args.tag
 time_stamp = args.time_stamp
 token = args.token
@@ -47,24 +51,24 @@ def fetch_file_content():
     file = repo.get_contents(file_path, "master")
     file_content=str(file.decoded_content, 'utf-8')
     content_list = file_content.split('\n')
+    totalCoverage= '[!['+coverage+'%](https://progress-bar.dev/'+coverage+')](https://bit.ly/2OLie8t)'
 
     # updating result's table if the table is already there
     if file_content.find('|')>0:
-        new_pipeline = '|     {}           |  {}           | {}  |'.format(pipeline_url,time_stamp,tag)
-        index = content_list.index('| Pipeline ID |   Execution Time        | Release Version |')
+        new_pipeline = '|     {}           |  {}           | {}  | {}  |'.format(pipeline_url,time_stamp,tag,totalCoverage)
+        index = content_list.index('| Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |')
         content_list.insert(index+2,new_pipeline)
         updated_file_content = ('\n').join(content_list)
 
     # creating result's table for first pipeline result entry 
     else:
-        updated_file_content =  '| Pipeline ID |   Execution Time        | Release Version |\n'
-        updated_file_content = updated_file_content + ('|---------|---------------------------| --------------|\n')
-        updated_file_content = updated_file_content + ('|    {}   |  {}           |  {}     |\n'.format(pipeline_url,time_stamp,tag))
+        updated_file_content =  '| Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |\n'
+        updated_file_content = updated_file_content + ('|---------|---------------------------|--------------|--------------|\n')
+        updated_file_content = updated_file_content + ('|    {}   |  {}           |  {}     |  {}     |\n'.format(pipeline_url,time_stamp,tag,totalCoverage))
         index = len(content_list)
         content_list.insert(index, updated_file_content)
         updated_file_content = ('\n').join(content_list)
     return file, updated_file_content
-
 file, updated_file_content = fetch_file_content()
 
 # github commit message 

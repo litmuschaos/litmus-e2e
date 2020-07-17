@@ -1,6 +1,10 @@
 package tests
 
 import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"strings"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/utils"
@@ -27,7 +31,13 @@ var _ = Describe("BDD of pipeline status update", func() {
 			//Updating the pipeline status table
 			By("Updating the pipeline status table")
 			var err error
-			err = utils.UpdatePipelineStatus()
+			coverageData, err := ioutil.ReadFile("../coverage")
+			if err != nil {
+				log.Panicf("failed reading coverageData from file: %s", err)
+			}
+			lines := strings.Split(string(coverageData), "\n")
+			fmt.Printf("\nFile Content: %s\n", string(lines[0]))
+			err = utils.UpdatePipelineStatus(string(lines[0]))
 			Expect(err).To(BeNil(), "Fail run the script for pipeline status updation")
 			klog.Info("Pipeline status updated successfully !!!")
 
