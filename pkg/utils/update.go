@@ -43,7 +43,7 @@ func UpdateResultTable(clientSet *chaosClient.LitmuschaosV1alpha1Client, experim
 }
 
 //UpdatePipelineStatus will update the status of pipeline at the end of all jobs
-func UpdatePipelineStatus() error {
+func UpdatePipelineStatus(coverageData string) error {
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -51,7 +51,7 @@ func UpdatePipelineStatus() error {
 	klog.Info("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
 	klog.Info("The release tag for running pipeline is:", chaosTypes.ExperimentImageTag)
 	// Recording job number for pipeline update
-	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", chaosTypes.ExperimentImageTag, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--token", os.Getenv("GITHUB_TOKEN"))
+	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", chaosTypes.ExperimentImageTag, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--token", os.Getenv("GITHUB_TOKEN"))
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
