@@ -37,3 +37,7 @@ filename: openebs
 
 
 # **Pipeline Runs**
+
+| Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |
+|---------|---------------------------|--------------|--------------|
+|    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11995">11995</a>   |  Mon Jul 20 15:05:41 2020(IST)           |  ci     |  [![86%](https://progress-bar.dev/86)](https://bit.ly/396abMB)     |
