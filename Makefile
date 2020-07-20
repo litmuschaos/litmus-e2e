@@ -229,7 +229,7 @@ admin-mode-check:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	"export CGO_ENABLED=0 && export CI_JOB_ID=${CI_JOB_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && export EXPERIMENT_REPO_NAME=${EXPERIMENT_REPO_NAME} && \
 	 export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE} && export EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG} &&  \
-	 export GOEXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && go test $(TESTPATH)/operator/admin-mode_test.go -v -count=1"	
+	 export GOEXPERIMENT_IMAGE=${GOEXPERIMENT_IMAGE} && go test $(TESTPATH)/operator/admin-mode_test.go -v -count=1"	
 
 
 .PHONY: e2e-metrics
