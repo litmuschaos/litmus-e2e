@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179580">179580</a>           |  Inject Packet Loss Into Application Pod           | Mon Jul 20 13:27:59 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179090">179090</a>           |  Inject Packet Loss Into Application Pod           | Mon Jul 20 11:19:13 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/178487">178487</a>           |  Inject Packet Loss Into Application Pod           | Fri Jul 17 07:04:02 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177521">177521</a>           |  Inject Packet Loss Into Application Pod           | Thu Jul 16 07:03:59 2020(IST)  | latest | Passed :smiley: |
