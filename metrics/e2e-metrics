@@ -27,8 +27,9 @@ sleep 50
 # Fetching coverage percentage from custom resource
 e2e_coverage_cr=$(kubectl get pcover -n $COVERAGE_NAMESPACE --no-headers | awk '{print $1}')
 kubectl get pcover $e2e_coverage_cr -n $COVERAGE_NAMESPACE -oyaml
-kubectl get pcover -n $COVERAGE_NAMESPACE -o=jsonpath='{.items[0].result.coverage}{"\n"}'
-sleep 5
+coverage_percentage=$(kubectl get pcover -n $COVERAGE_NAMESPACE -o=jsonpath='{.items[0].result.coverage}')
+echo "${coverage_percentage::-1}" >> coverage
+sleep 2
 
 #clean up
 kubectl delete -f e2e-metrics/deploy/rbac.yaml
