@@ -20,6 +20,7 @@
  
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179970">179970</a>           |  OpenEBS Target Pod Failure           | Mon Jul 20 16:38:14 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179969">179969</a>           |  OpenEBS Target Pod Failure           | Mon Jul 20 16:33:00 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179876">179876</a>           |  OpenEBS Target Pod Failure           | Mon Jul 20 15:57:36 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179768">179768</a>           |  OpenEBS Target Pod Failure           | Mon Jul 20 14:35:55 2020(IST)  | ci | Passed :smiley: |
