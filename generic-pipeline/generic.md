@@ -50,4 +50,5 @@ filename: generic
 
 | Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |
 |---------|---------------------------|--------------|--------------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11990">11990</a>           |  Mon Jul 20 13:46:17 2020(IST)           | ci  | [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)  |
 |    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11984">11984</a>   |  Mon Jul 20 12:19:23 2020(IST)           |  ci     |  [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)     |
