@@ -21,6 +21,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179769">179769</a>           |  OpenEBS Pool Container Failure test           | Mon Jul 20 14:38:58 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/178403">178403</a>           |  OpenEBS Pool Container Failure test           | Fri Jul 17 02:59:54 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177436">177436</a>           |  OpenEBS Pool Container Failure test           | Thu Jul 16 02:59:28 2020(IST)  | latest | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/177312">177312</a>           |  OpenEBS Pool Container Failure test           | Wed Jul 15 20:36:24 2020(IST)  | latest | Passed :smiley: |
