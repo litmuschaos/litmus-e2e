@@ -1,5 +1,9 @@
 /// <reference types="Cypress" />
 
+//This Script provides custom commands for tests.
+
+/* loginServer() command for stubbing a server 
+with /auth/login route with any status code provided as argument.*/
 Cypress.Commands.add('loginServer',(loginStatus)=>{
     cy.server();
     cy.route({
@@ -10,6 +14,8 @@ Cypress.Commands.add('loginServer',(loginStatus)=>{
     });
 })
 
+/* modalServer() command for stubbing a server 
+with /auth/update route with any status code provided as argument.*/
 Cypress.Commands.add('modalServer',(modalStatus)=>{
     cy.server();
     cy.route({
@@ -20,6 +26,7 @@ Cypress.Commands.add('modalServer',(modalStatus)=>{
     })
 })
 
+// Custom command for Inputting details in Welcome Modal.
 Cypress.Commands.add('welcomeModalInputs',(ProjectName,Email,Password)=>{
     cy.get('[data-cy=inputProjectEmail] input').type(ProjectName);
     cy.get('[data-cy=Welcome-continue]').click();
@@ -29,12 +36,9 @@ Cypress.Commands.add('welcomeModalInputs',(ProjectName,Email,Password)=>{
     cy.get('[data-cy=selectProjectFinish]').click();
 })
 
-Cypress.Commands.add('loginInput',(Email,password)=>{
+//Command for inputting details and login.
+Cypress.Commands.add('login',(Email,password)=>{
     cy.get('[data-cy=inputEmail] input').type(Email);
     cy.get('[data-cy=inputPassword] input').type(password);
-})
-
-Cypress.Commands.add('login',(Email,password)=>{
-    cy.loginInput(Email,password);
     cy.get('[data-cy=loginButton]').click();
 })

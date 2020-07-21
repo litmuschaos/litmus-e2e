@@ -18,12 +18,13 @@ describe("Checking functionality of Login Page",()=>{
     })
   
     it("Checking Input areas functionallity",()=>{
-        cy.loginInput("Vedant","Litmus");
+        cy.login("Vedant","Litmus");
         cy.get("[data-cy=inputEmail] input").should("have.value","Vedant");
         cy.get("[data-cy=inputPassword] input").should("have.value","Litmus");
     })
 
     it("Testing the only single input sign in [ Should not be possible ]",()=>{
+        cy.loginServer(503);
         cy.login("Vedant"," ");
         cy.url().should('include','/login');
         cy.get('[data-cy=inputEmail] input').clear();
