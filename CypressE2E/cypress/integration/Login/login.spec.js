@@ -51,5 +51,6 @@ describe("Checking functionality of Login Page",()=>{
         cy.contains("Welcome to Litmus Portal");
         indexedDB.deleteDatabase('localforage');
     })
+
 })
 
