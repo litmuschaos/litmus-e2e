@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="6.133" tests="1" failures="0">
+  <testsuite name="Root Suite" timestamp="2020-07-21T20:08:41" tests="0" file="cypress/integration/Community/community.spec.js" failures="0" time="0">
+  </testsuite>
+  <testsuite name="Testing the accessibility of Community page" timestamp="2020-07-21T20:08:41" tests="1" failures="0" time="6.133">
+    <testcase name="Testing the accessibility of Community page Visiting the Community page" time="6.133" classname="Visiting the Community page">
+    </testcase>
+  </testsuite>
+</testsuites>
