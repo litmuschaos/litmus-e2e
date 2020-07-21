@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/180703">180703</a>           |  Inject Node Taint Into Application Node           | Wed Jul 22 02:13:12 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/180080">180080</a>           |  Inject Node Taint Into Application Node           | Mon Jul 20 21:42:31 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179586">179586</a>           |  Inject Node Taint Into Application Node           | Mon Jul 20 13:42:18 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/179097">179097</a>           |  Inject Node Taint Into Application Node           | Mon Jul 20 11:35:27 2020(IST)  | ci | Passed :smiley: |
