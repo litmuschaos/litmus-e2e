@@ -47,9 +47,6 @@ Cypress-e2e:
       - CypressE2E/cypress/screenshots
       - CypressE2E/cypress/videos
       - .kube/
-    reports:
-      junit:
-        - results/TEST-*.xml
 
 Cluster Disconnect:
   when: always
