@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-describe("Testing the Rechability of Welcome Modal",()=>{
+describe("Testing the accessibility of Welcome Modal",()=>{
     it("Visiting the Welcome Modal after Login",()=>{
         cy.loginServer(200);
         cy.visit('/login');
