@@ -37,7 +37,7 @@ Cypress-e2e:
   script:
     - cd CypressE2E && npm ci
     - cd ../ && git clone -b litmus-portal https://github.com/litmuschaos/litmus.git
-    - cd litmus/litmus-portal/frontend && npm i
+    - cd litmus/litmus-portal/frontend && npm ci
     - CHOKIDAR_USEPOLLING=1 npm start &
     - cd ../../../CypressE2E
     - npm test
