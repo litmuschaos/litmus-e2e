@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="5.788" tests="1" failures="0">
-  <testsuite name="Root Suite" timestamp="2020-07-21T20:09:30" tests="0" file="cypress/integration/Workflow/workflow.spec.js" failures="0" time="0">
-  </testsuite>
-  <testsuite name="Testing the accessibility of Workflow page" timestamp="2020-07-21T20:09:30" tests="1" failures="0" time="5.788">
-    <testcase name="Testing the accessibility of Workflow page Visiting the workflow page" time="5.788" classname="Visiting the workflow page">
-    </testcase>
-  </testsuite>
-</testsuites>
