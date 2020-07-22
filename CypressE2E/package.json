@@ -4,7 +4,7 @@
   "description": "Package for Testing",
   "main": "index.js",
   "scripts": {
-    "test": "wait-on http://localhost:3000 && cypress run"
+    "test": "wait-on http://localhost:3000 && cypress run --headless --browser=chrome"
   },
   "keywords": [
     "Testing",
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^4.10.0",
+    "cypress": "^4.11.0",
     "wait-on": "^5.1.0"
   }
 }
