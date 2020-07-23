@@ -30,7 +30,7 @@ Cluster Connect:
 
 Cypress-e2e:
   when: always
-  image: cypress/base:10
+  image: cypress/browsers:latest
   stage: cypress-test
   tags:
     - litmus-portal
