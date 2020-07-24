@@ -1,8 +1,8 @@
 ---
 stages:
-  # - setup
+  - setup
   - cypress-test
-  # - cleanup
+  - cleanup
 
 
 variables:
@@ -16,24 +16,24 @@ cache:
     - CypressE2E/cache/Cypress
     - CypressE2E/node_modules
 
-# Cluster Connect:
-#   stage: setup
-#   tags:
-#     - litmus-portal
-#   script:
-#     - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
-#     - ./build/gitlab/stages/3-cluster-connect/cluster-connect
-#   artifacts:
-#     when: always
-#     paths:
-#       - .kube/
+Cluster Connect:
+  stage: setup
+  tags:
+    - litmus-portal
+  script:
+    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
+    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
 Cypress-e2e:
   when: always
   image: cypress/base:10
   stage: cypress-test
-  # tags:
-  #   - litmus-portal
+  tags:
+    - litmus-portal
   script:
     - cd CypressE2E && npm ci
     - cd ../ && git clone -b litmus-portal https://github.com/litmuschaos/litmus.git
@@ -48,16 +48,16 @@ Cypress-e2e:
       - CypressE2E/cypress/videos
       - .kube/
 
-# Cluster Disconnect:
-#   when: always
-#   stage: cleanup
-#   tags:
-#     - litmus-portal
-#   script: 
-#     - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-#     - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-#   artifacts:
-#     when: always
-#     paths:
-#       - .kube/
+Cluster Disconnect:
+  when: always
+  stage: cleanup
+  tags:
+    - litmus-portal
+  script: 
+    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+  artifacts:
+    when: always
+    paths:
+      - .kube/
 
