@@ -47,7 +47,7 @@ var (
 	Client     *kubernetes.Clientset
 	ClientSet  *chaosClient.LitmuschaosV1alpha1Client
 	//InstallLitmus : Path to create operator
-	InstallLitmus = "https://raw.githubusercontent.com/litmuschaos/pages/master/docs/litmus-operator-latest.yaml"
+	InstallLitmus = "https://litmuschaos.github.io/litmus/litmus-operator-v" + ExperimentImageTag + ".yaml"
 	//LitmusCrd : Path to litmus crds
 	LitmusCrd = "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml"
 )
