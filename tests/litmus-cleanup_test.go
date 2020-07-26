@@ -2,65 +2,23 @@ package tests
 
 import (
 	"fmt"
-	"os"
+	"log"
 	"os/exec"
 	"testing"
 
-	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"k8s.io/client-go/kubernetes"
-	scheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/client-go/tools/clientcmd"
-
-	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
-	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	restclient "k8s.io/client-go/rest"
+	"k8s.io/klog"
 )
 
-var (
-	kubeconfig string
-	config     *restclient.Config
-	client     *kubernetes.Clientset
-	clientSet  *chaosClient.LitmuschaosV1alpha1Client
-	err        error
-)
-
-func TestChaos(t *testing.T) {
+func TestLitmusCleanup(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
-
-var _ = BeforeSuite(func() {
-
-	var err error
-	kubeconfig = os.Getenv("HOME") + "/.kube/config"
-	config, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
-
-	if err != nil {
-		Expect(err).To(BeNil(), "failed to get config")
-	}
-
-	client, err = kubernetes.NewForConfig(config)
-
-	if err != nil {
-		Expect(err).To(BeNil(), "failed to get client")
-	}
-
-	clientSet, err = chaosClient.NewForConfig(config)
-
-	if err != nil {
-		Expect(err).To(BeNil(), "failed to get clientSet")
-	}
-
-	err = v1alpha1.AddToScheme(scheme.Scheme)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-})
 
 //BDD Tests to delete litmus
 var _ = Describe("BDD of litmus cleanup", func() {
@@ -70,25 +28,40 @@ var _ = Describe("BDD of litmus cleanup", func() {
 
 		It("Should check for deletion of Litmus", func() {
 
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			var err error
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
+				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
+			}
+
+			//Fetching all the default ENV
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "litmus-cleanup", "")
+
 			//Deleting all chaosengines
 			By("Deleting all chaosengine")
-			err = exec.Command("kubectl", "delete", "chaosengine", "-n", chaosTypes.ChaosNamespace, "--all").Run()
+			err = exec.Command("kubectl", "delete", "chaosengine", "-n", testsDetails.ChaosNamespace, "--all").Run()
 			Expect(err).To(BeNil(), "failed to delete chaosengine")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			fmt.Println("All chaosengine deleted successfully")
+			klog.Info("All chaosengine deleted successfully")
 
 			//Deleting all chaosexperiment
 			By("Deleting all chaosexperiment")
-			err = exec.Command("kubectl", "delete", "chaosexperiment", "-n", chaosTypes.ChaosNamespace, "--all").Run()
+			err = exec.Command("kubectl", "delete", "chaosexperiment", "-n", testsDetails.ChaosNamespace, "--all").Run()
 			Expect(err).To(BeNil(), "failed to delete chaosexperiment")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			fmt.Println("All chaosexperiment deleted successfully")
+			klog.Info("All chaosexperiment deleted successfully")
 
 			//Deleting crds
 			By("Delete chaosengine crd")
@@ -98,7 +71,7 @@ var _ = Describe("BDD of litmus cleanup", func() {
 				fmt.Println(err)
 			}
 
-			fmt.Println("crds deleted successfully")
+			klog.Info("crds deleted successfully")
 
 			//Deleting rbacs
 			By("Delete chaosengine rbac")
@@ -107,7 +80,7 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println("rbac deleted sucessfully")
+			klog.Info("rbac deleted sucessfully")
 
 			//Delete test deployments from default namespace
 			By("Delete test deployments")

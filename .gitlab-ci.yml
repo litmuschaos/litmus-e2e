@@ -3,12 +3,13 @@ stages:
   - setup
   - install
   - deploy
-  - generic-experiment
-  - infra-experiment
-  - component checks
-  - e2e-metrics
-  - app-cleanup
-  - cleanup
+  - Generic Experiment
+  - Infra Experiment
+  - Component Checks
+  - Ansible Experiment 
+  - E2E Metrics
+  - App Cleanup
+  - Cleanup
 
 Cluster Connect:
   image: litmuschaos/litmus-e2e:latest
@@ -77,7 +78,7 @@ Auxiliary App:
 TCID-VMWx-GENERIC-APP-POD-DELETE:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -90,7 +91,7 @@ TCID-VMWx-GENERIC-APP-POD-DELETE:
 TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -103,7 +104,7 @@ TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
 TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -116,7 +117,7 @@ TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
 TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -129,7 +130,7 @@ TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
 TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -142,7 +143,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
 TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -155,7 +156,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
 TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -168,7 +169,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
 TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: generic-experiment
+  stage: Generic Experiment
   tags:
     - litmus-build
   script:
@@ -181,7 +182,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
 TCID-VMWx-GENERIC-APP-DISK-FILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags:
     - litmus-build
   script:
@@ -194,7 +195,7 @@ TCID-VMWx-GENERIC-APP-DISK-FILL:
 TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags: 
     - litmus-build
   script:
@@ -207,7 +208,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
 TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags:
     - litmus-build
   script:
@@ -220,7 +221,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
 TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags:
     - litmus-build
   script:
@@ -233,7 +234,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
 TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags:
     - litmus-build
   script:
@@ -246,7 +247,7 @@ TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
 TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: infra-experiment
+  stage: Infra Experiment
   tags:
     - litmus-build
   script:
@@ -259,7 +260,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
 TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: component checks
+  stage: Component Checks
   tags:
     - litmus-build
   script:
@@ -272,7 +273,7 @@ TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
 TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: component checks
+  stage: Component Checks
   tags:
     - litmus-build
   script:
@@ -282,11 +283,208 @@ TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE:
     paths:
       - .kube/      
 
-e2e-metric:
+## Ansible Experiments will trigger 
+## only if ANSIBLE_VARIABLE is defined
 
+TCID-VMWx-GO-EXPERIMENT-CLEANUP:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: e2e-metrics
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make go-experiment-cleanup
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-POD-DELETE:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-delete
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-CONTAINER-KILL:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-container-kill
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-DISK-FILL:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-disk-fill
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}        
+
+TCID-VMWx-ANSIBLE-NODE-CPU-HOG:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-node-cpu-hog
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-NODE-MEMORY-HOG:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-node-memory-hog
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}  
+
+TCID-VMWx-ANSIBLE-POD-CPU-HOG:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-cpu-hog
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE} 
+
+TCID-VMWx-ANSIBLE-POD-MEMORY-HOG:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-memory-hog
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-POD-NETWORK-CORRUPTION:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-network-corruption
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-POD-NETWORK-LATENCY:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-network-latency
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}    
+
+TCID-VMWx-ANSIBLE-POD-NETWORK-LOSS:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-pod-network-loss
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}
+
+TCID-VMWx-ANSIBLE-KUBELET-SERVICE-KILL:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-kubelet-service-kill
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}  
+    
+TCID-VMWx-ANSIBLE-NODE-DRAIN:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Ansible Experiment 
+  tags:
+    - litmus-build
+  script:
+    - make ansible-node-drain
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  only:
+    - ${ANSIBLE_VARIABLE}      
+
+E2E Metrics:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: E2E Metrics
   tags:
     - litmus-build
   script:
@@ -297,10 +495,9 @@ e2e-metric:
       - .kube/
 
 App Cleanup:
-
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: app-cleanup
+  stage: App Cleanup
   tags: 
     - litmus-build
   script:
@@ -313,7 +510,7 @@ App Cleanup:
 Pipeline Status Check:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: app-cleanup
+  stage: App Cleanup
   tags:
     - litmus-build
   script:
@@ -326,7 +523,7 @@ Pipeline Status Check:
 Cluster Disconnect:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: cleanup
+  stage: Cleanup
   tags:
     - litmus-build
   script: 

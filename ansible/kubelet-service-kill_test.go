@@ -1,4 +1,4 @@
-package tests
+package ansible
 
 import (
 	"log"
@@ -13,14 +13,14 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoContainerKill(t *testing.T) {
+func TestKubeletServiceKill(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for container-kill experiment
-var _ = Describe("BDD of container-kill experiment", func() {
+//BDD Tests for kubelet-service-kill experiment
+var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 	// BDD TEST CASE 1
 	Context("Check for litmus components", func() {
@@ -40,7 +40,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "container-kill", "go-engine1")
+			environment.GetENV(&testsDetails, "kubelet-service-kill", "ansible-engine12")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -50,19 +50,19 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install rbac, due to %v", err)
 			}
 
-			//Installing Chaos Experiment for container-kill
+			//Installing Chaos Experiment for kubelet-service-kill
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaos experiment, due to %v", err)
 			}
 
-			//Installing Chaos Engine for container-kill
+			//Installing Chaos Engine for kubelet-service-kill
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
 
@@ -104,7 +104,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "container-kill", "go-engine1")
+			environment.GetENV(&testsDetails, "kubelet-service-kill", "ansible-engine12")
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
@@ -112,40 +112,6 @@ var _ = Describe("BDD of container-kill experiment", func() {
 				log.Fatalf("ChaosEngine Verdict check failed, due to %v", err)
 			}
 
-		})
-	})
-
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		It("Should check for the result updation", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
-			}
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "container-kill", "go-engine1")
-
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			if err != nil {
-				log.Fatalf("Getting ChaosEngine Verdict failed, due to %v", err)
-			}
-
-			if err := pkg.UpdateResultTable("Kill one container in the application pod", ChaosEngineVerdict, &testsDetails); err != nil {
-				log.Fatalf("Job Result table updation failed, due to %v", err)
-			}
 		})
 	})
 })

@@ -3,22 +3,14 @@ package operator
 import (
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"testing"
-	"time"
 
-	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
-	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus-e2e/pkg/utils"
-	chaosTypes "github.com/litmuschaos/litmus-e2e/types"
+	"github.com/litmuschaos/litmus-e2e/pkg"
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	appv1 "k8s.io/api/apps/v1"
-	apiv1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	scheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/klog"
 )
@@ -29,29 +21,6 @@ func TestReconcileResiliency(t *testing.T) {
 	RunSpecs(t, "BDD test")
 }
 
-var _ = BeforeSuite(func() {
-
-	var err error
-	//Prerequisite of the test
-	chaosTypes.Config, err = utils.GetKubeConfig()
-	if err != nil {
-		Expect(err).To(BeNil(), "Failed to get kubeconfig client")
-	}
-	chaosTypes.Client, err = kubernetes.NewForConfig(chaosTypes.Config)
-	if err != nil {
-		Expect(err).To(BeNil(), "failed to get client")
-	}
-	chaosTypes.ClientSet, err = chaosClient.NewForConfig(chaosTypes.Config)
-	if err != nil {
-		Expect(err).To(BeNil(), "failed to get clientSet")
-	}
-	err = v1alpha1.AddToScheme(scheme.Scheme)
-	if err != nil {
-		klog.Info(err)
-	}
-
-})
-
 //BDD Tests for operator reconcile resiliency
 //Checking for the creation of runner pod for application in same namespace
 var _ = Describe("BDD of operator reconcile resiliency check", func() {
@@ -61,227 +30,130 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 		It("Should check for creation of runner pod", func() {
 
-			var err error
-			var experimentName1 = "pod-delete"
-			var experimentName2 = "container-kill"
-			var engineName = "testengine"
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
+				klog.Infof("Unable to Get the kubeconfig due to %v", err)
+			}
+
+			//Fetching all the default ENV
+			//Note: please don't provide custom experiment name here
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "pod-delete", "reconsile-engine1")
+
+			// Checking the chaos operator running status
+			By("[Status]: Checking chaos operator status")
+			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
+				log.Fatalf("Operator status check failed, due to %v", err)
+			}
+
 			//Creating first application for pod-delete in default namespace
 			By("Creating first deployment for pod-delete chaos")
-			testapp1 := &appv1.Deployment{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "testapp1",
-				},
-				Spec: appv1.DeploymentSpec{
-					Replicas: utils.Int32Ptr(1),
-					Selector: &metav1.LabelSelector{
-						MatchLabels: map[string]string{
-							"run": "testapp1",
-						},
-					},
-					Template: apiv1.PodTemplateSpec{
-						ObjectMeta: metav1.ObjectMeta{
-							Labels: map[string]string{
-								"run": "testapp1",
-							},
-						},
-						Spec: apiv1.PodSpec{
-							Containers: []apiv1.Container{
-								{
-									Name:  "testapp1",
-									Image: "nginx:1.12",
-									Ports: []apiv1.ContainerPort{
-										{
-											Name:          "http",
-											Protocol:      apiv1.ProtocolTCP,
-											ContainerPort: 80,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+			if err := pkg.CreateDeployment(clients, "testapp1", "nginx:1.12", "default"); err != nil {
+				log.Fatalf("Operator status check failed, due to %v", err)
 			}
-			_, err = chaosTypes.Client.AppsV1().Deployments("default").Create(testapp1)
-			if err != nil {
-				klog.Infoln("testapp1 deployment is not created and error is ", err)
-				Fail("Fail to create testapp1 deployment")
-			}
-			klog.Info("testapp1 deployment is created")
 
 			//Waiting for deployment to get ready
-			err = utils.DeploymentRunningStatus("default", "testapp1")
-			if err != nil {
-				klog.Infof("Timeout, %v", err)
-				os.Exit(1)
+			if err := pkg.DeploymentStatusCheck(&testsDetails, "testapp1", "default", clients); err != nil {
+				log.Fatalf("Error Timeout, %v", err)
 			}
 
-			//Creating Second application for container-kill in test-1 namespace
+			//Creating second application for container-kill in default namespace
 			By("Creating second deployment for container-kill chaos")
-			testapp2 := &appv1.Deployment{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "testapp2",
-				},
-				Spec: appv1.DeploymentSpec{
-					Replicas: utils.Int32Ptr(1),
-					Selector: &metav1.LabelSelector{
-						MatchLabels: map[string]string{
-							"run": "testapp2",
-						},
-					},
-					Template: apiv1.PodTemplateSpec{
-						ObjectMeta: metav1.ObjectMeta{
-							Labels: map[string]string{
-								"run": "testapp2",
-							},
-						},
-						Spec: apiv1.PodSpec{
-							Containers: []apiv1.Container{
-								{
-									Name:  "testapp2",
-									Image: "nginx:1.12",
-									Ports: []apiv1.ContainerPort{
-										{
-											Name:          "http",
-											Protocol:      apiv1.ProtocolTCP,
-											ContainerPort: 80,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+			if err := pkg.CreateDeployment(clients, "testapp2", "nginx:1.12", "litmus"); err != nil {
+				log.Fatalf("Operator status check failed, due to %v", err)
 			}
-			_, err = chaosTypes.Client.AppsV1().Deployments("default").Create(testapp2)
-			if err != nil {
-				klog.Infoln("testapp2 deployment is not created and error is ", err)
-				Fail("Fail to create testapp2 deployment")
-			}
-			klog.Info("testapp2 deployment is created")
 
 			//Waiting for deployment to get ready
-			err = utils.DeploymentRunningStatus("default", "testapp2")
-			if err != nil {
-				klog.Infof("Timeout, %v", err)
-				os.Exit(1)
+			if err := pkg.DeploymentStatusCheck(&testsDetails, "testapp2", "default", clients); err != nil {
+				log.Fatalf("Error Timeout, %v", err)
 			}
 
-			//Installing RBAC for first experiment that is pod-delete
-			rbacPath := "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac.yaml"
-			rbacNamespace := "default"
-			installrbac, err := utils.InstallRbac(rbacPath, rbacNamespace, experimentName1, chaosTypes.Client)
-			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
-			Expect(err).To(BeNil(), "Fail to create RBAC")
-			klog.Info("Rbac for pod-delete has been created successfully !!!")
+			////////////////////////////////////////////////////////
+			//   Prepare Two Chaos Experiments at the same time  //
+			//////////////////////////////////////////////////////
 
-			//Installing RBAC for second experiment that is container-kill
-			rbacPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml"
-			rbacNamespace = chaosTypes.ChaosNamespace
-			installrbac, err = utils.InstallRbac(rbacPath, rbacNamespace, experimentName2, chaosTypes.Client)
-			Expect(installrbac).To(Equal(0), "Fail to create rbac file")
-			Expect(err).To(BeNil(), "Fail to create RBAC")
-			klog.Info("Rbac for container kill has been created successfully !!!")
+			//Installing RBAC for first chaos experiment that is pod-delete
+			By("[Install]: Install rbac for pod-delete chaos")
+			testsDetails.ChaosNamespace = "default"
+			//Fetching all the default ENV
+			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install rbac, due to %v", err)
+			}
+			//Installing Chaos Experiment for pod-delete
+			By("[Install]: Installing chaos experiment")
+			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install chaos experiment, due to %v", err)
+			}
 
-			//Creating Chaos-Experiment for pod delete
-			By("Creating Experiment for pod delete")
-			err = utils.DownloadFile("pod-delete.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-delete/experiment.yaml")
-			Expect(err).To(BeNil(), "Fail to fetch experiment file")
-			err = utils.EditFile("pod-delete.yaml", "image: \"litmuschaos/ansible-runner:latest\"", "image: "+utils.GetEnv("EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:latest"))
-			Expect(err).To(BeNil(), "Failed to update the experiment image")
-			err = exec.Command("kubectl", "apply", "-f", "pod-delete.yaml", "-n", "litmus").Run()
-			Expect(err).To(BeNil(), "Failed to create chaos experiment")
-			klog.Info("Pod delete Chaos Experiment Created Successfully")
+			//Fetching all the default ENV
+			//Note: please don't provide custom experiment name here
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "container-kill", "reconsile-engine2")
+			testsDetails.ChaosNamespace = "litmus"
 
-			//Creating Chaos-Experiment for container kill
-			By("Creating Experiment for container kill")
-			err = utils.DownloadFile("container-kill.yaml", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml")
-			Expect(err).To(BeNil(), "Fail to fetch experiment file")
-			err = utils.EditFile("container-kill.yaml", "image: \"litmuschaos/ansible-runner:latest\"", "image: "+utils.GetEnv("EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:latest"))
-			Expect(err).To(BeNil(), "Failed to update the experiment image")
-			err = utils.EditFile("container-kill.yaml", "name: container-kill", "name: container-kill-test")
-			Expect(err).To(BeNil(), "Failed to update the experiment name")
-			err = exec.Command("kubectl", "apply", "-f", "container-kill.yaml", "-n", "litmus").Run()
-			Expect(err).To(BeNil(), "Failed to create chaos experiment")
-			klog.Info("Container Kill Chaos Experiment Created Successfully")
+			//Installing RBAC for first chaos experiment that is container-kill
+			By("[Install]: Install rbac for pod-delete chaos")
+			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install rbac, due to %v", err)
+			}
+			//Installing Chaos Experiment for container-kill
+			By("[Install]: Installing chaos experiment")
+			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install chaos experiment, due to %v", err)
+			}
+			/////////////////////////////////////////////////////
+			//   Check the runner pod status for both chaos   ///
+			/////////////////////////////////////////////////////
 
-			//Installing chaos engine for pod-delete experiment
-			//Fetching engine file
-			By("Fetching engine file for pod delete experiment")
-			err = utils.DownloadFile(experimentName1+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/engine.yaml")
-			Expect(err).To(BeNil(), "Fail to fetch chaosengine file for pod delete")
+			//Creating Chaos-Engine for container-kill
+			By("[Install]: Install Chaos Engine for container-kill")
+			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install chaosengine, due to %v", err)
+			}
+			//Checking the runner pod status
+			By("[Status]: Runner pod running status check")
+			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
+				log.Fatalf("Runner pod status check failed, due to %v", err)
+			}
 
-			//Modify chaos engine spec
-			err = utils.EditFile(experimentName1+"-ce.yaml", "name: nginx-chaos", "name: "+engineName)
-			Expect(err).To(BeNil(), "Failed to update chaosengine name in chaosengine file")
-			err = utils.EditFile(experimentName1+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: 'false'")
-			Expect(err).To(BeNil(), "Failed to update AnnotationCheck in engine")
-			err = utils.EditFile(experimentName1+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: 'retain'")
-			Expect(err).To(BeNil(), "Failed to update jobCleanUpPolicy in chaosengine file of pod-delete")
-			err = utils.EditFile(experimentName1+"-ce.yaml", "applabel: 'app=nginx'", "applabel: run=testapp1")
-			Expect(err).To(BeNil(), "Failed to update application label in engine")
+			//Fetching all the default ENV
+			//Note: please don't provide custom experiment name here
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "pod-delete", "reconsile-engine1")
+			testsDetails.ChaosNamespace = "default"
 
-			//Creating ChaosEngine
-			By("Creating ChaosEngine")
-			err = exec.Command("kubectl", "apply", "-f", experimentName1+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to create chaos engine")
-			klog.Info("ChaosEngine for pod delete created successfully...")
-			time.Sleep(2 * time.Second)
+			//Creating Chaos-Engine for container kill
+			By("[Install]: Install Chaos Engine for container-kill")
+			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+				log.Fatalf("Fail to install chaosengine, due to %v", err)
+			}
 
-			//Fetching the runner pod and Checking if it gets in Running state or not
-			By("Wait for runner pod to come in running sate")
-			runnerNamespace1 := "default"
-			runnerPodStatus1, err := utils.RunnerPodStatus(runnerNamespace1, engineName, chaosTypes.Client)
-			Expect(runnerPodStatus1).NotTo(Equal("1"), "Failed to get in running state")
-			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			klog.Info("Runner pod for pod delete is in Running state")
-
-			//Installing chaos engine for container kill experiment
-			//Fetching engine file
-			By("Fetching engine file for container kill")
-			//Modify chaos engine spec
-			err = utils.DownloadFile(experimentName2+"-ce.yaml", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/engine.yaml")
-			Expect(err).To(BeNil(), "Fail to fetch chaosengine file for container kill")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "name: nginx-chaos", "name: "+engineName)
-			Expect(err).To(BeNil(), "Failed to update chaosengine name in chaosengine file for container kill")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "namespace: default", "namespace: litmus")
-			Expect(err).To(BeNil(), "Failed to update chaosengine namespace")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "name: container-kill", "name: container-kill-test")
-			Expect(err).To(BeNil(), "Failed to update experiment name in engine file")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: 'false'")
-			Expect(err).To(BeNil(), "Failed to update AnnotationCheck in engine")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: 'retain'")
-			Expect(err).To(BeNil(), "Failed to update jobCleanUpPolicy in chaosengine")
-			err = utils.EditFile(experimentName2+"-ce.yaml", "applabel: 'app=nginx'", "applabel: run=testapp2")
-			Expect(err).To(BeNil(), "Failed to update application label in engine")
-
-			//Creating ChaosEngine
-			By("Creating ChaosEngine")
-			err = exec.Command("kubectl", "apply", "-f", experimentName2+"-ce.yaml").Run()
-			Expect(err).To(BeNil(), "Fail to create chaos engine")
-			klog.Info("ChaosEngine for container kill created successfully...")
-			time.Sleep(2 * time.Second)
-
-			//Fetching the runner pod and Checking if it gets in Running state or not
-			By("Wait for runner pod to come in running sate")
-			runnerNamespace2 := chaosTypes.ChaosNamespace
-			runnerPodStatus2, err := utils.RunnerPodStatus(runnerNamespace2, engineName, chaosTypes.Client)
-			Expect(runnerPodStatus2).NotTo(Equal("1"), "Failed to get in running state")
-			Expect(err).To(BeNil(), "Fail to get the runner pod")
-			klog.Info("Runner pod for container kill is in Running state")
+			// Checking the runner pod status
+			By("[Status]: Runner pod running status check")
+			testsDetails.AppNS = "default"
+			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
+				log.Fatalf("Runner pod status check failed, due to %v", err)
+			}
 
 			//Visualising the components at default namespace
 			By("Getting the components in default namespace")
 			out1, err1 := exec.Command("kubectl", "get", "pods").Output()
-			if err != nil {
+			if err1 != nil {
 				log.Fatal(err1)
 			}
 			fmt.Printf("The output is: %s\n", out1)
 
 			//Visualising the components at chaosNamespace namespace
 			By("Getting the components in chaosNamespace namespace")
-			out2, err2 := exec.Command("kubectl", "get", "pods", "-n", chaosTypes.ChaosNamespace).Output()
-			if err != nil {
+			out2, err2 := exec.Command("kubectl", "get", "pods", "-n", testsDetails.ChaosNamespace).Output()
+			if err2 != nil {
 				log.Fatal(err2)
 			}
 			fmt.Printf("The output is: %s\n", out2)
