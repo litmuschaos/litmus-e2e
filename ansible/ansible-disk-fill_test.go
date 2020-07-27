@@ -61,7 +61,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 			//Installing Chaos Engine for disk-fill
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
 

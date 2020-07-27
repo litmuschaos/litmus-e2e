@@ -57,7 +57,7 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
 	// Modify the spec of experiemnt file
-	if err = EditFile(testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/ansible-runner:1.6.0\"", "image: "+testsDetails.AnsibleExperimentImage); err != nil {
+	if err = EditFile(testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/ansible-runner:latest\"", "image: "+testsDetails.AnsibleExperimentImage); err != nil {
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 
 	}
@@ -76,8 +76,8 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 	return nil
 }
 
-//InstallChaosEngine installs the given ansible based chaos engine
-func InstallChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
+//InstallAnsibleChaosEngine installs the given ansible based chaos engine
+func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
 
 	// Fetch Chaos Engine
 	var out bytes.Buffer
@@ -109,13 +109,12 @@ func InstallChaosEngine(testsDetails *types.TestDetails, engineNamespace string)
 		}
 	}
 
-	if testsDetails.ExperimentName == "node-drain" {
-
-		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-1'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "kubelet-service-kill" {
+		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
-
 	}
+
 	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
@@ -223,8 +222,8 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "node-taint" {
-		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-1'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "node-taint" || testsDetails.ExperimentName == "kubelet-service-kill" {
+		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}

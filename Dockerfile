@@ -34,7 +34,7 @@ COPY Makefile ./
 COPY nginx ./nginx
 COPY pkg ./pkg
 COPY tests ./tests
-COPY types ./types
+COPY operator ./operator
 COPY utils ./utils
 COPY vendor ./vendor
 

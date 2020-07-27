@@ -48,6 +48,18 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 				log.Fatalf("Operator status check failed, due to %v", err)
 			}
 
+			// Getting application node name
+			By("[Prepare]: Getting application node name")
+			if _, err := pkg.GetApplicationNode(&testsDetails, clients); err != nil {
+				log.Fatalf("Unable to get application node name, due to %v", err)
+			}
+
+			//Cordon the application node
+			By("Cordoning Application Node")
+			if err := pkg.NodeCordon(&testsDetails); err != nil {
+				log.Fatalf("Failed NodeCordon, due to %v", err)
+			}
+
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
 			if err := pkg.InstallAnsibleRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
@@ -62,7 +74,7 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 			//Installing Chaos Engine for kubelet-service-kill
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
 
@@ -83,6 +95,12 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
 				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
+			}
+
+			//Uncordon the application node
+			By("Uncordoning Application Node")
+			if err := pkg.NodeUncordon(&testsDetails); err != nil {
+				log.Fatalf("Failed NodeUncordon, due to %v", err)
 			}
 
 		})

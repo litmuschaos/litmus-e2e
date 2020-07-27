@@ -60,7 +60,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Installing Chaos Engine for pod-delete
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaos engine, due to %v", err)
 			}
 

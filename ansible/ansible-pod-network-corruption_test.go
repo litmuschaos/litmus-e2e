@@ -61,7 +61,7 @@ var _ = Describe("BDD of pod-network-corruption experiment", func() {
 
 			//Installing Chaos Engine for pod-network-corruption
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
+			if err := pkg.InstallAnsibleChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
 

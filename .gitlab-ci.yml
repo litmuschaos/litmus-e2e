@@ -257,7 +257,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
     paths:
       - .kube/            
 
-TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
+TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
@@ -270,7 +270,7 @@ TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY:
     paths:
       - .kube/      
 
-TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE:
+TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
@@ -284,7 +284,7 @@ TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE:
       - .kube/      
 
 ## Ansible Experiments will trigger 
-## only if ANSIBLE_VARIABLE is defined
+## only if ANSIBLE_JOB is defined
 
 TCID-VMWx-GO-EXPERIMENT-CLEANUP:
   when: always
@@ -293,15 +293,18 @@ TCID-VMWx-GO-EXPERIMENT-CLEANUP:
   tags:
     - litmus-build
   script:
+    - ls 
+    - pwd
     - make go-experiment-cleanup
   artifacts:
     when: always
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-POD-DELETE:
+TCID-VMWx-ANSIBLE-APP-POD-DELETE:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -314,9 +317,10 @@ TCID-VMWx-ANSIBLE-POD-DELETE:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-CONTAINER-KILL:
+TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -329,9 +333,10 @@ TCID-VMWx-ANSIBLE-CONTAINER-KILL:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-DISK-FILL:
+TCID-VMWx-ANSIBLE-APP-DISK-FILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -344,9 +349,10 @@ TCID-VMWx-ANSIBLE-DISK-FILL:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}        
+    variables:
+    - $ANSIBLE_JOB == "true"       
 
-TCID-VMWx-ANSIBLE-NODE-CPU-HOG:
+TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -359,9 +365,10 @@ TCID-VMWx-ANSIBLE-NODE-CPU-HOG:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-NODE-MEMORY-HOG:
+TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -374,9 +381,10 @@ TCID-VMWx-ANSIBLE-NODE-MEMORY-HOG:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}  
+    variables:
+    - $ANSIBLE_JOB == "true" 
 
-TCID-VMWx-ANSIBLE-POD-CPU-HOG:
+TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -389,9 +397,10 @@ TCID-VMWx-ANSIBLE-POD-CPU-HOG:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE} 
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-POD-MEMORY-HOG:
+TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -404,9 +413,10 @@ TCID-VMWx-ANSIBLE-POD-MEMORY-HOG:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-POD-NETWORK-CORRUPTION:
+TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -419,9 +429,10 @@ TCID-VMWx-ANSIBLE-POD-NETWORK-CORRUPTION:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-POD-NETWORK-LATENCY:
+TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -434,9 +445,10 @@ TCID-VMWx-ANSIBLE-POD-NETWORK-LATENCY:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}    
+    variables:
+    - $ANSIBLE_JOB == "true"   
 
-TCID-VMWx-ANSIBLE-POD-NETWORK-LOSS:
+TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -449,9 +461,10 @@ TCID-VMWx-ANSIBLE-POD-NETWORK-LOSS:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}
+    variables:
+    - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-KUBELET-SERVICE-KILL:
+TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -464,9 +477,10 @@ TCID-VMWx-ANSIBLE-KUBELET-SERVICE-KILL:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}  
+    variables:
+    - $ANSIBLE_JOB == "true"
     
-TCID-VMWx-ANSIBLE-NODE-DRAIN:
+TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
@@ -479,7 +493,8 @@ TCID-VMWx-ANSIBLE-NODE-DRAIN:
     paths:
       - .kube/
   only:
-    - ${ANSIBLE_VARIABLE}      
+    variables:
+    - $ANSIBLE_JOB == "true"     
 
 E2E Metrics:
   when: always
