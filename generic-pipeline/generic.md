@@ -24,7 +24,6 @@ filename: generic
 </tr>
 </table>
 
-
 # **Pipeline Jobs**
 
 - [TCID-VMWx-GENERIC-APP-POD-DELETE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-delete/README.md)
