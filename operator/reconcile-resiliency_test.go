@@ -113,6 +113,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Creating Chaos-Engine for container-kill
 			By("[Install]: Install Chaos Engine for container-kill")
+			testsDetails.AppLabel = "run=testapp2"
 			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
@@ -129,8 +130,10 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			environment.GetENV(&testsDetails, "pod-delete", "reconsile-engine1")
 			testsDetails.ChaosNamespace = "default"
 
-			//Creating Chaos-Engine for container kill
-			By("[Install]: Install Chaos Engine for container-kill")
+			//Creating Chaos-Engine for pod-delete
+			By("[Install]: Install Chaos Engine for pod-delete")
+			testsDetails.AppLabel = "run=testapp1"
+			testsDetails.AppNS = "default"
 			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
