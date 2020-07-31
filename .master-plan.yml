@@ -325,30 +325,20 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-IMAGE-NAME
-    name: "TCID-VMWx-GENERIC-ENGINE-IMAGE-NAME"
-    description: "Test the image name field of chaosengine"
+  - tcid: TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE
+    name: "TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE"
+    description: "Test the abort functionality of chaosengine"
     labels:
       test/feature: "Generic"
-      test/tags: "experiment-image-name"
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-IMAGE-NAME
-    name: "TCID-VMWx-GENERIC-ENGINE-IMAGE-NAME"
-    description: "Test the image name field of chaosengine"
+  - tcid: TCID-VMWx-GENERIC-ENGINE-MONITORING
+    name: "TCID-VMWx-GENERIC-ENGINE-MONITORING"
+    description: "Test the monitoring functionality of chaosengine"
     labels:
       test/feature: "Generic"
-      test/tags: "experiment-image-name"
-      git/location: ""
-      test/status: "Not Done"
-
-  - tcid: TCID-VMWx-GENERIC-ENGINE-IMAGE-PULL-POLICY
-    name: "TCID-VMWx-GENERIC-ENGINE-IMAGE-PULL-POLICY"
-    description: "Test the image pull policy field of chaosengine"
-    labels:
-      test/feature: "Generic"
-      test/tags: "experiment-image-pull-policy"
+      test/tags: "monitoring"
       git/location: ""
       test/status: "Not Done"
 
@@ -406,11 +396,3 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-RBAC-NAME-MISMATCH
-    name: "TCID-VMWx-GENERIC-RBAC-NAME-MISMATCH"
-    description: "Test the experiment with mismatch rbac name"
-    labels:
-      test/feature: "Generic"
-      test/tags: "rbac, mismatch-name"
-      git/location: ""
-      test/status: "Not Done"
