@@ -75,7 +75,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
 			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the expweriment job pod logs, due to %v", err)
+				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
 			}
 
 			//Checking the chaosresult verdict

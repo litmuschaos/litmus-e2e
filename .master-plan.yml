@@ -128,15 +128,6 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/kubelet-service-kill"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-DISK-LOSS
-    name: "TCID-VMWx-GENERIC-INFRA-DISK-LOSS"
-    description: "External disk loss from the node"
-    labels:
-      test/feature: "Generic-Infra"
-      test/tags: "disk, loss"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-loss"
-      test/status: "Not Done"
-
   - tcid: TCID-VMWx-GENERIC-INFRA-NODE-TAINT
     name: "TCID-VMWx-GENERIC-INFRA-NODE-TAINT"
     description: "Taint the application node"
@@ -147,23 +138,261 @@ spec:
       test/status: "Done"
 
   # ----------------------------------------------------------
-  # LitmusChaos Operator BDDs
+  # LitmusChaos Ansible Experiments BDDs
+  # ----------------------------------------------------------      
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-DELETE
+    name: "TCID-VMWx-ANSIBLE-APP-POD-DELETE:"
+    description: "Delete the application pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, delete"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL
+    name: "TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL"
+    description: "Kill one container in the application pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, container"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG
+    name: "TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG"
+    description: "Consume CPU resources on the application container"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, cpu,container"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG
+    name: "TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG"
+    description: "Consume memory resources on the application container"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, memory"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION
+    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION"
+    description: "Inject Network Packet Corruption Into Application Pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, network, corruption"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY
+    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY"
+    description: "Inject Network Latency Into Application Pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, network, latency"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS
+    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS"
+    description: "Inject Packet Loss Into Application Pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, network, loss"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-DUPLICATION
+    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-DUPLICATION"
+    description: "Inject Network Duplication Into Application Pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, network, duplication"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-APP-DISK-FILL
+    name: "TCID-VMWx-ANSIBLE-APP-DISK-FILL"
+    description: "Fill up Ephemeral Storage of a Pod"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "pod, ephemeral, disk"
+      git/location: ""
+      test/status: "Done"      
+
+  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG
+    name: "TCID-VMWx-GENERIC-APP-NODE-CPU-HOG"
+    description: "Exhaust CPU resources on the Kubernetes Node"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "node, cpu, spike"
+      git/location: ""
+      test/status: "Done" 
+
+  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG
+    name: "TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG"
+    description: "Exhaust Memory resources on the Kubernetes Node"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "node, memory, hog"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN
+    name: "TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN"
+    description: "Drain the node where application pod is scheduled"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "node, drain"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL
+    name: "TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL"
+    description: "Kills the kubelet service on the application node to check the resiliency"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "kubelet, service, kill"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-VMWx-ANSIBLE-INFRA-DISK-LOSS
+    name: "TCID-VMWx-ANSIBLE-INFRA-DISK-LOSS"
+    description: "External disk loss from the node"
+    labels:
+      test/feature: "Ansible-Experiment"
+      test/tags: "disk, loss"
+      git/location: ""
+      test/status: "Not Done"
+
+  # ----------------------------------------------------------
+  # LitmusChaos COMPONENT BDDs
   # ----------------------------------------------------------
 
-  - tcid: TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY
-    name: "TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY"
+  - tcid: TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY
+    name: "TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY"
     description: "Tests the Reconcile Resiliency of Litmus Operator"
     labels:
-      test/feature: "Generic-Infra"
+      test/feature: "Generic"
       test/tags: "operator, litmus, resiliency"
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE
-    name: "TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE"
+  - tcid: TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE
+    name: "TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE"
     description: "Test the admin mode functionality"
     labels:
-      test/feature: "Generic-Infra"
+      test/feature: "Generic"
       test/tags: "admin-mode, operator, litmus"
       git/location: ""
       test/status: "Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-APP-INFO
+    name: "TCID-VMWx-GENERIC-ENGINE-APP-INFO"
+    description: "Test the app info functionality of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "app-ns, app-label, app-type, app-info"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT
+    name: "TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT"
+    description: "Test the service account field of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "service-account"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK
+    name: "TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK"
+    description: "Test the annotation check functionality of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "annotation-check"
+      git/location: ""
+      test/status: "Not Done"   
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME
+    name: "TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME"
+    description: "Test the experiment name field of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "experiment-name"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE
+    name: "TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE"
+    description: "Test the abort functionality of chaosengine"
+    labels:
+      test/feature: "Generic"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-MONITORING
+    name: "TCID-VMWx-GENERIC-ENGINE-MONITORING"
+    description: "Test the monitoring functionality of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "monitoring"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-ENV-VARIABLE
+    name: "TCID-VMWx-GENERIC-ENGINE-ENV-VARIABLEY"
+    description: "Test the env variable field of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "env-variable-test"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY
+    name: "TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY"
+    description: "Test the job cleanup policy functionality of chaosengine"
+    labels:
+      test/feature: "Generic"
+      test/tags: "job-cleanup-policy, retain, delete"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
+    name: "TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME"
+    description: "Test the experiment image name field of chaosexperiment"
+    labels:
+      test/feature: "Generic"
+      test/tags: "image-name, chaosexperiment"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE
+    name: "TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE"
+    description: "Test the experiment env variable field of chaosexperiment"
+    labels:
+      test/feature: "Generic"
+      test/tags: "envs, chaosexperiment"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-ENTRY-POINT
+    name: "TCID-VMWx-GENERIC-EXPERIMENT-ENTERY-POINT"
+    description: "Test the experiment entry point field of chaosexperiment"
+    labels:
+      test/feature: "Generic"
+      test/tags: "entry-point, chaosexperiment"
+      git/location: ""
+      test/status: "Not Done"
+
+  - tcid: TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION
+    name: "TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION"
+    description: "Test the experiment with less permission"
+    labels:
+      test/feature: "Generic"
+      test/tags: "rbac, permission"
+      git/location: ""
+      test/status: "Not Done"
+
