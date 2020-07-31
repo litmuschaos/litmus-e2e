@@ -1,8 +1,9 @@
-package operator
+package engine
 
 import (
 	"log"
 	"testing"
+	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -13,18 +14,16 @@ import (
 	"k8s.io/klog"
 )
 
-func TestAdminModeTest(t *testing.T) {
-
+func TestEngineName(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for testing admin mode functionality
-//Checking for the creation of runner pod for application in same namespace
-var _ = Describe("BDD of operator reconcile resiliency check", func() {
+//BDD Tests for job-cleanup-policy in engine
+//Testing with Job Cleanup policy 'retain'
+var _ = Describe("BDD of job cleanup policy test", func() {
 
 	// BDD TEST CASE 1
-	// All Litmus components are in litmus namespace and application pod is in defalt ns
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
@@ -39,10 +38,9 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			}
 
 			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "adminengine")
+			environment.GetENV(&testsDetails, "container-kill", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -50,39 +48,26 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 				log.Fatalf("Operator status check failed, due to %v", err)
 			}
 
-			//Creating application for pod-delete in default namespace
-			By("Creating deployment for pod-delete chaos")
-			if err := pkg.CreateDeployment(clients, "adminapp", "nginx:1.12", "default"); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
-
-			//Waiting for deployment to get ready
-			if err := pkg.DeploymentStatusCheck(&testsDetails, "adminapp", "default", clients); err != nil {
-				log.Fatalf("Error Timeout, %v", err)
-			}
-			testsDetails.AppNS = "default"
-			testsDetails.AppLabel = "run=adminapp"
-			//Installing admin RBAC for the chaos
-			By("[Install]: Installing RBAC for pod-delete")
-			if err := pkg.InstallAdminRbac(&testsDetails); err != nil {
+			//Installing RBAC for the job-cleanup-policy test
+			By("[Install]: Installing RBAC")
+			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install rbac, due to %v", err)
 			}
 
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing pod-delete chaos experiment")
+			//Installing Chaos Experiment for container-kill
+			By("[Install]: Installing chaos experiment")
 			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaos experiment, due to %v", err)
 			}
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
-			testsDetails.ChaosServiceAccount = "litmus-admin"
+			//Providing wrong job-cleanup-policy
 			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
+				log.Fatalf("Fail to install chaos engine, due to %v", err)
 			}
 
-			//Checking runner pod running state
-			testsDetails.AppNS = "litmus"
+			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
 			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
 				log.Fatalf("Runner pod status check failed, due to %v", err)
@@ -92,7 +77,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
 			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the expweriment job pod logs, due to %v", err)
+				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
 			}
 
 			//Checking the chaosresult verdict
@@ -100,14 +85,36 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
 				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
 			}
+
+			//Wait for few seconds and check again the job status
+			time.Sleep(5 * time.Second)
+
+			//Again check the job status
+			By("[Status]: Again checking the Job pod status for retain policy")
+			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
+				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
+			}
+
 		})
 	})
-	// BDD TEST CASE 2
-	// Operator in litmus ns, engine and experiment is in test ns
-	// Application is in deafult ns
+	// BDD for cleaning all components
+	Context("Check for litmus components", func() {
+
+		It("Should delete all the litmus CRs", func() {
+
+			By("[Cleanup]: Removing Litmus Components")
+			if err := pkg.Cleanup(); err != nil {
+				log.Fatalf("Fail to delete all litmus components, due to %v", err)
+			}
+
+		})
+	})
+
+	//Re-run the test with job cleanup policy 'delete'
 	Context("Check for litmus components", func() {
 
 		It("Should check for creation of runner pod", func() {
+
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
@@ -118,40 +125,37 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			}
 
 			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "adminengine")
+			environment.GetENV(&testsDetails, "container-kill", "job-cleanup-policy-engine")
 
-			//Create Namespace for the test
-			By("Creating namespace")
-			if _, err := pkg.CreateNamespace(clients, "test"); err != nil {
-				log.Fatalf("Namespace creation failed, due to %v", err)
+			// Checking the chaos operator running status
+			By("[Status]: Checking chaos operator status")
+			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
+				log.Fatalf("Operator status check failed, due to %v", err)
 			}
-			testsDetails.ChaosNamespace = "test"
-			testsDetails.AppNS = "default"
-			testsDetails.AppLabel = "run=adminapp"
-			//Installing admin RBAC for the chaos
+
+			//Installing RBAC for the job-cleanup-policy test
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallAdminRbac(&testsDetails); err != nil {
+			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install rbac, due to %v", err)
 			}
 
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing pod-delete chaos experiment")
+			//Installing Chaos Experiment for container-kill
+			By("[Install]: Installing chaos experiment")
 			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaos experiment, due to %v", err)
 			}
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
-			testsDetails.ChaosServiceAccount = "litmus-admin"
+			//Providing wrong job-cleanup-policy
+			testsDetails.JobCleanUpPolicy = "delete"
 			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
+				log.Fatalf("Fail to install chaos engine, due to %v", err)
 			}
 
-			//Checking runner pod running state
-			testsDetails.AppNS = "test"
+			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
 			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
 				log.Fatalf("Runner pod status check failed, due to %v", err)
@@ -161,7 +165,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
 			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the expweriment job pod logs, due to %v", err)
+				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
 			}
 
 			//Checking the chaosresult verdict
@@ -169,7 +173,28 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
 				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
 			}
+
+			//Wait for few seconds and check again the job status
+			time.Sleep(5 * time.Second)
+
+			//Again check the job status
+			By("[Status]: Again checking the Job pod status for retain policy")
+			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err == nil {
+				log.Fatalf("[TEST FAILED]: Job pod found after chaos with cleaup policy delete, due to %v", err)
+			}
+
 		})
 	})
+	// BDD for cleaning all components
+	Context("Check for litmus components", func() {
 
+		It("Should delete all the litmus CRs", func() {
+
+			By("[Cleanup]: Removing Litmus Components")
+			if err := pkg.Cleanup(); err != nil {
+				log.Fatalf("Fail to delete all litmus components, due to %v", err)
+			}
+
+		})
+	})
 })

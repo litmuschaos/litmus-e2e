@@ -281,28 +281,101 @@ TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
   artifacts:
     when: always
     paths:
-      - .kube/      
-
-## Ansible Experiments will trigger 
-## only if ANSIBLE_JOB is defined
-
-TCID-VMWx-GO-EXPERIMENT-CLEANUP:
+      - .kube/
+      
+TCID-VMWx-GENERIC-ENGINE-APP-INFO:
   when: always
   image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
+  stage: Component Checks
   tags:
     - litmus-build
   script:
-    - ls 
-    - pwd
-    - make go-experiment-cleanup
+    - make appinfo
   artifacts:
     when: always
     paths:
       - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
+
+TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make annotation-check
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make engine-state
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+
+TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make experiment-name
+  artifacts:
+    when: always
+    paths:
+      - .kube/ 
+
+TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make job-cleanup-policy
+  artifacts:
+    when: always
+    paths:
+      - .kube/ 
+
+TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make service-account
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+      
+TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make experiment-image
+  artifacts:
+    when: always
+    paths:
+      - .kube/        
+
+## Ansible Experiments will trigger 
+## only if ANSIBLE_JOB is defined
 
 TCID-VMWx-ANSIBLE-APP-POD-DELETE:
   when: always

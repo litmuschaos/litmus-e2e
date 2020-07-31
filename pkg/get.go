@@ -28,3 +28,13 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 	}
 	return string(chaosEngine.Status.Experiments[0].Verdict), nil
 }
+
+//GetChaosResultVerdict checks the chaos result verdict
+func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
+
+	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
+	if err != nil {
+		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)
+	}
+	return string(chaosResult.Status.ExperimentStatus.Verdict), nil
+}

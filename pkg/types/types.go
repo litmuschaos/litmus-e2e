@@ -25,4 +25,6 @@ type TestDetails struct {
 	RunnerImage            string
 	ChaosDuration          int
 	AdminRbacPath          string
+	ChaosServiceAccount    string
+	NewExperimentName      string
 }

@@ -267,15 +267,6 @@ docker-push:
 #################            Ansible Experiment BDDS            #################
 #################################################################################
 
-.PHONY: go-experiment-cleanup
-go-experiment-cleanup:
-
-	@echo "-----------------------------"
-	@echo "Running Go Experiment Cleanup"
-	@echo "-----------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && ls && bash cleanup.sh"
-
 .PHONY: ansible-pod-delete
 ansible-pod-delete:
 
@@ -386,3 +377,71 @@ ansible-node-drain:
 	@echo "-------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-node-drain_test.go -v -count=1"	
+
+######################
+### NEGATIVE TESTS ###
+######################
+
+.PHONY: annotation-check
+annotation-check:
+
+	@echo "-----------------------------------------"
+	@echo "Running Annotation Check For Chaos Engine"
+	@echo "-----------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/annotation-check_test.go -v -count=1"
+
+
+.PHONY: appinfo
+appinfo:
+
+	@echo "---------------------------------------"
+	@echo "Running App Info Check For Chaos Engine"
+	@echo "---------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/appinfo_test.go -v -count=1"
+
+.PHONY: engine-state
+engine-state:
+
+	@echo "---------------------------------------"
+	@echo "Running App Info Check For Chaos Engine"
+	@echo "---------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/engine-state_test.go -v -count=1"
+
+.PHONY: experiment-name
+experiment-name:
+
+	@echo "----------------------------------------------"
+	@echo "Running Experiment Name Check For Chaos Engine"
+	@echo "----------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/experiment-name_test.go -v -count=1"
+
+.PHONY: job-cleanup-policy
+job-cleanup-policy:
+
+	@echo "-------------------------------------------------"
+	@echo "Running Job Cleanup Policy Check For Chaos Engine"
+	@echo "-------------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/job-cleanup-policy_test.go -v -count=1"
+
+.PHONY: service-account
+service-account:
+
+	@echo "----------------------------------------------"
+	@echo "Running Service Account Check For Chaos Engine"
+	@echo "----------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/service-account_test.go -v -count=1"
+
+.PHONY: experiment-image
+experiment-image:
+
+	@echo "---------------------------------------------------"
+	@echo "Running Experiment Image Check For Chaos Experiment"
+	@echo "---------------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/service-account_test.go -v -count=1"
