@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"log"
 	"testing"
 	"time"
 
@@ -30,70 +29,61 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-
+			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err = clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "container-kill", "job-cleanup-policy-engine")
+			environment.GetENV(&testsDetails, "disk-fill", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			//Installing RBAC for the job-cleanup-policy test
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for container-kill
+			//Installing Chaos Experiment for disk-fill
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for container-kill
+			//Installing Chaos Engine for disk-fill
 			By("[Install]: Installing chaos engine")
 			//Providing wrong job-cleanup-policy
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos engine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
-			}
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for few seconds and check again the job status
 			time.Sleep(5 * time.Second)
 
 			//Again check the job status
 			By("[Status]: Again checking the Job pod status for retain policy")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
-			}
+			err = pkg.GetJobPod(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 		})
 	})
@@ -101,13 +91,12 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 	Context("Check for litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
-
 			By("[Cleanup]: Removing Litmus Components")
-			if err := pkg.Cleanup(); err != nil {
-				log.Fatalf("Fail to delete all litmus components, due to %v", err)
-			}
+			err := pkg.Cleanup()
+			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
 		})
+
 	})
 
 	//Re-run the test with job cleanup policy 'delete'
@@ -117,71 +106,62 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-
+			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err = clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "container-kill", "job-cleanup-policy-engine")
+			environment.GetENV(&testsDetails, "disk-fill", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Installing RBAC for the job-cleanup-policy test
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for container-kill
+			//Installing Chaos Experiment for disk-fill
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for container-kill
+			//Installing Chaos Engine for disk-fill
 			By("[Install]: Installing chaos engine")
 			//Providing wrong job-cleanup-policy
 			testsDetails.JobCleanUpPolicy = "delete"
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos engine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
-			}
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for few seconds and check again the job status
 			time.Sleep(5 * time.Second)
 
 			//Again check the job status
 			By("[Status]: Again checking the Job pod status for retain policy")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err == nil {
-				log.Fatalf("[TEST FAILED]: Job pod found after chaos with cleaup policy delete, due to %v", err)
-			}
+			err = pkg.GetJobPod(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Job pod found after chaos with cleaup policy delete, due to {%v}", err)
 
 		})
 	})
@@ -189,12 +169,11 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 	Context("Check for litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
-
 			By("[Cleanup]: Removing Litmus Components")
-			if err := pkg.Cleanup(); err != nil {
-				log.Fatalf("Fail to delete all litmus components, due to %v", err)
-			}
+			err := pkg.Cleanup()
+			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
 		})
+
 	})
 })

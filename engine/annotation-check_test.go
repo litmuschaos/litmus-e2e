@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"log"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -31,12 +30,11 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-
+			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err = clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -45,48 +43,41 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			//Installing RBAC for the annotation-check test
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for pod-delete
 			By("[Install]: Installing chaos engine")
 			//Providing wrong annotation-check
 			testsDetails.AnnotationCheck = "true"
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos engine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err == nil {
-				log.Fatalf("[TEST FAILED]: Runner pod created when the application is not annotated")
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Runner pod created when the application is not annotated")
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err == nil {
-				log.Fatalf("[TEST FAILED]: Chaos pod created when the application is not annotated")
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Chaos pod created when the application is not annotated")
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.GetChaosResultVerdict(&testsDetails, clients); err == nil {
-				log.Fatalf("[TEST FAILED]: ChaosResult created when the application is not annotated")
-			}
+			_, err = pkg.GetChaosResultVerdict(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: ChaosResult created when the application is not annotated")
 
 		})
 	})
@@ -100,9 +91,8 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -112,9 +102,7 @@ var _ = Describe("BDD of annotation check test", func() {
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngine, _ := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
-			if len(chaosEngine.Status.Experiments) != 0 {
-				log.Fatalf("[TEST FAILED]: ChaosEngine verdict is not nil")
-			}
+			Expect(len(chaosEngine.Status.Experiments)).To(Equal(0), "[TEST FAILED]: ChaosEngine verdict is not nil")
 
 		})
 	})
@@ -124,9 +112,8 @@ var _ = Describe("BDD of annotation check test", func() {
 		It("Should delete all the litmus CRs", func() {
 
 			By("[Cleanup]: Removing Litmus Components")
-			if err := pkg.Cleanup(); err != nil {
-				log.Fatalf("Fail to delete all litmus components, due to %v", err)
-			}
+			err := pkg.Cleanup()
+			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
 		})
 	})
