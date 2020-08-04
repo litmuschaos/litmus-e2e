@@ -257,7 +257,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Fail to fetch litmus operator file, due to %v", err)
 	}
 	klog.Info("Updating ChaosOperator Image ...")
-	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: litmuschaos/chaos-operator:latest"); err != nil {
+	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
 		return errors.Errorf("Unable to update operator image, due to %v", err)
 
 	}

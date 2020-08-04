@@ -210,7 +210,7 @@ e2e-metrics:
 	@echo "Pipeline Coverage Percentage"
 	@echo "----------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && bash metrics/e2e-metrics"
+	 "$(EXPORT_VARIABLES) && cd $(TESTPATH) && bash metrics/e2e-metrics"
 
 .PHONY: app-cleanup
 app-cleanup:
@@ -274,7 +274,7 @@ go-experiment-cleanup:
 	@echo "Running Go Experiment Cleanup"
 	@echo "-----------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && ls && bash cleanup.sh"
+	 "$(EXPORT_VARIABLES)  &&  cd $(TESTPATH) && bash cleanup.sh"
 
 .PHONY: ansible-pod-delete
 ansible-pod-delete:
