@@ -30,6 +30,7 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
@@ -52,6 +53,11 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			By("[Prepare]: Getting application node name")
 			if _, err := pkg.GetApplicationNode(&testsDetails, clients); err != nil {
 				log.Fatalf("Unable to get application node name, due to %v", err)
+			}
+
+			// Getting other node for nodeSelector in engine
+			if testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients); err != nil || testsDetails.NodeSelectorName == "" {
+				log.Fatalf("Unable to get node name for node selector, due to %v", err)
 			}
 
 			//Cordon the application node

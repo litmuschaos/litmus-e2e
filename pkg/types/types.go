@@ -25,4 +25,5 @@ type TestDetails struct {
 	RunnerImage            string
 	ChaosDuration          int
 	AdminRbacPath          string
+	NodeSelectorName       string
 }
