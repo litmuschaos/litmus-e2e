@@ -18,6 +18,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.JobCleanUpPolicy = Getenv("JOB_CLEANUP_POLICY", "'retain'")
 	testDetails.AnnotationCheck = Getenv("ANNOTATION_CHECK", "false")
 	testDetails.ApplicationNodeName = Getenv("APPLICATION_NODE_NAME", "")
+	testDetails.NodeSelectorName = Getenv("APPLICATION_NODE_NAME", "")
 	testDetails.ImagePullPolicy = Getenv("IMAGE_PULL_POLICY", "Always")
 	testDetails.ChaosDuration, _ = strconv.Atoi(Getenv("TOTAL_CHAOS_DURATION", ""))
 

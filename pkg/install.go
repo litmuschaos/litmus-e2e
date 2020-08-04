@@ -109,8 +109,11 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 		}
 	}
 
-	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "kubelet-service-kill" {
+	if testsDetails.ApplicationNodeName != "" {
 		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
@@ -222,8 +225,11 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "node-taint" || testsDetails.ExperimentName == "kubelet-service-kill" {
+	if testsDetails.ApplicationNodeName != "" {
 		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
