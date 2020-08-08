@@ -3,7 +3,6 @@ package pkg
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
 	"time"
 
@@ -39,7 +38,7 @@ func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) e
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")
@@ -68,7 +67,7 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the experiment file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosExperiment]: " + out.String())
 	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.AnsibleExperimentImage + " !!!")
@@ -125,7 +124,7 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the engine file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosEngine]: " + out.String())
 	time.Sleep(2 * time.Second)
@@ -156,7 +155,7 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")
@@ -185,7 +184,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the experiment file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosExperiment]: " + out.String())
 	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
@@ -246,7 +245,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the engine file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosEngine]: " + out.String())
 	time.Sleep(2 * time.Second)
@@ -281,7 +280,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the installation file, due to {%v}", err)
 	}
 	klog.Infof("Result: " + out.String())
 
@@ -313,7 +312,7 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		os.Exit(1)
+		errors.Errorf("Fail to create the admin rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")

@@ -21,12 +21,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/crypto v0.0.0-20200302210943-78000ba7a073 // indirect
-	golang.org/x/tools v0.0.0-20200311090712-aafaee8bce8c // indirect
 	k8s.io/api v0.0.0-20190918195907-bd6ac527cfd2
 	k8s.io/apimachinery v0.0.0-20190817020851-f2f3a405f61d
 	k8s.io/client-go v0.0.0-20190918200256-06eb1244587a
-	k8s.io/code-generator v0.15.12-beta.0 // indirect
-	k8s.io/gengo v0.0.0-20200205140755-e0e292d8aa12 // indirect
 	k8s.io/klog v1.0.0
 	k8s.io/utils v0.0.0-20200229041039-0a110f9eb7ab // indirect
 	sigs.k8s.io/controller-runtime v0.3.0 // indirect

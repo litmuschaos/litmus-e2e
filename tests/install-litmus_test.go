@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"log"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -32,9 +31,8 @@ var _ = Describe("BDD of Litmus installation", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -44,16 +42,13 @@ var _ = Describe("BDD of Litmus installation", func() {
 
 			//Installing Litmus
 			By("Installing Litmus")
-			if err := pkg.InstallLitmus(&testsDetails); err != nil {
-				log.Fatalf("Litmus installation failed, due to %v", err)
-			}
+			err = pkg.InstallLitmus(&testsDetails)
+			Expect(err).To(BeNil(), "Litmus installation failed, due to {%v}", err)
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
-
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 		})
 	})
 
