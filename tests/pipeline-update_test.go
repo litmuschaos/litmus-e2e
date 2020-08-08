@@ -2,7 +2,6 @@ package tests
 
 import (
 	"io/ioutil"
-	"log"
 	"strings"
 	"testing"
 
@@ -40,14 +39,13 @@ var _ = Describe("BDD of pipeline status update", func() {
 			By("Updating the pipeline status table")
 			var err error
 			coverageData, err := ioutil.ReadFile("../coverage")
-			if err != nil {
-				log.Fatalf("failed reading coverageData from file: %s", err)
-			}
+			Expect(err).To(BeNil(), "failed reading coverageData from file, due to {%v}", err)
+
 			lines := strings.Split(string(coverageData), "\n")
 			klog.Infof("\nFile Content: %s\n", string(lines[0]))
-			if err = pkg.UpdatePipelineStatus(&testsDetails, string(lines[0])); err != nil {
-				log.Fatalf("Fail to run the script for pipeline status update,due to %v", err)
-			}
+			err = pkg.UpdatePipelineStatus(&testsDetails, string(lines[0]))
+			Expect(err).To(BeNil(), "Fail to run the script for pipeline status update,due to {%v}", err)
+
 			klog.Info("Pipeline status updated successfully !!!")
 
 		})

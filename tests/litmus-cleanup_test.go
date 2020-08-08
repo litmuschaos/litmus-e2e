@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"testing"
 
@@ -34,9 +33,8 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
-			}
+			err = clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
