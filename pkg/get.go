@@ -49,3 +49,18 @@ func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients env
 	klog.Info("[JOB]: The give job is present")
 	return nil
 }
+
+// GetSelectorNode will return a node other than the application node selected for using in node selector in chaos engine spec
+func GetSelectorNode(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
+	nodes, err := clients.KubeClient.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil || len(nodes.Items) == 0 {
+		return "", errors.Errorf("Fail to get nodes, due to %v", err)
+	}
+
+	for _, node := range nodes.Items {
+		if node.Name != testsDetails.ApplicationNodeName {
+			return string(node.Name), nil
+		}
+	}
+	return "", nil
+}

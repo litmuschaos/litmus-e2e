@@ -34,9 +34,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -46,60 +45,53 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			//Creating application for pod-delete in default namespace
 			By("Creating deployment for pod-delete chaos")
-			if err := pkg.CreateDeployment(clients, "adminapp", "nginx:1.12", "default"); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.CreateDeployment(clients, "adminapp", "nginx:1.12", "default")
+			Expect(err).To(BeNil(), "Deployment adminapp failed to create, due to {%v}", err)
 
 			//Waiting for deployment to get ready
-			if err := pkg.DeploymentStatusCheck(&testsDetails, "adminapp", "default", clients); err != nil {
-				log.Fatalf("Error Timeout, %v", err)
-			}
+			err = pkg.DeploymentStatusCheck(&testsDetails, "adminapp", "default", clients)
+			Expect(err).To(BeNil(), "Error Timeout, {%v}", err)
+
 			testsDetails.AppNS = "default"
 			testsDetails.AppLabel = "run=adminapp"
+
 			//Installing admin RBAC for the chaos
 			By("[Install]: Installing RBAC for pod-delete")
-			if err := pkg.InstallAdminRbac(&testsDetails); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallAdminRbac(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
-			testsDetails.ChaosServiceAccount = "litmus-admin"
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "litmus"
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the expweriment job pod logs, due to %v", err)
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
-			}
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+
 		})
 	})
 	// BDD TEST CASE 2
@@ -113,9 +105,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -125,50 +116,51 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Create Namespace for the test
 			By("Creating namespace")
-			if _, err := pkg.CreateNamespace(clients, "test"); err != nil {
-				log.Fatalf("Namespace creation failed, due to %v", err)
-			}
+			_, err = pkg.CreateNamespace(clients, "test")
+			Expect(err).To(BeNil(), "Namespace creation failed, due to {%v}", err)
+
 			testsDetails.ChaosNamespace = "test"
 			testsDetails.AppNS = "default"
 			testsDetails.AppLabel = "run=adminapp"
 			//Installing admin RBAC for the chaos
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallAdminRbac(&testsDetails); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallAdminRbac(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to create namespace, due to {%v}", err)
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
+<<<<<<< HEAD
 			testsDetails.ChaosServiceAccount = "litmus-admin"
 			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
 				log.Fatalf("Fail to install chaosengine, due to %v", err)
 			}
+=======
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "test"
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			log.Fatalf("Fail to install chaosengine, due to %v", err)
+			Expect(err).To(BeNil(), "Unable to check the runner pod status, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the expweriment job pod logs, due to %v", err)
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
-			}
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 		})
 	})
 

@@ -210,7 +210,7 @@ e2e-metrics:
 	@echo "Pipeline Coverage Percentage"
 	@echo "----------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && bash metrics/e2e-metrics"
+	 "$(EXPORT_VARIABLES) && cd $(TESTPATH) && bash metrics/e2e-metrics"
 
 .PHONY: app-cleanup
 app-cleanup:
@@ -271,7 +271,7 @@ docker-push:
 ansible-pod-delete:
 
 	@echo "-------------------------------------"
-	@echo "Running Ansible Pod Delete Experiemnt"
+	@echo "Running Ansible Pod Delete Experiment"
 	@echo "-------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-delete_test.go -v -count=1"
@@ -280,7 +280,7 @@ ansible-pod-delete:
 ansible-container-kill:
 
 	@echo "-------------------------------------"
-	@echo "Running Ansible Container Kill Experiemnt"
+	@echo "Running Ansible Container Kill Experiment"
 	@echo "-------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-container-kill_test.go -v -count=1"
@@ -289,7 +289,7 @@ ansible-container-kill:
 ansible-disk-fill:
 
 	@echo "-------------------------------------"
-	@echo "Running Ansible disk fill Experiemnt"
+	@echo "Running Ansible disk fill Experiment"
 	@echo "-------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-disk-fill_test.go -v -count=1"
@@ -298,7 +298,7 @@ ansible-disk-fill:
 ansible-node-cpu-hog:
 
 	@echo "---------------------------------------"
-	@echo "Running Ansible Node CPU Hog Experiemnt"
+	@echo "Running Ansible Node CPU Hog Experiment"
 	@echo "---------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-node-cpu-hog_test.go -v -count=1"
@@ -307,7 +307,7 @@ ansible-node-cpu-hog:
 ansible-node-memory-hog:
 
 	@echo "------------------------------------------"
-	@echo "Running Ansible Node Memory Hog Experiemnt"
+	@echo "Running Ansible Node Memory Hog Experiment"
 	@echo "------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-node-memory-hog_test.go -v -count=1"
@@ -316,7 +316,7 @@ ansible-node-memory-hog:
 ansible-pod-cpu-hog:
 
 	@echo "--------------------------------------"
-	@echo "Running Ansible Pod CPU Hog Experiemnt"
+	@echo "Running Ansible Pod CPU Hog Experiment"
 	@echo "--------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-cpu-hog_test.go -v -count=1"
@@ -325,7 +325,7 @@ ansible-pod-cpu-hog:
 ansible-pod-memory-hog:
 
 	@echo "-----------------------------------------"
-	@echo "Running Ansible Pod Memory Hog Experiemnt"
+	@echo "Running Ansible Pod Memory Hog Experiment"
 	@echo "-----------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-memory-hog_test.go -v -count=1"
@@ -334,7 +334,7 @@ ansible-pod-memory-hog:
 ansible-pod-network-corruption:
 
 	@echo "-------------------------------------------------"
-	@echo "Running Ansible Pod Network Corruption Experiemnt"
+	@echo "Running Ansible Pod Network Corruption Experiment"
 	@echo "-------------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-corruption_test.go -v -count=1"
@@ -343,7 +343,7 @@ ansible-pod-network-corruption:
 ansible-pod-network-latency:
 
 	@echo "----------------------------------------------"
-	@echo "Running Ansible Pod Network Latency Experiemnt"
+	@echo "Running Ansible Pod Network Latency Experiment"
 	@echo "----------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-latency_test.go -v -count=1"
@@ -353,7 +353,7 @@ ansible-pod-network-latency:
 ansible-pod-network-loss:
 
 	@echo "-------------------------------------------"
-	@echo "Running Ansible Pod Network Loss Experiemnt"
+	@echo "Running Ansible Pod Network Loss Experiment"
 	@echo "-------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-loss_test.go -v -count=1"
@@ -363,7 +363,7 @@ ansible-pod-network-loss:
 ansible-kubelet-service-kill:
 
 	@echo "-----------------------------------------------"
-	@echo "Running Ansible Kubelet Service Kill Experiemnt"
+	@echo "Running Ansible Kubelet Service Kill Experiment"
 	@echo "-----------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-kubelet-service-kill_test.go -v -count=1"
@@ -373,7 +373,7 @@ ansible-kubelet-service-kill:
 ansible-node-drain:
 
 	@echo "-------------------------------------"
-	@echo "Running Ansible Node Drain Experiemnt"
+	@echo "Running Ansible Node Drain Experiment"
 	@echo "-------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-node-drain_test.go -v -count=1"	

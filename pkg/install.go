@@ -3,7 +3,6 @@ package pkg
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"time"
 
@@ -39,7 +38,7 @@ func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) e
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[RBAC]: RBAC creation failed")
+		return errors.Errorf("Fail to create the rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")
@@ -68,7 +67,7 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[ChaosExperiment]: Chaos Experiment creation failed")
+		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosExperiment]: " + out.String())
 	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.AnsibleExperimentImage + " !!!")
@@ -109,8 +108,11 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 		}
 	}
 
-	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "kubelet-service-kill" {
+	if testsDetails.ApplicationNodeName != "" {
 		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
@@ -122,7 +124,7 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[ChaosEngine]: Choas Engine creation failed")
+		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosEngine]: " + out.String())
 	time.Sleep(2 * time.Second)
@@ -153,7 +155,7 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[RBAC]: RBAC creation failed")
+		errors.Errorf("Fail to create the rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")
@@ -182,7 +184,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[ChaosExperiment]: ChaosExperiment creation failed")
+		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosExperiment]: " + out.String())
 	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
@@ -228,8 +230,11 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	if testsDetails.ExperimentName == "node-drain" || testsDetails.ExperimentName == "node-taint" || testsDetails.ExperimentName == "kubelet-service-kill" {
+	if testsDetails.ApplicationNodeName != "" {
 		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
@@ -240,7 +245,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[ChaosEngine]: Chaos Engine creation failed")
+		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosEngine]: " + out.String())
 	time.Sleep(2 * time.Second)
@@ -257,7 +262,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Fail to fetch litmus operator file, due to %v", err)
 	}
 	klog.Info("Updating ChaosOperator Image ...")
-	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: litmuschaos/chaos-operator:latest"); err != nil {
+	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
 		return errors.Errorf("Unable to update operator image, due to %v", err)
 
 	}
@@ -275,7 +280,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[Install]: Litmus Installation failed")
+		return errors.Errorf("Fail to create the installation file, due to {%v}", err)
 	}
 	klog.Infof("Result: " + out.String())
 
@@ -307,7 +312,7 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatalf("[ADMIN-RBAC]: Admin RBAC creation failed")
+		return errors.Errorf("Fail to create the admin rbac file, due to {%v}", err)
 	}
 	klog.Infof("[RBAC]: " + out.String())
 	klog.Info("[RBAC]: Rbac installed successfully !!!")

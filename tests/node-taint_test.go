@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"log"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -32,9 +31,8 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -44,67 +42,83 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			// Getting application node name
 			By("[Prepare]: Getting application node name")
-			if _, err := pkg.GetApplicationNode(&testsDetails, clients); err != nil {
-				log.Fatalf("Unable to get application node name, due to %v", err)
-			}
+			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
+
+			// Getting other node for nodeSelector in engine
+			testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Error in getting node selector name, due to {%v}", err)
+			Expect(testsDetails.NodeSelectorName).NotTo(BeEmpty(), "Unable to get node name for node selector, due to {%v}", err)
 
 			//Cordon the application node
 			By("Cordoning Application Node")
-			if err := pkg.NodeCordon(&testsDetails); err != nil {
-				log.Fatalf("Failed NodeCordon, due to %v", err)
-			}
+			err = pkg.NodeCordon(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
 
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
 			//Installing Chaos Experiment for node-cordon
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for node-cordon
 			By("[Install]: Installing chaos engine")
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
-			if _, err := pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Fail to get the experiment job pod logs, due to %v", err)
-			}
+			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			if _, err := pkg.ChaosResultVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChasoResult Verdict check failed, due to %v", err)
-			}
-
-			//Uncordon the application node
-			By("Uncordoning Application Node")
-			if err := pkg.NodeUncordon(&testsDetails); err != nil {
-				log.Fatalf("Failed NodeUncordon, due to %v", err)
-			}
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
 	})
+	// BDD for uncordoning the application node
+	Context("Check for application node", func() {
+
+		It("Should uncordon the app node", func() {
+
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
+
+			// Getting application node name
+			By("[Prepare]: Getting application node name")
+			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
+
+			//Uncordon the application node
+			By("Uncordoning Application Node")
+			err = pkg.NodeUncordon(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
+
+		})
+	})
+
 	// BDD for checking chaosengine Verdict
 	Context("Check for chaos engine verdict", func() {
 
@@ -115,9 +129,8 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -126,9 +139,8 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
-			if _, err := pkg.ChaosEngineVerdict(&testsDetails, clients); err != nil {
-				log.Fatalf("ChaosEngine Verdict check failed, due to %v", err)
-			}
+			_, err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 
 		})
 	})
@@ -142,27 +154,25 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				log.Fatalf("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-taint", "go-engine7")
 
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
 			//Getting chaosengine verdict
 			By("Getting Verdict of Chaos Engine")
 			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			if err != nil {
-				log.Fatalf("Getting ChaosEngine Verdict failed, due to %v", err)
-			}
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
 
-			if err := pkg.UpdateResultTable("Drain the node where application pod is scheduled", ChaosEngineVerdict, &testsDetails); err != nil {
-				log.Fatalf("Job Result table updation failed, due to %v", err)
-			}
+			//Updating the pipeline result table
+			By("Updating the pipeline result table")
+			err = pkg.UpdateResultTable("Drain the node where application pod is scheduled", ChaosEngineVerdict, &testsDetails)
+			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+
 		})
 	})
 })

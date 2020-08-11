@@ -27,4 +27,5 @@ type TestDetails struct {
 	AdminRbacPath          string
 	ChaosServiceAccount    string
 	NewExperimentName      string
+	NodeSelectorName       string
 }

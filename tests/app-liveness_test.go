@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"log"
 	"os/exec"
 	"testing"
 
@@ -34,9 +33,8 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -45,15 +43,14 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 			//Deploying liveness for application
 			By("Deploying liveness pod for the applicaiton")
-			if err := exec.Command("kubectl", "apply", "-f", "../nginx/liveness.yml").Run(); err != nil {
-				log.Fatalf("Failed to install liveness probe,due to %v", err)
-			}
+			err = exec.Command("kubectl", "apply", "-f", "../nginx/liveness.yml").Run()
+			Expect(err).To(BeNil(), "Fail to install liveness probe, due to {%v}", err)
 
 			//Get the status of liveness pod
 			By("liveness pod status check")
-			if err := pkg.PodStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("liveness pod status check faied,due to %v", err)
-			}
+			err = pkg.PodStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "iveness pod status check faied, due to {%v}", err)
+
 			klog.Info("Liveness pod established successfully !!!")
 
 		})

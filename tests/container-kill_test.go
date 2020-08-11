@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"log"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -32,8 +31,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err = clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -59,23 +58,40 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+<<<<<<< HEAD
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+=======
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+<<<<<<< HEAD
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+=======
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Waiting for experiment job to get completed
 			//And Print the logs of the job pod (chaos pod)
 			By("[Status]: Wait for job completion and then print logs")
 			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+<<<<<<< HEAD
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+=======
+			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+<<<<<<< HEAD
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+=======
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 		})
 	})
 	// BDD for checking chaosengine Verdict
@@ -88,8 +104,13 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
+<<<<<<< HEAD
 			err = clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+=======
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -99,8 +120,12 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			_, err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+<<<<<<< HEAD
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
+=======
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 		})
 	})
 
@@ -115,24 +140,37 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
+<<<<<<< HEAD
 			log.Fatalf("Unable to Get the kubeconfig due to %v", err)
+=======
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "container-kill", "go-engine1")
 
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
 			//Getting chaosengine verdict
 			By("Getting Verdict of Chaos Engine")
 			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+<<<<<<< HEAD
 
 			log.Fatalf("Getting ChaosEngine Verdict failed, due to %v", err)
 
 			err = pkg.UpdateResultTable("Kill one container in the application pod", ChaosEngineVerdict, &testsDetails)
 			log.Fatalf("Job Result table updation failed, due to %v", err)
 
+=======
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+
+			//Updating the pipeline result table
+			By("Updating the pipeline result table")
+			err = pkg.UpdateResultTable("Kill one container in the application pod", ChaosEngineVerdict, &testsDetails)
+			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+
+>>>>>>> 25ab196d17d750647ea85f1854b6cf1e55ac0cdd
 		})
 	})
 })

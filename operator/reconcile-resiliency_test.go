@@ -35,9 +35,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			if err := clients.GenerateClientSetFromKubeConfig(); err != nil {
-				klog.Infof("Unable to Get the kubeconfig due to %v", err)
-			}
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -47,31 +46,26 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
-			if err := pkg.OperatorStatusCheck(&testsDetails, clients); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			//Creating first application for pod-delete in default namespace
 			By("Creating first deployment for pod-delete chaos")
-			if err := pkg.CreateDeployment(clients, "testapp1", "nginx:1.12", "default"); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.CreateDeployment(clients, "testapp1", "nginx:1.12", "default")
+			Expect(err).To(BeNil(), "create testapp1 deployment, due to {%v}", err)
 
 			//Waiting for deployment to get ready
-			if err := pkg.DeploymentStatusCheck(&testsDetails, "testapp1", "default", clients); err != nil {
-				log.Fatalf("Error Timeout, %v", err)
-			}
+			err = pkg.DeploymentStatusCheck(&testsDetails, "testapp1", "default", clients)
+			Expect(err).To(BeNil(), "Error Timeout, due to {%v}", err)
 
 			//Creating second application for container-kill in default namespace
 			By("Creating second deployment for container-kill chaos")
-			if err := pkg.CreateDeployment(clients, "testapp2", "nginx:1.12", "litmus"); err != nil {
-				log.Fatalf("Operator status check failed, due to %v", err)
-			}
+			err = pkg.CreateDeployment(clients, "testapp2", "nginx:1.12", "litmus")
+			Expect(err).To(BeNil(), "create testapp2 deployment, due to {%v}", err)
 
 			//Waiting for deployment to get ready
-			if err := pkg.DeploymentStatusCheck(&testsDetails, "testapp2", "default", clients); err != nil {
-				log.Fatalf("Error Timeout, %v", err)
-			}
+			err = pkg.DeploymentStatusCheck(&testsDetails, "testapp2", "default", clients)
+			Expect(err).To(BeNil(), "Error Timeout, due to {%v}", err)
 
 			////////////////////////////////////////////////////////
 			//   Prepare Two Chaos Experiments at the same time  //
@@ -81,14 +75,13 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("[Install]: Install rbac for pod-delete chaos")
 			testsDetails.ChaosNamespace = "default"
 			//Fetching all the default ENV
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -99,14 +92,14 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing RBAC for first chaos experiment that is container-kill
 			By("[Install]: Install rbac for pod-delete chaos")
-			if err := pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install rbac, due to %v", err)
-			}
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+
 			//Installing Chaos Experiment for container-kill
 			By("[Install]: Installing chaos experiment")
-			if err := pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaos experiment, due to %v", err)
-			}
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+
 			/////////////////////////////////////////////////////
 			//   Check the runner pod status for both chaos   ///
 			/////////////////////////////////////////////////////
@@ -114,14 +107,13 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Creating Chaos-Engine for container-kill
 			By("[Install]: Install Chaos Engine for container-kill")
 			testsDetails.AppLabel = "run=testapp2"
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+
 			//Checking the runner pod status
 			By("[Status]: Runner pod running status check")
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -134,16 +126,14 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("[Install]: Install Chaos Engine for pod-delete")
 			testsDetails.AppLabel = "run=testapp1"
 			testsDetails.AppNS = "default"
-			if err := pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace); err != nil {
-				log.Fatalf("Fail to install chaosengine, due to %v", err)
-			}
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			// Checking the runner pod status
 			By("[Status]: Runner pod running status check")
 			testsDetails.AppNS = "default"
-			if _, err := pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients); err != nil {
-				log.Fatalf("Runner pod status check failed, due to %v", err)
-			}
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Visualising the components at default namespace
 			By("Getting the components in default namespace")
