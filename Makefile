@@ -410,14 +410,14 @@ engine-state:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/engine-state_test.go -v -count=1"
 
-.PHONY: experiment-name
-experiment-name:
+.PHONY: experiment-404
+experiment-404:
 
 	@echo "----------------------------------------------"
 	@echo "Running Experiment Name Check For Chaos Engine"
 	@echo "----------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/experiment-name_test.go -v -count=1"
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/experiment-404_test.go -v -count=1"
 
 .PHONY: job-cleanup-policy
 job-cleanup-policy:

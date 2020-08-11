@@ -43,23 +43,13 @@ var _ = Describe("BDD of litmus cleanup", func() {
 
 			//Deleting all chaosengines
 			By("Deleting all chaosengine")
-			err = exec.Command("kubectl", "delete", "chaosengine", "-n", testsDetails.ChaosNamespace, "--all").Run()
-			Expect(err).To(BeNil(), "failed to delete chaosengine")
+			err = exec.Command("kubectl", "delete", "chaosengine,chaosexperiment,chaosresult", "--all", "--all-namespaces").Run()
+			Expect(err).To(BeNil(), "failed to delete CRs")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			klog.Info("All chaosengine deleted successfully")
-
-			//Deleting all chaosexperiment
-			By("Deleting all chaosexperiment")
-			err = exec.Command("kubectl", "delete", "chaosexperiment", "-n", testsDetails.ChaosNamespace, "--all").Run()
-			Expect(err).To(BeNil(), "failed to delete chaosexperiment")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			klog.Info("All chaosexperiment deleted successfully")
+			klog.Info("All CRs deleted successfully")
 
 			//Deleting crds
 			By("Delete chaosengine crd")
@@ -83,9 +73,8 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			//Delete test deployments from default namespace
 			By("Delete test deployments")
 			err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()
-			Expect(err).To(BeNil(), "fail to delete test deployment from default namespace")
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("fail to delete the deployments from default namespace, due to ", err)
 			}
 
 			//Delete test namespace

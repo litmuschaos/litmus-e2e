@@ -2,6 +2,7 @@ package engine
 
 import (
 	"testing"
+	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -67,8 +68,12 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			//Waiting for chaos pod creation
 			klog.Info("Waiting for chaos pod creation ...")
-			err = ChaosPodStatusCheck(&testsDetails, clients)
+			err = pkg.ChaosPodStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Fail to create chaos pod, due to {%v}", err)
+
+			//Waiting for chaosresult creation from experiment
+			klog.Info("[Wait]: waiting for chaosresult creation from experiment")
+			time.Sleep(15 * time.Second)
 
 			//Abort the chaos experiment
 			By("[Abort]: Abort the chaos by patching engine state")

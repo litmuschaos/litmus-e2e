@@ -329,7 +329,7 @@ TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
   tags:
     - litmus-build
   script:
-    - make experiment-name
+    - make experiment-404
   artifacts:
     when: always
     paths:

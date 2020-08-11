@@ -1,7 +1,6 @@
 package operator
 
 import (
-	"log"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -72,6 +71,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
+			testsDetails.ChaosServiceAccount = "litmus-admin"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
@@ -134,6 +134,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
+			testsDetails.ChaosServiceAccount = "litmus-admin"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -141,7 +142,6 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			testsDetails.AppNS = "test"
 			By("[Status]: Runner pod running status check")
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			log.Fatalf("Fail to install chaosengine, due to %v", err)
 			Expect(err).To(BeNil(), "Unable to check the runner pod status, due to {%v}", err)
 
 			//Waiting for experiment job to get completed
