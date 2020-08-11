@@ -296,7 +296,7 @@ spec:
       test/feature: "Generic"
       test/tags: "app-ns, app-label, app-type, app-info"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT
     name: "TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT"
@@ -305,7 +305,7 @@ spec:
       test/feature: "Generic"
       test/tags: "service-account"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK
     name: "TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK"
@@ -314,7 +314,7 @@ spec:
       test/feature: "Generic"
       test/tags: "annotation-check"
       git/location: ""
-      test/status: "Not Done"   
+      test/status: "Done"   
 
   - tcid: TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME
     name: "TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME"
@@ -323,7 +323,7 @@ spec:
       test/feature: "Generic"
       test/tags: "experiment-name"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE
     name: "TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE"
@@ -331,7 +331,7 @@ spec:
     labels:
       test/feature: "Generic"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-ENGINE-MONITORING
     name: "TCID-VMWx-GENERIC-ENGINE-MONITORING"
@@ -358,7 +358,7 @@ spec:
       test/feature: "Generic"
       test/tags: "job-cleanup-policy, retain, delete"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
     name: "TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME"
@@ -367,7 +367,7 @@ spec:
       test/feature: "Generic"
       test/tags: "image-name, chaosexperiment"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   - tcid: TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE
     name: "TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE"
@@ -395,4 +395,3 @@ spec:
       test/tags: "rbac, permission"
       git/location: ""
       test/status: "Not Done"
-

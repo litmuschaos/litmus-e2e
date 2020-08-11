@@ -141,3 +141,28 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 
 	return nil
 }
+
+// ChaosPodStatusCheck will check the creation of chaos pod
+func ChaosPodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	Delay := 2
+	Retries := 90
+	chaosEngine, _ := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+
+	for count := 0; count < Retries; count++ {
+		if len(chaosEngine.Status.Experiments) == 0 {
+			time.Sleep(time.Duration(Delay) * time.Second)
+			klog.Info("[Status]: Experiment initializing")
+			if count == (Retries - 1) {
+				return errors.Errorf("Experiment pod fail to initialise, due to %v", err)
+			}
+
+		} else if len(chaosEngine.Status.Experiments[0].ExpPod) == 0 {
+			time.Sleep(time.Duration(Delay) * time.Second)
+			if count == (Retries - 1) {
+				return errors.Errorf("Experiment pod fail to create, due to %v", err)
+			}
+		}
+	}
+	klog.Info("[Status]: Choas pod created successfully")
+	return nil
+}
