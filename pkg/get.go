@@ -41,10 +41,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
-<<<<<<< HEAD
 	klog.Infof("[ChaosResult]: Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
-=======
->>>>>>> 3360831dc4456cf55767f6c4fd7bb16570910733
 	return string(chaosResult.Status.ExperimentStatus.Verdict), nil
 }
 
