@@ -32,7 +32,7 @@ type ChaosEngineSpec struct {
 	AnnotationCheck string `json:"annotationCheck,omitempty"`
 	//ChaosServiceAccount is the SvcAcc specified for chaos runner pods
 	ChaosServiceAccount string `json:"chaosServiceAccount"`
-	//Components contains the image of runnner and monitor pod
+	//Components contains the image, imagePullPolicy, arguments, and commands of runner
 	Components ComponentParams `json:"components"`
 	//Consists of experiments executed by the engine
 	Experiments []ExperimentList `json:"experiments"`
@@ -54,6 +54,24 @@ const (
 	EngineStateActive EngineState = "active"
 	// EngineStateStop stops the reconcile call
 	EngineStateStop EngineState = "stop"
+)
+
+// ExperimentStatus is typecasted to string for supporting the values below.
+type ExperimentStatus string
+
+const (
+	// ExperimentStatusRunning is status of Experiment which is currently running
+	ExperimentStatusRunning ExperimentStatus = "Running"
+	// ExperimentStatusCompleted is status of Experiment which has been completed
+	ExperimentStatusCompleted ExperimentStatus = "Completed"
+	// ExperimentStatusWaiting is status of Experiment which will be executed via a Job
+	ExperimentStatusWaiting ExperimentStatus = "Waiting for Job Creation"
+	// ExperimentStatusNotFound is status of Experiment which is not found inside ChaosNamespace
+	ExperimentStatusNotFound ExperimentStatus = "ChaosExperiment Not Found"
+	// ExperimentStatusSuccessful is status of a Successful experiment execution
+	ExperimentStatusSuccessful ExperimentStatus = "Execution Successful"
+	// ExperimentStatusAborted is status of a Experiment is forcefully aborted
+	ExperimentStatusAborted ExperimentStatus = "Forcefully Aborted"
 )
 
 // EngineStatus provides interface for all supported strings in status.EngineStatus
@@ -84,7 +102,7 @@ const (
 
 // ChaosEngineStatus derives information about status of individual experiments
 type ChaosEngineStatus struct {
-	//
+	//EngineStatus is a typed string to support limited values for ChaosEngine Status
 	EngineStatus EngineStatus `json:"engineStatus"`
 	//Detailed status of individual experiments
 	Experiments []ExperimentStatuses `json:"experiments"`
@@ -101,18 +119,10 @@ type ApplicationParams struct {
 	AppKind string `json:"appkind"`
 }
 
-// ComponentParams defines information about the runner and monitor image
+// ComponentParams defines information about the runner
 type ComponentParams struct {
-	//Contains informations of the monitor pod
-	Monitor MonitorInfo `json:"monitor"`
 	//Contains informations of the the runner pod
 	Runner RunnerInfo `json:"runner"`
-}
-
-// MonitorInfo defines the information of the monitor pod
-type MonitorInfo struct {
-	//Image of the monitor pod
-	Image string `json:"image"`
 }
 
 // RunnerInfo defines the information of the runnerinfo pod
@@ -127,6 +137,8 @@ type RunnerInfo struct {
 	Command []string `json:"command,omitempty"`
 	//ImagePullPolicy for runner pod
 	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
+	// Runner Annotations that needs to be provided in the pod for pod that is getting created
+	RunnerAnnotation map[string]string `json:"runnerannotation,omitempty"`
 }
 
 // ExperimentList defines information about chaos experiments defined in the chaos engine
@@ -148,9 +160,19 @@ type ExperimentAttributes struct {
 
 // ExperimentComponents contains ENV, Configmaps and Secrets
 type ExperimentComponents struct {
-	ENV        []ExperimentENV `json:"env,omitempty"`
-	ConfigMaps []ConfigMap     `json:"configMaps,omitempty"`
-	Secrets    []Secret        `json:"secrets,omitempty"`
+	ENV                   []ExperimentENV    `json:"env,omitempty"`
+	ConfigMaps            []ConfigMap        `json:"configMaps,omitempty"`
+	Secrets               []Secret           `json:"secrets,omitempty"`
+	ExperimentAnnotations map[string]string  `json:"experimentannotation,omitempty"`
+	ExperimentImage       string             `json:"experimentImage,omitempty"`
+	NodeSelector          map[string]string  `json:"nodeSelector,omitempty"`
+	StatusCheckTimeouts   StatusCheckTimeout `json:"statusCheckTimeouts,omitempty"`
+}
+
+// StatusCheckTimeout contains Delay and timeouts for the status checks
+type StatusCheckTimeout struct {
+	Delay   int `json:"delay,omitempty"`
+	Timeout int `json:"timeout,omitempty"`
 }
 
 // ExperimentENV varibles to override the default values in chaosexperiment
@@ -162,10 +184,14 @@ type ExperimentENV struct {
 // ExperimentStatuses defines information about status of individual experiments
 // These fields are immutable, and are derived by kubernetes(operator)
 type ExperimentStatuses struct {
-	//Name of experiment whose status is detailed
+	//Name of the chaos experiment
 	Name string `json:"name"`
+	//Name of chaos-runner pod managing this experiment
+	Runner string `json:"runner"`
+	//Name of experiment pod executing the chaos
+	ExpPod string `json:"experimentPod"`
 	//Current state of chaos experiment
-	Status string `json:"status"`
+	Status ExperimentStatus `json:"status"`
 	//Result of a completed chaos experiment
 	Verdict string `json:"verdict"`
 	//Time of last state change of chaos experiment

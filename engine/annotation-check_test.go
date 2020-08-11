@@ -77,12 +77,12 @@ var _ = Describe("BDD of annotation check test", func() {
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			_, err = pkg.GetChaosResultVerdict(&testsDetails, clients)
-			Expect(err).NotTo(BeNil(), "[TEST FAILED]: ChaosResult created when the application is not annotated")
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: ChaosResult created when the application is not annotated and the annotationCheck is marked as true!")
 
 		})
 	})
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
+	// BDD for checking ChaosEngine experiments status
+	Context("Check for chaos engine experiments status", func() {
 
 		It("Should check for the verdict of engine", func() {
 
@@ -102,12 +102,12 @@ var _ = Describe("BDD of annotation check test", func() {
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngine, _ := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
-			Expect(len(chaosEngine.Status.Experiments)).To(Equal(0), "[TEST FAILED]: ChaosEngine verdict is not nil")
+			Expect(len(chaosEngine.Status.Experiments)).To(Equal(0), "[TEST FAILED]: ChaosEngine experiments status is not nil")
 
 		})
 	})
 	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
+	Context("cleanup for litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 

@@ -2,7 +2,6 @@ package engine
 
 import (
 	"testing"
-	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -66,9 +65,10 @@ var _ = Describe("BDD of engine-state test", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-			//Waiting for Job Pod Creation
-			klog.Info("Waiting for job pod creation ...")
-			time.Sleep(15 * time.Second)
+			//Waiting for chaos pod creation
+			klog.Info("Waiting for chaos pod creation ...")
+			err = ChaosPodStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Fail to create chaos pod, due to {%v}", err)
 
 			//Abort the chaos experiment
 			By("[Abort]: Abort the chaos by patching engine state")
@@ -115,7 +115,7 @@ var _ = Describe("BDD of engine-state test", func() {
 		})
 	})
 	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
+	Context("Cleanup litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")

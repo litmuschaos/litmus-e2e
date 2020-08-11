@@ -44,7 +44,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients environment.ClientSets) error {
 	job, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + testsDetails.ExperimentName})
 	if err != nil || int(len(job.Items)) == 0 {
-		return errors.Errorf("Fail to get the job in running state, due to %v", err)
+		return errors.Errorf("failed to get the chaos jobs, due to %v", err)
 	}
 	klog.Info("[JOB]: The give job is present")
 	return nil

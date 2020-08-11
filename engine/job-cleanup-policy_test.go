@@ -57,7 +57,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Installing Chaos Engine for disk-fill
 			By("[Install]: Installing chaos engine")
-			//Providing wrong job-cleanup-policy
+			//Providing job-cleanup-policy as 'retain'
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
@@ -88,7 +88,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 		})
 	})
 	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
+	Context("Cleanup litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
@@ -166,7 +166,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 		})
 	})
 	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
+	Context("Cleanup litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")

@@ -3,10 +3,10 @@ package pkg
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
+	"github.com/pkg/errors"
 	"k8s.io/klog"
 )
 
@@ -21,7 +21,7 @@ func Cleanup() error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatal("Fail to delete Chaos CRs")
+		return errors.Wrapf(err, "Fail to delete litmus components, due to:%v", err)
 	}
 
 	return nil
@@ -38,7 +38,8 @@ func ChaosAbort(testsDetails *types.TestDetails) error {
 	if err != nil {
 		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		klog.Infof("Error: %v", err)
-		log.Fatal("Fail to abort the Chaos")
+		return errors.Wrapf(err, "Fail to abort the Chaos, due to:%v", err)
+
 	}
 	klog.Info("[Abort]: Chaos Experiment Aborted !!!")
 

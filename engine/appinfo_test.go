@@ -89,7 +89,7 @@ var _ = Describe("BDD of appinfo test", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Fail to get the chaosresult, due to {%v}", err)
-			Expect(chaosResult).To(Equal("Fail"), "Fail to get the chaosresult verdict as Fail, due to {%v}", err)
+			Expect(chaosResult).To(Equal("Fail"), "ChaosResult verdict is not set to Fail, due to {%v}", err)
 
 		})
 	})
@@ -115,12 +115,12 @@ var _ = Describe("BDD of appinfo test", func() {
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Fail to get ChaosEngine Verdict due to, {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not Fail")
+			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not set to Fail,")
 
 		})
 	})
 	// BDD for cleaning all components
-	Context("Check for litmus components", func() {
+	Context("Cleanup litmus components", func() {
 
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
