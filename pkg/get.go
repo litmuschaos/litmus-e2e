@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"time"
+
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
@@ -23,10 +25,12 @@ func GetApplicationNode(testsDetails *types.TestDetails, clients environment.Cli
 //GetChaosEngineVerdict checks the chaosengine verdict
 func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
 
+	time.Sleep(10 * time.Second)
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosengine, due to %v", err)
 	}
+	klog.Infof("[ChaosEngien]: Chaos Engine Verdict is: %v", chaosEngine.Status.Experiments[0].Verdict)
 	return string(chaosEngine.Status.Experiments[0].Verdict), nil
 }
 
@@ -37,6 +41,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
+	klog.Infof("[ChaosResult]: Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
 	return string(chaosResult.Status.ExperimentStatus.Verdict), nil
 }
 
