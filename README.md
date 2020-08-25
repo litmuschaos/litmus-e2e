@@ -31,10 +31,9 @@ This repository contains the Litmus E2E pipelines for testing the chaos and litm
   </tr>
 </table>
 
-## How to view the details of the last few pipeline runs?
-To view the details of the last few pipelines runs:
-- Choose the above directory whose pipeline details you want.
-- Inside it contains the details of the job in each folder and pipeline details in README.md. 
+## Pipeline Execution Details
+
+Visit [LitmusChaos CI](https://litmuschaos.github.io/litmus-e2e) to get the pipeline execution details.
 
 # Generic E2E Pipeline:
 

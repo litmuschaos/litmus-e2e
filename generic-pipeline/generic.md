@@ -26,6 +26,8 @@ filename: generic
 
 # **Pipeline Jobs**
 
+### **Experiment Tests**
+
 - [TCID-VMWx-GENERIC-APP-POD-DELETE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-delete/README.md)
 - [TCID-VMWx-GENERIC-APP-CONTAINER-KILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/container-kill/README.md)
 - [TCID-VMWx-GENERIC-APP-POD-CPU-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-cpu-hog/README.md)
@@ -40,9 +42,23 @@ filename: generic
 - [TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-memory-hog/README.md)
 - [TCID-VMWx-GENERIC-INFRA-NODE-DRAIN](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-drain/README.md)
 - [TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/kubelet-service-kill/README.md)
-- [TCID-VMWx-GENERIC-INFRA-NODE-TAINT](https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint)
-- [TCID-VMWx-GENERIC-CONTROL-OPERATOR-RECONCILE-RESILIENCY]()
-- [TCID-VMWx-GENERIC-CONTROL-ADMIN-MODE]()
+- [TCID-VMWx-GENERIC-INFRA-NODE-TAINT](https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint/README.md)
+
+- [TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/experiment-image/README.md)
+
+### **Operator Tests**
+
+- [TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/reconcile-resiliency/README.md)
+- [TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/admin-mode/README.md)
+
+### **Engine Tests**
+
+- [TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/annotation-check/README.md)
+- [TCID-VMWx-GENERIC-ENGINE-APP-INFO](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/appinfo/README.md)
+- [TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/engine-state/README.md)
+- [TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/experiment-404/README.md)
+- [TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/job-cleanup-policy/README.md)
+- [TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/service-account/README.md)
 
 # **Pipeline Runs**
 
