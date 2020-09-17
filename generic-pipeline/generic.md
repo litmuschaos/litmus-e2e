@@ -65,6 +65,7 @@ filename: generic
 
 | Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |
 |---------|---------------------------|--------------|--------------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12722">12722</a>           |  Thu Sep 17 17:05:50 2020(IST)           | 1.8.0  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12693">12693</a>           |  Tue Sep 15 22:19:21 2020(IST)           | 1.8.0  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12689">12689</a>           |  Tue Sep 15 19:48:14 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12664">12664</a>           |  Mon Sep 14 02:02:44 2020(IST)           | latest  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
