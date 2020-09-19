@@ -4,7 +4,7 @@
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 
 # export all the dependent variables
-EXPORT_VARIABLES = $(shell echo "export CI_JOB=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \
+EXPORT_VARIABLES = $(shell echo "export CI_JOB_ID=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && export GITHUB_TOKEN=${GITHUB_TOKEN} && \
 export CGO_ENABLED=${CGO_ENABLED} && export ANSIBLE_EXPERIMENT_IMAGE=${ANSIBLE_EXPERIMENT_IMAGE} && export GO_EXPERIMENT_IMAGE=${GO_EXPERIMENT_IMAGE} && \
 export OPERATOR_IMAGE=${OPERATOR_IMAGE} && export RUNNER_IMAGE=${RUNNER_IMAGE} && export OPERATOR_NAME=${OPERATOR_NAME} && export CHAOS_NAMESPACE=${CHAOS_NAMESPACE} && \
 export APP_NS=${APP_NS} && export APP_LABEL=${APP_LABEL} && export JOB_CLEANUP_POLICY=${JOB_CLEANUP_POLICY} && export ANNOTATION_CHECK=${ANNOTATION_CHECK} && \
@@ -181,8 +181,34 @@ pod-network-duplication:
 	@echo "Running pod-network-duplication experiment"
 	@echo "------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-duplication_test.go -v -count=1"	  
+	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-duplication_test.go -v -count=1"
 
+.PHONY: pod-autoscaler
+pod-autoscaler:
+
+	@echo "------------------------------------------"
+	@echo "Running pod-autoscaler experiment"
+	@echo "------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-autoscaler_test.go -v -count=1"	
+	
+.PHONY: pod-io-stress
+pod-io-stress:
+
+	@echo "------------------------------------------"
+	@echo "Running pod-io-stress experiment"
+	@echo "------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-io-stress_test.go -v -count=1"	
+
+.PHONY: node-io-stress
+node-io-stress:
+
+	@echo "------------------------------------------"
+	@echo "Running node-io-stress experiment"
+	@echo "------------------------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/node-io-stress_test.go -v -count=1"		
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
