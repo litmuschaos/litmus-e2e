@@ -179,6 +179,32 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
     paths:
       - .kube/ 
 
+TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Generic Experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-io-stress
+  artifacts:
+    when: always
+    paths:
+      - .kube/ 
+      
+TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Generic Experiment
+  tags:
+    - litmus-build
+  script:
+    - make pod-autoscaler
+  artifacts:
+    when: always
+    paths:
+      - .kube/       
+
 TCID-VMWx-GENERIC-APP-DISK-FILL:
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -255,7 +281,20 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
   artifacts:
     when: always
     paths:
-      - .kube/            
+      - .kube/
+      
+TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Infra Experiment
+  tags:
+    - litmus-build
+  script:
+    - make node-io-stress
+  artifacts:
+    when: always
+    paths:
+      - .kube/       
 
 TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   when: always

@@ -86,7 +86,25 @@ spec:
       test/feature: "Generic-App"
       test/tags: "pod, ephemeral, disk"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-fill"
-      test/status: "Done"      
+      test/status: "Done" 
+      
+  - tcid: TCID-VMWx-GENERIC-APP-POD-IO-STRESS
+    name: "TCID-VMWx-GENERIC-APP-POD-IO-STRESS"
+    description: "Inject IO stress on the application container"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, io, stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
+      test/status: "Done" 
+      
+  - tcid: TCID-VMWx-GENERIC-APP-POD-AUTOSCALER
+    name: "TCID-VMWx-GENERIC-APP-POD-AUTOSCALER"
+    description: "Scale the application replicas and test the node autoscaling on cluster"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, io, stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
+      test/status: "Done"        
 
   # ----------------------------------------------------------
   # Kubernetes Infra level chaos experiment BDDs
@@ -136,6 +154,15 @@ spec:
       test/tags: "node, taint"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint"
       test/status: "Done"
+
+  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS
+    name: "TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS"
+    description: "Give IO Stress on the Kubernetes Node"
+    labels:
+      test/feature: "Generic-Infra"
+      test/tags: "node, io,disk,stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-io-stress"
+      test/status: "Done"      
 
   # ----------------------------------------------------------
   # LitmusChaos Ansible Experiments BDDs
