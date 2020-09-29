@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/220588">220588</a>           |  Kills the kubelet service on the application node           | Tue Sep 29 15:11:04 2020(IST)  | img | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/219653">219653</a>           |  Kills the kubelet service on the application node           | Fri Sep 25 13:04:27 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/218373">218373</a>           |  Kills the kubelet service on the application node           | Tue Sep 22 00:21:56 2020(IST)  | 1.8.1 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/217940">217940</a>           |  Kills the kubelet service on the application node           | Mon Sep 21 11:12:19 2020(IST)  | 1.8.1 | Awaited :cold_sweat: |
