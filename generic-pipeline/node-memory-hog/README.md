@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/222999">222999</a>           |  Exhaust Memory resources on the Kubernetes Node           | Mon Oct  5 17:04:52 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/220586">220586</a>           |  Exhaust Memory resources on the Kubernetes Node           | Tue Sep 29 15:04:47 2020(IST)  | img | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/219651">219651</a>           |  Exhaust Memory resources on the Kubernetes Node           | Fri Sep 25 12:58:25 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/218371">218371</a>           |  Exhaust Memory resources on the Kubernetes Node           | Tue Sep 22 00:15:34 2020(IST)  | 1.8.1 | Passed :smiley: |
