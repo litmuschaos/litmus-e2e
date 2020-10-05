@@ -4,7 +4,13 @@
   "description": "Package for Testing",
   "main": "index.js",
   "scripts": {
-    "test": "wait-on http://localhost:3000 && cypress run --headless --browser=chrome"
+    "tests": "cypress run",
+    "BasicSetup_Tests": "cypress run --config testFiles='Basic_Setup/**/*.spec.js'",
+    "Community_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Community/*.spec.js'",
+    "Routes_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Routes/*.spec.js'",
+    "CreateWorkflow_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Create_Workflow/*.spec.js'",
+    "AccountSettings_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Account_Settings/*.spec.js'",
+    "BrowseWorkflow_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/BrowseWorkflow/*.spec.js'"
   },
   "keywords": [
     "Testing",
@@ -13,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^4.11.0",
-    "wait-on": "^5.1.0"
+    "cypress": "^5.2.0"
   }
 }

@@ -1,0 +1,9 @@
+{
+    "projectname":"litmus",
+    "AdminName":"admin",
+    "AdminPassword":"litmus",
+    "AdminEmail":"admin@gmail.com",
+    "NewName":"John",
+    "NewPassword":"John123",
+    "NewEmail":"John@gmail.com" 
+}
