@@ -33,7 +33,6 @@ Cluster Connect:
 
 Portal-Setup:
   when: always
-<<<<<<< HEAD
   stage: portal-setup
   tags: 
     - litmus-portal
@@ -61,10 +60,6 @@ PreTest-Setup:
   stage: pre-test-setup
   image:
     name: cypress/base:10
-=======
-  image: cypress/base:10
-  stage: cypress-test
->>>>>>> c34954a553331ac870975db66ba576d60100799c
   tags:
     - litmus-portal
   script:
