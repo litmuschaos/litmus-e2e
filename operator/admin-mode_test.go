@@ -81,11 +81,15 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-			//Waiting for experiment job to get completed
-			//And Print the logs of the job pod (chaos pod)
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
@@ -144,11 +148,15 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Unable to check the runner pod status, due to {%v}", err)
 
-			//Waiting for experiment job to get completed
-			//And Print the logs of the job pod (chaos pod)
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment job pod logs, due to {%v}", err)
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")

@@ -68,10 +68,14 @@ var _ = Describe("BDD of annotation check test", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Runner pod created when the application is not annotated")
 
-			//Waiting for experiment job to get completed
-			//And Print the logs of the job pod (chaos pod)
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: chaos pod created when application pod is not annotated")
+
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Chaos pod created when the application is not annotated")
 
 			//Checking the chaosresult verdict

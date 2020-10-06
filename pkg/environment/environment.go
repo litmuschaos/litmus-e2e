@@ -23,12 +23,14 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.ChaosDuration, _ = strconv.Atoi(Getenv("TOTAL_CHAOS_DURATION", ""))
 	testDetails.ChaosServiceAccount = Getenv("CHAOS_SERVICE_ACCOUNT", expName+"-sa")
 	testDetails.NewExperimentName = Getenv("NEW_EXPERIMENT_NAME", expName)
+	testDetails.Delay, _ = strconv.Atoi(Getenv("DELAY", "5"))
+	testDetails.Duration, _ = strconv.Atoi(Getenv("RETRIES", "90"))
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")
 	testDetails.GoExperimentImage = Getenv("GO_EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
 	testDetails.OperatorImage = Getenv("OPERATOR_IMAGE", "litmuschaos/chaos-operator:ci")
-	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "litmuschaos/chaos-runner:ci")
+	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "uditgaurav/chaos-runner:v12")
 
 	// All Links for running chaos testing
 	testDetails.RbacPath = Getenv("RBAC_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/"+expName+"/rbac.yaml")

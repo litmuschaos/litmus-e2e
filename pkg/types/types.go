@@ -28,4 +28,6 @@ type TestDetails struct {
 	ChaosServiceAccount    string
 	NewExperimentName      string
 	NodeSelectorName       string
+	Delay                  int
+	Duration               int
 }

@@ -14,121 +14,46 @@ import (
 	"k8s.io/klog"
 )
 
-// JobLogs is used to wait for the job to get completed and then prints the log of the Job Pod.
-func JobLogs(testsDetails *types.TestDetails, jobNamespace string, clients environment.ClientSets) (error, error) {
+// ChaosPodLogs is used to wait for the chaosPod to get completed and then prints the logs of it.
+func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 
-	//Waiting for Job Creation
-	for i := 0; i < 10; i++ {
-		job, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + testsDetails.ExperimentName})
+	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.AppNS).Get(testsDetails.EngineName, metav1.GetOptions{})
+	if err != nil {
+		return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
+	}
+	if len(chaosEngine.Status.Experiments) == 0 {
+		return errors.Errorf("fail to get the chaos pod for the test")
+	}
+	for count := 0; count < 3000; count++ {
+
+		chaosPod, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).Get(chaosEngine.Status.Experiments[0].ExpPod, metav1.GetOptions{})
 		if err != nil {
-			return nil, errors.Errorf("Fail to get the job in running state, due to %v", err)
+			return errors.Errorf("fail to get the chaos pod err: %v", err)
 		}
-		if int(len(job.Items)) == 0 {
-			klog.Info("Waiting for Job creation")
-			time.Sleep(5 * time.Second)
-			if i == 9 {
-				return nil, errors.Errorf("[Chaos Pod]: Chaos pod unable to come in running state, due to %v", err)
+		if chaosPod.Status.Phase != "Succeeded" {
+			if chaosPod.Status.Phase != "Running" {
+				return errors.Errorf("chaos pod is in %v state", chaosPod.Status.Phase)
 			}
+			time.Sleep(10 * time.Second)
+			klog.Infof("[Status]: Currently, the Chaos Pod is in %v State, Please Wait for its completion", chaosPod.Status.Phase)
 		} else {
 			break
 		}
-
-	}
-	if _, err := JobRunningStatusCheck(testsDetails.ExperimentName, jobNamespace, clients); err != nil {
-		return nil, errors.Errorf("Job status check failed, due to %v", err)
 	}
 
-	// Getting the list of job pods for the experiment
-	job, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + testsDetails.ExperimentName})
-	if err != nil {
-		return nil, errors.Errorf("Fail to get the list of job pods, due to %v", err)
-	}
-	// Getting the pod from the list of pods
-	for _, podList := range job.Items {
-		//Waiting of some infinite time (3000s) for the compition of job
-		//If job gets stuck, then Gitlab job will fail after deafult time(10m)
-		for i := 0; i < 3000; i++ {
-			if string(podList.Status.Phase) != "Succeeded" {
-				time.Sleep(10 * time.Second)
-				//Getting the jobList again after waiting 10s
-				jobPod, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + testsDetails.ExperimentName})
-				if err != nil || len(jobPod.Items) == 0 {
-					return nil, errors.Errorf("Fail to get the list of job pods after wait, due to %v", err)
-				}
-
-				flag := true
-				//Getting the pod from jobList after waiting 10s
-				for _, jobList := range jobPod.Items {
-					if string(jobList.Status.Phase) != "Succeeded" {
-						klog.Infof("Currently, the experiment job pod is in %v State, Please Wait for its completion\n", jobList.Status.Phase)
-					} else {
-						flag = false
-						break
-					}
-				}
-				if flag == false {
-					break
-				}
-
-			} else {
-				break
-			}
-		}
-
-	}
 	//Getting the jobList after the job gets completed
-	for _, pod := range job.Items {
-		jobPodName := (pod.Name)
-		klog.Infof("JobPodName : %v \n\n\n", jobPodName)
-		// After the Job gets completed further commands will print the logs.
-		req := clients.KubeClient.CoreV1().Pods(jobNamespace).GetLogs(jobPodName, &v1.PodLogOptions{})
-		readCloser, err := req.Stream()
-		if err != nil {
-			fmt.Println("Error2: ", err)
-		} else {
-			buf := new(bytes.Buffer)
-			_, err = io.Copy(buf, readCloser)
-			fmt.Println("Experiment logs : \n\n", buf.String())
-		}
-	}
-	return nil, nil
-}
-
-//JobRunningStatusCheck Checks the Job Running status
-func JobRunningStatusCheck(ExperimentName, jobNamespace string, clients environment.ClientSets) (error, error) {
-	job, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + ExperimentName})
+	jobPodName := (chaosEngine.Status.Experiments[0].ExpPod)
+	klog.Infof("JobPodName : %v \n\n\n", jobPodName)
+	// After the Job gets completed further commands will print the logs.
+	req := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).GetLogs(jobPodName, &v1.PodLogOptions{})
+	readCloser, err := req.Stream()
 	if err != nil {
-		return nil, errors.Errorf("Fail to get the list of job pods, due to %v", err)
+		fmt.Println("Error2: ", err)
+	} else {
+		buf := new(bytes.Buffer)
+		_, err = io.Copy(buf, readCloser)
+		fmt.Println("Experiment logs : \n\n", buf.String())
 	}
-	for _, podList := range job.Items {
-		for i := 0; i < 12; i++ {
-			if string(podList.Status.Phase) != "Running" {
-				time.Sleep(5 * time.Second)
-				jobPod, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + ExperimentName})
-				if err != nil || len(jobPod.Items) == 0 {
-					return nil, errors.Errorf("Fail to get the list of job pods after wait, due to %v", err)
-				}
-				flag := true
-				//Getting the pod from jobList after waiting 10s
-				for _, jobList := range jobPod.Items {
-					if string(jobList.Status.Phase) != "Running" {
-						klog.Infof("Job pod Status: %v \n", jobList.Status.Phase)
-					} else {
-						flag = false
-						break
-					}
-				}
-				if flag == false {
-					break
-				}
 
-			} else {
-				break
-			}
-			if i == 11 {
-				return nil, errors.Errorf("Job pod fail to get in Running state")
-			}
-		}
-	}
-	return nil, nil
+	return nil
 }
