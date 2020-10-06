@@ -1,16 +1,19 @@
 #!/bin/bash
+set -e 
 
 # Booting up the Litmus-Portal Setup
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+
+# Using LoadBalancer for getting External_IP
 # kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus
+
+# Waiting for pods to be ready
 kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=180s
 
 ## For NodePort (Should be removed if not working)
 export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
 # export EXTERNAL_IP=$(kubectl get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
 export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service -n litmus)
-# echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
-
 
 # Trying to access portal using Node_IP and Node_Port
 external_ip="";

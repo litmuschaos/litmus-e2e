@@ -57,15 +57,6 @@ Cypress.Commands.add("login", (Username, Password) => {
   cy.get("[data-cy=loginButton]").click();
 });
 
-//Custom command to Reset The database
-Cypress.Commands.add("resetDatabase", () => {
-  // cy.exec('chmod 755 ./Scripts/resetDB.sh');
-  // cy.exec('sudo ./Scripts/resetDB.sh');
-  cy.exec("docker exec -i mongodb bash", { failOnNonZeroExit: false });
-  cy.exec("mongo -host localhost -port 27017", { failOnNonZeroExit: false });
-  cy.exec("use litmus", { failOnNonZeroExit: false });
-});
-
 //Custom command for Logut.
 Cypress.Commands.add("logout", () => {
   cy.get("[data-cy=header-dropdown]").click();
