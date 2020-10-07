@@ -74,6 +74,7 @@ var _ = Describe("BDD of experiment image test", func() {
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
+			//The chaos pod logs should not get printed
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: chaos pod runs with invalid experiment image, due to {%v}", err)

@@ -173,6 +173,6 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 			break
 		}
 	}
-	klog.Info("Choas pod created successfully")
+	klog.Info("Chaos pod created successfully")
 	return nil
 }

@@ -72,6 +72,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
+			//The chaos pod logs should not get printed
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)

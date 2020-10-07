@@ -81,6 +81,7 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
+			//The chaos pod logs should not get printed
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Unable to remove chaos pod after abort")
