@@ -67,10 +67,8 @@ var _ = Describe("BDD of experiment name test", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-			//Waiting for experiment job to get completed
-			//And Print the logs of the job pod (chaos pod)
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Chaos pod created when the experiment name is invalid")
 
 			//Checking the chaosresult verdict

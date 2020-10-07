@@ -68,11 +68,16 @@ var _ = Describe("BDD of experiment image test", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-			//Waiting for experiment job to get completed
-			//And Print the logs of the job pod (chaos pod)
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Experiment comes in running state for invalid image")
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).To(BeNil(), "unable to create chaos pod, due to {%v}", err)
+
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			//The chaos pod logs should not get printed
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: chaos pod runs with invalid experiment image, due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")

@@ -66,10 +66,9 @@ var _ = Describe("BDD of engine-state test", func() {
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-			//Waiting for chaos pod creation
-			klog.Info("Waiting for chaos pod creation ...")
-			err = pkg.ChaosPodStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to create chaos pod, due to {%v}", err)
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
 
 			//Waiting for chaosresult creation from experiment
 			klog.Info("[Wait]: waiting for chaosresult creation from experiment")
@@ -80,10 +79,12 @@ var _ = Describe("BDD of engine-state test", func() {
 			err = pkg.ChaosAbort(&testsDetails)
 			Expect(err).To(BeNil(), "[Abort]: Chaos abort failed, due to {%v}", err)
 
-			//Checking the Chaos Pod Status
-			By("[Status]: Wait for job completion and then print logs")
-			_, err = pkg.JobLogs(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Unable to remove job pod after abort")
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			//The chaos pod logs should not get printed
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
+			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Unable to remove chaos pod after abort")
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")

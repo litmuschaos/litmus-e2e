@@ -142,27 +142,37 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 	return nil
 }
 
-// ChaosPodStatusCheck will check the creation of chaos pod
-func ChaosPodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
-	Delay := 2
-	Retries := 90
-	chaosEngine, _ := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+// ChaosPodStatus will check the creation of chaos pod
+func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 
-	for count := 0; count < Retries; count++ {
+	for count := 0; count < (testsDetails.Duration / testsDetails.Delay); count++ {
+
+		chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+		if err != nil {
+			return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
+		}
 		if len(chaosEngine.Status.Experiments) == 0 {
-			time.Sleep(time.Duration(Delay) * time.Second)
+			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			klog.Info("[Status]: Experiment initializing")
-			if count == (Retries - 1) {
+			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
 				return errors.Errorf("Experiment pod fail to initialise, due to %v", err)
 			}
 
 		} else if len(chaosEngine.Status.Experiments[0].ExpPod) == 0 {
-			time.Sleep(time.Duration(Delay) * time.Second)
-			if count == (Retries - 1) {
-				return errors.Errorf("Experiment pod fail to create, due to %v", err)
+			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
+			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
+				return errors.Errorf("Experiment pod fails to create, due to %v", err)
 			}
+		} else if chaosEngine.Status.Experiments[0].Status != "Running" {
+			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
+			klog.Infof("[Status]: Currently, the Chaos Pod is in %v state, Please Wait...", chaosEngine.Status.Experiments[0].Status)
+			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
+				return errors.Errorf("Experiment pod fails to get in running state, due to %v", err)
+			}
+		} else {
+			break
 		}
 	}
-	klog.Info("[Status]: Choas pod created successfully")
+	klog.Info("Chaos pod created successfully")
 	return nil
 }
