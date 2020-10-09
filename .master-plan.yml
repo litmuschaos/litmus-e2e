@@ -7,8 +7,8 @@ spec:
   # ----------------------------------------------------------
   # Kubernetes generic application level chaos experiment BDDs
   # ----------------------------------------------------------
-  - tcid: TCID-VMWx-GENERIC-APP-POD-DELETE
-    name: "TCID-VMWx-GENERIC-APP-POD-DELETE"
+  - tcid: TCID-EKS-GENERIC-APP-POD-DELETE
+    name: "TCID-EKS-GENERIC-APP-POD-DELETE"
     description: "Fail the application pod"
     labels:
       test/feature: "Generic-App"
@@ -16,8 +16,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-delete"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-CONTAINER-KILL
-    name: "TCID-VMWx-GENERIC-APP-CONTAINER-KILL"
+  - tcid: TCID-EKS-GENERIC-APP-CONTAINER-KILL
+    name: "TCID-EKS-GENERIC-APP-CONTAINER-KILL"
     description: "Kill one container in the application pod"
     labels:
       test/feature: "Generic-App"
@@ -25,8 +25,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/container-kill"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-CPU-HOG
-    name: "TCID-VMWx-GENERIC-APP-POD-CPU-HOG"
+  - tcid: TCID-EKS-GENERIC-APP-POD-CPU-HOG
+    name: "TCID-EKS-GENERIC-APP-POD-CPU-HOG"
     description: "Consume CPU resources on the application container"
     labels:
       test/feature: "Generic-App"
@@ -34,8 +34,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-cpu-hog"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG
-    name: "TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG"
+  - tcid: TCID-EKS-GENERIC-APP-POD-MEMORY-HOG
+    name: "TCID-EKS-GENERIC-APP-POD-MEMORY-HOG"
     description: "Consume memory resources on the application container"
     labels:
       test/feature: "Generic-App"
@@ -43,8 +43,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-memory-hog"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION
-    name: "TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION"
+  - tcid: TCID-EKS-GENERIC-APP-POD-NETWORK-CORRUPTION
+    name: "TCID-EKS-GENERIC-APP-POD-NETWORK-CORRUPTION"
     description: "Inject Network Packet Corruption Into Application Pod"
     labels:
       test/feature: "Generic-App"
@@ -52,8 +52,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-corruption"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY
-    name: "TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY"
+  - tcid: TCID-EKS-GENERIC-APP-POD-NETWORK-LATENCY
+    name: "TCID-EKS-GENERIC-APP-POD-NETWORK-LATENCY"
     description: "Inject Network Latency Into Application Pod"
     labels:
       test/feature: "Generic-App"
@@ -61,8 +61,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-latency"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS
-    name: "TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS"
+  - tcid: TCID-EKS-GENERIC-APP-POD-NETWORK-LOSS
+    name: "TCID-EKS-GENERIC-APP-POD-NETWORK-LOSS"
     description: "Inject Packet Loss Into Application Pod"
     labels:
       test/feature: "Generic-App"
@@ -70,8 +70,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-loss"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION
-    name: "TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION"
+  - tcid: TCID-EKS-GENERIC-APP-POD-NETWORK-DUPLICATION
+    name: "TCID-EKS-GENERIC-APP-POD-NETWORK-DUPLICATION"
     description: "Inject Network Duplication Into Application Pod"
     labels:
       test/feature: "Generic-App"
@@ -79,8 +79,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-duplication"
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-APP-DISK-FILL
-    name: "TCID-VMWx-GENERIC-APP-DISK-FILL"
+  - tcid: TCID-EKS-GENERIC-APP-DISK-FILL
+    name: "TCID-EKS-GENERIC-APP-DISK-FILL"
     description: "Fill up Ephemeral Storage of a Pod"
     labels:
       test/feature: "Generic-App"
@@ -88,8 +88,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-fill"
       test/status: "Done" 
       
-  - tcid: TCID-VMWx-GENERIC-APP-POD-IO-STRESS
-    name: "TCID-VMWx-GENERIC-APP-POD-IO-STRESS"
+  - tcid: TCID-EKS-GENERIC-APP-POD-IO-STRESS
+    name: "TCID-EKS-GENERIC-APP-POD-IO-STRESS"
     description: "Inject IO stress on the application container"
     labels:
       test/feature: "Generic-App"
@@ -97,8 +97,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
       test/status: "Done" 
       
-  - tcid: TCID-VMWx-GENERIC-APP-POD-AUTOSCALER
-    name: "TCID-VMWx-GENERIC-APP-POD-AUTOSCALER"
+  - tcid: TCID-EKS-GENERIC-APP-POD-AUTOSCALER
+    name: "TCID-EKS-GENERIC-APP-POD-AUTOSCALER"
     description: "Scale the application replicas and test the node autoscaling on cluster"
     labels:
       test/feature: "Generic-App"
@@ -110,8 +110,8 @@ spec:
   # Kubernetes Infra level chaos experiment BDDs
   # ----------------------------------------------------------
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG
-    name: "TCID-VMWx-GENERIC-APP-NODE-CPU-HOG"
+  - tcid: TCID-EKS-GENERIC-INFRA-NODE-CPU-HOG
+    name: "TCID-EKS-GENERIC-APP-NODE-CPU-HOG"
     description: "Exhaust CPU resources on the Kubernetes Node"
     labels:
       test/feature: "Generic-Infra"
@@ -119,8 +119,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-fill"
       test/status: "Done" 
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG
-    name: "TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG"
+  - tcid: TCID-EKS-GENERIC-INFRA-NODE-MEMORY-HOG
+    name: "TCID-EKS-GENERIC-INFRA-NODE-MEMORY-HOG"
     description: "Exhaust Memory resources on the Kubernetes Node"
     labels:
       test/feature: "Generic-Infra"
@@ -128,8 +128,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-memory-hog"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-DRAIN
-    name: "TCID-VMWx-GENERIC-INFRA-NODE-DRAIN"
+  - tcid: TCID-EKS-GENERIC-INFRA-NODE-DRAIN
+    name: "TCID-EKS-GENERIC-INFRA-NODE-DRAIN"
     description: "Drain the node where application pod is scheduled"
     labels:
       test/feature: "Generic-Infra"
@@ -137,8 +137,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-drain"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL
-    name: "TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL"
+  - tcid: TCID-EKS-GENERIC-INFRA-KUBELET-SERVICE-KILL
+    name: "TCID-EKS-GENERIC-INFRA-KUBELET-SERVICE-KILL"
     description: "Kills the kubelet service on the application node to check the resiliency"
     labels:
       test/feature: "Generic-Infra"
@@ -146,8 +146,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/kubelet-service-kill"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-TAINT
-    name: "TCID-VMWx-GENERIC-INFRA-NODE-TAINT"
+  - tcid: TCID-EKS-GENERIC-INFRA-NODE-TAINT
+    name: "TCID-EKS-GENERIC-INFRA-NODE-TAINT"
     description: "Taint the application node"
     labels:
       test/feature: "Generic-Infra"
@@ -155,8 +155,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS
-    name: "TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS"
+  - tcid: TCID-EKS-GENERIC-INFRA-NODE-IO-STRESS
+    name: "TCID-EKS-GENERIC-INFRA-NODE-IO-STRESS"
     description: "Give IO Stress on the Kubernetes Node"
     labels:
       test/feature: "Generic-Infra"
@@ -168,8 +168,8 @@ spec:
   # LitmusChaos Ansible Experiments BDDs
   # ----------------------------------------------------------      
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-DELETE
-    name: "TCID-VMWx-ANSIBLE-APP-POD-DELETE:"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-DELETE
+    name: "TCID-EKS-ANSIBLE-APP-POD-DELETE:"
     description: "Delete the application pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -177,8 +177,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL
-    name: "TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL"
+  - tcid: TCID-EKS-ANSIBLE-APP-CONTAINER-KILL
+    name: "TCID-EKS-ANSIBLE-APP-CONTAINER-KILL"
     description: "Kill one container in the application pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -186,8 +186,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG
-    name: "TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-CPU-HOG
+    name: "TCID-EKS-ANSIBLE-APP-POD-CPU-HOG"
     description: "Consume CPU resources on the application container"
     labels:
       test/feature: "Ansible-Experiment"
@@ -195,8 +195,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG
-    name: "TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-MEMORY-HOG
+    name: "TCID-EKS-ANSIBLE-APP-POD-MEMORY-HOG"
     description: "Consume memory resources on the application container"
     labels:
       test/feature: "Ansible-Experiment"
@@ -204,8 +204,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION
-    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-NETWORK-CORRUPTION
+    name: "TCID-EKS-ANSIBLE-APP-POD-NETWORK-CORRUPTION"
     description: "Inject Network Packet Corruption Into Application Pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -213,8 +213,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY
-    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-NETWORK-LATENCY
+    name: "TCID-EKS-ANSIBLE-APP-POD-NETWORK-LATENCY"
     description: "Inject Network Latency Into Application Pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -222,8 +222,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS
-    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-NETWORK-LOSS
+    name: "TCID-EKS-ANSIBLE-APP-POD-NETWORK-LOSS"
     description: "Inject Packet Loss Into Application Pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -231,8 +231,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-POD-NETWORK-DUPLICATION
-    name: "TCID-VMWx-ANSIBLE-APP-POD-NETWORK-DUPLICATION"
+  - tcid: TCID-EKS-ANSIBLE-APP-POD-NETWORK-DUPLICATION
+    name: "TCID-EKS-ANSIBLE-APP-POD-NETWORK-DUPLICATION"
     description: "Inject Network Duplication Into Application Pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -240,8 +240,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-APP-DISK-FILL
-    name: "TCID-VMWx-ANSIBLE-APP-DISK-FILL"
+  - tcid: TCID-EKS-ANSIBLE-APP-DISK-FILL
+    name: "TCID-EKS-ANSIBLE-APP-DISK-FILL"
     description: "Fill up Ephemeral Storage of a Pod"
     labels:
       test/feature: "Ansible-Experiment"
@@ -249,8 +249,8 @@ spec:
       git/location: ""
       test/status: "Done"      
 
-  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG
-    name: "TCID-VMWx-GENERIC-APP-NODE-CPU-HOG"
+  - tcid: TCID-EKS-ANSIBLE-INFRA-NODE-CPU-HOG
+    name: "TCID-EKS-GENERIC-APP-NODE-CPU-HOG"
     description: "Exhaust CPU resources on the Kubernetes Node"
     labels:
       test/feature: "Ansible-Experiment"
@@ -258,8 +258,8 @@ spec:
       git/location: ""
       test/status: "Done" 
 
-  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG
-    name: "TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG"
+  - tcid: TCID-EKS-ANSIBLE-INFRA-NODE-MEMORY-HOG
+    name: "TCID-EKS-ANSIBLE-INFRA-NODE-MEMORY-HOG"
     description: "Exhaust Memory resources on the Kubernetes Node"
     labels:
       test/feature: "Ansible-Experiment"
@@ -267,8 +267,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN
-    name: "TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN"
+  - tcid: TCID-EKS-ANSIBLE-INFRA-NODE-DRAIN
+    name: "TCID-EKS-ANSIBLE-INFRA-NODE-DRAIN"
     description: "Drain the node where application pod is scheduled"
     labels:
       test/feature: "Ansible-Experiment"
@@ -276,8 +276,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL
-    name: "TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL"
+  - tcid: TCID-EKS-ANSIBLE-INFRA-KUBELET-SERVICE-KILL
+    name: "TCID-EKS-ANSIBLE-INFRA-KUBELET-SERVICE-KILL"
     description: "Kills the kubelet service on the application node to check the resiliency"
     labels:
       test/feature: "Ansible-Experiment"
@@ -285,8 +285,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-ANSIBLE-INFRA-DISK-LOSS
-    name: "TCID-VMWx-ANSIBLE-INFRA-DISK-LOSS"
+  - tcid: TCID-EKS-ANSIBLE-INFRA-DISK-LOSS
+    name: "TCID-EKS-ANSIBLE-INFRA-DISK-LOSS"
     description: "External disk loss from the node"
     labels:
       test/feature: "Ansible-Experiment"
@@ -298,8 +298,8 @@ spec:
   # LitmusChaos COMPONENT BDDs
   # ----------------------------------------------------------
 
-  - tcid: TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY
-    name: "TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY"
+  - tcid: TCID-EKS-GENERIC-OPERATOR-RECONCILE-RESILIENCY
+    name: "TCID-EKS-GENERIC-OPERATOR-RECONCILE-RESILIENCY"
     description: "Tests the Reconcile Resiliency of Litmus Operator"
     labels:
       test/feature: "Generic"
@@ -307,8 +307,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE
-    name: "TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE"
+  - tcid: TCID-EKS-GENERIC-OPERATOR-ADMIN-MODE
+    name: "TCID-EKS-GENERIC-OPERATOR-ADMIN-MODE"
     description: "Test the admin mode functionality"
     labels:
       test/feature: "Generic"
@@ -316,8 +316,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-APP-INFO
-    name: "TCID-VMWx-GENERIC-ENGINE-APP-INFO"
+  - tcid: TCID-EKS-GENERIC-ENGINE-APP-INFO
+    name: "TCID-EKS-GENERIC-ENGINE-APP-INFO"
     description: "Test the app info functionality of chaosengine"
     labels:
       test/feature: "Generic"
@@ -325,8 +325,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT
-    name: "TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT"
+  - tcid: TCID-EKS-GENERIC-ENGINE-SERVICE-ACCOUNT
+    name: "TCID-EKS-GENERIC-ENGINE-SERVICE-ACCOUNT"
     description: "Test the service account field of chaosengine"
     labels:
       test/feature: "Generic"
@@ -334,8 +334,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK
-    name: "TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK"
+  - tcid: TCID-EKS-GENERIC-ENGINE-ANNOTATION-CHECK
+    name: "TCID-EKS-GENERIC-ENGINE-ANNOTATION-CHECK"
     description: "Test the annotation check functionality of chaosengine"
     labels:
       test/feature: "Generic"
@@ -343,8 +343,8 @@ spec:
       git/location: ""
       test/status: "Done"   
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME
-    name: "TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME"
+  - tcid: TCID-EKS-GENERIC-ENGINE-EXPERIMENT-NAME
+    name: "TCID-EKS-GENERIC-ENGINE-EXPERIMENT-NAME"
     description: "Test the experiment name field of chaosengine"
     labels:
       test/feature: "Generic"
@@ -352,16 +352,16 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE
-    name: "TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE"
+  - tcid: TCID-EKS-GENERIC-ENGINE-ENGINE-STATE
+    name: "TCID-EKS-GENERIC-ENGINE-ENGINE-STATE"
     description: "Test the abort functionality of chaosengine"
     labels:
       test/feature: "Generic"
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-MONITORING
-    name: "TCID-VMWx-GENERIC-ENGINE-MONITORING"
+  - tcid: TCID-EKS-GENERIC-ENGINE-MONITORING
+    name: "TCID-EKS-GENERIC-ENGINE-MONITORING"
     description: "Test the monitoring functionality of chaosengine"
     labels:
       test/feature: "Generic"
@@ -369,8 +369,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-ENV-VARIABLE
-    name: "TCID-VMWx-GENERIC-ENGINE-ENV-VARIABLEY"
+  - tcid: TCID-EKS-GENERIC-ENGINE-ENV-VARIABLE
+    name: "TCID-EKS-GENERIC-ENGINE-ENV-VARIABLEY"
     description: "Test the env variable field of chaosengine"
     labels:
       test/feature: "Generic"
@@ -378,8 +378,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY
-    name: "TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY"
+  - tcid: TCID-EKS-GENERIC-ENGINE-JOB-CLEANUP-POLICY
+    name: "TCID-EKS-GENERIC-ENGINE-JOB-CLEANUP-POLICY"
     description: "Test the job cleanup policy functionality of chaosengine"
     labels:
       test/feature: "Generic"
@@ -387,8 +387,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
-    name: "TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME"
+  - tcid: TCID-EKS-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
+    name: "TCID-EKS-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME"
     description: "Test the experiment image name field of chaosexperiment"
     labels:
       test/feature: "Generic"
@@ -396,8 +396,8 @@ spec:
       git/location: ""
       test/status: "Done"
 
-  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE
-    name: "TCID-VMWx-GENERIC-EXPERIMENT-ENV-VARIABLE"
+  - tcid: TCID-EKS-GENERIC-EXPERIMENT-ENV-VARIABLE
+    name: "TCID-EKS-GENERIC-EXPERIMENT-ENV-VARIABLE"
     description: "Test the experiment env variable field of chaosexperiment"
     labels:
       test/feature: "Generic"
@@ -405,8 +405,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-ENTRY-POINT
-    name: "TCID-VMWx-GENERIC-EXPERIMENT-ENTERY-POINT"
+  - tcid: TCID-EKS-GENERIC-EXPERIMENT-ENTRY-POINT
+    name: "TCID-EKS-GENERIC-EXPERIMENT-ENTERY-POINT"
     description: "Test the experiment entry point field of chaosexperiment"
     labels:
       test/feature: "Generic"
@@ -414,8 +414,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION
-    name: "TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION"
+  - tcid: TCID-EKS-GENERIC-RBAC-LESS-PERMISSION
+    name: "TCID-EKS-GENERIC-RBAC-LESS-PERMISSION"
     description: "Test the experiment with less permission"
     labels:
       test/feature: "Generic"

@@ -11,22 +11,21 @@ stages:
   - App Cleanup
   - Cleanup
 
-Cluster Connect:
-  image: litmuschaos/litmus-e2e:latest
+EKS Setup:
   stage: setup
   tags:
     - litmus-build
-  script: 
-    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
-    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
+  script:
+    - chmod 755 build/gitlab/eks/1-cluster-setup/setup
+    - ./build/eks/gitlab/1-cluster-setup/setup
   artifacts:
     when: always
     paths:
       - .kube/
+      
 
 Litmus Infra Setup:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: install
   tags:
     - litmus-build
@@ -51,7 +50,6 @@ Deploy App:
 
 Liveness:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -64,7 +62,6 @@ Liveness:
 
 Auxiliary App:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -75,9 +72,8 @@ Auxiliary App:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-DELETE:
+TCID-EKS-GENERIC-APP-POD-DELETE:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -88,9 +84,8 @@ TCID-VMWx-GENERIC-APP-POD-DELETE:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
+TCID-EKS-GENERIC-APP-CONTAINER-KILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -101,9 +96,8 @@ TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
+TCID-EKS-GENERIC-APP-POD-CPU-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -114,9 +108,8 @@ TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
+TCID-EKS-GENERIC-APP-POD-MEMORY-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -127,9 +120,8 @@ TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
+TCID-EKS-GENERIC-APP-POD-NETWORK-CORRUPTION:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -140,9 +132,8 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
+TCID-EKS-GENERIC-APP-POD-NETWORK-LATENCY:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -153,9 +144,8 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
+TCID-EKS-GENERIC-APP-POD-NETWORK-LOSS:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -166,9 +156,8 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
+TCID-EKS-GENERIC-APP-POD-NETWORK-DUPLICATION:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -179,9 +168,8 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
     paths:
       - .kube/ 
 
-TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
+TCID-EKS-GENERIC-APP-POD-IO-STRESS:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -192,9 +180,8 @@ TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
     paths:
       - .kube/ 
       
-TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
+TCID-EKS-GENERIC-APP-POD-AUTOSCALER:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Generic Experiment
   tags:
     - litmus-build
@@ -205,9 +192,8 @@ TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
     paths:
       - .kube/       
 
-TCID-VMWx-GENERIC-APP-DISK-FILL:
+TCID-EKS-GENERIC-APP-DISK-FILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -218,9 +204,8 @@ TCID-VMWx-GENERIC-APP-DISK-FILL:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
+TCID-EKS-GENERIC-INFRA-NODE-CPU-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags: 
     - litmus-build
@@ -231,9 +216,8 @@ TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
     paths:
       - .kube/      
 
-TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
+TCID-EKS-GENERIC-INFRA-NODE-MEMORY-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -244,9 +228,8 @@ TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
+TCID-EKS-GENERIC-INFRA-NODE-DRAIN:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -257,9 +240,8 @@ TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
+TCID-EKS-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -270,9 +252,8 @@ TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
     paths:
       - .kube/ 
 
-TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
+TCID-EKS-GENERIC-INFRA-NODE-TAINT:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -283,9 +264,8 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
     paths:
       - .kube/
       
-TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
+TCID-EKS-GENERIC-INFRA-NODE-IO-STRESS:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Infra Experiment
   tags:
     - litmus-build
@@ -296,9 +276,8 @@ TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
     paths:
       - .kube/       
 
-TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
+TCID-EKS-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -309,9 +288,8 @@ TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
     paths:
       - .kube/      
 
-TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
+TCID-EKS-GENERIC-OPERATOR-ADMIN-MODE:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -322,9 +300,8 @@ TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
     paths:
       - .kube/
       
-TCID-VMWx-GENERIC-ENGINE-APP-INFO:
+TCID-EKS-GENERIC-ENGINE-APP-INFO:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -335,9 +312,8 @@ TCID-VMWx-GENERIC-ENGINE-APP-INFO:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
+TCID-EKS-GENERIC-ENGINE-ANNOTATION-CHECK:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -348,9 +324,8 @@ TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
+TCID-EKS-GENERIC-ENGINE-ENGINE-STATE:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -361,9 +336,8 @@ TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
+TCID-EKS-GENERIC-ENGINE-EXPERIMENT-NAME:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -374,9 +348,8 @@ TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
     paths:
       - .kube/ 
 
-TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
+TCID-EKS-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -387,9 +360,8 @@ TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
     paths:
       - .kube/ 
 
-TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
+TCID-EKS-GENERIC-ENGINE-SERVICE-ACCOUNT:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -400,9 +372,8 @@ TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
     paths:
       - .kube/
       
-TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
+TCID-EKS-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Component Checks
   tags:
     - litmus-build
@@ -416,9 +387,8 @@ TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
 ## Ansible Experiments will trigger 
 ## only if ANSIBLE_JOB is defined
 
-TCID-VMWx-ANSIBLE-APP-POD-DELETE:
+TCID-EKS-ANSIBLE-APP-POD-DELETE:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -432,9 +402,8 @@ TCID-VMWx-ANSIBLE-APP-POD-DELETE:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
+TCID-EKS-ANSIBLE-APP-CONTAINER-KILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -448,9 +417,8 @@ TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-DISK-FILL:
+TCID-EKS-ANSIBLE-APP-DISK-FILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -464,9 +432,8 @@ TCID-VMWx-ANSIBLE-APP-DISK-FILL:
     variables:
     - $ANSIBLE_JOB == "true"       
 
-TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
+TCID-EKS-ANSIBLE-INFRA-NODE-CPU-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -480,9 +447,8 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
+TCID-EKS-ANSIBLE-INFRA-NODE-MEMORY-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -496,9 +462,8 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
     variables:
     - $ANSIBLE_JOB == "true" 
 
-TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
+TCID-EKS-ANSIBLE-APP-POD-CPU-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -512,9 +477,8 @@ TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
+TCID-EKS-ANSIBLE-APP-POD-MEMORY-HOG:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -528,9 +492,8 @@ TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
+TCID-EKS-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -544,9 +507,8 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
+TCID-EKS-ANSIBLE-APP-POD-NETWORK-LATENCY:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -560,9 +522,8 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
     variables:
     - $ANSIBLE_JOB == "true"   
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
+TCID-EKS-ANSIBLE-APP-POD-NETWORK-LOSS:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -576,9 +537,8 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
     variables:
     - $ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
+TCID-EKS-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -592,9 +552,8 @@ TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
     variables:
     - $ANSIBLE_JOB == "true"
     
-TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
+TCID-EKS-ANSIBLE-INFRA-NODE-DRAIN:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Ansible Experiment 
   tags:
     - litmus-build
@@ -610,7 +569,6 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
 
 E2E Metrics:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: E2E Metrics
   tags:
     - litmus-build
@@ -623,7 +581,6 @@ E2E Metrics:
 
 App Cleanup:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: App Cleanup
   tags: 
     - litmus-build
@@ -636,7 +593,6 @@ App Cleanup:
 
 Pipeline Status Check:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: App Cleanup
   tags:
     - litmus-build
@@ -647,17 +603,15 @@ Pipeline Status Check:
     paths:
       - .kube/
       
-Cluster Disconnect:
+EKS Cleanup:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: Cleanup
   tags:
     - litmus-build
-  script: 
-    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+  script:
+    - chmod 755 build/gitlab/eks/2-cluster-cleanup/cleanup
+    - ./build/eks/gitlab/2-cluster-cleanup/cleanup
   artifacts:
     when: always
     paths:
       - .kube/
-  
