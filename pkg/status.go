@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	litmusexec "github.com/litmuschaos/litmus-e2e/pkg/exec"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -173,6 +174,28 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 			break
 		}
 	}
-	klog.Info("Chaos pod created successfully")
+	klog.Info("[Status]: Chaos pod initiated successfully")
+	return nil
+}
+
+// ValidateNetworkChaos checks the network interruption in the target pod specified
+func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPod string, clients environment.ClientSets) error {
+
+	//waiting for sometime for chaos to begin
+	klog.Infof("[Wait]: Waiting for 10s before %v validation ...", testsDetails.ExperimentName)
+	time.Sleep(10 * time.Second)
+
+	klog.Infof("[Validation]: %v validation started", testsDetails.ExperimentName)
+	// It will contains all the pod & container details required for exec command
+	execCommandDetails := litmusexec.PodDetails{}
+	command := append([]string{"/bin/sh", "-c"}, "ping -c1 "+TargetPodIP+"")
+	litmusexec.SetExecCommandAttributes(&execCommandDetails, HelperPod, "nginx", testsDetails.AppNS)
+	response, err := litmusexec.Exec(&execCommandDetails, clients, command)
+	if err != nil {
+		klog.Infof("[Validation]: Ping response is: %v", response)
+	} else {
+		klog.Infof("[Validation]: Ping response is: %v", response)
+		return errors.Errorf("network is not interrupted")
+	}
 	return nil
 }
