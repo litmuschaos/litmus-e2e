@@ -21,7 +21,7 @@ cache: &global_cache
 Cluster Connect:
   stage: setup
   tags:
-    - litmus-portal-2
+    - litmus-portal
   script:
     - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
     - ./build/gitlab/stages/3-cluster-connect/cluster-connect
@@ -35,7 +35,7 @@ Portal-Setup:
   when: always
   stage: portal-setup
   tags: 
-    - litmus-portal-2
+    - litmus-portal
   script:
     - make install-portal
   artifacts:
@@ -50,8 +50,8 @@ Cypress-Setup:
   when: always
   stage: test-setup
   image: cypress/base:10
-  # tags:
-  #   - litmus-portal-2
+  tags:
+    - litmus-portal
   script:
     - make cypress-setup
 
@@ -60,8 +60,8 @@ PreTest-Setup:
   stage: pre-test-setup
   image:
     name: cypress/base:10
-  # tags:
-  #   - litmus-portal-2
+  tags:
+    - litmus-portal
   script:
     - echo ${FRONTEND_IP}
     - make pre-test-setup
@@ -80,8 +80,8 @@ PreTest-Setup:
   stage: cypress-test
   image:
     name: cypress/base:10
-  # tags:
-  #   - litmus-portal
+  tags:
+    - litmus-portal
   before_script:
     - echo ${FRONTEND_IP}
   artifacts:
@@ -123,7 +123,7 @@ portal-cleanup:
   when: always
   stage: portal-cleanup
   tags: 
-    - litmus-portal-2
+    - litmus-portal
   script:
     - make uninstall-portal
   artifacts:
@@ -136,7 +136,7 @@ Cluster Disconnect:
   when: always
   stage: cleanup
   tags:
-    - litmus-portal-2
+    - litmus-portal
   script: 
     - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
     - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
