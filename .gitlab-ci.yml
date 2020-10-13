@@ -102,7 +102,7 @@ routesCheck_Tests:
 createWorkflow_Tests:
   extends: .cypress-e2e
   script: 
-    - cd CypressE2E && CYPRESS_BASE_URL=http://${FRONTEND_IP}:9091/ npm run CreateWorkflow_Tests
+    - make create-workflow-check
 
 communityData_Tests:
   extends: .cypress-e2e
