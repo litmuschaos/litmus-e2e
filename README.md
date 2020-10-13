@@ -121,7 +121,7 @@ It contains the openebs e2e BDDs for OpenEBS experiments. A stateful application
 
 # Litmus-portal E2E Pipeline
 
-This branch contains Gitlab e2e pipeline for litmus-portal with BDD tests using Cypress.
+It contains litmus-portal BDD tests using Cypress. Currently, it contains Cypress E2E tests for functionalities like login, Welcome Modal, User management and Browse Schedules.
 
 ### Different Stages:
 <table style="width:100%">
