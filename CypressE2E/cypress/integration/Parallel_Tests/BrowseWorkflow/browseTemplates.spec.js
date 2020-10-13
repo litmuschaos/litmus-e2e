@@ -10,7 +10,7 @@ describe("Testing the Templates Tab", () => {
 		indexedDB.deleteDatabase("localforage");
 		cy.requestLogin();
 		cy.visit("/");
-		cy.wait(3000);
+		cy.wait(8000);
 	});
 
 	it("Visiting the Templates tab", () => {
@@ -22,9 +22,6 @@ describe("Testing the Templates Tab", () => {
 	});
 
 	it("Testing the redirection to template details page on individual Card click", () => {
-		cy.get("[data-cy=workflows]").click();
-		cy.url().should("contain", "/workflows");
-		cy.get("[data-cy=templates] > .MuiTab-wrapper").click();
 		cy.get("[data-cy=templatesPage]").should("exist");
 		cy.get("[data-cy=expName]").each(($data) => {
 			//Get template names from all the templates
@@ -38,10 +35,9 @@ describe("Testing the Templates Tab", () => {
 			//Clicking on individual template card and redirecting to the details page
 			cy.contains(templateName).click()
 
-			//Checking if the name on template is same in the details page
+			// //Checking if the name on template is same in the details page
 			cy.get("[data-cy=expName]").should("contain", expName);
 			cy.go("back");
-			cy.get("[data-cy=templates] > .MuiTab-wrapper").click();
 		});
 	});
 });

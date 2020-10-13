@@ -10,12 +10,12 @@ describe("Testing the Browse Workflow Tab", () => {
 	beforeEach("Refreshing page and starting server",()=>{
 		cy.server();
 		cy.visit("/");
+		cy.wait(8000); //Waiting for the homepage to load successfully
 	})
 	it("Visiting the browse workflow page and verifying the availability of data", () => {
-		cy.wait(2000); //Waiting for the homepage to load successfully
 		cy.route({
 			method: "POST",
-			url: "/api/query",
+			url: Cypress.env('apiURL')+"/query",
 		}).as("workflowData");
 		cy.get("[data-cy=workflows]").click();
 		cy.url().should("contain", "workflows");
@@ -39,10 +39,9 @@ describe("Testing the Browse Workflow Tab", () => {
 		});
 	});
 	it("Testing the menu options in first row of Browse Workflow Table", () => {
-		cy.wait(2000); //Waiting for the homepage to load successfully
 		cy.route({
 			method: "POST",
-			url: "/api/query",
+			url: Cypress.env('apiURL')+"/query",
 		}).as("workflowData"); //Alias for the WorkflowRuns Query
 		cy.get("[data-cy=workflows]").click();
 		cy.url().should("contain", "workflows");
@@ -62,10 +61,9 @@ describe("Testing the Browse Workflow Tab", () => {
 		});
 	});
 	it("Testing the menu options to redirect to the Argo Graph page", () => {
-		cy.wait(2000); //Waiting for the homepage to load successfully
 		cy.route({
 			method: "POST",
-			url: "/api/query",
+			url:Cypress.env('apiURL')+"/query",
 		}).as("workflowData");
 		cy.get("[data-cy=workflows]").click();
 		cy.url().should("contain", "workflows");

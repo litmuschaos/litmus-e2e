@@ -10,6 +10,7 @@ describe("Testing the My accounts section", () => {
     });
     cy.requestLogin();
     cy.visit("/");
+    cy.wait(8000);
     cy.contains("Congratulations").should("be.visible"); // confirmation of HomePage loaded.
   });
 
@@ -25,7 +26,7 @@ describe("Testing the My accounts section", () => {
 
   it("Changing the personal details by inputting all details", () => {
     cy.server();
-    cy.route("POST", "/api/query").as("detailsResponse");
+    cy.route("POST", Cypress.env('apiURL')+"/query").as("detailsResponse");
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear().type(user.NewEmail);
     cy.get("[data-cy=save]").click();
@@ -37,7 +38,7 @@ describe("Testing the My accounts section", () => {
 
   it("Changing the personal details with empty email field", () => {
     cy.server();
-    cy.route("POST", "/api/query").as("detailsResponse");
+    cy.route("POST", Cypress.env('apiURL')+"/query").as("detailsResponse");
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear();
     cy.get("[data-cy=save]").click();
@@ -77,10 +78,9 @@ describe("Testing the My accounts section", () => {
     );
     cy.logout();
     cy.server();
-    cy.route("POST", "/auth/login").as("loginResponse"); //Alias for Login Route
+    cy.route("POST", Cypress.env('authURL')+"/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
-    cy.contains("Congratulations").should("be.visible"); //confirmation of HomePage loaded.
   });
 
 
