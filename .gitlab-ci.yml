@@ -411,7 +411,20 @@ TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
   artifacts:
     when: always
     paths:
-      - .kube/        
+      - .kube/ 
+      
+TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
+  when: always
+  image: litmuschaos/litmus-e2e:latest
+  stage: Component Checks
+  tags:
+    - litmus-build
+  script:
+    - make target-pod
+  artifacts:
+    when: always
+    paths:
+      - .kube/    
 
 ## Ansible Experiments will trigger 
 ## only if ANSIBLE_JOB is defined
