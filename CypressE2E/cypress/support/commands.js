@@ -7,7 +7,7 @@ Cypress.Commands.add("loginServer", (loginStatus, email, password) => {
   cy.server();
   cy.route({
     method: "POST",
-    url: Cypress.env("baseUrl") + "/login",
+    url: Cypress.env("authURL") + "/login",
     status: loginStatus,
     response: loginStatus == 503 ? "" : {},
   }).as("login");
@@ -22,7 +22,7 @@ Cypress.Commands.add(
   (modalStatus, ProjectName, Name, Email, Password) => {
     cy.server();
     cy.route({
-      url: "/update/details",
+      url: Cypress.env("authURL")+"/update/details",
       method: "POST",
       status: modalStatus,
       response:
@@ -68,7 +68,7 @@ Cypress.Commands.add(
   "changePassword",
   (currPassword, newPassword, confPasword) => {
     cy.server();
-    cy.route("POST", "/auth/update/password").as("passwordResponse");
+    cy.route("POST", Cypress.env('authURL')+"/update/password").as("passwordResponse");
     currPassword === ""
       ? cy.get("[data-cy=currPassword] input").clear()
       : cy.get("[data-cy=currPassword] input").clear().type(currPassword);
@@ -104,7 +104,7 @@ Cypress.Commands.add("headerCheck", (name, email) => {
 Cypress.Commands.add("requestLogin",()=>{
   cy.request({
     method: 'POST',
-    url: '/auth/login',
+    url: Cypress.env('authURL')+'/login',
     body: {
       username: 'admin',
       password: 'litmus'
