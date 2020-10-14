@@ -177,8 +177,10 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 
 	}
-	if err = EditKeyValue(testsDetails.ExperimentName+"-exp.yaml", "TARGET_POD", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
+	if testsDetails.TargetPod != "" {
+		if err = EditKeyValue(testsDetails.ExperimentName+"-exp.yaml", "TARGET_POD", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
 	}
 	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
 	cmd.Stdout = &out

@@ -182,8 +182,8 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPod string, clients environment.ClientSets) error {
 
 	//waiting for sometime for chaos to begin
-	klog.Infof("[Wait]: Waiting for 10s before %v validation ...", testsDetails.ExperimentName)
-	time.Sleep(10 * time.Second)
+	klog.Infof("[Wait]: Waiting for 15s before %v validation ...", testsDetails.ExperimentName)
+	time.Sleep(15 * time.Second)
 
 	klog.Infof("[Validation]: %v validation started", testsDetails.ExperimentName)
 	// It will contains all the pod & container details required for exec command

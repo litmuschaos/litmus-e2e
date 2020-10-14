@@ -49,7 +49,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			//Get Target pod name and IP
 			testsDetails.TargetPod, TargetPodIP, HelperPod, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Fail to get the target pod name and ip, due to {%v}", err)
+			Expect(err).To(BeNil(), "Fail to get the target pod details, due to {%v}", err)
 
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
