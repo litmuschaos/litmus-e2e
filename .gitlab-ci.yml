@@ -42,8 +42,6 @@ Portal-Setup:
     when: always
     paths:
       - .kube/
-    reports:
-      dotenv: Portal-Setup.env
   cache: {}
 
 Cypress-Setup:
@@ -69,8 +67,6 @@ PreTest-Setup:
     when: always
     paths:
       - CypressE2E/cypress/screenshots
-  dependencies:
-    - Portal-Setup
   cache:
     <<: *global_cache
     policy: pull
@@ -88,8 +84,6 @@ PreTest-Setup:
     when: always
     paths:
       - CypressE2E/cypress/screenshots
-  dependencies:
-    - Portal-Setup
   cache:
     <<: *global_cache
     policy: pull
