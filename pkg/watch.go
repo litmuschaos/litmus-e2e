@@ -31,7 +31,7 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 			return errors.Errorf("fail to get the chaos pod err: %v", err)
 		}
 		if chaosPod.Status.Phase != "Succeeded" {
-			if chaosPod.Status.Phase != "Running" {
+			if chaosPod.Status.Phase != "Running" && chaosPod.Status.Phase != "Pending" {
 				return errors.Errorf("chaos pod is in %v state", chaosPod.Status.Phase)
 			}
 			time.Sleep(10 * time.Second)

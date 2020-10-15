@@ -38,10 +38,6 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "go-target-pod-1")
 
-			//Get Target pod name
-			testsDetails.TargetPod, _, _, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Fail to get the target pod name and ip, due to {%v}", err)
-
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)

@@ -28,6 +28,8 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			var TargetPodIP string
+			var HelperPod string
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -44,6 +46,10 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+
+			//Get Target pod name and IP
+			testsDetails.TargetPod, TargetPodIP, HelperPod, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the target pod details, due to {%v}", err)
 
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
@@ -68,6 +74,10 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Validate network chaos
+			err = pkg.ValidateNetworkChaos(&testsDetails, TargetPodIP, HelperPod, clients)
+			Expect(err).To(BeNil(), "Network chaos validation falied, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod

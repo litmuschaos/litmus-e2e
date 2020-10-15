@@ -80,6 +80,7 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 
 	klog.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)
 
+	// returns the target pod and target pod ip along with helper pod to ping
 	return PodList.Items[0].Name, PodList.Items[0].Status.PodIP, PodList.Items[1].Name, nil
 
 }
