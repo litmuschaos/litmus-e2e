@@ -471,3 +471,12 @@ experiment-image:
 	@echo "---------------------------------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/service-account_test.go -v -count=1"
+
+.PHONY: target-pod
+target-pod:
+
+	@echo "-----------------------------"
+	@echo "Running Target pod chaos test"
+	@echo "-----------------------------"
+	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
+	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/experiment/target-pod_test.go -v -count=1"

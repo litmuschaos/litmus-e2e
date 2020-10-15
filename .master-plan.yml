@@ -414,6 +414,15 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
+  - tcid: TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD
+    name: "TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD"
+    description: "Test the experiment with given target pod"
+    labels:
+      test/feature: "Generic"
+      test/tags: "target-pod, experiment"
+      git/location: ""
+      test/status: "Done"   
+
   - tcid: TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION
     name: "TCID-VMWx-GENERIC-RBAC-LESS-PERMISSION"
     description: "Test the experiment with less permission"
@@ -422,3 +431,5 @@ spec:
       test/tags: "rbac, permission"
       git/location: ""
       test/status: "Not Done"
+
+
