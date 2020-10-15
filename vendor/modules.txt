@@ -7,6 +7,9 @@ github.com/PuerkitoBio/purell
 github.com/PuerkitoBio/urlesc
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/docker/spdystream v0.0.0-20160310174837-449fdfce4d96
+github.com/docker/spdystream
+github.com/docker/spdystream/spdy
 # github.com/emicklei/go-restful v2.12.0+incompatible
 ## explicit
 github.com/emicklei/go-restful
@@ -176,8 +179,9 @@ gopkg.in/inf.v0
 gopkg.in/tomb.v1
 # gopkg.in/yaml.v2 v2.2.8
 gopkg.in/yaml.v2
-# k8s.io/api v0.0.0-20190918195907-bd6ac527cfd2
+# k8s.io/api v0.0.0-20191016110408-35e52d86657a => k8s.io/api v0.0.0-20191016110408-35e52d86657a
 ## explicit
+k8s.io/api/admissionregistration/v1
 k8s.io/api/admissionregistration/v1beta1
 k8s.io/api/apps/v1
 k8s.io/api/apps/v1beta1
@@ -197,6 +201,7 @@ k8s.io/api/certificates/v1beta1
 k8s.io/api/coordination/v1
 k8s.io/api/coordination/v1beta1
 k8s.io/api/core/v1
+k8s.io/api/discovery/v1alpha1
 k8s.io/api/events/v1beta1
 k8s.io/api/extensions/v1beta1
 k8s.io/api/networking/v1
@@ -214,7 +219,7 @@ k8s.io/api/settings/v1alpha1
 k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
-# k8s.io/apimachinery v0.0.0-20190817020851-f2f3a405f61d
+# k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8 => k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8
 ## explicit
 k8s.io/apimachinery/pkg/api/errors
 k8s.io/apimachinery/pkg/api/meta
@@ -238,10 +243,13 @@ k8s.io/apimachinery/pkg/types
 k8s.io/apimachinery/pkg/util/clock
 k8s.io/apimachinery/pkg/util/errors
 k8s.io/apimachinery/pkg/util/framer
+k8s.io/apimachinery/pkg/util/httpstream
+k8s.io/apimachinery/pkg/util/httpstream/spdy
 k8s.io/apimachinery/pkg/util/intstr
 k8s.io/apimachinery/pkg/util/json
 k8s.io/apimachinery/pkg/util/naming
 k8s.io/apimachinery/pkg/util/net
+k8s.io/apimachinery/pkg/util/remotecommand
 k8s.io/apimachinery/pkg/util/runtime
 k8s.io/apimachinery/pkg/util/sets
 k8s.io/apimachinery/pkg/util/validation
@@ -249,12 +257,14 @@ k8s.io/apimachinery/pkg/util/validation/field
 k8s.io/apimachinery/pkg/util/yaml
 k8s.io/apimachinery/pkg/version
 k8s.io/apimachinery/pkg/watch
+k8s.io/apimachinery/third_party/forked/golang/netutil
 k8s.io/apimachinery/third_party/forked/golang/reflect
-# k8s.io/client-go v0.0.0-20190918200256-06eb1244587a
+# k8s.io/client-go v0.0.0-20191016111102-bec269661e48 => k8s.io/client-go v0.0.0-20191016111102-bec269661e48
 ## explicit
 k8s.io/client-go/discovery
 k8s.io/client-go/kubernetes
 k8s.io/client-go/kubernetes/scheme
+k8s.io/client-go/kubernetes/typed/admissionregistration/v1
 k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1
 k8s.io/client-go/kubernetes/typed/apps/v1
 k8s.io/client-go/kubernetes/typed/apps/v1beta1
@@ -274,6 +284,7 @@ k8s.io/client-go/kubernetes/typed/certificates/v1beta1
 k8s.io/client-go/kubernetes/typed/coordination/v1
 k8s.io/client-go/kubernetes/typed/coordination/v1beta1
 k8s.io/client-go/kubernetes/typed/core/v1
+k8s.io/client-go/kubernetes/typed/discovery/v1alpha1
 k8s.io/client-go/kubernetes/typed/events/v1beta1
 k8s.io/client-go/kubernetes/typed/extensions/v1beta1
 k8s.io/client-go/kubernetes/typed/networking/v1
@@ -307,9 +318,12 @@ k8s.io/client-go/tools/clientcmd/api/latest
 k8s.io/client-go/tools/clientcmd/api/v1
 k8s.io/client-go/tools/metrics
 k8s.io/client-go/tools/reference
+k8s.io/client-go/tools/remotecommand
 k8s.io/client-go/transport
+k8s.io/client-go/transport/spdy
 k8s.io/client-go/util/cert
 k8s.io/client-go/util/connrotation
+k8s.io/client-go/util/exec
 k8s.io/client-go/util/flowcontrol
 k8s.io/client-go/util/homedir
 k8s.io/client-go/util/jsonpath
@@ -317,7 +331,7 @@ k8s.io/client-go/util/keyutil
 # k8s.io/klog v1.0.0
 ## explicit
 k8s.io/klog
-# k8s.io/kube-openapi v0.0.0-20190228160746-b3a7cee44a30
+# k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf
 k8s.io/kube-openapi/pkg/common
 # k8s.io/utils v0.0.0-20200229041039-0a110f9eb7ab
 ## explicit
@@ -330,3 +344,24 @@ sigs.k8s.io/controller-runtime/pkg/scheme
 ## explicit
 sigs.k8s.io/yaml
 # gopkg.in/fsnotify.v1 v1.4.8 => github.com/fsnotify/fsnotify v1.4.8
+# k8s.io/api => k8s.io/api v0.0.0-20191016110408-35e52d86657a
+# k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.0.0-20191016113550-5357c4baaf65
+# k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8
+# k8s.io/apiserver => k8s.io/apiserver v0.0.0-20191016112112-5190913f932d
+# k8s.io/cli-runtime => k8s.io/cli-runtime v0.0.0-20191016114015-74ad18325ed5
+# k8s.io/client-go => k8s.io/client-go v0.0.0-20191016111102-bec269661e48
+# k8s.io/cloud-provider => k8s.io/cloud-provider v0.0.0-20191016115326-20453efc2458
+# k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.0.0-20191016115129-c07a134afb42
+# k8s.io/code-generator => k8s.io/code-generator v0.0.0-20191004115455-8e001e5d1894
+# k8s.io/component-base => k8s.io/component-base v0.0.0-20191016111319-039242c015a9
+# k8s.io/cri-api => k8s.io/cri-api v0.0.0-20190828162817-608eb1dad4ac
+# k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.0.0-20191016115521-756ffa5af0bd
+# k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.0.0-20191016112429-9587704a8ad4
+# k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.0.0-20191016114939-2b2b218dc1df
+# k8s.io/kube-proxy => k8s.io/kube-proxy v0.0.0-20191016114407-2e83b6f20229
+# k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.0.0-20191016114748-65049c67a58b
+# k8s.io/kubectl => k8s.io/kubectl v0.0.0-20191016120415-2ed914427d51
+# k8s.io/kubelet => k8s.io/kubelet v0.0.0-20191016114556-7841ed97f1b2
+# k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.0.0-20191016115753-cf0698c3a16b
+# k8s.io/metrics => k8s.io/metrics v0.0.0-20191016113814-3b1a734dba6e
+# k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.0.0-20191016112829-06bb3c9d77c9

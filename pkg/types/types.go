@@ -30,4 +30,5 @@ type TestDetails struct {
 	NodeSelectorName       string
 	Delay                  int
 	Duration               int
+	TargetPod              string
 }

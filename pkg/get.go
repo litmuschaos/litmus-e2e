@@ -69,3 +69,18 @@ func GetSelectorNode(testsDetails *types.TestDetails, clients environment.Client
 	}
 	return "", nil
 }
+
+// GetAppNameAndIP will return the first app name and its ip along with a helper pod to ping from the list of app pods
+func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (string, string, string, error) {
+
+	PodList, err := clients.KubeClient.CoreV1().Pods(appNS).List(metav1.ListOptions{LabelSelector: appLabel})
+	if err != nil || len(PodList.Items) == 0 {
+		return "", "", "", errors.Errorf("fail to get the podlist err: %v", err)
+	}
+
+	klog.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)
+
+	// returns the target pod and target pod ip along with helper pod to ping
+	return PodList.Items[0].Name, PodList.Items[0].Status.PodIP, PodList.Items[1].Name, nil
+
+}
