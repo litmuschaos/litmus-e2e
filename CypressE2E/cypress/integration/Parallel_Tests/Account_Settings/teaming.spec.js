@@ -1,25 +1,20 @@
 let user;
 describe("Testing the Teaming section", () => {
   before("Clearing local storage", () => {
-    cy.clearCookie("token");
-    indexedDB.deleteDatabase("localforage");
     cy.fixture("Users").then((User) => {
       user = User;
+      cy.requestLogin(user.AdminName,user.AdminPassword);
     });
-    cy.requestLogin();
-    cy.visit("/");
     cy.wait(8000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
     cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
   });
   it("Checking the accessibility of the Settings", () => {
-    cy.wait(3000);
     cy.contains("Settings").click();
     cy.contains("Settings").should("be.visible");
   });
   it("Checking the accessibility of Team Tab", () => {
-    cy.wait(3000);
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
   });

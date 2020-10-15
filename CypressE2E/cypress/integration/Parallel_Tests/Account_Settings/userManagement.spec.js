@@ -1,13 +1,16 @@
 /// <reference types="Cypress" />
+let user;
 describe("Testing the User management section", () => {
   before("Clearing local storage", () => {
     cy.clearCookie("token");
     indexedDB.deleteDatabase("localforage");
     cy.server();
-    cy.visit("/login");
-    cy.route("POST", Cypress.env("authURL")+"/login").as("loginResponse"); //Alias for Login Route
-    cy.login("admin", "litmus");
-    cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
+    cy.fixture("Users").then((User) => {
+      user = User;
+      cy.requestLogin(user.AdminName,user.AdminPassword);
+    });
+    cy.visit("/");
+    cy.wait(8000);
     cy.contains("Congratulations").should("be.visible"); //confirmation of HomePage loaded.
   });
   it("Checking the accessibility of the Settings", () => {
@@ -60,23 +63,22 @@ describe("Testing the User management section", () => {
     cy.get("[data-cy=newUserDoneButton]").click();
     cy.contains("richard124").should("be.visible");
   });
-    it("Creating user by inputting all details", () => {
-        cy.get("[data-cy=searchField]").within(() => {
-      cy.get("input").clear().type("Richard Hill"); 
-    });
- cy.get("[data-cy=userTableRow]").within(() => {
+  it("Creating user by inputting all details", () => {
+      cy.get("[data-cy=searchField]").within(() => {
+        cy.get("input").clear().type("Richard Hill"); 
+      });
+      cy.get("[data-cy=userTableRow]").within(() => {
         cy.get("[data-cy=editUser]").first().click(); 
       });
- cy.get("[data-cy=editProfile]").click();
-   cy.get("[data-cy=editPassword] input").clear().type("litmus@123");
-    cy.server();
-    cy.route("POST", Cypress.env("authURL")+"/reset/password").as("resetResponse");
-        cy.get("[data-cy=edit]").click();
-
-    cy.wait("@resetResponse").its("status").should("eq", 200);
-   cy.get("[data-cy=done]").should("be.visible");
-    cy.get("[data-cy=done]").click();
-    });
+      cy.get("[data-cy=editProfile]").click();
+      cy.get("[data-cy=editPassword] input").clear().type("litmus@123");
+      cy.server();
+      cy.route("POST", Cypress.env("authURL")+"/reset/password").as("resetResponse");
+      cy.get("[data-cy=edit]").click();
+      cy.wait("@resetResponse").its("status").should("eq", 200);
+      cy.get("[data-cy=done]").should("be.visible");
+      cy.get("[data-cy=done]").click();
+  });
   it("logging in from new user and checking the accesibility of non admin users", () => {
     cy.logout();
     cy.server();

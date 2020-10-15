@@ -5,5 +5,9 @@
     "AdminEmail":"admin@gmail.com",
     "NewName":"John",
     "NewPassword":"John123",
-    "NewEmail":"John@gmail.com" 
+    "NewEmail":"John@gmail.com" ,
+    "NewUserName":"Vash",
+    "NewUserPassword":"Vash123",
+    "NewUserEmail":"Vash123@gmail.com",
+    "NewUserUserName":"Van"
 }

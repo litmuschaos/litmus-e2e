@@ -1,6 +1,5 @@
 /// <reference types="Cypress" />
 //This Script provides custom commands for tests.
-
 /* loginServer() command for stubbing a server 
 with /auth/login route with any status code and login details provided as argument.*/
 Cypress.Commands.add("loginServer", (loginStatus, email, password) => {
@@ -22,7 +21,7 @@ Cypress.Commands.add(
   (modalStatus, ProjectName, Name, Email, Password) => {
     cy.server();
     cy.route({
-      url: Cypress.env("authURL")+"/update/details",
+      url: Cypress.env("authURL") + "/update/details",
       method: "POST",
       status: modalStatus,
       response:
@@ -37,15 +36,15 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   "welcomeModalInputs",
   (ProjectName, Name, Password, Email) => {
-    cy.get("[data-cy=InputProjectName] input").type(ProjectName);
+    cy.get("[data-cy=InputProjectName] input").clear().type(ProjectName);
     cy.get("[data-cy=Continue]").click();
-    cy.get("[data-cy=InputName] input").type(Name);
+    cy.get("[data-cy=InputName] input").clear().type(Name);
     cy.get("[data-cy=startButton]").eq(0).click();
     cy.get("[data-cy=InputPassword] input").each(($div) => {
       cy.wrap($div).type(Password);
     });
     cy.get("[data-cy=startButton]").eq(0).click();
-    cy.get("[data-cy=InputEmail]").type(Email);
+    cy.get("[data-cy=InputEmail] input").clear().type(Email);
     cy.get("[data-cy=startButton]").eq(0).click();
   }
 );
@@ -68,7 +67,9 @@ Cypress.Commands.add(
   "changePassword",
   (currPassword, newPassword, confPasword) => {
     cy.server();
-    cy.route("POST", Cypress.env('authURL')+"/update/password").as("passwordResponse");
+    cy.route("POST", Cypress.env("authURL") + "/update/password").as(
+      "passwordResponse"
+    );
     currPassword === ""
       ? cy.get("[data-cy=currPassword] input").clear()
       : cy.get("[data-cy=currPassword] input").clear().type(currPassword);
@@ -99,17 +100,37 @@ Cypress.Commands.add("headerCheck", (name, email) => {
   cy.root().click();
 });
 
-
 // Custom function for logging In & setting token without using UI
-Cypress.Commands.add("requestLogin",()=>{
+Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
+  cy.clearCookie("token");
+  indexedDB.deleteDatabase("localforage");
   cy.request({
-    method: 'POST',
-    url: Cypress.env('authURL')+'/login',
+    method: "POST",
+    url: Cypress.env("authURL") + "/login",
     body: {
-      username: 'admin',
-      password: 'litmus'
-    }
-  }).its('body').then((res)=>{
-    cy.setCookie('token',res.access_token);
-  });
+      username: loginName,
+      password: loginPassword,
+    },
+  })
+    .its("body")
+    .then((res) => {
+      cy.setCookie("token", res.access_token);
+    });
+    cy.visit("/");
+});
+
+//Custom command for Inputting user Details.
+Cypress.Commands.add("createUser", (Name, Email, Username, Password) => {
+  Name === ""
+    ? cy.get("[data-cy=InputName] input").clear()
+    : cy.get("[data-cy=InputName] input").clear().type(Name);
+  Email === ""
+    ? cy.get("[data-cy=InputEmail] input").clear()
+    : cy.get("[data-cy=InputEmail] input").clear().type(Email);
+  Username === ""
+    ? cy.get("[data-cy=username] input").clear()
+    : cy.get("[data-cy=username] input").clear().type(Username);
+  Password === ""
+    ? cy.get("[data-cy=passwordInput] input").clear()
+    : cy.get("[data-cy=passwordInput] input").clear().type(Password);
 });
