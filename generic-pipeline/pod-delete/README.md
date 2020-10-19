@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/228965">228965</a>           |  Pod Delete test fails the application pod           | Mon Oct 19 16:36:07 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/228929">228929</a>           |  Pod Delete test fails the application pod           | Mon Oct 19 16:28:00 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/228248">228248</a>           |  unable to update pipeline result           | Fri Oct 16 17:22:33 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/228212">228212</a>           |  unable to update pipeline result           | Fri Oct 16 16:55:01 2020(IST)  | 1.9.0 | Failed :worried: |
