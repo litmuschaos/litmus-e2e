@@ -50,3 +50,70 @@ func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPo
 	}
 	return nil
 }
+
+// ValidateResourceChaos will validate the actual cpu injection on the application pod
+// It will compare the cpu usage before and after chaos
+func ValidateResourceChaos(validation bool, resourceName, namespace, expName string) error {
+
+	var cpuUsage int
+	var memoryUsage int
+
+	// waiting for chaos to progress
+	klog.Info("[Wait]: Waiting for chaos to progress...")
+	time.Sleep(40 * time.Second)
+
+	switch expName {
+
+	case "pod-cpu-hog":
+		cpuUsage, err = GetCPUUsage(validation, resourceName, namespace, "pod")
+		if err != nil {
+			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+		}
+		klog.Infof("[CPU]: The CPU usage of app pod after chaos is: %vm", cpuUsage)
+		// for default cpu spike of 1 core
+		if cpuUsage < 900 {
+			return errors.Errorf("Cpu chaos validation failed, the cpu usage after chaos is %v", cpuUsage)
+		}
+	case "node-cpu-hog":
+		cpuUsage, err = GetCPUUsage(validation, resourceName, namespace, "node")
+		if err != nil {
+			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+		}
+		klog.Infof("[CPU]: The CPU usage of app node after chaos is: %vm", cpuUsage)
+
+		// the default cpu spike depends on node capacity
+		// assuming it to be 900m in this case
+		if cpuUsage < 900 {
+			return errors.Errorf("Cpu chaos validation failed, the cpu usage after chaos is %v", cpuUsage)
+		}
+	case "pod-memory-hog":
+
+		memoryUsage, err = GetMemoryUsage(validation, resourceName, namespace, "node")
+		if err != nil {
+			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+		}
+		klog.Infof("[Memory]: The Memory usage of app pod after chaos is: %vm", memoryUsage)
+		// for default memory spike of 500mb
+		if memoryUsage < 500 {
+			return errors.Errorf("Memory chaos validation failed, the memory usage after chaos is %v", memoryUsage)
+		}
+
+	case "node-memory-hog":
+
+		memoryUsage, err = GetMemoryUsage(validation, resourceName, namespace, "node")
+		if err != nil {
+			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+		}
+		klog.Infof("[Memory]: The Memory usage of app node after chaos is: %vm", memoryUsage)
+		// for default memory spike of 90%
+		// assuming 90% of memory spike will be > 800m
+		if memoryUsage < 800 {
+			return errors.Errorf("Memory chaos validation failed, the memory usage after chaos is %v", memoryUsage)
+		}
+
+	default:
+		return errors.Errorf("invalid experiment name for resource chaos")
+	}
+
+	return nil
+}

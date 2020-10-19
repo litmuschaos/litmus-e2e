@@ -25,6 +25,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.NewExperimentName = Getenv("NEW_EXPERIMENT_NAME", expName)
 	testDetails.Delay, _ = strconv.Atoi(Getenv("DELAY", "5"))
 	testDetails.Duration, _ = strconv.Atoi(Getenv("RETRIES", "90"))
+	testDetails.Validate, _ = strconv.ParseBool(Getenv("VALIDATE", "true"))
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")

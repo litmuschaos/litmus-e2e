@@ -31,4 +31,5 @@ type TestDetails struct {
 	Delay                  int
 	Duration               int
 	TargetPod              string
+	Validate               bool
 }

@@ -1,6 +1,11 @@
 package pkg
 
 import (
+	"bytes"
+	"fmt"
+	"os/exec"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -83,4 +88,50 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 	// returns the target pod and target pod ip along with helper pod to ping
 	return PodList.Items[0].Name, PodList.Items[0].Status.PodIP, PodList.Items[1].Name, nil
 
+}
+
+// GetCPUUsage will return the CPU usage by pod or node depending upon resource type.
+func GetCPUUsage(validation bool, resourceName, namespace, resourceType string) (int, error) {
+
+	if validation == true {
+		var out, stderr bytes.Buffer
+		cmd := exec.Command("bash", "-c", `kubectl top `+resourceType+` `+resourceName+` -n `+namespace+` --no-headers | awk '{print$2}'`)
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		err = cmd.Run()
+		if err != nil {
+			klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+			klog.Infof("Error: %v", err)
+			return 0, errors.Errorf("Fail to get the cpu usage before chaos, due to {%v}", err)
+		}
+		output := strings.Trim(out.String(), "")
+		cpu, _ := strconv.Atoi(strings.Split(output, "m")[0])
+		return cpu, nil
+	}
+	klog.Info("[Skip]: CPU Chaos validation skiped")
+
+	return 0, nil
+}
+
+// GetMemoryUsage will return the Memory usage by pod or node depending upon resource type.
+func GetMemoryUsage(validation bool, resourceName, namespace, resourceType string) (int, error) {
+
+	if validation == true {
+		var out, stderr bytes.Buffer
+		cmd := exec.Command("bash", "-c", `kubectl top `+resourceType+` `+resourceName+` -n `+namespace+` --no-headers | awk '{print$3}'`)
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		err = cmd.Run()
+		if err != nil {
+			klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+			klog.Infof("Error: %v", err)
+			return 0, errors.Errorf("Fail to get the memory usage before chaos, due to {%v}", err)
+		}
+		output := strings.Trim(out.String(), "")
+		memory, _ := strconv.Atoi(strings.Split(output, "m")[0])
+		return memory, nil
+	}
+	klog.Info("[Skip]: Memory Chaos validation skiped")
+
+	return 0, nil
 }

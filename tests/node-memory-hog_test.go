@@ -45,6 +45,10 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
+			//Get Target pod name and IP
+			testsDetails.TargetPod, _, _, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Fail to get the target pod details, due to {%v}", err)
+
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
@@ -68,6 +72,10 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Validate the chaos experiment
+			err = pkg.ValidateResourceChaos(testsDetails.Validate, testsDetails.TargetPod, testsDetails.AppNS, testsDetails.ExperimentName)
+			Expect(err).To(BeNil(), "Experiment validation failed, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
