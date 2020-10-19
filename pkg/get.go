@@ -16,15 +16,13 @@ import (
 )
 
 // GetApplicationNode will give the node name of the application pod
-func GetApplicationNode(testsDetails *types.TestDetails, clients environment.ClientSets) (error, error) {
+func GetApplicationNode(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	appPodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 	if err != nil {
-		return nil, errors.Errorf("Unable to get the list of application pods, due to %v", err)
+		return errors.Errorf("Unable to get the list of application pods, due to %v", err)
 	}
-
 	testsDetails.ApplicationNodeName = appPodList.Items[0].Spec.NodeName
-
-	return nil, nil
+	return nil
 }
 
 //GetChaosEngineVerdict checks the chaosengine verdict
@@ -93,8 +91,8 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 // GetCPUUsage will return the CPU usage by pod or node depending upon resource type.
 func GetCPUUsage(validation bool, resourceName, namespace, resourceType string) (int, error) {
 
+	var out, stderr bytes.Buffer
 	if validation == true {
-		var out, stderr bytes.Buffer
 		cmd := exec.Command("bash", "-c", `kubectl top `+resourceType+` `+resourceName+` -n `+namespace+` --no-headers | awk '{print$2}'`)
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
@@ -116,9 +114,17 @@ func GetCPUUsage(validation bool, resourceName, namespace, resourceType string) 
 // GetMemoryUsage will return the Memory usage by pod or node depending upon resource type.
 func GetMemoryUsage(validation bool, resourceName, namespace, resourceType string) (int, error) {
 
+	var out, stderr bytes.Buffer
+	var col string
+	// select the third or fouth row of top command output
+	// according to the resource type.
+	if resourceType == "node" {
+		col = "4"
+	} else {
+		col = "3"
+	}
 	if validation == true {
-		var out, stderr bytes.Buffer
-		cmd := exec.Command("bash", "-c", `kubectl top `+resourceType+` `+resourceName+` -n `+namespace+` --no-headers | awk '{print$3}'`)
+		cmd := exec.Command("bash", "-c", `kubectl top `+resourceType+` `+resourceName+` -n `+namespace+` --no-headers | awk '{print$`+col+`}'`)
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
 		err = cmd.Run()
@@ -128,7 +134,7 @@ func GetMemoryUsage(validation bool, resourceName, namespace, resourceType strin
 			return 0, errors.Errorf("Fail to get the memory usage before chaos, due to {%v}", err)
 		}
 		output := strings.Trim(out.String(), "")
-		memory, _ := strconv.Atoi(strings.Split(output, "m")[0])
+		memory, _ := strconv.Atoi(strings.Split(output, "M")[0])
 		return memory, nil
 	}
 	klog.Info("[Skip]: Memory Chaos validation skiped")

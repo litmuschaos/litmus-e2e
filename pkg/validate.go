@@ -60,7 +60,7 @@ func ValidateResourceChaos(validation bool, resourceName, namespace, expName str
 
 	// waiting for chaos to progress
 	klog.Info("[Wait]: Waiting for chaos to progress...")
-	time.Sleep(40 * time.Second)
+	time.Sleep(60 * time.Second)
 
 	switch expName {
 
@@ -70,8 +70,8 @@ func ValidateResourceChaos(validation bool, resourceName, namespace, expName str
 			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
 		}
 		klog.Infof("[CPU]: The CPU usage of app pod after chaos is: %vm", cpuUsage)
-		// for default cpu spike of 1 core
-		if cpuUsage < 900 {
+		// for default cpu spike of half core
+		if cpuUsage < 500 {
 			return errors.Errorf("Cpu chaos validation failed, the cpu usage after chaos is %v", cpuUsage)
 		}
 	case "node-cpu-hog":
@@ -88,13 +88,13 @@ func ValidateResourceChaos(validation bool, resourceName, namespace, expName str
 		}
 	case "pod-memory-hog":
 
-		memoryUsage, err = GetMemoryUsage(validation, resourceName, namespace, "node")
+		memoryUsage, err = GetMemoryUsage(validation, resourceName, namespace, "pod")
 		if err != nil {
-			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+			return errors.Errorf("fail to get the memory usage after chaos err: %v", err)
 		}
-		klog.Infof("[Memory]: The Memory usage of app pod after chaos is: %vm", memoryUsage)
-		// for default memory spike of 500mb
-		if memoryUsage < 500 {
+		klog.Infof("[Memory]: The Memory usage of app pod after chaos is: %vMi", memoryUsage)
+		// for default memory spike of 500Mi
+		if memoryUsage < 450 {
 			return errors.Errorf("Memory chaos validation failed, the memory usage after chaos is %v", memoryUsage)
 		}
 
@@ -102,11 +102,11 @@ func ValidateResourceChaos(validation bool, resourceName, namespace, expName str
 
 		memoryUsage, err = GetMemoryUsage(validation, resourceName, namespace, "node")
 		if err != nil {
-			return errors.Errorf("fail to get the cpu usage after chaos err: %v", err)
+			return errors.Errorf("fail to get the memory usage after chaos err: %v", err)
 		}
-		klog.Infof("[Memory]: The Memory usage of app node after chaos is: %vm", memoryUsage)
+		klog.Infof("[Memory]: The Memory usage of app node after chaos is: %vMi", memoryUsage)
 		// for default memory spike of 90%
-		// assuming 90% of memory spike will be > 800m
+		// assuming 90% of memory spike will be > 800Mi
 		if memoryUsage < 800 {
 			return errors.Errorf("Memory chaos validation failed, the memory usage after chaos is %v", memoryUsage)
 		}

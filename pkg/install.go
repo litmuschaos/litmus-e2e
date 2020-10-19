@@ -236,13 +236,21 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 		}
 	}
 	if testsDetails.ApplicationNodeName != "" {
-		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		if testsDetails.ExperimentName == "node-cpu-hog" || testsDetails.ExperimentName == "node-memory-hog" {
+			if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: ''", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+				return errors.Errorf("Fail to Update the engine file, due to %v", err)
+			}
 		}
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		if testsDetails.NodeSelectorName != "" {
+			if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+				return errors.Errorf("Fail to Update the engine file, due to %v", err)
+			}
+			if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
+				return errors.Errorf("Fail to Update the engine file, due to %v", err)
+			}
 		}
 	}
+
 	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr

@@ -73,6 +73,11 @@ var _ = Describe("BDD of pod-memory-hog experiment", func() {
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
 
+			// time.Sleep(20 * time.Second)
+
+			// data, err := clients.KubeClient.MetricsV1beta1().PodMetricses(metav1.NamespaceAll).Get("your pod name", metav1.GetOptions{})
+			// fmt.Println(data)
+
 			//Validate the chaos experiment
 			err = pkg.ValidateResourceChaos(testsDetails.Validate, testsDetails.TargetPod, testsDetails.AppNS, testsDetails.ExperimentName)
 			Expect(err).To(BeNil(), "Experiment validation failed, due to {%v}", err)
