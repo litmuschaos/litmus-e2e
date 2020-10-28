@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230128">230128</a>           |  Injects chaos to disrupt network connectivity of pod           | Wed Oct 28 22:31:09 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230086">230086</a>           |  Injects chaos to disrupt network connectivity of pod           | Wed Oct 28 14:12:59 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/229008">229008</a>           |  Injects chaos to disrupt network connectivity of pod           | Mon Oct 19 20:29:46 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/228972">228972</a>           |  Injects chaos to disrupt network connectivity of pod           | Mon Oct 19 16:51:06 2020(IST)  | 1.9.0 | Passed :smiley: |
