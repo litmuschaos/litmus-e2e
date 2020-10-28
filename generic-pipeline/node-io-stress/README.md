@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230164">230164</a>           |  Give IO disk stress on a node belonging to a deployment           | Thu Oct 29 00:47:13 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230137">230137</a>           |  Give IO disk stress on a node belonging to a deployment           | Wed Oct 28 22:52:03 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230095">230095</a>           |  Give IO disk stress on a node belonging to a deployment           | Wed Oct 28 14:21:32 2020(IST)  | 1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/229017">229017</a>           |  Give IO disk stress on a node belonging to a deployment           | Mon Oct 19 21:01:19 2020(IST)  | 1.9.0 | Passed :smiley: |
