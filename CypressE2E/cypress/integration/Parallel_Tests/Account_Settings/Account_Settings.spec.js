@@ -7,8 +7,8 @@ describe("Testing the My accounts section", () => {
     indexedDB.deleteDatabase("localforage");
     cy.fixture("Users").then(User=>{
       user = User;
+      cy.requestLogin(user.AdminName,user.AdminPassword);
     });
-    cy.requestLogin();
     cy.visit("/");
     cy.wait(8000);
     cy.contains("Congratulations").should("be.visible"); // confirmation of HomePage loaded.

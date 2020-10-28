@@ -4,12 +4,10 @@ let user;
 describe("Testing the accessibility of Welcome Modal",()=>{
 
     before("Clearing local storage",()=>{
-        cy.clearCookie('token');
-        indexedDB.deleteDatabase('localforage');
         cy.fixture("Users").then(User=>{
             user = User;
+            cy.requestLogin(user.AdminName,user.AdminPassword);
         });
-        cy.requestLogin();
     });
 
     beforeEach("Refreshing page",()=>{
