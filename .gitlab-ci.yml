@@ -1,19 +1,21 @@
----
 stages:
   - setup
+  - portal-setup
+  - test-setup
+  - pre-test-setup
   - cypress-test
+  - portal-cleanup
   - cleanup
 
-
 variables:
-  npm_config_cache: "$CI_PROJECT_DIR/CypressE2E/.npm"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/CypressE2E/cache/Cypress"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
+cache: &global_cache
+  key: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
   paths:
-    - CypressE2E/.npm
-    - CypressE2E/cache/Cypress
+    - .npm
+    - cache/Cypress
     - CypressE2E/node_modules
 
 Cluster Connect:
@@ -27,30 +29,103 @@ Cluster Connect:
     when: always
     paths:
       - .kube/
+  cache: {}
 
-Cypress-e2e:
+Portal-Setup:
   when: always
+  stage: portal-setup
+  tags: 
+    - litmus-portal
+  script:
+    - make install-portal
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  cache: {}
+
+Cypress-Setup:
+  when: always
+  stage: test-setup
   image: cypress/base:10
-  stage: cypress-test
   tags:
     - litmus-portal
   script:
-    - cd CypressE2E && npm ci
-    - cd ../ && git clone -b litmus-portal https://github.com/litmuschaos/litmus.git
-    - cd litmus/litmus-portal/frontend && npm i
-    - CHOKIDAR_USEPOLLING=1 npm start &
-    - cd ../../../CypressE2E
-    - npm test
+    - make cypress-setup
+
+PreTest-Setup:
+  when: always
+  stage: pre-test-setup
+  image:
+    name: cypress/base:10
+  tags:
+    - litmus-portal
+  script:
+    - echo ${FRONTEND_IP}
+    - make pre-test-setup
   artifacts:
     when: always
     paths:
       - CypressE2E/cypress/screenshots
-      - CypressE2E/cypress/videos
-      - .kube/
-    reports:
-      junit:
-        - results/TEST-*.xml
+  cache:
+    <<: *global_cache
+    policy: pull
 
+.cypress-e2e:
+  when: always
+  stage: cypress-test
+  image:
+    name: cypress/base:10
+  tags:
+    - litmus-portal
+  before_script:
+    - echo ${FRONTEND_IP}
+  artifacts:
+    when: always
+    paths:
+      - CypressE2E/cypress/screenshots
+  cache:
+    <<: *global_cache
+    policy: pull
+
+routesCheck_Tests:
+  extends: .cypress-e2e
+  script:
+    - make routes-check
+
+createWorkflow_Tests:
+  extends: .cypress-e2e
+  script: 
+    - make create-workflow-check
+
+communityData_Tests:
+  extends: .cypress-e2e
+  script: 
+    - make community-page-check
+
+accountSettings_Tests:
+  extends: .cypress-e2e
+  script: 
+    - make account-settings-check
+
+browseWorkflow_Tests:
+  extends: .cypress-e2e
+  script: 
+    - make browse-workflow-check
+
+portal-cleanup:
+  when: always
+  stage: portal-cleanup
+  tags: 
+    - litmus-portal
+  script:
+    - make uninstall-portal
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  cache: {}
+    
 Cluster Disconnect:
   when: always
   stage: cleanup
@@ -63,4 +138,4 @@ Cluster Disconnect:
     when: always
     paths:
       - .kube/
-
+  cache: {}

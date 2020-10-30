@@ -1,3 +1,14 @@
 {
-    "baseUrl":"http://localhost:3000"
+  "baseUrl": "http://localhost:3001",
+  "experimentalFetchPolyfill": true,
+  "viewportWidth": 1800,
+  "viewportHeight": 1200,
+  "defaultCommandTimeout": 10000,
+  "chromeWebSecurity": false,
+  "video": false,
+  "experimentalNetworkStubbing":true,
+  "env": {
+    "authURL" : "http://localhost:3000",
+    "apiURL" : "http://localhost:8080"
+  }
 }
