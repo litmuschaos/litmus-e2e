@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231918">231918</a>           |  unable to update pipeline result           | Sat Nov 14 17:37:52 2020(IST)  | multiarch-1.9.0 | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231841">231841</a>           |  unable to update pipeline result           | Sat Nov 14 13:00:32 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230121">230121</a>           |  unable to update pipeline result           | Wed Oct 28 22:07:45 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230079">230079</a>           |  Pod Delete test fails the application pod           | Wed Oct 28 13:57:51 2020(IST)  | 1.9.0 | Passed :smiley: |
