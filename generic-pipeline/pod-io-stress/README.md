@@ -19,6 +19,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231999">231999</a>           |  IO stress on a app pods belonging to an app deployment           | Sun Nov 15 01:29:31 2020(IST)  | multiarch-1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231972">231972</a>           |  IO stress on a app pods belonging to an app deployment           | Sat Nov 14 23:55:05 2020(IST)  | multiarch-1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231849">231849</a>           |  IO stress on a app pods belonging to an app deployment           | Sat Nov 14 13:28:17 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/230129">230129</a>           |  IO stress on a app pods belonging to an app deployment           | Wed Oct 28 22:35:52 2020(IST)  | ci | Passed :smiley: |
