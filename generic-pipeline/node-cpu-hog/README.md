@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232044">232044</a>           |  Exhaust CPU resources on the Kubernetes Node           | Sun Nov 15 20:11:23 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232007">232007</a>           |  Exhaust CPU resources on the Kubernetes Node           | Sun Nov 15 02:05:28 2020(IST)  | multiarch-1.9.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231975">231975</a>           |  Exhaust CPU resources on the Kubernetes Node           | Sun Nov 15 00:03:46 2020(IST)  | multiarch-1.9.0 | Awaited :cold_sweat: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231852">231852</a>           |  Exhaust CPU resources on the Kubernetes Node           | Sat Nov 14 13:36:50 2020(IST)  | ci | Passed :smiley: |
