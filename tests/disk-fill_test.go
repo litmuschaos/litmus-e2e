@@ -102,7 +102,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
-			_, err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 		})
 	})

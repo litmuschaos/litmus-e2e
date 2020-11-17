@@ -1,8 +1,6 @@
 package pkg
 
 import (
-	"time"
-
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
@@ -26,18 +24,21 @@ func ChaosResultVerdict(testsDetails *types.TestDetails, clients environment.Cli
 }
 
 //ChaosEngineVerdict checks the chaosengine verdict
-func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (error, error) {
+func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 
-	time.Sleep(10 * time.Second)
+	if err = WaitForEngineCompletion(testsDetails, clients); err != nil {
+		return errors.Errorf("engine state check failed, err %v", err)
+	}
+
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
-		return nil, errors.Errorf("Fail to get the chaosengine, due to %v", err)
+		return errors.Errorf("Fail to get the chaosengine, due to %v", err)
 	}
 	klog.Infof("Chaos Engine Verdict is: %v", chaosEngine.Status.Experiments[0].Verdict)
 
 	if string(chaosEngine.Status.Experiments[0].Verdict) != "Pass" {
-		return nil, errors.Errorf("Fail to get the chaosengine verdict as \"Pass\"")
+		return errors.Errorf("Fail to get the chaosengine verdict as \"Pass\"")
 	}
 
-	return nil, nil
+	return nil
 }

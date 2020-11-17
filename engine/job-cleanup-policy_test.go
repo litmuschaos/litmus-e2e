@@ -2,7 +2,6 @@ package engine
 
 import (
 	"testing"
-	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -82,8 +81,9 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-			//Wait for few seconds and check again the job status
-			time.Sleep(10 * time.Second)
+			//Wait for engine completion and check again the job status
+			err = pkg.WaitForEngineCompletion(&testsDetails, clients)
+			Expect(err).To(BeNil(), "engine state check failed, err {%v}", err)
 
 			//Again check the job status
 			By("[Status]: Again checking the Job pod status for retain policy")
@@ -164,8 +164,9 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-			//Wait for few seconds and check again the job status
-			time.Sleep(10 * time.Second)
+			//Wait for engine completion and check again the job status
+			err = pkg.WaitForEngineCompletion(&testsDetails, clients)
+			Expect(err).To(BeNil(), "engine state check failed, err {%v}", err)
 
 			//Again check the job status
 			By("[Status]: Again checking the Job pod status for retain policy")
