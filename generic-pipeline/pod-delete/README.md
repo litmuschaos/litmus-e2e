@@ -15,7 +15,12 @@
  </tr>
  </table>
 
- ### Pipeline Runs
+### Heatmap Coverage
+
+<img src="../../images/pod-delete-heatmap.png" alt="Pod Delete Heatmap coverage">
+
+
+### Pipeline Runs
 
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
