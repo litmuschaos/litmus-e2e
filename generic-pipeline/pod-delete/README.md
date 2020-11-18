@@ -15,11 +15,6 @@
  </tr>
  </table>
 
-### Heatmap Coverage
-
-<img src="../../images/pod-delete-heatmap.png" alt="Pod Delete Heatmap coverage">
-
-
 ### Pipeline Runs
 
 
