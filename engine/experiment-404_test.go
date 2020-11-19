@@ -63,9 +63,10 @@ var _ = Describe("BDD of experiment name test", func() {
 			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
 
 			//Checking runner pod creation
-			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			//Runner pod will come in completed state and experiment pod will not be created at all
+			//Waiting for runner pod completion
+			err = pkg.WaitForRunnerCompletion(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Runner pod dosen't come in completed state, due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)

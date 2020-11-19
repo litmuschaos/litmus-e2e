@@ -5,6 +5,7 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
+	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
@@ -175,4 +176,50 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 	}
 	klog.Info("[Status]: Chaos pod initiated successfully")
 	return nil
+}
+
+//WaitForEngineCompletion waits for engine state to get completed
+func WaitForEngineCompletion(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	err := retry.
+		Times(uint(testsDetails.Duration / testsDetails.Delay)).
+		Wait(time.Duration(testsDetails.Delay) * time.Second).
+		Try(func(attempt uint) error {
+			chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+			if err != nil {
+				return errors.Errorf("Fail to get the chaosengine, due to %v", err)
+			}
+
+			if string(chaosEngine.Status.EngineStatus) != "completed" {
+				klog.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
+				return errors.Errorf("Engine is not yet completed")
+			}
+			klog.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
+
+			return nil
+		})
+
+	return err
+}
+
+//WaitForRunnerCompletion waits for runner pod completion
+func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	err := retry.
+		Times(uint(testsDetails.Duration / testsDetails.Delay)).
+		Wait(time.Duration(testsDetails.Delay) * time.Second).
+		Try(func(attempt uint) error {
+			runner, err := clients.KubeClient.CoreV1().Pods(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
+			if err != nil {
+				return errors.Errorf("Unable to get the runner pod, due to %v", err)
+			}
+
+			if string(runner.Status.Phase) != "Succeeded" {
+				klog.Infof("Runner pod status is %v", runner.Status.Phase)
+				return errors.Errorf("Runner pod is not yet completed")
+			}
+			klog.Infof("Runner pod status is %v", runner.Status.Phase)
+
+			return nil
+		})
+
+	return err
 }
