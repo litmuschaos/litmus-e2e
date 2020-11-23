@@ -19,6 +19,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/233082">233082</a>           |  Kill one container in the application pod           | Mon Nov 23 19:21:35 2020(IST)  | 1.10.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232102">232102</a>           |  Kill one container in the application pod           | Sun Nov 15 23:58:22 2020(IST)  | 1.10.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232034">232034</a>           |  Kill one container in the application pod           | Sun Nov 15 19:31:41 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/231995">231995</a>           |  Kill one container in the application pod           | Sun Nov 15 01:10:16 2020(IST)  | multiarch-1.9.0 | Passed :smiley: |
