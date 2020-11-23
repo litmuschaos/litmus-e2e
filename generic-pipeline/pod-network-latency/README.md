@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/233086">233086</a>           |  Inject Network Latency Into Application Pod           | Mon Nov 23 19:36:11 2020(IST)  | 1.10.0 | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232106">232106</a>           |  Inject Network Latency Into Application Pod           | Mon Nov 16 00:19:09 2020(IST)  | 1.10.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232038">232038</a>           |  Inject Network Latency Into Application Pod           | Sun Nov 15 19:49:31 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232003">232003</a>           |  Inject Network Latency Into Application Pod           | Sun Nov 15 01:51:17 2020(IST)  | multiarch-1.9.0 | Passed :smiley: |
