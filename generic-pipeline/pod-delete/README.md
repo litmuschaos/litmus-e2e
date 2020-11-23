@@ -15,7 +15,7 @@
  </tr>
  </table>
 
- ### Pipeline Runs
+### Pipeline Runs
 
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
