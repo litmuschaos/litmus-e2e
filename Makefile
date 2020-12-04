@@ -29,6 +29,14 @@ build-litmus:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES) && go test $(TESTPATH)/tests/install-litmus_test.go -v -count=1"
 
+.PHONY: build-litmus-cluster-1
+build-litmus-cluster-1:
+
+	@echo "-------------------------------------"
+	@echo "Build Litmus For Pod Level Chaos test"
+	@echo "-------------------------------------"
+	@go test tests/install-litmus_test.go -v -count=1
+
 .PHONY: app-deploy
 app-deploy:
 
@@ -37,6 +45,14 @@ app-deploy:
 	@echo "---------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/app-deploy_test.go -v -count=1"
+
+.PHONY: app-deploy-cluster-1
+app-deploy-cluster-1:
+
+	@echo "----------------------------------------"
+	@echo "Deploying Application For pod level test"
+	@echo "----------------------------------------"
+	@go test tests/app-deploy_test.go -v -count=1
 
 .PHONY: liveness
 liveness:
@@ -47,6 +63,14 @@ liveness:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
      "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/app-liveness_test.go -v -count=1"
 
+.PHONY: liveness-cluster-1
+liveness-cluster-1:
+
+	@echo "----------------------------------------"
+	@echo "Deploying Application For Pod level test"
+	@echo "----------------------------------------"
+	@go test tests/app-liveness_test.go -v -count=1
+
 .PHONY: auxiliary-app
 auxiliary-app:
 
@@ -56,14 +80,21 @@ auxiliary-app:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/auxiliary-app_test.go -v -count=1"
 
+.PHONY: auxiliary-app-cluster-1
+auxiliary-app-cluster-1:
+
+	@echo "-----------------------"
+	@echo "Deploying Auxiliary App"
+	@echo "-----------------------"
+	@go test tests/auxiliary-app_test.go -v -count=1	 
+
 .PHONY: pod-delete
 pod-delete:
 
 	@echo "-------------------------------"
 	@echo "Running pod-delete experiment"
 	@echo "--------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-delete_test.go -v -count=1"
+	@go test tests/pod-delete_test.go -v -count=1
 
 .PHONY: container-kill
 container-kill:
@@ -71,8 +102,7 @@ container-kill:
 	@echo "-------------------------------"
 	@echo "Running container-kill experiment"
 	@echo "--------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/container-kill_test.go -v -count=1"
+	@go test tests/container-kill_test.go -v -count=1
 
 .PHONY: pod-network-latency
 pod-network-latency:
@@ -80,8 +110,7 @@ pod-network-latency:
 	@echo "--------------------------------------"
 	@echo "Running pod-network-latency experiment"
 	@echo "--------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-latency_test.go -v -count=1"
+	@go test tests/pod-network-latency_test.go -v -count=1
 
 .PHONY: pod-network-loss
 pod-network-loss:
@@ -89,8 +118,7 @@ pod-network-loss:
 	@echo "-----------------------------------"
 	@echo "Running pod-network-loss experiment"
 	@echo "-----------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-loss_test.go -v -count=1"
+	@go test tests/pod-network-loss_test.go -v -count=1
 
 
 .PHONY: pod-network-corruption
@@ -99,8 +127,7 @@ pod-network-corruption:
 	@echo "-------------------------------"
 	@echo "Running pod-network-corruption experiment"
 	@echo "--------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-corruption_test.go -v -count=1"
+	@go test tests/pod-network-corruption_test.go -v -count=1
 
 .PHONY: pod-cpu-hog
 pod-cpu-hog:
@@ -108,8 +135,7 @@ pod-cpu-hog:
 	@echo "-------------------------------"
 	@echo "Running pod-cpu-hog experiment"
 	@echo "--------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-cpu-hog_test.go -v -count=1"
+	@go test tests/pod-cpu-hog_test.go -v -count=1
 
 .PHONY: node-cpu-hog
 node-cpu-hog:
@@ -135,8 +161,7 @@ disk-fill:
 	@echo "--------------------------------"
 	@echo "Running disk-fill experiment"
 	@echo "--------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/disk-fill_test.go -v -count=1"
+	@go test tests/disk-fill_test.go -v -count=1
 
 .PHONY: node-memory-hog
 node-memory-hog:
@@ -153,8 +178,7 @@ pod-memory-hog:
 	@echo "---------------------------------"
 	@echo "Running pod-memory-hog experiment"
 	@echo "---------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-memory-hog_test.go -v -count=1"
+	@go test tests/pod-memory-hog_test.go -v -count=1
 
 .PHONY: kubelet-service-kill
 kubelet-service-kill:
@@ -180,8 +204,7 @@ pod-network-duplication:
 	@echo "------------------------------------------"
 	@echo "Running pod-network-duplication experiment"
 	@echo "------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-network-duplication_test.go -v -count=1"
+	@go test tests/pod-network-duplication_test.go -v -count=1
 
 .PHONY: pod-autoscaler
 pod-autoscaler:
@@ -198,8 +221,7 @@ pod-io-stress:
 	@echo "------------------------------------------"
 	@echo "Running pod-io-stress experiment"
 	@echo "------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pod-io-stress_test.go -v -count=1"	
+	@go test tests/pod-io-stress_test.go -v -count=1	
 
 .PHONY: node-io-stress
 node-io-stress:
@@ -247,6 +269,14 @@ app-cleanup:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/litmus-cleanup_test.go -v -count=1"
 
+.PHONY: app-cleanup-cluster-1
+app-cleanup-cluster-1:
+
+	@echo "--------------------"
+	@echo "Deleting litmus From Cluster 1"
+	@echo "--------------------"
+	@go test tests/litmus-cleanup_test.go -v -count=1
+
 .PHONY: pipeline-status-update
 pipeline-status-update:
 
@@ -269,13 +299,13 @@ _build_check_docker:
 		fi;
 
 godeps:
-	@echo "INFO:\tverifying dependencies for chaos-ci-lib build ..."
+	@echo "INFO:\tverifying dependencies for litmus-e2e build ..."
 	@go get -u -v golang.org/x/lint/golint
 	@go get -u -v golang.org/x/tools/cmd/goimports
 
 docker-build: 
 	@echo "----------------------------"
-	@echo "--> Build chaos-ci-lib image" 
+	@echo "--> Build litmus-e2e image" 
 	@echo "----------------------------"
 	# Dockerfile available in the repo root
 	sudo docker build . -f Dockerfile -t $(DOCKER_REPO)/$(DOCKER_IMAGE):$(DOCKER_TAG)
@@ -285,9 +315,9 @@ push: docker-push
 
 docker-push:
 	@echo "---------------------------"
-	@echo "--> Push chaos-ci-lib image" 
+	@echo "--> Push litmus-e2e image" 
 	@echo "---------------------------"
-	REPONAME="litmuschaos" IMGNAME="litmus-e2e" IMGTAG="ci" ./build/push	 
+	REPONAME="$(DOCKER_REPO)" IMGNAME="$(DOCKER_IMAGE)" IMGTAG="$(DOCKER_TAG)" ./build/push	 
 	 
 #################################################################################
 #################            Ansible Experiment BDDS            #################
@@ -299,8 +329,7 @@ ansible-pod-delete:
 	@echo "-------------------------------------"
 	@echo "Running Ansible Pod Delete Experiment"
 	@echo "-------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-delete_test.go -v -count=1"
+	@go test ansible/ansible-pod-delete_test.go -v -count=1
 
 .PHONY: ansible-container-kill
 ansible-container-kill:
@@ -308,8 +337,7 @@ ansible-container-kill:
 	@echo "-------------------------------------"
 	@echo "Running Ansible Container Kill Experiment"
 	@echo "-------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-container-kill_test.go -v -count=1"
+	@go test ansible/ansible-container-kill_test.go -v -count=1
 
 .PHONY: ansible-disk-fill
 ansible-disk-fill:
@@ -317,8 +345,7 @@ ansible-disk-fill:
 	@echo "-------------------------------------"
 	@echo "Running Ansible disk fill Experiment"
 	@echo "-------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-disk-fill_test.go -v -count=1"
+	@go test ansible/ansible-disk-fill_test.go -v -count=1
 
 .PHONY: ansible-node-cpu-hog
 ansible-node-cpu-hog:
@@ -344,8 +371,7 @@ ansible-pod-cpu-hog:
 	@echo "--------------------------------------"
 	@echo "Running Ansible Pod CPU Hog Experiment"
 	@echo "--------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-cpu-hog_test.go -v -count=1"
+	@go test ansible/ansible-pod-cpu-hog_test.go -v -count=1
 
 .PHONY: ansible-pod-memory-hog
 ansible-pod-memory-hog:
@@ -353,8 +379,7 @@ ansible-pod-memory-hog:
 	@echo "-----------------------------------------"
 	@echo "Running Ansible Pod Memory Hog Experiment"
 	@echo "-----------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-memory-hog_test.go -v -count=1"
+	@go test ansible/ansible-pod-memory-hog_test.go -v -count=1
 
 .PHONY: ansible-pod-network-corruption
 ansible-pod-network-corruption:
@@ -362,8 +387,7 @@ ansible-pod-network-corruption:
 	@echo "-------------------------------------------------"
 	@echo "Running Ansible Pod Network Corruption Experiment"
 	@echo "-------------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-corruption_test.go -v -count=1"
+	@go test ansible/ansible-pod-network-corruption_test.go -v -count=1
 
 .PHONY: ansible-pod-network-latency
 ansible-pod-network-latency:
@@ -371,8 +395,7 @@ ansible-pod-network-latency:
 	@echo "----------------------------------------------"
 	@echo "Running Ansible Pod Network Latency Experiment"
 	@echo "----------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-latency_test.go -v -count=1"
+	@go test ansible/ansible-pod-network-latency_test.go -v -count=1
 
 
 .PHONY: ansible-pod-network-loss
@@ -381,8 +404,7 @@ ansible-pod-network-loss:
 	@echo "-------------------------------------------"
 	@echo "Running Ansible Pod Network Loss Experiment"
 	@echo "-------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/ansible/ansible-pod-network-loss_test.go -v -count=1"
+	@go test ansible/ansible-pod-network-loss_test.go -v -count=1
 
 
 .PHONY: ansible-kubelet-service-kill

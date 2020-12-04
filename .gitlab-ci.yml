@@ -11,6 +11,9 @@ stages:
   - App Cleanup
   - Cleanup
 
+include:
+  - local: '/templates/.pod-level-test-template.yml'
+
 Cluster Connect:
   image: litmuschaos/litmus-e2e:latest
   stage: setup
@@ -35,7 +38,8 @@ Litmus Infra Setup:
   artifacts:
     when: always
     paths:
-      - .kube/    
+      - .kube/      
+
 Deploy App:
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -60,7 +64,7 @@ Liveness:
   artifacts:
     when: always
     paths:
-      - .kube/
+      - .kube/    
 
 Auxiliary App:
   when: always
@@ -75,123 +79,6 @@ Auxiliary App:
     paths:
       - .kube/
 
-TCID-VMWx-GENERIC-APP-POD-DELETE:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-delete
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make container-kill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-cpu-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-memory-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-corruption
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-latency
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-loss
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-network-duplication
-  artifacts:
-    when: always
-    paths:
-      - .kube/ 
-
-TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Generic Experiment
-  tags:
-    - litmus-build
-  script:
-    - make pod-io-stress
-  artifacts:
-    when: always
-    paths:
-      - .kube/ 
-      
 TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -204,19 +91,6 @@ TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
     when: always
     paths:
       - .kube/       
-
-TCID-VMWx-GENERIC-APP-DISK-FILL:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Infra Experiment
-  tags:
-    - litmus-build
-  script:
-    - make disk-fill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
 
 TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
   when: always
@@ -426,57 +300,6 @@ TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
     paths:
       - .kube/    
 
-## Ansible Experiments will trigger 
-## only if ANSIBLE_JOB is defined
-
-TCID-VMWx-ANSIBLE-APP-POD-DELETE:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-delete
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
-
-TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-container-kill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
-
-TCID-VMWx-ANSIBLE-APP-DISK-FILL:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-disk-fill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"       
-
 TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
   when: always
   image: litmuschaos/litmus-e2e:latest
@@ -508,86 +331,6 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
   only:
     variables:
     - $ANSIBLE_JOB == "true" 
-
-TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-cpu-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
-
-TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-memory-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
-
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-network-corruption
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
-
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-network-latency
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"   
-
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Ansible Experiment 
-  tags:
-    - litmus-build
-  script:
-    - make ansible-pod-network-loss
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  only:
-    variables:
-    - $ANSIBLE_JOB == "true"
 
 TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
   when: always
