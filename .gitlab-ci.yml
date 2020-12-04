@@ -14,22 +14,8 @@ stages:
 include:
   - local: '/templates/.pod-level-test-template.yml'
 
-Cluster Connect:
-  image: litmuschaos/litmus-e2e:latest
-  stage: setup
-  tags:
-    - litmus-build
-  script: 
-    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
-    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-
-Litmus Infra Setup:
+Litmus Infra Setup In Cluster-2:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: install
   tags:
     - litmus-build
@@ -38,11 +24,13 @@ Litmus Infra Setup:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
 
-Deploy App:
+Deploy App In Cluster-2:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -52,10 +40,12 @@ Deploy App:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
 
-Liveness:
+Liveness In Cluster-2:
   when: always
-  image: litmuschaos/litmus-e2e:latest
   stage: deploy
   tags:
     - litmus-build
@@ -64,9 +54,12 @@ Liveness:
   artifacts:
     when: always
     paths:
-      - .kube/    
+      - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
 
-Auxiliary App:
+Auxiliary App In Cluster-2:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: deploy
@@ -78,6 +71,9 @@ Auxiliary App:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
 
 TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
   when: always
@@ -90,7 +86,10 @@ TCID-VMWx-GENERIC-APP-POD-AUTOSCALER:
   artifacts:
     when: always
     paths:
-      - .kube/       
+      - .kube/ 
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                
 
 TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
   when: always
@@ -103,7 +102,10 @@ TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                
 
 TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
   when: always
@@ -117,6 +119,9 @@ TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
 
 TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
   when: always
@@ -130,6 +135,9 @@ TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
 
 TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   when: always
@@ -142,7 +150,10 @@ TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   artifacts:
     when: always
     paths:
-      - .kube/ 
+      - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"           
 
 TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
   when: always
@@ -156,6 +167,9 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
       
 TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
   when: always
@@ -168,7 +182,10 @@ TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
   artifacts:
     when: always
     paths:
-      - .kube/       
+      - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                 
 
 TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   when: always
@@ -181,7 +198,10 @@ TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   artifacts:
     when: always
     paths:
-      - .kube/      
+      - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"            
 
 TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
   when: always
@@ -195,6 +215,9 @@ TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"      
       
 TCID-VMWx-GENERIC-ENGINE-APP-INFO:
   when: always
@@ -208,6 +231,9 @@ TCID-VMWx-GENERIC-ENGINE-APP-INFO:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
 
 TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
   when: always
@@ -221,6 +247,9 @@ TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
 
 TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
   when: always
@@ -234,6 +263,9 @@ TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
 
 TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
   when: always
@@ -246,7 +278,10 @@ TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
   artifacts:
     when: always
     paths:
-      - .kube/ 
+      - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
 
 TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
   when: always
@@ -259,7 +294,10 @@ TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
   artifacts:
     when: always
     paths:
-      - .kube/ 
+      - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
 
 TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
   when: always
@@ -273,6 +311,9 @@ TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
       
 TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
   when: always
@@ -285,7 +326,10 @@ TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
   artifacts:
     when: always
     paths:
-      - .kube/ 
+      - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
       
 TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
   when: always
@@ -298,7 +342,10 @@ TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
   artifacts:
     when: always
     paths:
-      - .kube/    
+      - .kube/
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"            
 
 TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
   when: always
@@ -314,7 +361,7 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
       - .kube/
   only:
     variables:
-    - $ANSIBLE_JOB == "true"
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"
 
 TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
   when: always
@@ -330,7 +377,7 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
       - .kube/
   only:
     variables:
-    - $ANSIBLE_JOB == "true" 
+    - $NODE_LEVEL_ANSIBLE_JOB == "true" 
 
 TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
   when: always
@@ -346,7 +393,7 @@ TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
       - .kube/
   only:
     variables:
-    - $ANSIBLE_JOB == "true"
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"
     
 TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
   when: always
@@ -362,9 +409,9 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
       - .kube/
   only:
     variables:
-    - $ANSIBLE_JOB == "true"     
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"     
 
-E2E Metrics:
+E2E Metrics In Cluster-2:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: E2E Metrics
@@ -376,8 +423,11 @@ E2E Metrics:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"       
 
-App Cleanup:
+App Cleanup In Cluster-2:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: App Cleanup
@@ -389,8 +439,11 @@ App Cleanup:
     when: always
     paths:
       - .kube/
+  only:
+    variables:
+    - $NODE_LEVEL == "true"       
 
-Pipeline Status Check:
+Pipeline Status Check In Cluster-2:
   when: always
   image: litmuschaos/litmus-e2e:latest
   stage: App Cleanup
@@ -402,18 +455,6 @@ Pipeline Status Check:
     when: always
     paths:
       - .kube/
-      
-Cluster Disconnect:
-  when: always
-  image: litmuschaos/litmus-e2e:latest
-  stage: Cleanup
-  tags:
-    - litmus-build
-  script: 
-    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  
+  only:
+    variables:
+    - $NODE_LEVEL == "true"       
