@@ -7,7 +7,8 @@ import (
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/kubernetes"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+
+	// _ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -42,10 +43,18 @@ func (clientSets *ClientSets) GenerateClientSetFromKubeConfig() error {
 
 // getKubeConfig setup the config for access cluster resource
 func getKubeConfig() (*rest.Config, error) {
-	command := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	kubeconfig := command.String("kubeconfig", os.Getenv("HOME")+"/.kube/config", "absolute path to the kubeconfig file")
 
-	flag.Parse()
+	var kubeconfig *string
+	if _, err := os.Stat(os.Getenv("HOME") + "/.kube/config"); os.IsExist(err) {
+		command := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+		kubeconfig = command.String("kubeconfig", os.Getenv("HOME")+"/.kube/config", "absolute path to the kubeconfig file")
+		flag.Parse()
+	} else {
+		command := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+		kubeconfig = command.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		flag.Parse()
+	}
+
 	// Use in-cluster config if kubeconfig path is specified
 	if *kubeconfig == "" {
 		config, err := rest.InClusterConfig()

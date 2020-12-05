@@ -29,8 +29,8 @@ build-litmus:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES) && go test $(TESTPATH)/tests/install-litmus_test.go -v -count=1"
 
-.PHONY: build-litmus-cluster-1
-build-litmus-cluster-1:
+.PHONY: build-litmus
+build-litmus:
 
 	@echo "-------------------------------------"
 	@echo "Build Litmus For Pod Level Chaos test"
@@ -46,8 +46,8 @@ app-deploy:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/app-deploy_test.go -v -count=1"
 
-.PHONY: app-deploy-cluster-1
-app-deploy-cluster-1:
+.PHONY: app-deploy
+app-deploy:
 
 	@echo "----------------------------------------"
 	@echo "Deploying Application For pod level test"
@@ -63,8 +63,8 @@ liveness:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
      "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/app-liveness_test.go -v -count=1"
 
-.PHONY: liveness-cluster-1
-liveness-cluster-1:
+.PHONY: liveness
+liveness:
 
 	@echo "----------------------------------------"
 	@echo "Deploying Application For Pod level test"
@@ -80,8 +80,8 @@ auxiliary-app:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/auxiliary-app_test.go -v -count=1"
 
-.PHONY: auxiliary-app-cluster-1
-auxiliary-app-cluster-1:
+.PHONY: auxiliary-app
+auxiliary-app:
 
 	@echo "-----------------------"
 	@echo "Deploying Auxiliary App"
@@ -238,8 +238,7 @@ node-io-stress:
 	@echo "--------------------------------------------"
 	@echo "Running  Operator Reconcile Resiliency Check"
 	@echo "--------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/operator/reconcile-resiliency_test.go -v -count=1"
+	@go test operator/reconcile-resiliency_test.go -v -count=1
 
 .PHONY: admin-mode-check
 admin-mode-check:
@@ -247,8 +246,7 @@ admin-mode-check:
 	@echo "------------------------"
 	@echo "Running Admin Mode Check"
 	@echo "------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	"$(EXPORT_VARIABLES)  && go test $(TESTPATH)/operator/admin-mode_test.go -v -count=1"	
+	@go test operator/admin-mode_test.go -v -count=1	
 
 
 .PHONY: e2e-metrics
@@ -269,8 +267,8 @@ app-cleanup:
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/litmus-cleanup_test.go -v -count=1"
 
-.PHONY: app-cleanup-cluster-1
-app-cleanup-cluster-1:
+.PHONY: app-cleanup
+app-cleanup:
 
 	@echo "--------------------"
 	@echo "Deleting litmus From Cluster 1"
@@ -285,7 +283,6 @@ pipeline-status-update:
 	@echo "------------------------"
 	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
 	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/tests/pipeline-update_test.go -v -count=1"
-
 
 .PHONY: deps
 deps: _build_check_docker godeps docker-build
@@ -436,8 +433,7 @@ annotation-check:
 	@echo "-----------------------------------------"
 	@echo "Running Annotation Check For Chaos Engine"
 	@echo "-----------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/annotation-check_test.go -v -count=1"
+	@go test engine/annotation-check_test.go -v -count=1
 
 
 .PHONY: appinfo
@@ -446,8 +442,7 @@ appinfo:
 	@echo "---------------------------------------"
 	@echo "Running App Info Check For Chaos Engine"
 	@echo "---------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/appinfo_test.go -v -count=1"
+	@go test engine/appinfo_test.go -v -count=1
 
 .PHONY: engine-state
 engine-state:
@@ -455,8 +450,7 @@ engine-state:
 	@echo "---------------------------------------"
 	@echo "Running App Info Check For Chaos Engine"
 	@echo "---------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/engine-state_test.go -v -count=1"
+	@go test engine/engine-state_test.go -v -count=1
 
 .PHONY: experiment-404
 experiment-404:
@@ -464,8 +458,7 @@ experiment-404:
 	@echo "----------------------------------------------"
 	@echo "Running Experiment Name Check For Chaos Engine"
 	@echo "----------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/experiment-404_test.go -v -count=1"
+	@go test engine/experiment-404_test.go -v -count=1
 
 .PHONY: job-cleanup-policy
 job-cleanup-policy:
@@ -473,8 +466,7 @@ job-cleanup-policy:
 	@echo "-------------------------------------------------"
 	@echo "Running Job Cleanup Policy Check For Chaos Engine"
 	@echo "-------------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/job-cleanup-policy_test.go -v -count=1"
+	@go test engine/job-cleanup-policy_test.go -v -count=1
 
 .PHONY: service-account
 service-account:
@@ -482,8 +474,7 @@ service-account:
 	@echo "----------------------------------------------"
 	@echo "Running Service Account Check For Chaos Engine"
 	@echo "----------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/service-account_test.go -v -count=1"
+	@go test engine/service-account_test.go -v -count=1
 
 .PHONY: experiment-image
 experiment-image:
@@ -491,8 +482,7 @@ experiment-image:
 	@echo "---------------------------------------------------"
 	@echo "Running Experiment Image Check For Chaos Experiment"
 	@echo "---------------------------------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/engine/service-account_test.go -v -count=1"
+	@go test engine/service-account_test.go -v -count=1
 
 .PHONY: target-pod
 target-pod:
@@ -500,5 +490,4 @@ target-pod:
 	@echo "-----------------------------"
 	@echo "Running Target pod chaos test"
 	@echo "-----------------------------"
-	@sshpass -p ${litmus_pass} ssh -o StrictHostKeyChecking=no ${litmus_user}@${litmus_ip} -p ${port} -tt \
-	 "$(EXPORT_VARIABLES)  && go test $(TESTPATH)/experiment/target-pod_test.go -v -count=1"
+	@go test experiment/target-pod_test.go -v -count=1

@@ -5,14 +5,9 @@ Litmus Infra Setup In Cluster-1:
   when: always
   stage: install
   tags:
-    - litmus-build
     - pod-level-test
   script:
-    - make build-litmus-cluster-1
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+    - make build-litmus
   only:
     variables:
     - $POD_LEVEL == "true"      
@@ -21,30 +16,20 @@ Deploy App In Cluster-1:
   when: always
   stage: deploy
   tags:
-    - litmus-build
     - pod-level-test
   script:
-    - make app-deploy-cluster-1
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+    - make app-deploy
   only:
     variables:
-    - $POD_LEVEL == "true"       
-
+    - $POD_LEVEL == "true"    
+       
 Liveness In Cluster-1:
   when: always
   stage: deploy
   tags:
-    - litmus-build
     - pod-level-test
   script:
-    - make liveness-cluster-1
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+    - make liveness
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -53,14 +38,9 @@ Auxiliary App In Cluster-1:
   when: always
   stage: deploy
   tags:
-    - litmus-build
     - pod-level-test
   script:
-    - make auxiliary-app-cluster-1
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+    - make auxiliary-app
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -69,14 +49,9 @@ TCID-VMWx-GENERIC-APP-POD-DELETE:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-delete
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -85,14 +60,9 @@ TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make container-kill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -101,14 +71,9 @@ TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-cpu-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -117,14 +82,9 @@ TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-memory-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -133,14 +93,9 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-network-corruption
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -149,14 +104,9 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-network-latency
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -165,14 +115,9 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-network-loss
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -181,14 +126,9 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-network-duplication
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -197,14 +137,9 @@ TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
   when: always
   stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make pod-io-stress
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"        
@@ -212,16 +147,11 @@ TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
 
 TCID-VMWx-GENERIC-APP-DISK-FILL:
   when: always
-  stage: Infra Experiment
+  stage: Generic Experiment
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make disk-fill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL == "true"       
@@ -233,14 +163,9 @@ TCID-VMWx-ANSIBLE-APP-POD-DELETE:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-delete
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -249,14 +174,9 @@ TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-container-kill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -265,14 +185,9 @@ TCID-VMWx-ANSIBLE-APP-DISK-FILL:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-disk-fill
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -281,14 +196,9 @@ TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-cpu-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -297,14 +207,9 @@ TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-memory-hog
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -313,14 +218,9 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-network-corruption
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
@@ -329,14 +229,9 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-network-latency
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"   
@@ -345,14 +240,9 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
   when: always
   stage: Ansible Experiment 
   tags:
-    - litmus-build
     - pod-level-test
   script:
     - make ansible-pod-network-loss
-  artifacts:
-    when: always
-    paths:
-      - .kube/
   only:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"    
@@ -361,14 +251,9 @@ App Cleanup In Cluster-1:
   when: always
   stage: App Cleanup
   tags: 
-    - litmus-build
     - pod-level-test
   script:
-    - make app-cleanup-cluster-1
-  artifacts:
-    when: always
-    paths:
-      - .kube/
+    - make app-cleanup
   only:
     variables:
     - $POD_LEVEL == "true"
