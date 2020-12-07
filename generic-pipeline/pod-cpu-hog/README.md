@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/235006">235006</a>           |  Consume CPU resources on the application container           | Mon Dec  7 00:48:31 2020(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/234775">234775</a>           |  Consume CPU resources on the application container           | Sun Dec  6 21:07:18 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/233083">233083</a>           |  Consume CPU resources on the application container           | Mon Nov 23 19:24:55 2020(IST)  | 1.10.0 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/232103">232103</a>           |  Consume CPU resources on the application container           | Mon Nov 16 00:04:08 2020(IST)  | 1.10.0 | Passed :smiley: |
