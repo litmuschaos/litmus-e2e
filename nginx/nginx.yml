@@ -23,9 +23,9 @@ spec:
         - containerPort: 80
         resources:
           requests:
-            ephemeral-storage: "2Gi"
+            ephemeral-storage: "1Gi"
           limits:
-            ephemeral-storage: "4Gi"
+            ephemeral-storage: "2Gi"
 ---
 apiVersion: v1
 kind: Service

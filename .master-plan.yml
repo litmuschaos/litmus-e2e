@@ -97,8 +97,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
       test/status: "Done" 
       
-  - tcid: TCID-VMWx-GENERIC-APP-POD-AUTOSCALER
-    name: "TCID-VMWx-GENERIC-APP-POD-AUTOSCALER"
+  - tcid: TCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER
+    name: "TCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER"
     description: "Scale the application replicas and test the node autoscaling on cluster"
     labels:
       test/feature: "Generic-App"
