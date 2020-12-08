@@ -19,6 +19,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/235191">235191</a>           |  IO stress on a app pods belonging to an app deployment           | Tue Dec  8 19:01:05 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/235057">235057</a>           |  IO stress on a app pods belonging to an app deployment           | Mon Dec  7 01:26:49 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/235012">235012</a>           |  IO stress on a app pods belonging to an app deployment           | Mon Dec  7 00:32:32 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/233089">233089</a>           |  IO stress on a app pods belonging to an app deployment           | Mon Nov 23 19:52:44 2020(IST)  | 1.10.0 | Failed :worried: |
