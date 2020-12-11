@@ -1,7 +1,7 @@
 ## litmus component test will trigger 
 ## only when the COMPONENT_TEST variable is set to true
 
-Litmus Infra Setup In Cluster-3:
+Litmus Infra Setup In Cluster-1:
   when: always
   stage: install
   tags:
@@ -12,7 +12,7 @@ Litmus Infra Setup In Cluster-3:
     variables:
     - $COMPONENT_TEST == "true"        
 
-Deploy App In Cluster-3:
+Deploy App In Cluster-1:
   when: always
   stage: deploy
   tags:
@@ -23,7 +23,7 @@ Deploy App In Cluster-3:
     variables:
     - $COMPONENT_TEST == "true"        
 
-Liveness In Cluster-3:
+Liveness In Cluster-1:
   when: always
   stage: deploy
   tags:
@@ -34,7 +34,7 @@ Liveness In Cluster-3:
     variables:
     - $COMPONENT_TEST == "true"        
 
-Auxiliary App In Cluster-3:
+Auxiliary App In Cluster-1:
   when: always
   stage: deploy
   tags:
@@ -155,7 +155,7 @@ TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
     variables:
     - $COMPONENT_TEST == "true"
 
-App Cleanup In Cluster-3:
+App Cleanup In Cluster-1:
   when: always
   stage: App Cleanup
   tags: 
@@ -164,4 +164,15 @@ App Cleanup In Cluster-3:
     - make app-cleanup 
   only:
     variables:
-    - $COMPONENT_TEST == "true"             
+    - $COMPONENT_TEST == "true"
+  
+Pipeline Status Check:
+  when: always
+  stage: App Cleanup
+  tags:
+    - component-test
+  script:
+    - make pipeline-status-update
+  only:
+    variables:
+    - $NODE_LEVEL == "true"
