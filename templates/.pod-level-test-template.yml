@@ -1,7 +1,7 @@
 ## Pod level experiment test will trigger 
 ## only if POD_LEVEL variable is set to true
 
-Litmus Infra Setup In Cluster-1:
+Litmus Infra Setup In Cluster-2:
   when: always
   stage: install
   tags:
@@ -12,7 +12,7 @@ Litmus Infra Setup In Cluster-1:
     variables:
     - $POD_LEVEL == "true"      
 
-Deploy App In Cluster-1:
+Deploy App In Cluster-2:
   when: always
   stage: deploy
   tags:
@@ -23,7 +23,7 @@ Deploy App In Cluster-1:
     variables:
     - $POD_LEVEL == "true"    
        
-Liveness In Cluster-1:
+Liveness In Cluster-2:
   when: always
   stage: deploy
   tags:
@@ -34,7 +34,7 @@ Liveness In Cluster-1:
     variables:
     - $POD_LEVEL == "true"       
 
-Auxiliary App In Cluster-1:
+Auxiliary App In Cluster-2:
   when: always
   stage: deploy
   tags:
@@ -247,7 +247,7 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"    
 
-App Cleanup In Cluster-1:
+App Cleanup In Cluster-2:
   when: always
   stage: App Cleanup
   tags: 
@@ -258,3 +258,13 @@ App Cleanup In Cluster-1:
     variables:
     - $POD_LEVEL == "true"
       
+Pipeline Status Check:
+  when: always
+  stage: App Cleanup
+  tags:
+    - pod-level-test
+  script:
+    - make pipeline-status-update
+  only:
+    variables:
+    - $NODE_LEVEL == "true"    

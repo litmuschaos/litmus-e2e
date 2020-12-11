@@ -50,14 +50,22 @@ func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *type
 //UpdatePipelineStatus will update the status of pipeline at the end of all jobs
 func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) error {
 
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+	var out, stderr bytes.Buffer
+	var pipelineName string
 	//Updating the result table
 	klog.Info("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
 
+	if os.Getenv("POD_LEVEL") == "true" {
+		pipelineName = "pod-level"
+	} else if os.Getenv("NODE_LEVEL") == "true" {
+		pipelineName = "node-level"
+	} else if os.Getenv("COMPONENT_TEST") == "true" {
+		pipelineName = "component"
+	}
+
 	imageTag := GetImageTag(testsDetails.GoExperimentImage)
 	// Recording job number for pipeline update
-	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", imageTag, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--token", os.Getenv("GITHUB_TOKEN"))
+	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", imageTag, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--pipeline", pipelineName, "--token", os.Getenv("GITHUB_TOKEN"))
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
