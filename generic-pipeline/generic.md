@@ -62,53 +62,102 @@ filename: generic
 
 # **Pipeline Runs**
 
+<a href="pipeline-runs/https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic"><img alt="pipeline status" src="https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg" /></a>
 
-| Pipeline ID |   Execution Time        | Release Version | Coverage (in %) |
-|---------|---------------------------|--------------|--------------|
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13021">13021</a>           |  Mon Nov 23 20:58:01 2020(IST)           | 1.10.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13015">13015</a>           |  Thu Nov 19 14:47:01 2020(IST)           | 1.10.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13006">13006</a>           |  Mon Nov 16 02:04:41 2020(IST)           | 1.10.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12999">12999</a>           |  Sun Nov 15 20:54:07 2020(IST)           | ci  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12996">12996</a>           |  Sun Nov 15 18:46:06 2020(IST)           | ci  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12990">12990</a>           |  Sat Nov 14 14:19:58 2020(IST)           | ci  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12961">12961</a>           |  Wed Oct 28 23:18:39 2020(IST)           | ci  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12959">12959</a>           |  Wed Oct 28 14:55:12 2020(IST)           | 1.9.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12942">12942</a>           |  Mon Oct 19 21:28:05 2020(IST)           | 1.9.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12941">12941</a>           |  Mon Oct 19 17:17:34 2020(IST)           | 1.9.0  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12911">12911</a>           |  Thu Oct 15 14:33:31 2020(IST)           | ci  | [![85%](https://progress-bar.dev/85)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12908">12908</a>           |  Thu Oct 15 04:16:11 2020(IST)           | ci  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12907">12907</a>           |  Wed Oct 14 22:15:48 2020(IST)           | ci  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12844">12844</a>           |  Wed Oct  7 21:56:24 2020(IST)           | ci  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12836">12836</a>           |  Tue Oct  6 22:49:51 2020(IST)           | ci  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12787">12787</a>           |  Tue Sep 29 15:47:23 2020(IST)           | img  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12741">12741</a>           |  Mon Sep 21 11:37:57 2020(IST)           | 1.8.1  | [![84%](https://progress-bar.dev/84)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12736">12736</a>           |  Fri Sep 18 17:54:37 2020(IST)           | 1.8.1  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12722">12722</a>           |  Thu Sep 17 17:05:50 2020(IST)           | 1.8.0  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12693">12693</a>           |  Tue Sep 15 22:19:21 2020(IST)           | 1.8.0  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12689">12689</a>           |  Tue Sep 15 19:48:14 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12664">12664</a>           |  Mon Sep 14 02:02:44 2020(IST)           | latest  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12582">12582</a>           |  Thu Sep  3 18:18:03 2020(IST)           | v7  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12568">12568</a>           |  Mon Aug 31 23:59:37 2020(IST)           | v3  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12567">12567</a>           |  Mon Aug 31 20:27:37 2020(IST)           | latest  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12550">12550</a>           |  Sun Aug 30 18:17:03 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12540">12540</a>           |  Wed Aug 26 18:09:04 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12530">12530</a>           |  Tue Aug 25 17:06:04 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12507">12507</a>           |  Thu Aug 20 19:29:26 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12501">12501</a>           |  Thu Aug 20 15:39:01 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12478">12478</a>           |  Sun Aug 16 23:14:16 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12477">12477</a>           |  Sun Aug 16 18:15:58 2020(IST)           | latest  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12471">12471</a>           |  Sun Aug 16 01:12:11 2020(IST)           | latest  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12464">12464</a>           |  Sat Aug 15 20:55:40 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12385">12385</a>           |  Wed Aug 12 14:59:39 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12377">12377</a>           |  Wed Aug 12 12:59:05 2020(IST)           | ci  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12369">12369</a>           |  Wed Aug 12 02:16:11 2020(IST)           | 1.6.2  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12367">12367</a>           |  Tue Aug 11 21:12:38 2020(IST)           | 1.6.2  | [![83%](https://progress-bar.dev/83)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12331">12331</a>           |  Sat Aug  8 21:28:00 2020(IST)           | 1.6.2  | [![67%](https://progress-bar.dev/67)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12293">12293</a>           |  Wed Aug  5 07:16:33 2020(IST)           | 1.6.2  | [![67%](https://progress-bar.dev/67)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12290">12290</a>           |  Wed Aug  5 05:05:40 2020(IST)           | ci  | [![67%](https://progress-bar.dev/67)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12269">12269</a>           |  Tue Aug  4 22:11:43 2020(IST)           | ci  | [![67%](https://progress-bar.dev/67)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12258">12258</a>           |  Tue Aug  4 15:04:57 2020(IST)           | ci  | [![67%](https://progress-bar.dev/67)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12120">12120</a>           |  Mon Jul 27 06:53:52 2020(IST)           | ci  | [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/12013">12013</a>           |  Wed Jul 22 02:20:04 2020(IST)           | ci  | [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)  |
-|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11990">11990</a>           |  Mon Jul 20 13:46:17 2020(IST)           | ci  | [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)  |
-|    <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/11984">11984</a>   |  Mon Jul 20 12:19:23 2020(IST)           |  ci     |  [![94%](https://progress-bar.dev/94)](https://bit.ly/2OLie8t)     |
+
+## Daily Nightly Builds
+
+<table  cellpadding="5">
+
+  <tr>
+      <td>
+      <a href="pipeline-runs/pod-level-run.html">
+      <img src="../images/pipeline-runs/pod-level-nightly-build.png" alt="pod-level-nightly-build" />
+      <br />
+      <b>Pod Level Nightly Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/node-level-run.html">
+      <img src="../images/pipeline-runs/node-level-nightly-build.png" alt="node-level-nightly-build" />
+      <br />
+      <b>Node Level Nightly Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/litmus-component-run.html">
+      <img src="../images/pipeline-runs/litmus-component-nightly-build.png" alt="litmus-component-nightly-build" />
+      <br />
+      <b>Component Nightly Build</b>
+      </a>
+      </td>
+  </tr>
+
+</table>
+
+## Release Candidate(RC) Build
+
+<table  cellpadding="5">
+
+  <tr>
+      <td>
+      <a href="pipeline-runs/pod-level-rc.html">
+      <img src="../images/pipeline-runs/pod-level-rc.png" alt="pod-level-rc-build" />
+      <br />
+      <b>Pod Level RC Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/node-level-rc.html">
+      <img src="../images/pipeline-runs/node-level-rc.png" alt="node-level-rc-build" />
+      <br />
+      <b>Node Level RC Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/litmus-component-rc.html">
+      <img src="../images/pipeline-runs/component-rc.png" alt="litmus-component-rc-build" />
+      <br />
+      <b>Component RC Build</b>
+      </a>
+      </td>
+  </tr>
+
+</table>
+
+
+## General Availability(GA) Build
+
+<table  cellpadding="5">
+
+  <tr>
+      <td>
+      <a href="pipeline-runs/pod-level-ga.html">
+      <img src="../images/pipeline-runs/pod-level-ga.png" alt="pod-level-ga-build" />
+      <br />
+      <b>Pod Level GA Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/node-level-ga.html">
+      <img src="../images/pipeline-runs/node-level-ga.png" alt="node-level-ga-build" />
+      <br />
+      <b>Node Level GA Build</b>
+      </a>
+      </td>
+
+      <td align="center" valign="center">
+      <a href="pipeline-runs/litmus-component-ga.html">
+      <img src="../images/pipeline-runs/component-ga.png" alt="litmus-component-ga-build" />
+      <br />
+      <b>Component GA Build</b>
+      </a>
+      </td>
+  </tr>
+
+</table>
