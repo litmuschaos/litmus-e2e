@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: nginx-chaos
+  namespace: default
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: node-cpu-hog-sa
+  monitoring: false
+  jobCleanUpPolicy: 'delete'
+  experiments:
+    - name: node-cpu-hog
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '60'
+            
+            - name: NODE_CPU_CORE
+              value: ''
+            
+            - name: TARGET_NODES
+              value: ''

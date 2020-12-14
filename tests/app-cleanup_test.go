@@ -13,7 +13,7 @@ import (
 	"k8s.io/klog"
 )
 
-func TestAppCleanUp(t *testing.T) {
+func TestAppCleanUpComponentLevel(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")

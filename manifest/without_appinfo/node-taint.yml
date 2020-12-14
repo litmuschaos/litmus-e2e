@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: nginx-chaos
+  namespace: default
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: node-taint-sa
+  monitoring: false
+  jobCleanUpPolicy: 'delete'
+  experiments:
+    - name: node-taint
+      spec:
+        components:
+          nodeSelector: 
+            kubernetes.io/hostname: 'node02'        
+          env:
+            # set target node name
+            - name: TARGET_NODE
+              value: 'node-01'
+
+            - name: TAINTS
+              value: 'node.kubernetes.io/unreachable:NoExecute'

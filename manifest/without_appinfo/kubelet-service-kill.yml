@@ -1,0 +1,25 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: nginx-chaos
+  namespace: default
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: kubelet-service-kill-sa
+  monitoring: false
+  jobCleanUpPolicy: 'delete'
+  experiments:
+    - name: kubelet-service-kill
+      spec:
+        components:
+          nodeSelector: 
+            kubernetes.io/hostname: 'node02'        
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '90' # in seconds
+              
+            - name: TARGET_NODE
+              value: 'node-01'
