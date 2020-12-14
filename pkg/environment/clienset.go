@@ -1,7 +1,6 @@
 package environment
 
 import (
-	"flag"
 	"os"
 
 	chaosClient "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
@@ -44,25 +43,12 @@ func (clientSets *ClientSets) GenerateClientSetFromKubeConfig() error {
 // getKubeConfig setup the config for access cluster resource
 func getKubeConfig() (*rest.Config, error) {
 
-	var kubeconfig *string
-	if _, err := os.Stat(os.Getenv("HOME") + "/.kube/config"); os.IsExist(err) {
-		command := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-		kubeconfig = command.String("kubeconfig", os.Getenv("HOME")+"/.kube/config", "absolute path to the kubeconfig file")
-		flag.Parse()
-	} else {
-		command := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-		kubeconfig = command.String("kubeconfig", "", "absolute path to the kubeconfig file")
-		flag.Parse()
+	KubeConfig := os.Getenv("KUBECONFIG")
+	// Use in-cluster config if kubeconfig path is not specified
+	if KubeConfig == "" {
+		return rest.InClusterConfig()
 	}
-
-	// Use in-cluster config if kubeconfig path is specified
-	if *kubeconfig == "" {
-		config, err := rest.InClusterConfig()
-		if err != nil {
-			return config, err
-		}
-	}
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", KubeConfig)
 	if err != nil {
 		return config, err
 	}

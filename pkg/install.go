@@ -206,6 +206,10 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err = DownloadFile(testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
 		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
 	}
+	// Add imagePullPolicy of chaos-runner to ifNotPresent
+	if err = AddAfterMatch(testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy", "  components:\n    runner:\n      imagePullPolicy: Always"); err != nil {
+		return errors.Errorf("Fail to add a new line due to %v", err)
+	}
 	// Modify the spec of engine file
 	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-chaos", "name: "+testsDetails.EngineName+""); err != nil {
 		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+testsDetails.EngineName+""); err != nil {
