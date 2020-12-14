@@ -19,6 +19,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/236705">236705</a>           |  Kill one container in the application pod           | Mon Dec 14 16:43:15 2020(IST)  | ci | Awaited :cold_sweat: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/236669">236669</a>           |  Kill one container in the application pod           | Mon Dec 14 15:48:02 2020(IST)  | ci | Awaited :cold_sweat: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/236500">236500</a>           |  Kill one container in the application pod           | Sun Dec 13 17:45:47 2020(IST)  | ci | Failed :worried: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/236385">236385</a>           |  Kill one container in the application pod           | Sat Dec 12 17:41:15 2020(IST)  | ci | Awaited :cold_sweat: |
