@@ -206,7 +206,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err = DownloadFile(testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
 		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
 	}
-	// Add imagePullPolicy of chaos-runner to ifNotPresent
+	// Add imagePullPolicy of chaos-runner to Always
 	if err = AddAfterMatch(testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy", "  components:\n    runner:\n      imagePullPolicy: Always"); err != nil {
 		return errors.Errorf("Fail to add a new line due to %v", err)
 	}
