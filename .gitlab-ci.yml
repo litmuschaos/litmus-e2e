@@ -6,6 +6,7 @@ stages:
   - Generic Experiment
   - Infra Experiment
   - Component Checks
+  - Engine Test
   - Ansible Experiment 
   - E2E Metrics
   - App Cleanup
