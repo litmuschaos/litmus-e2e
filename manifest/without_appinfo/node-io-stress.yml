@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: nginx-chaos
+  namespace: default
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: node-io-stress-sa
+  monitoring: false
+  jobCleanUpPolicy: 'delete'
+  experiments:
+    - name: node-io-stress
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '120'
+
+            - name: FILESYSTEM_UTILIZATION_PERCENTAGE
+              value: '10'
+            
+            - name: TARGET_NODES
+              value: ''

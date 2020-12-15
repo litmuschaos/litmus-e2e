@@ -104,7 +104,16 @@ spec:
       test/feature: "Generic-App"
       test/tags: "pod, io, stress"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
-      test/status: "Done"        
+      test/status: "Done"    
+      
+  - tcid: TCID-VMWx-GENERIC-INFRA-WITHOUT-APP-INFO
+    name: "TCID-VMWx-GENERIC-INFRA-WITHOUT-APP-INFO"
+    description: "Test the experiment without providing appinfo"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, appinfo"
+      git/location: ""
+      test/status: "Done"       
 
   # ----------------------------------------------------------
   # Kubernetes Infra level chaos experiment BDDs

@@ -1,0 +1,21 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: nginx-chaos
+  namespace: default
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: node-drain-sa
+  monitoring: false
+  jobCleanUpPolicy: 'delete'
+  experiments:
+    - name: node-drain
+      spec:
+        components:
+          nodeSelector: 
+            kubernetes.io/hostname: 'node02'        
+          env:
+            - name: TARGET_NODE
+              value: 'node-01'

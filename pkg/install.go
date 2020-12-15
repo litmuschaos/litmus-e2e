@@ -11,144 +11,23 @@ import (
 	"k8s.io/klog"
 )
 
-var (
-	err error
-)
-
-//InstallAnsibleRbac installs and configure rbac for running ansible based chaos
-func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
-
-	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	err = DownloadFile(testsDetails.ExperimentName+"-sa.yaml", testsDetails.AnsibleRbacPath)
-	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
-	}
-	//Modify Namespace field of the RBAC
-	err = EditFile(testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
-	if err != nil {
-		return errors.Errorf("Fail to Modify rbac file, due to %v", err)
-	}
-	//Creating rbac
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the rbac file, due to {%v}", err)
-	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
-
-	return nil
-}
-
-//InstallAnsibleChaosExperiment installs the given ansible based chaos experiment
-func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNamespace string) error {
-
-	// Fetch Chaos Experiment
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	if err = DownloadFile(testsDetails.ExperimentName+"-exp.yaml", testsDetails.AnsibleExperimentPath); err != nil {
-		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
-	}
-	// Modify the spec of experiemnt file
-	if err = EditFile(testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/ansible-runner:latest\"", "image: "+testsDetails.AnsibleExperimentImage); err != nil {
-		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
-
-	}
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
-	}
-	klog.Infof("[ChaosExperiment]: " + out.String())
-	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.AnsibleExperimentImage + " !!!")
-
-	return nil
-}
-
-//InstallAnsibleChaosEngine installs the given ansible based chaos engine
-func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
-
-	// Fetch Chaos Engine
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	if err = DownloadFile(testsDetails.ExperimentName+"-ce.yaml", testsDetails.AnsibleEnginePath); err != nil {
-		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
-	}
-	// Modify the spec of engine file
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-chaos", "name: "+testsDetails.EngineName+""); err != nil {
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+testsDetails.EngineName+""); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "namespace: default", "namespace: "+engineNamespace+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "appns: 'default'", "appns: "+testsDetails.AppNS+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: "+testsDetails.AppLabel+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: "+testsDetails.JobCleanUpPolicy+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
-
-	if testsDetails.ApplicationNodeName != "" {
-		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "APP_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
-
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
-	}
-	klog.Infof("[ChaosEngine]: " + out.String())
-	time.Sleep(2 * time.Second)
-
-	return nil
-}
-
-//InstallGoRbac installs and configure rbac for running ansible based chaos
+//InstallGoRbac installs and configure rbac for running go based chaos
 func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
 
 	//Fetch RBAC file
 	var out bytes.Buffer
 	var stderr bytes.Buffer
-	err = DownloadFile(testsDetails.ExperimentName+"-sa.yaml", testsDetails.RbacPath)
+	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.RbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
 	//Modify Namespace field of the RBAC
-	err = EditFile(testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
+	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
 	if err != nil {
 		return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 	}
 	//Creating rbac
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
+	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
@@ -169,20 +48,20 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	// Fetch Chaos Experiment
 	var out bytes.Buffer
 	var stderr bytes.Buffer
-	if err = DownloadFile(testsDetails.ExperimentName+"-exp.yaml", testsDetails.ExperimentPath); err != nil {
+	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", testsDetails.ExperimentPath); err != nil {
 		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
 	// Modify the spec of experiemnt file
-	if err = EditFile(testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 
 	}
 	if testsDetails.TargetPod != "" {
-		if err = EditKeyValue(testsDetails.ExperimentName+"-exp.yaml", "TARGET_PODS", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "TARGET_PODS", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
+	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
@@ -197,13 +76,13 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	return nil
 }
 
-//InstallGoChaosEngine installs the given ansible based chaos engine
+//InstallGoChaosEngine installs the given go based chaos engine
 func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
 
 	// Fetch Chaos Engine
 	var out bytes.Buffer
 	var stderr bytes.Buffer
-	if err = DownloadFile(testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
+	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
 		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
 	}
 	// Add imagePullPolicy of chaos-runner to Always
@@ -211,45 +90,47 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 		return errors.Errorf("Fail to add a new line due to %v", err)
 	}
 	// Modify the spec of engine file
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-chaos", "name: "+testsDetails.EngineName+""); err != nil {
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+testsDetails.EngineName+""); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: nginx-chaos", "name: "+testsDetails.EngineName+""); err != nil {
+		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+testsDetails.EngineName+""); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "namespace: default", "namespace: "+engineNamespace+""); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "namespace: default", "namespace: "+engineNamespace+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "appns: 'default'", "appns: "+testsDetails.AppNS+""); err != nil {
+	if testsDetails.AppNS != "" && testsDetails.AppLabel != "" {
+		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "appns: 'default'", "appns: "+testsDetails.AppNS+""); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: "+testsDetails.AppLabel+""); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "chaosServiceAccount: "+testsDetails.ExperimentName+"-sa", "chaosServiceAccount: "+testsDetails.ChaosServiceAccount+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: "+testsDetails.AppLabel+""); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: "+testsDetails.ExperimentName+"", "name: "+testsDetails.NewExperimentName+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "chaosServiceAccount: "+testsDetails.ExperimentName+"-sa", "chaosServiceAccount: "+testsDetails.ChaosServiceAccount+""); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: "+testsDetails.JobCleanUpPolicy+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "name: "+testsDetails.ExperimentName+"", "name: "+testsDetails.NewExperimentName+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: "+testsDetails.JobCleanUpPolicy+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
+		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
 	if testsDetails.ApplicationNodeName != "" {
-		if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
-			if err = EditKeyValue(testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODES", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
+			if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODES", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
 				return errors.Errorf("Fail to Update the engine file, due to %v", err)
 			}
 		}
-		if err = EditFile(testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
+		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
+	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
@@ -306,17 +187,17 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 	//Fetch RBAC file
 	var out bytes.Buffer
 	var stderr bytes.Buffer
-	err = DownloadFile(testsDetails.ExperimentName+"-sa.yaml", testsDetails.AdminRbacPath)
+	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.AdminRbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
 	//Modify Namespace field of the RBAC
-	err = EditFile(testsDetails.ExperimentName+"-sa.yaml", "namespace: litmus", "namespace: "+testsDetails.ChaosNamespace)
+	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: litmus", "namespace: "+testsDetails.ChaosNamespace)
 	if err != nil {
 		return errors.Errorf("Fail to Modify admin rbac file, due to %v", err)
 	}
 	//Creating admin rbac
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-sa.yaml", "-n", testsDetails.ChaosNamespace)
+	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", testsDetails.ChaosNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()

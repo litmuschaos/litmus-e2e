@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"testing"
 
@@ -70,11 +71,13 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			}
 			klog.Info("rbac deleted sucessfully")
 
-			//Delete test deployments from default namespace
-			By("Delete test deployments")
-			err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()
-			if err != nil {
-				fmt.Println("fail to delete the deployments from default namespace, due to ", err)
+			if os.Getenv("COMPONENT_LEVEL") == "true" {
+				//Delete test deployments from default namespace
+				By("Delete test deployments")
+				err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()
+				if err != nil {
+					fmt.Println("fail to delete the deployments from default namespace, due to ", err)
+				}
 			}
 
 			//Delete test namespace

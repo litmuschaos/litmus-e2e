@@ -257,6 +257,17 @@ App Cleanup In Cluster-2:
   only:
     variables:
     - $POD_LEVEL == "true"
+
+Litmus Cleanup In Cluster-2:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - pod-level-test
+  script:
+    - make litmus-cleanup
+  only:
+    variables:
+    - $POD_LEVEL == "true"    
       
 Pipeline Status Check:
   when: always
@@ -267,4 +278,4 @@ Pipeline Status Check:
     - make pipeline-status-update
   only:
     variables:
-    - $NODE_LEVEL == "true"    
+    - $POD_LEVEL == "true"

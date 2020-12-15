@@ -165,8 +165,19 @@ App Cleanup In Cluster-1:
   only:
     variables:
     - $COMPONENT_TEST == "true"
+
+Litmus Cleanup In Cluster-1:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - component-test
+  script:
+    - make litmus-cleanup 
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"    
   
-Pipeline Status Check:
+Pipeline Status Update:
   when: always
   stage: App Cleanup
   tags:
@@ -175,4 +186,4 @@ Pipeline Status Check:
     - make pipeline-status-update
   only:
     variables:
-    - $NODE_LEVEL == "true"
+    - $COMPONENT_TEST == "true"
