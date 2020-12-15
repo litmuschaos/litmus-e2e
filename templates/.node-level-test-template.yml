@@ -43,20 +43,9 @@ Auxiliary App In Cluster-3:
     - make auxiliary-app
   only:
     variables:
-    - $NODE_LEVEL == "true"
+    - $NODE_LEVEL == "true"        
 
-TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
-  when: always
-  stage: Infra Experiment
-  tags: 
-    - node-level-test
-  script:
-    - make node-cpu-hog
-  only:
-    variables:
-    - $NODE_LEVEL == "true"                
-
-TCTCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER:
+TCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER:
   when: always
   stage: Infra Experiment   
   tags:
@@ -199,7 +188,7 @@ App Cleanup In Cluster-3:
     variables:
     - $NODE_LEVEL == "true"
 
- Litmus Cleanup In Cluster-3:
+Litmus Cleanup In Cluster-3:
   when: always
   stage: App Cleanup
   tags: 
