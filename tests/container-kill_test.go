@@ -53,6 +53,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 			//Installing Chaos Experiment for container-kill
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

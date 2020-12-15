@@ -59,6 +59,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-latency
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

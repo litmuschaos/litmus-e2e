@@ -51,6 +51,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Installing Chaos Experiment for disk-fill
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -134,6 +135,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Installing Chaos Experiment for disk-fill
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
