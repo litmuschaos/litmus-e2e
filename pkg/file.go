@@ -65,6 +65,34 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 	return nil
 }
 
+// AddAfterMatch will add a new line when a match is found
+func AddAfterMatch(filepath, key, newvalue string) error {
+	failFlag := true
+	fileData, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to read the given file, due to:%v", err)
+	}
+	lines := strings.Split(string(fileData), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, key) {
+			copy(lines[i+2:], lines[i+1:])
+			lines[i+1] = newvalue
+			failFlag = false
+		}
+	}
+	if failFlag {
+		return errors.Errorf("Error in adding \"%v\", \"%v\" not found ", newvalue, key)
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(filepath, []byte(output), 0644)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to write the data in the given file, due to:%v", err)
+	}
+
+	return nil
+}
+
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
 func DownloadFile(filepath string, url string) error {
