@@ -61,6 +61,11 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
+	if testsDetails.LibImageCI != "" {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB_IMAGE", "value: '"+testsDetails.LibImageDefault+"'", "value: '"+testsDetails.LibImageCI+"'"); err != nil {
+			return errors.Errorf("Fail to update the lib image, due to %v", err)
+		}
+	}
 	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr

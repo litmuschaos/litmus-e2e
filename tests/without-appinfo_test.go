@@ -64,6 +64,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			//Installing Chaos Experiment for node-cpu-hog
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -156,6 +157,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			//Installing Chaos Experiment for node-memory-hog
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -748,6 +750,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			//Installing Chaos Experiment for node-io-stress
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
