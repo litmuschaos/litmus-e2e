@@ -141,4 +141,92 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 		})
 	})
+
+	// BDD TEST CASE 3
+	Context("Check for litmus components", func() {
+
+		It("Should check the experiment when app is annotated", func() {
+
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+
+			//Fetching all the default ENV
+			//Note: please don't provide custom experiment name here
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "disk-fill", "disk-fill-annotated")
+
+			// Checking the chaos operator running status
+			By("[Status]: Checking chaos operator status")
+			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+
+			//Installing RBAC for the experiment
+			By("[Install]: Installing RBAC")
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+
+			//Installing Chaos Experiment for disk-fill
+			By("[Install]: Installing chaos experiment")
+			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+
+			//Installing Chaos Engine for disk-fill
+			By("[Install]: Installing chaos engine")
+			testsDetails.AnnotationCheck = "true"
+			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+
+			//Checking runner pod running state
+			By("[Status]: Runner pod running status check")
+			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+
+			//Chaos pod running status check
+			err = pkg.ChaosPodStatus(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Waiting for chaos pod to get completed
+			//And Print the logs of the chaos pod
+			By("[Status]: Wait for chaos pod completion and then print logs")
+			err = pkg.ChaosPodLogs(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+
+			//Checking the chaosresult verdict
+			By("[Verdict]: Checking the chaosresult verdict")
+			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+
+		})
+	})
+
+	// BDD for checking chaosengine Verdict when the annotation check is set to true
+	Context("Check for chaos engine verdict", func() {
+
+		It("Should check for the verdict of experiment", func() {
+
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+
+			//Fetching all the default ENV
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "disk-fill", "disk-fill-annotated")
+
+			//Checking chaosengine verdict
+			By("Checking the Verdict of Chaos Engine")
+			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+		})
+	})
 })

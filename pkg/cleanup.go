@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
@@ -42,6 +43,8 @@ func ChaosAbort(testsDetails *types.TestDetails) error {
 
 	}
 	klog.Info("[Abort]: Chaos Experiment Aborted !!!")
+	// waiting for engine verdict updation
+	time.Sleep(3 * time.Second)
 
 	return nil
 }
