@@ -56,6 +56,11 @@ var _ = Describe("BDD of annotation check test", func() {
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
+			//Remove application annotation
+			By("[Annotate]: Remove the application annotation")
+			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "false", testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to add annotation before test, due to {%v}", err)
+
 			//Installing Chaos Engine for pod-delete
 			By("[Install]: Installing chaos engine")
 			//Providing wrong annotation-check
@@ -103,6 +108,11 @@ var _ = Describe("BDD of annotation check test", func() {
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "annotation-check-engine")
+
+			//Revert the application annotation
+			By("[Annotate]: Remove the application annotation")
+			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "true", testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to add annotation after test, due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")

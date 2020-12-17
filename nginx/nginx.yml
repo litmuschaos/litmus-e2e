@@ -5,6 +5,8 @@ metadata:
   name: nginx
   labels:
     run: nginx
+  annotations:
+    litmuschaos.io/chaos: "true"
   namespace: litmus
 spec:
   replicas: 3

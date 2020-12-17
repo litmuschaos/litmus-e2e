@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
+	"github.com/pkg/errors"
 
 	"k8s.io/klog"
 )
@@ -84,4 +85,20 @@ func GetImageTag(goExperimentImage string) string {
 	tag := strings.Split((goExperimentImage), ":")
 
 	return tag[1]
+}
+
+// AddAnnotation will add or update annotation on an application
+func AddAnnotation(deployment, key, value, ns string) error {
+	var out, stderr bytes.Buffer
+	cmd := exec.Command("kubectl", "annotate", "--overwrite", "deploy/"+deployment, key+"="+value, "-n", ns)
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+	if err != nil {
+		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+		klog.Infof("Error: %v", err)
+		return errors.Errorf("Unable to modify annotation")
+	}
+	klog.Infof("[Annotation] " + out.String())
+	return nil
 }
