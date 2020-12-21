@@ -22,9 +22,9 @@ func TestGoDiskFill(t *testing.T) {
 var _ = Describe("BDD of disk-fill experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for litmus components", func() {
+	Context("Check for disk fill chaos experiment", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check for creation of runner pod for disk fill", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -82,11 +82,8 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
-
-		It("Should check for the verdict of experiment", func() {
+		// BDD for checking chaosengine Verdict
+		It("Should check for the verdict of disk fill experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -108,44 +105,10 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 		})
 	})
 
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		It("Should check for the result updation", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "disk-fill", "go-engine2")
-
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
-
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			err = pkg.UpdateResultTable("Disk Fill Fills up Ephemeral Storage of a Pod", ChaosEngineVerdict, &testsDetails)
-			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-
-		})
-	})
-
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for disk fill experiment", func() {
 
-		It("Should check the experiment when app is annotated", func() {
+		It("Should check the disk fill experiment when app is annotated", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -203,11 +166,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
-
-	// BDD for checking chaosengine Verdict when the annotation check is set to true
-	Context("Check for chaos engine verdict", func() {
-
+		// BDD for checking chaosengine Verdict when the annotation check is set to true
 		It("Should check for the verdict of experiment", func() {
 
 			testsDetails := types.TestDetails{}
@@ -229,4 +188,51 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 		})
 	})
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
+
+		It("Should check for the result updation", func() {
+
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+
+			//Fetching all the default ENV
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "disk-fill", "go-engine2")
+
+			if testsDetails.UpdateWebsite == "true" {
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
+				//Getting chaosengine verdict
+				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+
+				//Getting chaosengine verdict for annotation test
+				By("Getting Verdict of Chaos Engine for abort test")
+				testsDetails.EngineName = "disk-fill-annotated"
+				ChaosEngineVerdictForAnnotation, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				if ChaosEngineVerdictForAnnotation != "Pass" {
+					ChaosEngineVerdict = "Fail"
+					klog.Error("Annotation test verdict is not Pass")
+				}
+
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				err = pkg.UpdateResultTable("Disk Fill Fills up Ephemeral Storage of a Pod", ChaosEngineVerdict, &testsDetails)
+				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+			} else {
+				klog.Info("[SKIP]: Skip updating the result on website")
+			}
+
+		})
+	})
+
 })

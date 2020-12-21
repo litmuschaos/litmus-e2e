@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
@@ -122,6 +123,24 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	}
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
 		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
+	// for experiments like pod network latency
+	if testsDetails.NetworkLatency != "" {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "NETWORK_LATENCY", "value: '2000'", "value: '"+testsDetails.NetworkLatency+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
+	// for experiments like pod cpu and memory hog
+	if testsDetails.ExperimentName == "pod-cpu-hog" || testsDetails.ExperimentName == "pod-memory-hog" {
+		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.ChaosKillCommad+""); err != nil {
+			return errors.Errorf("Failed to add the chaos kill command,due to %v", err)
+		}
+	}
+	// for experiments like disk-fill
+	if testsDetails.FillPercentage != 80 {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "FILL_PERCENTAGE", "value: '80'", "value: '"+strconv.Itoa(testsDetails.FillPercentage)+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}

@@ -96,10 +96,7 @@ var _ = Describe("BDD of node-taint experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
-	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
-
+		// BDD for uncordoning the application node
 		It("Should uncordon the app node", func() {
 
 			testsDetails := types.TestDetails{}
@@ -121,12 +118,8 @@ var _ = Describe("BDD of node-taint experiment", func() {
 			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
 
 		})
-	})
-
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
-
-		It("Should check for the verdict of experiment", func() {
+		// BDD for checking chaosengine Verdict
+		It("Should check for the verdict of node taint experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -166,17 +159,20 @@ var _ = Describe("BDD of node-taint experiment", func() {
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-taint", "go-engine7")
 
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+			if testsDetails.UpdateWebsite == "true" {
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
+				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
 
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			err = pkg.UpdateResultTable("Drain the node where application pod is scheduled", ChaosEngineVerdict, &testsDetails)
-			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				err = pkg.UpdateResultTable("Drain the node where application pod is scheduled", ChaosEngineVerdict, &testsDetails)
+				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+			} else {
+				klog.Info("[SKIP]: Skip updating the result on website")
+			}
 		})
 	})
 })

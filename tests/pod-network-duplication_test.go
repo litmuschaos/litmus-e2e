@@ -23,7 +23,7 @@ func TestGoPodNetworkDuplication(t *testing.T) {
 var _ = Describe("BDD of pod-network-duplication experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for litmus components", func() {
+	Context("Check for pod network duplication", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -83,10 +83,7 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
-
+		// BDD for checking chaosengine Verdict
 		It("Should check for the verdict of experiment", func() {
 
 			testsDetails := types.TestDetails{}
@@ -190,46 +187,6 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 		})
 	})
 
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		It("Should check for the result updation", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-duplication", "go-engine12")
-
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
-
-			//Getting chaosengine verdict for abort test
-			By("Getting Verdict of Chaos Engine for abort test")
-			testsDetails.EngineName = "pod-net-dup-abort"
-			ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			if ChaosEngineVerdictForAbort != "Stopped" {
-				ChaosEngineVerdict = "Fail"
-				klog.Error("Abort chaos test verdict is not Pass")
-			}
-			err = pkg.UpdateResultTable("Injects chaos to disrupt network connectivity of pod", ChaosEngineVerdict, &testsDetails)
-			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-
-		})
-	})
 	// BDD TEST CASE 3
 	Context("Check for litmus components", func() {
 
@@ -291,11 +248,8 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
 
-	// BDD for checking chaosengine Verdict when the annotation check is set to true
-	Context("Check for chaos engine verdict", func() {
-
+		// BDD for checking chaosengine Verdict when the annotation check is set to true
 		It("Should check for the verdict of experiment", func() {
 
 			testsDetails := types.TestDetails{}
@@ -315,6 +269,61 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+		})
+	})
+
+	// BDD for pipeline result update
+	Context("Check for the result update", func() {
+
+		It("Should check for the result updation", func() {
+
+			testsDetails := types.TestDetails{}
+			clients := environment.ClientSets{}
+
+			//Getting kubeConfig and Generate ClientSets
+			By("[PreChaos]: Getting kubeconfig and generate clientset")
+			err := clients.GenerateClientSetFromKubeConfig()
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+
+			//Fetching all the default ENV
+			By("[PreChaos]: Fetching all default ENVs")
+			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			environment.GetENV(&testsDetails, "pod-network-duplication", "go-engine12")
+
+			if testsDetails.UpdateWebsite == "true" {
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
+				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+
+				//Getting chaosengine verdict for abort test
+				By("Getting Verdict of Chaos Engine for abort test")
+				testsDetails.EngineName = "pod-net-dup-abort"
+				ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				if ChaosEngineVerdictForAbort != "Stopped" {
+					ChaosEngineVerdict = "Fail"
+					klog.Error("Abort chaos test verdict is not Pass")
+				}
+
+				//Getting chaosengine verdict for annotation test
+				By("Getting Verdict of Chaos Engine for annotation test")
+				testsDetails.EngineName = "pnd-annotated"
+				ChaosEngineVerdictForAnnotate, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				if ChaosEngineVerdictForAnnotate != "Pass" {
+					ChaosEngineVerdict = "Fail"
+					klog.Error("Annotation test verdict is not Pass")
+				}
+
+				err = pkg.UpdateResultTable("Injects chaos to disrupt network connectivity of pod", ChaosEngineVerdict, &testsDetails)
+				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+			} else {
+				klog.Info("[SKIP]: Skip updating the result on website")
+			}
 		})
 	})
 })

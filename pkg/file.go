@@ -76,6 +76,7 @@ func AddAfterMatch(filepath, key, newvalue string) error {
 
 	for i, line := range lines {
 		if strings.Contains(line, key) {
+			lines = append(lines, "")
 			copy(lines[i+2:], lines[i+1:])
 			lines[i+1] = newvalue
 			failFlag = false

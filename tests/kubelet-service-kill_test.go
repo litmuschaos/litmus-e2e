@@ -22,7 +22,7 @@ func TestGoKubeletServiceKill(t *testing.T) {
 var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for litmus components", func() {
+	Context("Check for kubelet service kill experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -95,12 +95,9 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 		})
-	})
 
-	//Waiting for experiment job to get completed
-	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
-
+		//Waiting for experiment job to get completed
+		// Uncordoning the application node
 		It("Should uncordon the app node", func() {
 
 			testsDetails := types.TestDetails{}
@@ -122,10 +119,8 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
 
 		})
-	})
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
 
+		// Checking chaosengine Verdict
 		It("Should check for the verdict of experiment", func() {
 
 			testsDetails := types.TestDetails{}
@@ -166,16 +161,20 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "kubelet-service-kill", "go-engine3")
 
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+			if testsDetails.UpdateWebsite == "true" {
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
+				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
 
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			err = pkg.UpdateResultTable("Kills the kubelet service on the application node", ChaosEngineVerdict, &testsDetails)
-			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				err = pkg.UpdateResultTable("Kills the kubelet service on the application node", ChaosEngineVerdict, &testsDetails)
+				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+			} else {
+				klog.Info("[SKIP]: Skip updating the result on website")
+			}
 
 		})
 	})

@@ -5,6 +5,7 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
+	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
@@ -25,24 +26,59 @@ func GetApplicationNode(testsDetails *types.TestDetails, clients environment.Cli
 //GetChaosEngineVerdict checks the chaosengine verdict
 func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
 
-	time.Sleep(10 * time.Second)
+	testsDetails.Duration = 30
+	testsDetails.Delay = 1
+	klog.Info("[Wait]: Wating for ChaosEngine Verdict updation")
+	err := retry.
+		Times(uint(testsDetails.Duration / testsDetails.Delay)).
+		Wait(time.Duration(testsDetails.Delay) * time.Second).
+		Try(func(attempt uint) error {
+			chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+			if err != nil {
+				return errors.Errorf("Fail to get the chaosengine, due to %v", err)
+			}
+
+			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
+				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
+			}
+			klog.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
+
+			return nil
+		})
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosengine, due to %v", err)
 	}
-	klog.Infof("[ChaosEngien]: Chaos Engine Verdict is: %v", chaosEngine.Status.Experiments[0].Verdict)
-	return string(chaosEngine.Status.Experiments[0].Verdict), nil
+	return string(chaosEngine.Status.Experiments[0].Verdict), err
 }
 
 //GetChaosResultVerdict checks the chaos result verdict
 func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
 
+	testsDetails.Duration = 30
+	testsDetails.Delay = 1
+	klog.Info("[Wait]: Wating for ChaosResult Verdict updation")
+	err := retry.
+		Times(uint(testsDetails.Duration / testsDetails.Delay)).
+		Wait(time.Duration(testsDetails.Delay) * time.Second).
+		Try(func(attempt uint) error {
+			chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
+			if err != nil {
+				return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+			}
+
+			if string(chaosResult.Status.ExperimentStatus.Verdict) == "Awaited" {
+				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
+			}
+			klog.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
+
+			return nil
+		})
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
-	klog.Infof("[ChaosResult]: Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
-	return string(chaosResult.Status.ExperimentStatus.Verdict), nil
+	return string(chaosResult.Status.ExperimentStatus.Verdict), err
 }
 
 //GetJobPod checks the job pod is present or not
@@ -51,7 +87,7 @@ func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients env
 	if err != nil || int(len(job.Items)) == 0 {
 		return errors.Errorf("failed to get the chaos jobs, due to %v", err)
 	}
-	klog.Info("[JOB]: The give job is present")
+	klog.Info("[JOB]: The given job is present")
 	return nil
 }
 

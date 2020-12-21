@@ -79,10 +79,7 @@ var _ = Describe("BDD of pod-autoscaler experiment", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
-	})
-	// BDD for checking chaosengine Verdict
-	Context("Check for chaos engine verdict", func() {
-
+		// BDD for checking chaosengine Verdict
 		It("Should check for the verdict of experiment", func() {
 
 			testsDetails := types.TestDetails{}
@@ -124,16 +121,20 @@ var _ = Describe("BDD of pod-autoscaler experiment", func() {
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-autoscaler", "go-engine17")
 
-			//Getting chaosengine verdict
-			By("Getting Verdict of Chaos Engine")
-			ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-			Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+			if testsDetails.UpdateWebsite == "true" {
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
+				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
 
-			//Updating the pipeline result table
-			By("Updating the pipeline result table")
-			err = pkg.UpdateResultTable("Pod Delete test fails the application pod", ChaosEngineVerdict, &testsDetails)
-			Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				err = pkg.UpdateResultTable("Pod Delete test fails the application pod", ChaosEngineVerdict, &testsDetails)
+				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
+			} else {
+				klog.Info("[SKIP]: Skip updating the result on website")
+			}
 
 		})
 	})
