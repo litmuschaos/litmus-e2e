@@ -1,0 +1,78 @@
+---
+## This worflow will build the litmus-e2e image for every new commit. 
+name: LitmusE2E-CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2  
+
+      - name: Set Tag
+        run: |
+          BRANCH="${GITHUB_REF##*/}"
+          CI_TAG="ci"
+          echo "TAG=${CI_TAG}" >> $GITHUB_ENV
+          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
+
+      - name: Print Tag info
+        run: |
+          echo "BRANCH: ${BRANCH}"
+          echo "TAG: ${TAG}"
+          echo "${TAG}" > ${{ github.workspace }}/tag.txt
+        shell: bash
+
+      - name: Build Image
+        env:
+          DOCKER_REPO: litmuschaos
+          DOCKER_IMAGE: litmus-e2e
+          DOCKER_TAG: ${TAG}
+          SAVE_PATH: ${{ github.workspace }}        
+        run: |
+          make docker-build
+          make save
+          chmod +x ${{ github.workspace }}/image.tar
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: myimage
+          path: |
+            ${{ github.workspace }}/image.tar
+            ${{ github.workspace }}/tag.txt
+
+  push:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2      
+      
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: myimage
+          path: ${{ github.workspace }}
+          
+      - name: Load Docker image
+        run: |
+          docker load --input ${{ github.workspace }}/image.tar
+          TAG=`cat ${{ github.workspace }}/tag.txt`
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+        shell: bash      
+
+      - name: Push Image
+        env:
+          DOCKER_REPO: litmuschaos
+          DOCKER_IMAGE: litmus-e2e
+          DOCKER_TAG: ${TAG}
+          DNAME: ${{ secrets.DNAME }}
+          DPASS: ${{ secrets.DPASS }}          
+        run: |
+          make push
+        shell: bash        
+                

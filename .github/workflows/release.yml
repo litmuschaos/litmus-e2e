@@ -1,0 +1,75 @@
+name: release
+
+on:
+  create:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Set Tag
+        run: |
+          TAG="${GITHUB_REF#refs/*/v}"
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Print Tag info
+        run: |
+          echo "RELEASE TAG: ${RELEASE_TAG}"
+          echo "${RELEASE_TAG}" > ${{ github.workspace }}/tag.txt
+
+      - name: Build Image
+        env:
+          DOCKER_REPO: litmuschaos
+          DOCKER_IMAGE: litmus-e2e
+          DOCKER_TAG: ${RELEASE_TAG}
+          SAVE_PATH: ${{ github.workspace }}
+        run: |
+          make docker-build
+          make save
+          chmod +x ${{ github.workspace }}/image.tar
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: myimage
+          path: |
+            ${{ github.workspace }}/image.tar
+            ${{ github.workspace }}/tag.txt
+
+  push:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2      
+      
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: myimage
+          path: ${{ github.workspace }}
+          
+      - name: Load Docker image
+        run: |
+          docker load --input ${{ github.workspace }}/image.tar
+          RELEASE_TAG=`cat ${{ github.workspace }}/tag.txt`
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
+        shell: bash         
+
+      - name: Push Image
+        env:
+          DOCKER_REPO: litmuschaos
+          DOCKER_IMAGE: litmus-e2e
+          DOCKER_TAG: ${RELEASE_TAG}
+          DNAME: ${{ secrets.DNAME }}
+          DPASS: ${{ secrets.DPASS }}          
+        run: |
+          make push
+        shell: bash                                   

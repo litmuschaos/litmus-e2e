@@ -245,7 +245,16 @@ docker-build:
 	@echo "--> Build litmus-e2e image" 
 	@echo "----------------------------"
 	# Dockerfile available in the repo root
-	sudo docker build . -f Dockerfile -t $(DOCKER_REPO)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker build . -f build/Dockerfile -t $(DOCKER_REPO)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+
+.PHONY: save
+save: docker-save
+
+docker-save:
+	@echo "---------------------------"
+	@echo "--> Saving litmus-e2e image"
+	@echo "---------------------------"
+	@docker save -o $(SAVE_PATH)/image.tar $(DOCKER_REPO)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 .PHONY: push
 push: docker-push
