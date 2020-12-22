@@ -68,7 +68,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 			}
 
 			if string(chaosResult.Status.ExperimentStatus.Verdict) == "Awaited" {
-				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
+				return errors.Errorf("Verdict of Chaos Engine is Awaited")
 			}
 			klog.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
 
