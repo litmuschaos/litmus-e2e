@@ -89,11 +89,14 @@ def fetch_file_content():
     file_content=str(file.decoded_content, 'utf-8')
     content_list = file_content.split('\n')
     totalCoverage= '<a href=\"https://bit.ly/2OLie8t\"><img alt='+coverage+'% src=\"https://progress-bar.dev/'+coverage+'\" /></a>'
-
+    if tag =="ci":
+           version_name = "Version"
+    else:
+           version_name = "Release Version"
     # updating result's table if the table is already present
-    if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>Release Version</th></tr>\n')>0:
+    if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th></tr>\n')>0:
         new_pipeline = ' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n </tr>\n'.format(pipeline_url,time_stamp,tag)
-        index = content_list.index('  <th>Release Version</th></tr>')
+        index = content_list.index('  <th>'+version_name+'</th></tr>')
         content_list.insert(index+2,new_pipeline)
         for line in content_list:
                count += line.count("<tr>")  
@@ -107,10 +110,7 @@ def fetch_file_content():
 
     # creating result's table for first pipeline result entry 
     else:
-        if tag=="ci":
-               updated_file_content =  '<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>Version</th></tr>\n'
-        else:
-               updated_file_content =  '<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>Release Version</th>\n </tr>\n'
+        updated_file_content =  '<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th></tr>\n'
         updated_file_content = updated_file_content + (' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n </tr>\n'.format(pipeline_url,time_stamp,tag))
         updated_file_content = updated_file_content + '</table>'
         index = len(content_list)

@@ -33,4 +33,8 @@ type TestDetails struct {
 	TargetPod              string
 	LibImageDefault        string
 	LibImageCI             string
+	FillPercentage         int
+	ChaosKillCommad        string
+	NetworkLatency         string
+	UpdateWebsite          string
 }

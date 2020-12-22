@@ -37,7 +37,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "disk-fill", "job-cleanup-policy-engine")
+			environment.GetENV(&testsDetails, "pod-delete", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -49,13 +49,12 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for disk-fill
+			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for disk-fill
+			//Installing Chaos Engine for pod-delete
 			By("[Install]: Installing chaos engine")
 			//Providing job-cleanup-policy as 'retain'
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
@@ -121,7 +120,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "disk-fill", "job-cleanup-policy-engine")
+			environment.GetENV(&testsDetails, "pod-delete", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -133,13 +132,12 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for disk-fill
+			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for disk-fill
+			//Installing Chaos Engine for pod-delete
 			By("[Install]: Installing chaos engine")
 			//Providing wrong job-cleanup-policy
 			testsDetails.JobCleanUpPolicy = "delete"
