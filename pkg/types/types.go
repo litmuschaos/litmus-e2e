@@ -34,7 +34,8 @@ type TestDetails struct {
 	LibImageDefault        string
 	LibImageCI             string
 	FillPercentage         int
-	ChaosKillCommad        string
+	CPUKillCommand         string
+	MemoryKillCommand      string
 	NetworkLatency         string
 	UpdateWebsite          string
 }

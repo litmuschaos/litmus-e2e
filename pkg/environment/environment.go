@@ -26,7 +26,8 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.Delay, _ = strconv.Atoi(Getenv("DELAY", "5"))
 	testDetails.Duration, _ = strconv.Atoi(Getenv("DURATION", "90"))
 	testDetails.FillPercentage, _ = strconv.Atoi(Getenv("FILL_PERCENTAGE", "80"))
-	testDetails.ChaosKillCommad = Getenv("CHAOS_KILL_COMMAND", "kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
+	testDetails.CPUKillCommand = Getenv("CPU_KILL_COMMAND", "kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
+	testDetails.MemoryKillCommand = Getenv("MEMORY_KILL_COMMAND", "kill -9 $(ps afx | grep \"[dd] /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 
 	//All Images for running chaos test
