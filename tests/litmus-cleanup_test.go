@@ -71,7 +71,7 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			}
 			klog.Info("rbac deleted sucessfully")
 
-			if os.Getenv("COMPONENT_LEVEL") == "true" {
+			if os.Getenv("COMPONENT_TEST") == "true" {
 				//Delete test deployments from default namespace
 				By("Delete test deployments")
 				err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()

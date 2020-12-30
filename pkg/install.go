@@ -133,8 +133,12 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 		}
 	}
 	// for experiments like pod cpu and memory hog
-	if testsDetails.ExperimentName == "pod-cpu-hog" || testsDetails.ExperimentName == "pod-memory-hog" {
-		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.ChaosKillCommad+""); err != nil {
+	if testsDetails.ExperimentName == "pod-cpu-hog" {
+		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.CPUKillCommand+""); err != nil {
+			return errors.Errorf("Failed to add the chaos kill command,due to %v", err)
+		}
+	} else if testsDetails.ExperimentName == "pod-memory-hog" {
+		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.MemoryKillCommand+""); err != nil {
 			return errors.Errorf("Failed to add the chaos kill command,due to %v", err)
 		}
 	}
