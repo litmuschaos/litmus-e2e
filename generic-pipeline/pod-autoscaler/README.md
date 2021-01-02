@@ -19,6 +19,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239690">239690</a>           |  Pod Delete test fails the application pod           | Sat Jan  2 17:39:42 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239562">239562</a>           |  Pod Delete test fails the application pod           | Fri Jan  1 17:30:02 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239513">239513</a>           |  Pod Delete test fails the application pod           | Fri Jan  1 10:48:36 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239365">239365</a>           |  Pod Delete test fails the application pod           | Thu Dec 31 17:37:29 2020(IST)  | ci | Passed :smiley: |
