@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239682">239682</a>           |  Disk Fill Fills up Ephemeral Storage of a Pod           | Sat Jan  2 18:33:22 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239554">239554</a>           |  Disk Fill Fills up Ephemeral Storage of a Pod           | Fri Jan  1 17:30:54 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239505">239505</a>           |  Disk Fill Fills up Ephemeral Storage of a Pod           | Fri Jan  1 11:53:17 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/239389">239389</a>           |  Disk Fill Fills up Ephemeral Storage of a Pod           | Thu Dec 31 19:05:48 2020(IST)  | ci | Passed :smiley: |
