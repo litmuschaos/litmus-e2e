@@ -45,7 +45,7 @@ Auxiliary App In Cluster-3:
     variables:
     - $NODE_LEVEL == "true"        
 
-TCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER:
+TCID-EC2-GENERIC-INFRA-POD-AUTOSCALER:
   when: always
   stage: Infra Experiment   
   tags:
@@ -56,7 +56,7 @@ TCID-VMWx-GENERIC-INFRA-POD-AUTOSCALER:
     variables:
     - $NODE_LEVEL == "true"                
 
-TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
+TCID-EC2-GENERIC-INFRA-NODE-CPU-HOG:
   when: always
   stage: Infra Experiment
   tags: 
@@ -67,7 +67,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG:
     variables:
     - $NODE_LEVEL == "true"                
 
-TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
+TCID-EC2-GENERIC-INFRA-NODE-MEMORY-HOG:
   when: always
   stage: Infra Experiment
   tags:
@@ -78,7 +78,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG:
     variables:
     - $NODE_LEVEL == "true"          
 
-TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
+TCID-EC2-GENERIC-INFRA-NODE-DRAIN:
   when: always
   stage: Infra Experiment
   tags:
@@ -89,7 +89,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-DRAIN:
     variables:
     - $NODE_LEVEL == "true"          
 
-TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
+TCID-EC2-GENERIC-INFRA-KUBELET-SERVICE-KILL:
   when: always
   stage: Infra Experiment
   tags:
@@ -100,7 +100,7 @@ TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL:
     variables:
     - $NODE_LEVEL == "true"           
 
-TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
+TCID-EC2-GENERIC-INFRA-NODE-TAINT:
   when: always
   stage: Infra Experiment
   tags:
@@ -111,7 +111,7 @@ TCID-VMWx-GENERIC-INFRA-NODE-TAINT:
     variables:
     - $NODE_LEVEL == "true"          
       
-TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
+TCID-EC2-GENERIC-INFRA-NODE-IO-STRESS:
   when: always
   stage: Infra Experiment
   tags:
@@ -122,7 +122,18 @@ TCID-VMWx-GENERIC-INFRA-NODE-IO-STRESS:
     variables:
     - $NODE_LEVEL == "true"
 
-TCID-VMWx-GENERIC-INFRA-WITHOUT-APP-INFO:
+TCID-EC2-KubeAWS-INFRA-EC2-TERMINATE:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make ec2-terminate
+  only:
+    variables:
+    - $NODE_LEVEL == "true" 
+
+TCID-EC2-GENERIC-INFRA-WITHOUT-APP-INFO:
   when: always
   stage: Engine Test
   tags:
@@ -131,9 +142,9 @@ TCID-VMWx-GENERIC-INFRA-WITHOUT-APP-INFO:
     - make without-app-info
   only:
     variables:
-    - $NODE_LEVEL == "true"                       
+    - $NODE_LEVEL == "true"                         
 
-TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
+TCID-EC2-ANSIBLE-INFRA-NODE-CPU-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -144,7 +155,7 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-CPU-HOG:
     variables:
     - $NODE_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
+TCID-EC2-ANSIBLE-INFRA-NODE-MEMORY-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -155,7 +166,7 @@ TCID-VMWx-ANSIBLE-INFRA-NODE-MEMORY-HOG:
     variables:
     - $NODE_LEVEL_ANSIBLE_JOB == "true" 
 
-TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
+TCID-EC2-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -166,7 +177,7 @@ TCID-VMWx-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
     variables:
     - $NODE_LEVEL_ANSIBLE_JOB == "true"
     
-TCID-VMWx-ANSIBLE-INFRA-NODE-DRAIN:
+TCID-EC2-ANSIBLE-INFRA-NODE-DRAIN:
   when: always
   stage: Ansible Experiment 
   tags:

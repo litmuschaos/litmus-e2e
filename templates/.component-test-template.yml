@@ -45,7 +45,7 @@ Auxiliary App In Cluster-1:
     variables:
     - $COMPONENT_TEST == "true"
 
-TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
+TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
   when: always
   stage: Component Checks
   tags:
@@ -56,7 +56,7 @@ TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
     variables:
     - $COMPONENT_TEST == "true"            
 
-TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
+TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE:
   when: always
   stage: Component Checks
   tags:
@@ -67,7 +67,7 @@ TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE:
     variables:
     - $COMPONENT_TEST == "true"      
       
-TCID-VMWx-GENERIC-ENGINE-APP-INFO:
+TCID-EC2-GENERIC-ENGINE-APP-INFO:
   when: always
   stage: Component Checks
   tags:
@@ -78,7 +78,7 @@ TCID-VMWx-GENERIC-ENGINE-APP-INFO:
     variables:
     - $COMPONENT_TEST == "true"        
 
-TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
+TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK:
   when: always
   stage: Component Checks
   tags:
@@ -89,7 +89,7 @@ TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK:
     variables:
     - $COMPONENT_TEST == "true"        
 
-TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
+TCID-EC2-GENERIC-ENGINE-ENGINE-STATE:
   when: always
   stage: Component Checks
   tags:
@@ -100,7 +100,7 @@ TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE:
     variables:
     - $COMPONENT_TEST == "true"        
 
-TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
+TCID-EC2-GENERIC-ENGINE-EXPERIMENT-NAME:
   when: always
   stage: Component Checks
   tags:
@@ -111,7 +111,7 @@ TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME:
     variables:
     - $COMPONENT_TEST == "true"         
 
-TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
+TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
   when: always
   stage: Component Checks
   tags:
@@ -122,7 +122,7 @@ TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
     variables:
     - $COMPONENT_TEST == "true"         
 
-TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
+TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT:
   when: always
   stage: Component Checks
   tags:
@@ -133,7 +133,7 @@ TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT:
     variables:
     - $COMPONENT_TEST == "true"        
       
-TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
+TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
   when: always
   stage: Component Checks
   tags:
@@ -144,7 +144,7 @@ TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
     variables:
     - $COMPONENT_TEST == "true"         
       
-TCID-VMWx-GENERIC-EXPERIMENT-TARGET-POD:
+TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD:
   when: always
   stage: Component Checks
   tags:
