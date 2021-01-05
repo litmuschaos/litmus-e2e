@@ -45,7 +45,7 @@ Auxiliary App In Cluster-2:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-DELETE:
+TCID-EC2-GENERIC-APP-POD-DELETE:
   when: always
   stage: Generic Experiment
   tags:
@@ -56,7 +56,7 @@ TCID-VMWx-GENERIC-APP-POD-DELETE:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
+TCID-EC2-GENERIC-APP-CONTAINER-KILL:
   when: always
   stage: Generic Experiment
   tags:
@@ -67,7 +67,7 @@ TCID-VMWx-GENERIC-APP-CONTAINER-KILL:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
+TCID-EC2-GENERIC-APP-POD-CPU-HOG:
   when: always
   stage: Generic Experiment
   tags:
@@ -78,7 +78,7 @@ TCID-VMWx-GENERIC-APP-POD-CPU-HOG:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
+TCID-EC2-GENERIC-APP-POD-MEMORY-HOG:
   when: always
   stage: Generic Experiment
   tags:
@@ -89,7 +89,7 @@ TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
+TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION:
   when: always
   stage: Generic Experiment
   tags:
@@ -100,7 +100,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
+TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY:
   when: always
   stage: Generic Experiment
   tags:
@@ -111,7 +111,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
+TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS:
   when: always
   stage: Generic Experiment
   tags:
@@ -122,7 +122,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
+TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION:
   when: always
   stage: Generic Experiment
   tags:
@@ -133,7 +133,7 @@ TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION:
     variables:
     - $POD_LEVEL == "true"       
 
-TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
+TCID-EC2-GENERIC-APP-POD-IO-STRESS:
   when: always
   stage: Generic Experiment
   tags:
@@ -145,7 +145,7 @@ TCID-VMWx-GENERIC-APP-POD-IO-STRESS:
     - $POD_LEVEL == "true"        
 
 
-TCID-VMWx-GENERIC-APP-DISK-FILL:
+TCID-EC2-GENERIC-APP-DISK-FILL:
   when: always
   stage: Generic Experiment
   tags:
@@ -159,7 +159,7 @@ TCID-VMWx-GENERIC-APP-DISK-FILL:
 ## Ansible Experiments will trigger 
 ## only if ANSIBLE_JOB is set to true
 
-TCID-VMWx-ANSIBLE-APP-POD-DELETE:
+TCID-EC2-ANSIBLE-APP-POD-DELETE:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -170,7 +170,7 @@ TCID-VMWx-ANSIBLE-APP-POD-DELETE:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
+TCID-EC2-ANSIBLE-APP-CONTAINER-KILL:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -181,7 +181,7 @@ TCID-VMWx-ANSIBLE-APP-CONTAINER-KILL:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-DISK-FILL:
+TCID-EC2-ANSIBLE-APP-DISK-FILL:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -192,7 +192,7 @@ TCID-VMWx-ANSIBLE-APP-DISK-FILL:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
+TCID-EC2-ANSIBLE-APP-POD-CPU-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -203,7 +203,7 @@ TCID-VMWx-ANSIBLE-APP-POD-CPU-HOG:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
+TCID-EC2-ANSIBLE-APP-POD-MEMORY-HOG:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -214,7 +214,7 @@ TCID-VMWx-ANSIBLE-APP-POD-MEMORY-HOG:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -225,7 +225,7 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-LATENCY:
   when: always
   stage: Ansible Experiment 
   tags:
@@ -236,7 +236,7 @@ TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LATENCY:
     variables:
     - $POD_LEVEL_ANSIBLE_JOB == "true"   
 
-TCID-VMWx-ANSIBLE-APP-POD-NETWORK-LOSS:
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-LOSS:
   when: always
   stage: Ansible Experiment 
   tags:

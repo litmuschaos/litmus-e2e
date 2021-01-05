@@ -23,9 +23,11 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
 	//Modify Namespace field of the RBAC
-	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
-	if err != nil {
-		return errors.Errorf("Fail to Modify rbac file, due to %v", err)
+	if rbacNamespace != "" {
+		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
+		if err != nil {
+			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
+		}
 	}
 	//Creating rbac
 	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
@@ -55,7 +57,6 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	// Modify the spec of experiemnt file
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
-
 	}
 	if testsDetails.TargetPod != "" {
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "TARGET_PODS", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
@@ -124,6 +125,15 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
 		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
+	// for ec2-terminate instance
+	if testsDetails.ExperimentName == "ec2-terminate" {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "EC2_INSTANCE_ID", "value: ''", "value: '"+testsDetails.InstanceID+"'"); err != nil {
+			return errors.Errorf("Fail to update the instance id engine file, due to %v", err)
+		}
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "REGION", "value: ''", "value: '"+testsDetails.Region+"'"); err != nil {
+			return errors.Errorf("Fail to update the region engine file, due to %v", err)
 		}
 	}
 	// for experiments like pod network latency

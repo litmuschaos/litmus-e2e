@@ -175,7 +175,15 @@ node-io-stress:
 	@echo "------------------------------------------"
 	@echo "Running node-io-stress experiment"
 	@echo "------------------------------------------"
-	@go test tests/node-io-stress_test.go -v -count=1		
+	@go test tests/node-io-stress_test.go -v -count=1	
+
+.PHONY: ec2-terminate
+ec2-terminate:
+
+	@echo "------------------------------------------"
+	@echo "Running ec2-terminate experiment"
+	@echo "------------------------------------------"
+	@go test tests/ec2-terminate_test.go -v -count=1			
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
@@ -198,7 +206,7 @@ without-app-info:
 	@echo "-----------------------------"
 	@echo "Running Without App info test"
 	@echo "-----------------------------"
-	@go test tests/without-appinfo_test.go -v -count=1		
+	@go test tests/without-appinfo_test.go -v -count=1 -timeout=30m		
 
 .PHONY: app-cleanup
 app-cleanup:

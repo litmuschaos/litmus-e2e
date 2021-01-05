@@ -38,4 +38,6 @@ type TestDetails struct {
 	MemoryKillCommand      string
 	NetworkLatency         string
 	UpdateWebsite          string
+	InstanceID             string
+	Region                 string
 }
