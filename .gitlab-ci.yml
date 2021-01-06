@@ -1,9 +1,10 @@
 stages:
   - setup
   - portal-setup
-  - test-setup
-  - pre-test-setup
-  - cypress-test
+  - cypress-setup
+  - basic-auth-tests
+  - gui-tests
+  - e2e-metrics
   - portal-cleanup
   - cleanup
 
@@ -46,16 +47,16 @@ Portal-Setup:
 
 Cypress-Setup:
   when: always
-  stage: test-setup
+  stage: cypress-setup
   image: cypress/base:10
   tags:
     - litmus-portal
   script:
     - make cypress-setup
 
-PreTest-Setup:
+TCID-VMWx-Portal-GUI-Auth:
   when: always
-  stage: pre-test-setup
+  stage: basic-auth-tests
   image:
     name: cypress/base:10
   tags:
@@ -73,7 +74,7 @@ PreTest-Setup:
 
 .cypress-e2e:
   when: always
-  stage: cypress-test
+  stage: gui-tests
   image:
     name: cypress/base:10
   tags:
@@ -88,30 +89,43 @@ PreTest-Setup:
     <<: *global_cache
     policy: pull
 
-routesCheck_Tests:
+TCID-VMWx-Portal-GUI-Routes:
   extends: .cypress-e2e
   script:
     - make routes-check
 
-createWorkflow_Tests:
+TCID-VMWx-portal-GUI-ScheduleWorkflow:
   extends: .cypress-e2e
   script: 
     - make create-workflow-check
 
-communityData_Tests:
+TCID-VMWx-Portal-GUI-CommunityData:
   extends: .cypress-e2e
   script: 
     - make community-page-check
 
-accountSettings_Tests:
+TCID-VMWx-Portal-GUI-AccountSettings:
   extends: .cypress-e2e
   script: 
     - make account-settings-check
 
-browseWorkflow_Tests:
+TCID-VMWx-Portal-GUI-BrowseWorkflows:
   extends: .cypress-e2e
   script: 
     - make browse-workflow-check
+
+e2e-metric:
+  when: always
+  stage: e2e-metrics
+  tags: 
+    - litmus-portal
+  script:
+    - make e2e-metrics
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  cache: {}
 
 portal-cleanup:
   when: always
