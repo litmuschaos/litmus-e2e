@@ -1,38 +1,38 @@
-## litmus-e2e
-This repository contains the Gitlab e2e pipeline with BDD and other positive and negative test cases for Generic experiments of litmus. An auxiliary application is deployed in the scope of different scenarios and the chaos is performed on that application then in the cleanup stage it is removed successfully.
-# Here are the different stages of the Gitlab pipeline:
+# Litmus-E2E
+The goal of litmus e2e is to provide the test suite to demonstrate the chaos experiment behavior in different scenarios. As the name suggests this branch is for testing the generic suite of experiments which includes different pod and node-level chaos experiment testing like resource chaos, network chaos, disk, and io chaos, and others. Apart from this the infra component of litmus which is crds and operator is also tested under this branch. Chaos testing is powered by GitLab. There are 3 different pipelines (triggers according to GitLab env) that execute all the tests. These are:
 
-<table style="width:100%">
-  <tr>
-    <th>Stages</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>Setup</td>
-    <td>In this stage, the gke cluster is set up with the given value of nodes.</td>
-  </tr>
-  <tr>
-    <td>Install</td>
-    <td>This is the Litmus installation stage, in this stage the crds rbacs and the operator are created.</td>
-  </tr>
-    <tr>
-    <td>Deploy</td>
-    <td>This is the application deployment stage. The application under chaos is deployed and the liveness test for the application is also performed in this stage.</td>
-  </tr>
-    <tr>
-    <td>Generic-experiment</td>
-    <td>This stage includes the creation of experiments,engine and positive and negative test cases for the experiments.</td>
-  </tr>
-    <tr>
-    <td>Infra-experiment</td>
-    <td>This stage also includes the creation of experiments,engine and positive and negative test cases of Infra experiments.</td>
-  </tr>
-    <tr>
-    <td>App-cleanup</td>
-    <td>This is the experiment and application cleanup stage on which all the engines, applications, experiments are removed.</td>
-  </tr>
-    <tr>
-    <td>Cleanup</td>
-    <td>In this stage, the cluster along with VPC Network gets deleted.</td>
-  </tr>
-</table>
+1. ***Application Level pipeline:*** It executes all pod level tests.
+2. ***Infra Level pipeline:*** It executes all infra/node level tests.
+3. ***Component Level pipeline:*** It executes some component level tests.
+
+The `.gitlab-ci.yml` uses local templates (stored under the templates directory in root repo) to run each of these pipelines.
+
+## Why Litmus e2e Matters?
+
+- The End-to-end (e2e) tests for chaos experiment provide a mechanism to test the behavior of the chaos experiment and is the last signal to ensure end-user operations match developer specifications which include the chaos experiment validation and verification of different functionalities like a probe, abort, and others. Although unit and integration tests provide a good signal, in a distributed system like Kubernetes it is not uncommon that a minor change may pass all unit and integration tests, but cause unforeseen changes at the system level.
+
+- The primary objectives of the litmus e2e tests are to ensure consistent and reliable behavior of the experiment business logic and to catch hard-to-test bugs before users do when unit and integration tests are insufficient.
+
+## The Scheduled builds
+
+Pipelines are normally run based on certain conditions being met. For example, when a branch is pushed to the repository. Similarly, Pipeline schedules can be used to also run pipelines at specific intervals.
+GitLab provides a scheduling option that is easy to configure. The litmus generic tests are also scheduled and can be visualized in [e2e portal](https://litmuschaos.github.io/litmus-e2e/generic-pipeline/generic). It has the following scheduled builds:
+
+- [Daily Nightly Builds](https://litmuschaos.github.io/litmus-e2e/generic-pipeline/generic#daily-nightly-builds)
+- [Release Candidate(RC) Build](https://litmuschaos.github.io/litmus-e2e/generic-pipeline/generic#release-candidaterc-build)
+- [General Availability(GA) Build](https://litmuschaos.github.io/litmus-e2e/generic-pipeline/generic#general-availabilityga-build)
+
+
+## Working Group Information
+
+There is a [Special Interest Groups (SIG)](https://github.com/litmuschaos/litmus/wiki/Special-Interest-Groups#sig-testing) to test the litmus components. To contribute to or use the test suite you can join the [slack channel](https://kubernetes.slack.com/archives/CNXNB0ZTN), weekly meetings, and interact in GitHub via issues.
+
+## Test Suite Information
+
+- Instructions - TBD
+- FAQ - TBD
+
+## Introduce a new test scenario
+
+- For adding a new test scenario that is missing, feel free to add a Pull Request(PR) which includes the entry of the test details in [.master-plan.yml](https://github.com/litmuschaos/litmus-e2e/blob/generic/.master-plan.yml) also make sure that the test is not already mentioned in that list. You can also use [GitHub issues](https://github.com/litmuschaos/litmus-e2e/issues) or [slack channel](https://kubernetes.slack.com/archives/CNXNB0ZTN) for any discussion if required. You can also pick up a test form `.master-plan.yml` to start working with a new test in e2e.
+- To know more check out the format to add a PR for including a test scenario from [master-plan.md](https://github.com/litmuschaos/litmus-e2e/blob/generic/master-plan.md).
