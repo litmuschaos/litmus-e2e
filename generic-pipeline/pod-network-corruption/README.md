@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/240728">240728</a>           |  Inject Network Packet Corruption Into Application Pod           | Fri Jan  8 17:59:26 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/240593">240593</a>           |  Inject Network Packet Corruption Into Application Pod           | Thu Jan  7 18:00:59 2021(IST)  | 1.11.2 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/240458">240458</a>           |  Inject Network Packet Corruption Into Application Pod           | Wed Jan  6 18:00:16 2021(IST)  | 1.11.2 | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/240329">240329</a>           |  Inject Network Packet Corruption Into Application Pod           | Tue Jan  5 17:58:46 2021(IST)  | 1.11.2 | Passed :smiley: |
