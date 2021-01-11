@@ -77,6 +77,15 @@ community-page-check:
 	@echo "-----------"
 	cd CypressE2E && CYPRESS_BASE_URL=http://${FRONTEND_IP}:${FRONTEND_PORT}/ npm run Community_Tests
 
+.PHONY: e2e-metrics
+e2e-metrics:
+
+	@echo "----------------------------"
+	@echo "Pipeline Coverage Percentage"
+	@echo "----------------------------"
+	@sshpass -p ${portal_pass} ssh -o StrictHostKeyChecking=no ${portal_user}@${litmus_ip} -p ${port} -tt \
+	 "export CI_JOB_ID=${CI_JOB_ID} && export CI_PIPELINE_ID=${CI_PIPELINE_ID} && cd $(TESTPATH) && bash $(TESTPATH)/metrics/e2e-metrics"
+
 .PHONY: uninstall-portal
 uninstall-portal:
 

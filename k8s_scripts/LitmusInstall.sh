@@ -12,7 +12,7 @@ echo "---------Services Running in Litmus Namespace----------"
 kubectl get svc -n litmus
 
 # Patching the frontend-service to use the Default port
-kubectl patch svc litmusportal-frontend-service -n litmus -p '{"spec": {"ports": [{"port": 9091,"targetPort": 80,"name": "http","nodePort":30221}],"type": "NodePort"}}'
+kubectl patch svc litmusportal-frontend-service -n litmus -p '{"spec": {"ports": [{"port": 9091,"targetPort": 8080,"name": "http","nodePort":30221}],"type": "NodePort"}}'
 
 echo "---------Services Running in Litmus Namespace----------"
 kubectl get svc -n litmus
