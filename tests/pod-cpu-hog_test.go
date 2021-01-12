@@ -53,6 +53,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Installing Chaos Experiment for pod-cpu-hog
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -137,7 +138,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Installing Chaos Experiment
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -208,6 +209,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			//Installing RBAC for the experiment

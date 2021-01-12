@@ -97,6 +97,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Experiment for container-kill
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

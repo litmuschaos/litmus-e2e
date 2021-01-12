@@ -52,7 +52,7 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 
 			//Installing Chaos Experiment for node-memory-hog
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

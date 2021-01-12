@@ -33,6 +33,7 @@ type TestDetails struct {
 	TargetPod              string
 	LibImageDefault        string
 	LibImageCI             string
+	LibImageNew            string
 	FillPercentage         int
 	CPUKillCommand         string
 	MemoryKillCommand      string
