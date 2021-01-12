@@ -13,7 +13,8 @@ RUN apk --update add \
         python3\
         py3-pip \
         rsync \
-        sshpass
+        sshpass\
+        build-base
 
 # Update pip version
 RUN python3 -m pip install pygithub 

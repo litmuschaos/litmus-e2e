@@ -228,6 +228,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-loss
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

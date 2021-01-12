@@ -64,6 +64,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 		}
 	}
 	if testsDetails.LibImageCI != "" {
+		klog.Info("[LIB Image]: LIB image: " + testsDetails.LibImageCI + " !!!")
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB_IMAGE", "value: '"+testsDetails.LibImageDefault+"'", "value: '"+testsDetails.LibImageCI+"'"); err != nil {
 			return errors.Errorf("Fail to update the lib image, due to %v", err)
 		}
@@ -78,7 +79,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
 	}
 	klog.Infof("[ChaosExperiment]: " + out.String())
-	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+	klog.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
 
 	return nil
 }

@@ -53,7 +53,7 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-duplication
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -139,7 +139,7 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-duplication
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -218,6 +218,7 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-duplication
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
