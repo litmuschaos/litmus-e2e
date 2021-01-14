@@ -41,4 +41,5 @@ type TestDetails struct {
 	UpdateWebsite          string
 	InstanceID             string
 	Region                 string
+	Lib                    string
 }
