@@ -58,7 +58,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-loss
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -149,7 +149,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 			//Installing Chaos Experiment for pod-network-loss
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = "litmuschaos/go-runner:ci"
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
@@ -290,6 +290,8 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			var TargetPodIP string
+			var HelperPod string
 
 			klog.Info("RUNNING POD-NETWORK-LOSS PUMBA LIB TEST!!!")
 			//Getting kubeConfig and Generate ClientSets
@@ -334,6 +336,10 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+
+			//Validate network chaos
+			err = pkg.ValidateNetworkChaos(&testsDetails, TargetPodIP, HelperPod, clients)
+			Expect(err).To(BeNil(), "Network chaos validation falied, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod

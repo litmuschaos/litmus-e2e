@@ -273,94 +273,6 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 		})
 	})
 
-	// BDD TEST CASE 4
-	Context("Check for pumba lib", func() {
-
-		It("Should check the pod-network-duplication experiment when lib is set to pumba", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			klog.Info("RUNNING POD-NETWORK-DUPLICATION PUMBA LIB TEST!!!")
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-duplication", "pod-network-dup-pumba")
-
-			// Checking the chaos operator running status
-			By("[Status]: Checking chaos operator status")
-			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
-
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-corr
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
-			testsDetails.Lib = "pumba"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-corr
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
-
-			//Checking runner pod running state
-			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
-
-			//Chaos pod running status check
-			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
-
-			//Waiting for chaos pod to get completed
-			//And Print the logs of the chaos pod
-			By("[Status]: Wait for chaos pod completion and then print logs")
-			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
-
-			//Checking the chaosresult verdict
-			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
-
-		})
-
-		// BDD for checking chaosengine Verdict when the annotation check is set to true
-		It("Should check for the verdict of experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-duplication", "pod-network-dup-pumba")
-
-			//Checking chaosengine verdict
-			By("Checking the Verdict of Chaos Engine")
-			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-		})
-	})
-
 	// BDD for pipeline result update
 	Context("Check for the result update", func() {
 
@@ -406,16 +318,6 @@ var _ = Describe("BDD of pod-network-duplication experiment", func() {
 				if ChaosEngineVerdictForAnnotate != "Pass" {
 					ChaosEngineVerdict = "Fail"
 					klog.Error("Annotation test verdict is not Pass")
-				}
-
-				//Getting chaosengine verdict for pumba lib test
-				By("Getting Verdict of Chaos Engine for pumba lib test")
-				testsDetails.EngineName = "pod-network-dup-pumba"
-				ChaosEngineVerdictForPumba, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				if ChaosEngineVerdictForPumba != "Pass" {
-					ChaosEngineVerdict = "Fail"
-					klog.Error("Pumba test verdict is not Pass")
 				}
 
 				err = pkg.UpdateResultTable("Injects chaos to disrupt network connectivity of pod", ChaosEngineVerdict, &testsDetails)
