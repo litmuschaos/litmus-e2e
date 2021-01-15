@@ -29,18 +29,19 @@ var _ = Describe("BDD of pipeline status update", func() {
 	// BDD for overall pipeline result update
 	Context("Check for the overall pipeline update", func() {
 
-		It("Should check for the result updation", func() {
+		testsDetails := types.TestDetails{}
+		if testsDetails.UpdateWebsite == "true" {
+			It("Should check for the result updation", func() {
 
-			testsDetails := types.TestDetails{}
-			var err error
-			var out, stderr bytes.Buffer
+				testsDetails := types.TestDetails{}
+				var err error
+				var out, stderr bytes.Buffer
 
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pipeline-update", "")
+				//Fetching all the default ENV
+				By("[PreChaos]: Fetching all default ENVs")
+				klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+				environment.GetENV(&testsDetails, "pipeline-update", "")
 
-			if testsDetails.UpdateWebsite == "true" {
 				//Setup metrics to get pipeline details
 				//Creating rbac
 				cmd := exec.Command("bash", "../metrics/e2e-metrics", "start")
@@ -60,26 +61,26 @@ var _ = Describe("BDD of pipeline status update", func() {
 				err = pkg.UpdatePipelineStatus(&testsDetails, string(lines[0]))
 				Expect(err).To(BeNil(), "Fail to run the script for pipeline status update,due to {%v}", err)
 				klog.Info("Pipeline status updated successfully !!!")
-			} else {
-				klog.Info("[SKIP]: Skip updating the result on website")
-			}
 
-		})
+			})
 
-		It("Should check for the result updation", func() {
+			It("Should check for the result updation", func() {
 
-			var err error
-			var out, stderr bytes.Buffer
-			//Setup metrics to get pipeline details
-			//Creating rbac
-			cmdStop := exec.Command("bash", "../metrics/e2e-metrics", "stop")
-			cmdStop.Stdout = &out
-			cmdStop.Stderr = &stderr
-			err = cmdStop.Run()
-			klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-			Expect(err).To(BeNil(), "Fail to setup metrics for pipeline, due to {%v}", err)
+				var err error
+				var out, stderr bytes.Buffer
+				//Setup metrics to get pipeline details
+				//Creating rbac
+				cmdStop := exec.Command("bash", "../metrics/e2e-metrics", "stop")
+				cmdStop.Stdout = &out
+				cmdStop.Stderr = &stderr
+				err = cmdStop.Run()
+				klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+				Expect(err).To(BeNil(), "Fail to setup metrics for pipeline, due to {%v}", err)
 
-		})
+			})
+		} else {
+			klog.Info("[SKIP]: Skip updating the result on website")
+		}
 
 	})
 })

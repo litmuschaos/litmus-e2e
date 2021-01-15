@@ -63,6 +63,14 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
+	// Modify Lib
+	if testsDetails.Lib != "" {
+		klog.Info("[LIB]: LIB: " + testsDetails.Lib)
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB", "value: 'litmus'", "value: '"+testsDetails.Lib+"'"); err != nil {
+			return errors.Errorf("Fail to update the lib, due to %v", err)
+		}
+	}
+	// Modify Lib image
 	if testsDetails.LibImageCI != "" {
 		klog.Info("[LIB Image]: LIB image: " + testsDetails.LibImageCI + " !!!")
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB_IMAGE", "value: '"+testsDetails.LibImageDefault+"'", "value: '"+testsDetails.LibImageCI+"'"); err != nil {
