@@ -154,7 +154,41 @@ TCID-EC2-GENERIC-APP-DISK-FILL:
     - make disk-fill
   only:
     variables:
-    - $POD_LEVEL == "true"       
+    - $POD_LEVEL == "true"
+
+
+TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make pod-affected-perc-ton-parallel
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make pod-affected-perc-ton-series
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make multiple-app-deploy
+  only:
+    variables:
+    - $MULTIPLE-APP == "true"               
 
 ## Ansible Experiments will trigger 
 ## only if ANSIBLE_JOB is set to true

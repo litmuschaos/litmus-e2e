@@ -82,27 +82,11 @@ var _ = Describe("BDD of pod-io-stress experiment", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-		})
-		// BDD for checking chaosengine Verdict
-		It("Should check for the verdict of experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-io-stress", "go-engine16")
-
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+
 		})
 	})
 

@@ -208,6 +208,27 @@ without-app-info:
 	@echo "-----------------------------"
 	@go test tests/without-appinfo_test.go -v -count=1 -timeout=30m		
 
+.PHONY: pod-affected-perc-ton-parallel
+pod-affected-perc-ton-parallel:
+	@echo "------------------------------------------------------------"
+	@echo "Running pod affected percentage 100 and sequence as parallel"
+	@echo "------------------------------------------------------------"
+	@go test tests/pod-affected-perc-ton-parallel_test.go -v -count=1 -timeout=30m
+
+.PHONY: pod-affected-perc-ton-series
+pod-affected-perc-ton-series:
+	@echo "----------------------------------------------------------"
+	@echo "Running pod affected percentage 100 and sequence as series"
+	@echo "----------------------------------------------------------"
+	@go test tests/pod-affected-perc-ton-series_test.go -v -count=1 -timeout=30m			
+
+.PHONY: multiple-app-deploy
+multiple-app-deploy:
+	@echo "------------------------------------------------"
+	@echo "Running Pod Level Chaos With Multiple app deploy"
+	@echo "------------------------------------------------"
+	@go test tests/multiple-app-deploy_test.go -v -count=1 -timeout=30m					
+
 .PHONY: app-cleanup
 app-cleanup:
 

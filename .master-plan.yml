@@ -95,7 +95,34 @@ spec:
       test/feature: "Generic-App"
       test/tags: "pod, io, stress"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
-      test/status: "Done" 
+      test/status: "Done"
+
+  - tcid: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
+    name: "TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL"
+    description: "Test the app level experiment when pod affected percentage is 100 and sequence is parallel"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, parallel,pod-affected-percentage"
+      git/location: ""
+      test/status: "Done"    
+      
+  - tcid: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
+    name: "TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES"
+    description: "Test the app level experiment when pod affected percentage is 100 and sequence is parallel"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, series,pod-affected-percentage"
+      git/location: ""
+      test/status: "Done"      
+      
+  - tcid: TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY
+    name: "TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY"
+    description: "Test the app level experiment when pod is deployed with comman label"
+    labels:
+      test/feature: "Generic-App"
+      test/tags: "pod, multiple deployment"
+      git/location: ""
+      test/status: "Done"        
       
   - tcid: TCID-EC2-GENERIC-INFRA-POD-AUTOSCALER
     name: "TCID-EC2-GENERIC-INFRA-POD-AUTOSCALER"
