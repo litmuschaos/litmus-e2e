@@ -84,22 +84,6 @@ var _ = Describe("BDD of ec2-terminate experiment", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-		})
-		It("Should check for the verdict of ec2-terminate experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "ec2-terminate", "go-engine-ec2")
-
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			testsDetails.ChaosNamespace = "default"

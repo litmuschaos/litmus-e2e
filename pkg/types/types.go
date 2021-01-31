@@ -42,4 +42,6 @@ type TestDetails struct {
 	InstanceID             string
 	Region                 string
 	Lib                    string
+	PodsAffectedPercentage string
+	Sequence               string
 }

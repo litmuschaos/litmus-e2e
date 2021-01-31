@@ -4,6 +4,7 @@ stages:
   - install
   - deploy
   - Generic Experiment
+  - Experiment Tunables
   - Infra Experiment
   - Component Checks
   - Engine Test

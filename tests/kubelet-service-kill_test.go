@@ -94,6 +94,11 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+
+			//Checking chaosengine verdict
+			By("Checking the Verdict of Chaos Engine")
+			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 		})
 
 		//Waiting for experiment job to get completed
@@ -117,29 +122,6 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 			By("Uncordoning Application Node")
 			err = pkg.NodeUncordon(&testsDetails)
 			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
-
-		})
-
-		// Checking chaosengine Verdict
-		It("Should check for the verdict of experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "kubelet-service-kill", "go-engine3")
-
-			//Checking chaosengine verdict
-			By("Checking the Verdict of Chaos Engine")
-			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 
 		})
 	})

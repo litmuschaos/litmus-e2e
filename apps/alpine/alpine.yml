@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apline
+  labels:
+    run: nginx
+    app: alpine
+  annotations:
+    litmuschaos.io/chaos: "true"
+  namespace: litmus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: apline
+  template:
+    metadata:
+      labels:
+        run: apline
+    spec:
+      containers:
+      - name: apline
+        image: alpine:latest
+        command: ['sh', '-c', 'sleep 10000']
+        ports:
+        - containerPort: 80

@@ -58,6 +58,16 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 	}
+	if testsDetails.Sequence != "" {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "SEQUENCE", "value: 'parallel'", "value: '"+testsDetails.Sequence+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
+	if testsDetails.PodsAffectedPercentage != "" {
+		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "PODS_AFFECTED_PERC", "value: ''", "value: '"+testsDetails.PodsAffectedPercentage+"'"); err != nil {
+			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		}
+	}
 	if testsDetails.TargetPod != "" {
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "TARGET_PODS", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)

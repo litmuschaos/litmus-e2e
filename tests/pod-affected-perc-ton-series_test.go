@@ -12,14 +12,13 @@ import (
 	"k8s.io/klog"
 )
 
-func TestWithoutAppInfo(t *testing.T) {
-
+func TestGoPodAffectedPercentageSeries(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for node-cpu-hog without appinfo
-var _ = Describe("BDD of node-cpu-hog experiment", func() {
+//BDD for testing experiment
+var _ = Describe("BDD of pod-delete experiment", func() {
 
 	// BDD for cleaning all components before running the test
 	Context("cleanup for litmus components", func() {
@@ -28,29 +27,29 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			By("[Cleanup]: Removing Litmus Components")
 			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
-
+			if err != nil {
+				klog.Info("Nothing to cleanup...")
+			}
 		})
 	})
 
 	// BDD TEST CASE 1
-	Context("Check for litmus components", func() {
+	Context("Check for pod-delete experiment with pod", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check for the pod delete experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-
+			klog.Info("POD DELETE EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-cpu-hog", "node-cpu-engine-without-appinfo")
+			environment.GetENV(&testsDetails, "pod-delete", "pod-del-pap-100-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -62,24 +61,21 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for node-cpu-hog
+			//Installing Chaos Experiment
 			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for node-cpu-hog
+			//Installing Chaos Engine
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/node-cpu-hog.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
@@ -107,13 +103,14 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	})
 
 	// BDD TEST CASE 2
-	Context("Check for litmus components", func() {
+	Context("Check for container kill experiment", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check the container kill with pod affected percentage 100 and mode is parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			klog.Info("CONTAINER KILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -123,7 +120,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-memory-hog", "node-memory-engine-without-appinfo")
+			environment.GetENV(&testsDetails, "container-kill", "con-kill-pap-ton-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -135,24 +132,22 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for node-memory-hog
+			//Installing Chaos Experiment for container-kill
 			By("[Install]: Installing chaos experiment")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for node-memory-hog
+			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/node-memory-hog.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
@@ -175,18 +170,18 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-
 		})
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for disk fill experiment", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check the disk fill experiment when pod affected percentage is 100 and mode is parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -196,50 +191,34 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "kubelet-service-kill", "ksk-engine-without-appinfo")
+			environment.GetENV(&testsDetails, "disk-fill", "disk-fill-pap-ton-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			// Getting other node for nodeSelector in engine
-			testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Error in getting node selector name, due to {%v}", err)
-			Expect(testsDetails.NodeSelectorName).NotTo(BeEmpty(), "Unable to get node name for node selector, due to {%v}", err)
-
-			//Cordon the application node
-			By("Cordoning Application Node")
-			err = pkg.NodeCordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
-
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for kubelet-service-kill
+			//Installing Chaos Experiment for disk-fill
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for kubelet-service-kill
+			//Installing Chaos Engine for disk-fill
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/kubelet-service-kill.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
@@ -262,32 +241,6 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-		})
-	})
-
-	//Waiting for experiment job to get completed
-	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
-
-		It("Should uncordon the app node", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			//Uncordon the application node
-			By("Uncordoning Application Node")
-			err = pkg.NodeUncordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
 
 		})
 	})
@@ -295,11 +248,12 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	// BDD TEST CASE 4
 	Context("Check for litmus components", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			klog.Info("POD CPU HOG EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -309,50 +263,34 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-drain", "node-drain-engine-without-appinfo")
+			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-hog-pap-100-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
-
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			// Getting other node for nodeSelector in engine
-			testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Error in getting node selector name, due to {%v}", err)
-			Expect(testsDetails.NodeSelectorName).NotTo(BeEmpty(), "Unable to get node name for node selector, due to {%v}", err)
-
-			//Cordon the application node
-			By("Cordoning Application Node")
-			err = pkg.NodeCordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
 
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for node-cordon
+			//Installing Chaos Experiment for pod-cpu-hog
 			By("[Install]: Installing chaos experiment")
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for node-cordon
+			//Installing Chaos Engine for pod-cpu-hog
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/node-drain.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
@@ -375,32 +313,6 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-
-		})
-	})
-
-	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
-
-		It("Should uncordon the app node", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			//Uncordon the application node
-			By("Uncordoning Application Node")
-			err = pkg.NodeUncordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
 
 		})
 	})
@@ -408,11 +320,12 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	// BDD TEST CASE 5
 	Context("Check for litmus components", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			klog.Info("POD MEMORY HOG EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -422,50 +335,34 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-taint", "node-taint-engine-without-appinfo")
+			environment.GetENV(&testsDetails, "pod-memory-hog", "pod-mem-hog-pap-100-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			// Getting other node for nodeSelector in engine
-			testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Error in getting node selector name, due to {%v}", err)
-			Expect(testsDetails.NodeSelectorName).NotTo(BeEmpty(), "Unable to get node name for node selector, due to {%v}", err)
-
-			//Cordon the application node
-			By("Cordoning Application Node")
-			err = pkg.NodeCordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
-
 			//Installing RBAC for the experiment
 			By("[Install]: Installing RBAC")
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for node-cordon
+			//Installing Chaos Experiment for pod-memory-hog
 			By("[Install]: Installing chaos experiment")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for node-cordon
+			//Installing Chaos Engine for pod-memory-hog
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/node-taint.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
@@ -491,40 +388,16 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 		})
 	})
-	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
-
-		It("Should uncordon the app node", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			// Getting application node name
-			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
-
-			//Uncordon the application node
-			By("Uncordoning Application Node")
-			err = pkg.NodeUncordon(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
-
-		})
-	})
 
 	// BDD TEST CASE 6
 	Context("Check for litmus components", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 
+			klog.Info("POD NETWORK CORRUPTION EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -534,7 +407,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-io-stress", "no-io-stress-engine-wo-appinfo")
+			environment.GetENV(&testsDetails, "pod-network-corruption", "pod-net-cor-pap-100-ser")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -546,24 +419,22 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-			//Installing Chaos Experiment for node-io-stress
+			//Installing Chaos Experiment for pod-network-corruption
 			By("[Install]: Installing chaos experiment")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
+			testsDetails.PodsAffectedPercentage = "100"
+			testsDetails.Sequence = "serial"
 			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-			//Installing Chaos Engine for node-io-stress
+			//Installing Chaos Engine for pod-network-corruption
 			By("[Install]: Installing chaos engine")
-			testsDetails.AppNS = ""
-			testsDetails.AppLabel = ""
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/without_appinfo/node-io-stress.yml"
-			testsDetails.JobCleanUpPolicy = "delete"
+			testsDetails.AnnotationCheck = "true"
 			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			testsDetails.AppNS = "litmus"
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 

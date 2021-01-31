@@ -95,6 +95,11 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
+			//Checking chaosengine verdict
+			By("Checking the Verdict of Chaos Engine")
+			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+
 		})
 		// Uncordoning the application node
 		It("Should uncordon the app node for node drain", func() {
@@ -116,28 +121,6 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			By("Uncordoning Application Node")
 			err = pkg.NodeUncordon(&testsDetails)
 			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
-
-		})
-		// Checking chaosengine Verdict
-		It("Should check for the verdict of node drain experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-drain", "go-engine5")
-
-			//Checking chaosengine verdict
-			By("Checking the Verdict of Chaos Engine")
-			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 
 		})
 	})
