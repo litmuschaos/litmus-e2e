@@ -102,7 +102,7 @@ var _ = Describe("BDD of pod-network-corruption experiment", func() {
 
 	// BDD TEST CASE 2
 	//Add abort-chaos for pod-network-corruption experiment
-	Context("Abort-Chaos check of litmus component", func() {
+	Context("Abort-Chaos check for pod network corruption", func() {
 
 		It("Should check the abort of pod-network-corruption experiment", func() {
 
@@ -181,7 +181,7 @@ var _ = Describe("BDD of pod-network-corruption experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for pod network corruption with annotation true", func() {
 
 		It("Should check the experiment when app is annotated", func() {
 

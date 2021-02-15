@@ -188,7 +188,7 @@ TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY:
     - make multiple-app-deploy
   only:
     variables:
-    - $MULTIPLE-APP == "true"               
+    - $MULTIPLE_APP == "true"               
 
 ## Ansible Experiments will trigger 
 ## only if ANSIBLE_JOB is set to true

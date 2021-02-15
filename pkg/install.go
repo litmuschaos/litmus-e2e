@@ -58,6 +58,11 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 	}
+	// Modify experiment imagePullPolicy
+	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ExperimentImagePullPolicy); err != nil {
+		klog.Info("Field imagePullPolicy not defined")
+	}
+
 	if testsDetails.Sequence != "" {
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "SEQUENCE", "value: 'parallel'", "value: '"+testsDetails.Sequence+"'"); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
