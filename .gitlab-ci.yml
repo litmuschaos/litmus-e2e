@@ -1,12 +1,12 @@
 stages:
-  - setup
+  - cluster-setup
   - portal-setup
   - cypress-setup
   - basic-auth-tests
   - gui-tests
   - e2e-metrics
   - portal-cleanup
-  - cleanup
+  - cluster-cleanup
 
 variables:
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
@@ -17,15 +17,15 @@ cache: &global_cache
   paths:
     - .npm
     - cache/Cypress
-    - CypressE2E/node_modules
+    - Cypress/node_modules
 
-Cluster Connect:
-  stage: setup
+EKS-Setup:
+  stage: cluster-setup
   tags:
     - litmus-portal
   script:
-    - chmod 755 ./build/gitlab/stages/3-cluster-connect/cluster-connect
-    - ./build/gitlab/stages/3-cluster-connect/cluster-connect
+    - chmod 755 build/eks/1-cluster-setup/setup
+    - ./build/eks/1-cluster-setup/setup
   artifacts:
     when: always
     paths:
@@ -43,12 +43,13 @@ Portal-Setup:
     when: always
     paths:
       - .kube/
+      - url.txt
   cache: {}
 
 Cypress-Setup:
   when: always
   stage: cypress-setup
-  image: cypress/base:10
+  image: jonsy13/cypress:buster-slim
   tags:
     - litmus-portal
   script:
@@ -57,17 +58,19 @@ Cypress-Setup:
 TCID-VMWx-Portal-GUI-Auth:
   when: always
   stage: basic-auth-tests
+  dependencies:
+    - Portal-Setup
   image:
-    name: cypress/base:10
+    name: jonsy13/cypress:buster-slim
   tags:
     - litmus-portal
   script:
-    - echo ${FRONTEND_IP}
-    - make pre-test-setup
+    - source url.txt
+    - URL=$URL make pre-test-setup
   artifacts:
     when: always
     paths:
-      - CypressE2E/cypress/screenshots
+      - Cypress/cypress/screenshots
   cache:
     <<: *global_cache
     policy: pull
@@ -75,16 +78,16 @@ TCID-VMWx-Portal-GUI-Auth:
 .cypress-e2e:
   when: always
   stage: gui-tests
+  dependencies:
+    - Portal-Setup
   image:
-    name: cypress/base:10
+    name: jonsy13/cypress:buster-slim
   tags:
     - litmus-portal
-  before_script:
-    - echo ${FRONTEND_IP}
   artifacts:
     when: always
     paths:
-      - CypressE2E/cypress/screenshots
+      - Cypress/cypress/screenshots
   cache:
     <<: *global_cache
     policy: pull
@@ -92,27 +95,32 @@ TCID-VMWx-Portal-GUI-Auth:
 TCID-VMWx-Portal-GUI-Routes:
   extends: .cypress-e2e
   script:
-    - make routes-check
+    - source url.txt
+    - URL=$URL make routes-check
 
 TCID-VMWx-portal-GUI-ScheduleWorkflow:
   extends: .cypress-e2e
   script: 
-    - make create-workflow-check
+    - source url.txt
+    -  URL=$URL make create-workflow-check
 
 TCID-VMWx-Portal-GUI-CommunityData:
   extends: .cypress-e2e
   script: 
-    - make community-page-check
+    - source url.txt
+    -  URL=$URL make community-page-check
 
 TCID-VMWx-Portal-GUI-AccountSettings:
   extends: .cypress-e2e
   script: 
-    - make account-settings-check
+    - source url.txt
+    - URL=$URL make account-settings-check
 
 TCID-VMWx-Portal-GUI-BrowseWorkflows:
   extends: .cypress-e2e
   script: 
-    - make browse-workflow-check
+    - source url.txt
+    -  URL=$URL make browse-workflow-check
 
 e2e-metric:
   when: always
@@ -140,14 +148,14 @@ portal-cleanup:
       - .kube/
   cache: {}
     
-Cluster Disconnect:
+EKS-Cleanup:
   when: always
-  stage: cleanup
+  stage: cluster-cleanup
   tags:
     - litmus-portal
-  script: 
-    - chmod 755 ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
-    - ./build/gitlab/stages/4-cluster-disconnect/cluster-disconnect
+  script:
+    - chmod 755 build/eks/2-cluster-cleanup/cleanup
+    - ./build/eks/2-cluster-cleanup/cleanup
   artifacts:
     when: always
     paths:

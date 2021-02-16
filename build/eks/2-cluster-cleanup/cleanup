@@ -1,0 +1,20 @@
+#!/bin/bash
+# This script will
+# 1. delete the eks cluster
+set -e
+
+path=$(pwd)
+echo $path
+CI_PIPELINE_ID=$(echo $CI_PIPELINE_ID)
+cluster_name="portal-e2e-litmus-"$CI_PIPELINE_ID
+# setup aws configuration
+echo '#### SETTING UP AWS CONFIGURATION ####'
+aws configure set default.region ${region}
+aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+
+# creating cluster
+chmod +x build/eks/eks_bootstrap_script
+./build/eks/eks_bootstrap_script -c ${cluster_name} -r ${region} down
+
+

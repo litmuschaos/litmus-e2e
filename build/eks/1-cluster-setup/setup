@@ -1,0 +1,28 @@
+#!/bin/bash
+# This script will
+# 1. setup aws configuration
+# 2. create an eks cluster
+# 3. use context of $HOME/.kube/config
+set -e
+
+path=$(pwd)
+echo $path
+CI_PIPELINE_ID=$(echo $CI_PIPELINE_ID)
+cluster_name="portal-e2e-litmus-"$CI_PIPELINE_ID
+
+# setup aws configuration
+echo '#### SETTING UP AWS CONFIGURATION ####'
+aws configure set default.region ${region}
+aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+
+# creating an eks cluster with the given cluster info
+chmod +x build/eks/eks_bootstrap_script
+./build/eks/eks_bootstrap_script -c ${cluster_name} -n ${nodes} -r ${region} -m ${node_type} up
+
+# use context of $HOME/.kube/config
+mkdir $path/.kube
+mkdir $path/.kube/resources
+cat ~/.kube/config > $path/.kube/config
+cat ~/.kube/config > $path/.kube/admin.conf
+kubectl get nodes

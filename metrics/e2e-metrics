@@ -1,5 +1,12 @@
 #!/bin/bash
 set -ex
+path=$(pwd)
+
+# # Setting up the kubeconfig
+mkdir -p ~/.kube
+
+cp $path/.kube/config ~/.kube/config
+cp $path/.kube/admin.conf ~/.kube/config
 
 # set environment variables
 COVERAGE_NAMESPACE="e2e-metrics"
