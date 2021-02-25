@@ -7,8 +7,8 @@ install-portal:
 	@echo "-----------"
 	@echo "Installing Litmus-Portal"
 	@echo "-----------"
-	chmod 755 k8s_scripts/LitmusInstall.sh
-	./k8s_scripts/LitmusInstall.sh
+	chmod 755 litmus/setup.sh
+	./litmus/setup.sh
 
 .PHONY: cypress-setup
 cypress-setup:
@@ -87,5 +87,5 @@ uninstall-portal:
 	@echo "-----------"
 	@echo "Uninstalling Litmus-Portal"
 	@echo "-----------"
-	chmod 755 k8s_scripts/LitmusUninstall.sh
-	./k8s_scripts/LitmusUninstall.sh
+	chmod 755 litmus/cleanup.sh
+	./litmus/cleanup.sh
