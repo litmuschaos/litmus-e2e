@@ -49,6 +49,7 @@ wait_period=0
 
 # Waiting for URL to be active
 until $(curl --output /dev/null --silent --head --fail $URL); do
+wait_period=$(($wait_period+10))
     if [ $wait_period -gt 300 ];then
        echo "The frontend URL couldn't come in active state in 5 minutes, exiting now.."
        exit 1
