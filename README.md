@@ -11,11 +11,11 @@ This branch contains Gitlab e2e pipeline for litmus-portal with BDD tests using 
   </tr>
   <tr>
     <td>Setup</td>
-    <td>This stage is used for connecting to the OnPrem cluster which is a 4 node cluster(1 master and 3 worker) and clone the litmus-e2e folder.</td>
+    <td>This stage is used for creating a 3-node cluster on EKS.</td>
   </tr>
   <tr>
     <td>Portal-Setup</td>
-    <td>This stage is used for deploying the litmus-portal on OnPrem cluster and also verifies if all pods and services are ready or not.</td>
+    <td>This stage is used for deploying the litmus-portal on 3-node cluster created in Setup stage and also verifies if all pods and services are ready or not.</td>
   </tr>
   <tr>
     <td>Test-Setup</td>
@@ -35,6 +35,6 @@ This branch contains Gitlab e2e pipeline for litmus-portal with BDD tests using 
   </tr>
   <tr>
     <td>Cluster Cleanup</td>
-    <td>In this stage, the litmus-e2e repo is removed and cluster gets disconnected.</td>
+    <td>In this stage, the 3-node cluster is distroyed.</td>
   </tr>
 </table>
