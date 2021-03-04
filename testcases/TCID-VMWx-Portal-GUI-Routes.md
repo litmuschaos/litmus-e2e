@@ -1,7 +1,7 @@
 # GUI Test Cases For Routes Checks (With/Without Login) in Litmus-Portal
 
 <b>tcid:</b> GUI-Routes <br>
-<b>name:</b> Local Routes Testcases Using Browser<br>
+<b>name:</b> Local Routes Test Cases Using Browser<br>
 
 ### Prerequisites
 
@@ -17,11 +17,11 @@
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Open Litmus-Portal URL in Browser
-- Once UI is accessible, Try visiting Different routes without logging In and check contents of landing page.
+- Once the UI is accessible, Try visiting Different routes without logging In and check the contents of the landing page.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     User should be redirected to Login Page.
+     Users should be redirected to Login Page.
 
 ### Test Case 2:
 
@@ -37,13 +37,13 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     User should be redirected to requested page.
+     Users should be redirected to the requested page.
 
 ### Test Case 3:
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to verify routes functionality after loggting In as Admin.
+     Test case to verify routes functionality after logging In as Admin.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 

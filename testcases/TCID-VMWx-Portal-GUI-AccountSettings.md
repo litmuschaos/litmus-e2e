@@ -1,7 +1,7 @@
 # GUI Test Cases For My Account Settings in Litmus-Portal
 
 <b>tcid:</b> GUI-Auth <br>
-<b>name:</b> My Account Setings Testcases Using Browser<br>
+<b>name:</b> My Account Settings Test Cases Using Browser<br>
 
 ### Prerequisites
 
@@ -23,7 +23,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     The user should be able to update the details and Header should show correct details.
+     The user should be able to update the details and the Header should show correct details.
 
 ### Test Case 2:
 
@@ -40,7 +40,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     The user should be able to update the details and Header should show correct details with empty email.
+     The user should be able to update the details and the Header should show correct details with empty email.
 
 ### Test Case 3:
 
@@ -57,7 +57,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     The user should be able to update the details and Header should show correct details with empty Fullname.
+     The user should be able to update the details and the Header should show correct details with empty Fullname.
 
 ### Test Case 4:
 

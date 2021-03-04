@@ -12,7 +12,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to check the accesibility of Team Tab.
+     Test case to check the accessibility of Team Tab.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
@@ -21,7 +21,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     User should be able to see Team Tab.
+     Users should be able to see Team Tab.
 
 ### Test Case 2:
 
@@ -39,7 +39,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     User should be able to see the newly created user in invite tab.
+     Users should be able to see the newly created user in the invite tab.
 
 ### Test Case 3:
 
@@ -50,10 +50,10 @@
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Login as Admin and goto Teaming Tab.
-- Click on "Invite a member" and select the newly created user and click on "send invite" as viewer.
-- Check the Sent tab and Login with new user and check the invitation recieved.
+- Click on "Invite a member" and select the newly created user and click on "send invite" as a viewer.
+- Check the Sent tab and Login with the new user and check the invitation received.
 - Accept the invitation and check if it is visible in active projects.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     User should be able to see the newly created user in invite tab.
+     Users should be able to see the newly created user in the invite tab.

@@ -1,7 +1,7 @@
 # GUI Test Cases For Auth in Litmus-Portal
 
 <b>tcid:</b> GUI-Auth <br>
-<b>name:</b> Local Auth Testcases Using Browser<br>
+<b>name:</b> Auth Test Cases Using Browser<br>
 
 ### Prerequisites
 
@@ -17,7 +17,7 @@
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Open Litmus-Portal URL in Browser
-- Once UI is accessible, check the URL and Content of the Login page.
+- Once the UI is accessible, check the URL and Content of the Login page.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 

@@ -1,7 +1,7 @@
 # GUI Test Cases For User-Management in Litmus-Portal
 
 <b>tcid:</b> GUI-User-Management <br>
-<b>name:</b> Local User-Management Testcases Using Browser<br>
+<b>name:</b> User-Management Test Cases Using Browser<br>
 
 ### Prerequisites
 
@@ -27,12 +27,12 @@
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to verify creation of user by inputting fullname and email only.
+     Test case to verify creation of user by inputting full name and email only.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Login as Admin, Goto the user-managements page.
-- Try creating a user by inputting fullname and email only.
+- Try creating a user by inputting full name and email only.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
@@ -47,7 +47,7 @@
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Login as Admin, Goto the user-managements page.
-- Try creating user by leaving full name empty.
+- Try creating a user by leaving your full name empty.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
@@ -111,5 +111,5 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Create Button should be enabled and we should be able to create user.
+     Create Button should be enabled and we should be able to create a user.
      Login with new user creds should be successful.
