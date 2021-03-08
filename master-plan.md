@@ -10,8 +10,8 @@ metadata:
   name: litmus-e2e-master-testplan
 spec:
   tests:
-    - tcid: TCID-VMWx-Portal-GUI-Auth
-      name: "TCID-VMWx-Portal-GUI-Auth"
+    - tcid: TCID-EKS-Portal-GUI-Auth
+      name: "TCID-EKS-Portal-GUI-Auth"
       description: "UI Tests for Login and Welcome Modal Functionalities"
       labels:
         test/feature: "Litmus-Portal"
@@ -19,8 +19,8 @@ spec:
         git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Basic_Setup"
         test/status: "Done"
 
-    - tcid: TCID-VMWx-Portal-GUI-MyHub
-      name: "TCID-VMWx-Portal-GUI-MyHub"
+    - tcid: TCID-EKS-Portal-GUI-MyHub
+      name: "TCID-EKS-Portal-GUI-MyHub"
       description: "UI Tests for MyHub"
       labels:
         test/feature: "Litmus-Portal"
@@ -39,7 +39,7 @@ spec:
   **TEST-SCOPE:** Specify the scope of the test. It can be an app for application-level test or infra for infra level test.<br>
   **ACTUAL-TEST-NAME:** The actual name of the test<br>
 
-  **Example:** TCID-VMWx-Portal-GUI-Auth
+  **Example:** TCID-EKS-Portal-GUI-Auth
 
 _Following items are added in list format:_
 

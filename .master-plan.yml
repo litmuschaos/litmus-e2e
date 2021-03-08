@@ -7,8 +7,8 @@ spec:
   # ----------------------------------------------------------
   # Cypress UI Tests for Litmus-portal for Self Cluster
   # ----------------------------------------------------------
-  - tcid: TCID-VMWx-Portal-GUI-Auth
-    name: "TCID-VMWx-Portal-GUI-Auth"
+  - tcid: TCID-EKS-Portal-GUI-Auth
+    name: "TCID-EKS-Portal-GUI-Auth"
     description: "UI Tests for Login and Welcome Modal Functionalities"
     labels:
       test/feature: "Litmus-Portal"
@@ -16,8 +16,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Basic_Setup"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-Portal-GUI-AccountSettings
-    name: "TCID-VMWx-Portal-GUI-AccountSettings"
+  - tcid: TCID-EKS-Portal-GUI-AccountSettings
+    name: "TCID-EKS-Portal-GUI-AccountSettings"
     description: "UI Tests for Settings and Teaming Tab"
     labels:
       test/feature: "Litmus-Portal"
@@ -25,8 +25,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Parallel_Tests/Account_Settings"
       test/status: "Done"
   
-  - tcid: TCID-VMWx-Portal-GUI-BrowseWorkflows
-    name: "TCID-VMWx-Portal-GUI-BrowseWorkflows"
+  - tcid: TCID-EKS-Portal-GUI-BrowseWorkflows
+    name: "TCID-EKS-Portal-GUI-BrowseWorkflows"
     description: "UI Tests for Workflow tables Browsing"
     labels:
       test/feature: "Litmus-Portal"
@@ -34,8 +34,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Parallel_Tests/BrowseWorkflow"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-Portal-GUI-CommunityData
-    name: "TCID-VMWx-Portal-GUI-CommunityData"
+  - tcid: TCID-EKS-Portal-GUI-CommunityData
+    name: "TCID-EKS-Portal-GUI-CommunityData"
     description: "UI Tests for Community Tab ( Community and Geo Analytics)"
     labels:
       test/feature: "Litmus-Portal"
@@ -43,8 +43,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Parallel_Tests/Community"
       test/status: "Done"
   
-  - tcid: TCID-VMWx-portal-GUI-ScheduleWorkflow
-    name: "TCID-VMWx-portal-GUI-ScheduleWorkflow"
+  - tcid: TCID-EKS-portal-GUI-ScheduleWorkflow
+    name: "TCID-EKS-portal-GUI-ScheduleWorkflow"
     description: "UI Tests for Workflow Scheduling Scenarios (Different Scenarios for scheduling workflow)."
     labels:
       test/feature: "Litmus-Portal"
@@ -52,8 +52,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Parallel_Tests/Create_Workflow"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-Portal-GUI-Routes
-    name: "TCID-VMWx-Portal-GUI-Routes"
+  - tcid: TCID-EKS-Portal-GUI-Routes
+    name: "TCID-EKS-Portal-GUI-Routes"
     description: "UI Tests for routes checks (Authorized and Unautorized)"
     labels:
       test/feature: "Litmus-Portal"
@@ -61,8 +61,8 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/litmus-portal/CypressE2E/cypress/integration/Parallel_Tests/Routes"
       test/status: "Done"
 
-  - tcid: TCID-VMWx-Portal-GUI-MyHub
-    name: "TCID-VMWx-Portal-GUI-MyHub"
+  - tcid: TCID-EKS-Portal-GUI-MyHub
+    name: "TCID-EKS-Portal-GUI-MyHub"
     description: "UI Tests for MyHub"
     labels:
       test/feature: "Litmus-Portal"
@@ -70,8 +70,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
-  - tcid: TCID-VMWx-Portal-GUI-Analytics
-    name: "TCID-VMWx-Portal-GUI-Analytics"
+  - tcid: TCID-EKS-Portal-GUI-Analytics
+    name: "TCID-EKS-Portal-GUI-Analytics"
     description: "UI Tests for Workflow Analytics"
     labels:
       test/feature: "Litmus-Portal"
@@ -82,8 +82,8 @@ spec:
   # ----------------------------------------------------------
   #   Cypress UI Tests for External Cluster or Agent
   # ----------------------------------------------------------
-  - tcid: TCID-VMWx-Portal-Cluster-External-Cluster-Register
-    name: "TCID-VMWx-Portal-Cluster-External-Cluster-Register"
+  - tcid: TCID-EKS-Portal-Cluster-External-Cluster-Register
+    name: "TCID-EKS-Portal-Cluster-External-Cluster-Register"
     description: "Tests for External Agent or Cluster Registration."
     labels:
       test/feature: "Litmus-Portal"
@@ -91,8 +91,8 @@ spec:
       git/location: ""
       test/status: "Not Done"
   
-  - tcid: TCID-VMWx-Portal-Cluster-External-Cluster-WorkflowScheduling
-    name: "TCID-VMWx-Portal-Cluster-External-Cluster-WorkflowScheduling"
+  - tcid: TCID-EKS-Portal-Cluster-External-Cluster-WorkflowScheduling
+    name: "TCID-EKS-Portal-Cluster-External-Cluster-WorkflowScheduling"
     description: "Tests Scheduling Workflows on External Agent."
     labels:
       test/feature: "Litmus-Portal"
