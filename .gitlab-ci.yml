@@ -55,7 +55,7 @@ Cypress-Setup:
   script:
     - make cypress-setup
 
-TCID-VMWx-Portal-GUI-Auth:
+TCID-EKS-Portal-GUI-Auth:
   when: always
   stage: basic-auth-tests
   dependencies:
@@ -92,35 +92,35 @@ TCID-VMWx-Portal-GUI-Auth:
     <<: *global_cache
     policy: pull
 
-TCID-VMWx-Portal-GUI-Routes:
+TCID-EKS-Portal-GUI-Routes:
   extends: .cypress-e2e
   script:
     - source url.txt
     - URL=$URL make routes-check
 
-TCID-VMWx-portal-GUI-ScheduleWorkflow:
+TCID-EKS-portal-GUI-ScheduleWorkflow:
   extends: .cypress-e2e
   script: 
     - source url.txt
-    -  URL=$URL make create-workflow-check
+    - URL=$URL make create-workflow-check
 
-TCID-VMWx-Portal-GUI-CommunityData:
+TCID-EKS-Portal-GUI-CommunityData:
   extends: .cypress-e2e
   script: 
     - source url.txt
-    -  URL=$URL make community-page-check
+    - URL=$URL make community-page-check
 
-TCID-VMWx-Portal-GUI-AccountSettings:
+TCID-EKS-Portal-GUI-AccountSettings:
   extends: .cypress-e2e
   script: 
     - source url.txt
     - URL=$URL make account-settings-check
 
-TCID-VMWx-Portal-GUI-BrowseWorkflows:
+TCID-EKS-Portal-GUI-BrowseWorkflows:
   extends: .cypress-e2e
   script: 
     - source url.txt
-    -  URL=$URL make browse-workflow-check
+    - URL=$URL make browse-workflow-check
 
 e2e-metric:
   when: always

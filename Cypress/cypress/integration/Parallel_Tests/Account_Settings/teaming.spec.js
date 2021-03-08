@@ -1,9 +1,10 @@
+/// <reference types="Cypress" />
 let user;
 describe("Testing the Teaming section", () => {
   before("Clearing local storage", () => {
     cy.fixture("Users").then((User) => {
       user = User;
-      cy.requestLogin(user.AdminName,user.AdminPassword);
+      cy.requestLogin(user.AdminName, user.AdminPassword);
     });
     cy.wait(8000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
@@ -18,18 +19,7 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
   });
-  //Invitation Button + Modal access check
-  it("Checking the accessibility of the Invitation section", () => {
-    cy.get("[data-cy=invitationButton]").click();
-    cy.get("[data-cy=invitationModal]").should("be.visible");
-    cy.get("[data-cy=receivedTab]").should("be.visible");
-    cy.get("[data-cy=sentTab]").click();
-    cy.get("[data-cy=invitationModal]").should("be.visible");
-    cy.get("[data-cy=sentTab]").should("be.visible");
-    cy.get("[data-cy=modal]").within(() => {
-      cy.get("button").first().click();
-    });
-  });
+
   it("Checking the accessibility of the Invite new member section", () => {
     cy.get("[data-cy=inviteNewMemberButton]").click();
     cy.get("[data-cy=inviteNewMemberModal]").should("be.visible");
@@ -37,6 +27,7 @@ describe("Testing the Teaming section", () => {
       cy.get("button").first().click();
     });
   });
+
   it("Creating new User and testing invite functionality", () => {
     //Create a new user
     cy.get("[data-cy=user-management]").click();
@@ -69,7 +60,7 @@ describe("Testing the Teaming section", () => {
     //Login now as admin
     cy.server();
     cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
-    cy.login("admin", "litmus");
+    cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert Login success
     cy.wait(3000);
@@ -90,6 +81,7 @@ describe("Testing the Teaming section", () => {
       cy.contains("No users available.").should("not.be.visible");
     });
   });
+
   it("Search the new Member and invite them as Viewer", () => {
     //Search and send the invite
     cy.get("[data-cy=inviteNewMemberSearch]").within(() => {
@@ -99,7 +91,7 @@ describe("Testing the Teaming section", () => {
       cy.get("[data-cy=inviteNewMemberTable]").within(() => {
         cy.get("[data-cy=inviteNewMemberCheckBox]").get("span").first().click(); //Get first button to get the dropdown for Viewer/Editor
       });
-      cy.get("[data-cy=inviteNewMemberSendInviteButton]").click();
+      cy.get("[data-cy=inviteNewMemberSendInviteButton] button").click();
       cy.get("[data-cy=inviteNewMemberSuccessModal]").within(() => {
         cy.get(
           "[data-cy=inviteNewMemberSuccessModalDoneButton] button"
@@ -107,21 +99,10 @@ describe("Testing the Teaming section", () => {
       });
     });
     //Check if invitation got sent in the "Sent Tab"
-    cy.get("[data-cy=teamTabPanel]").within(() => {
-      cy.get("[data-cy=toolBarComponent]").within(() => {
-        cy.get("[data-cy=invitationButton] button").click();
-      });
-    });
-    cy.get("[data-cy=sentTab]").click();
+    cy.get("[data-cy=invitedTab]").click();
     cy.contains("There is no one waiting for your invitation.").should(
       "not.be.visible"
     );
-    // Frontend checking of Resend Invite and Cancel Invite buttons
-    cy.get("[data-cy=resendInviteDoneButton] button").should("be.visible");
-    cy.get("[data-cy=cancelInviteDoneButton] button").should("be.visible");
-    cy.get("[data-cy=modal]").within(() => {
-      cy.get("button").first().click();
-    });
     cy.logout();
     //Login again as the intivation receipent
     cy.server();
@@ -138,22 +119,18 @@ describe("Testing the Teaming section", () => {
     cy.wait(3000);
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
-    cy.get("[data-cy=toolBarComponent]").should("be.visible");
+    cy.get("[data-cy=my-account]").click();
     cy.wait(3000); // CHECK
     cy.get("[data-cy=teaming]").click(); // CHECK
-    cy.get("[data-cy=invitationButton]").click();
+    cy.get("[data-cy=receivedTab]").click();
     cy.get("[data-cy=receivedInvitationAccept] button").click();
     cy.wait(3000);
-    //ADD SNACKBAR ASSERTION HERE
-    cy.get("[data-cy=modal]").within(() => {
-      cy.get("button").first().click();
-    });
     //Logout
     cy.logout();
     //Login again as Admin to confirm that member has been added.
     cy.server();
     cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
-    cy.login("admin", "litmus");
+    cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert Login success
     cy.wait(3000);

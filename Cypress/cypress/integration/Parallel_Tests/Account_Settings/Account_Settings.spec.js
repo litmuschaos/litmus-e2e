@@ -5,9 +5,9 @@ describe("Testing the My accounts section", () => {
   before("Clearing local storage", () => {
     cy.clearCookie("token");
     indexedDB.deleteDatabase("localforage");
-    cy.fixture("Users").then(User=>{
+    cy.fixture("Users").then((User) => {
       user = User;
-      cy.requestLogin(user.AdminName,user.AdminPassword);
+      cy.requestLogin(user.AdminName, user.AdminPassword);
     });
     cy.visit("/");
     cy.wait(8000);
@@ -26,7 +26,7 @@ describe("Testing the My accounts section", () => {
 
   it("Changing the personal details by inputting all details", () => {
     cy.server();
-    cy.route("POST", Cypress.env('apiURL')+"/query").as("detailsResponse");
+    cy.route("POST", Cypress.env("apiURL") + "/query").as("detailsResponse");
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear().type(user.NewEmail);
     cy.get("[data-cy=save]").click();
@@ -38,7 +38,7 @@ describe("Testing the My accounts section", () => {
 
   it("Changing the personal details with empty email field", () => {
     cy.server();
-    cy.route("POST", Cypress.env('apiURL')+"/query").as("detailsResponse");
+    cy.route("POST", Cypress.env("apiURL") + "/query").as("detailsResponse");
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear();
     cy.get("[data-cy=save]").click();
@@ -78,11 +78,10 @@ describe("Testing the My accounts section", () => {
     );
     cy.logout();
     cy.server();
-    cy.route("POST", Cypress.env('authURL')+"/login").as("loginResponse"); //Alias for Login Route
+    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
   });
-
 
   // it("Changing the password by inputting all the three password fields", () => {
   //   cy.contains("Settings").click();
