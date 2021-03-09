@@ -23,7 +23,7 @@ parser.add_argument("--time_stamp",
        help="time of gitlab pipeline run")
 
 parser.add_argument("--pipeline",
-       help="the name of pipeline")
+help="the name of pipeline")
 
 parser.add_argument("--token",
        help="github authentication token")
@@ -46,7 +46,7 @@ def get_file_to_update(pipeline,tag):
        else:
               return "portal-pipeline/pipeline-runs/portal-ga.html"
 
-repo = github_token.get_repo("Jonsy13/Pipeline-Updates-Test")
+repo = github_token.get_repo("litmuschaos/litmus-e2e")
 b= repo.get_branch(branch="master")
 filename = get_file_to_update(pipeline,tag)
 print("filename to be updated: "+filename)
@@ -59,7 +59,7 @@ content_list = file_content.split('\n')
 file_update_retries = 5
 
 # github pipeline url using pipeline_id
-pipeline_url ="<a href= \"https://gitlab.com/Jonsy13/portal-e2e-aws/pipelines/{0}\">{0}</a>".format(pipeline_id) #Change to MayaData
+pipeline_url ="<a href= \"https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/{0}\">{0}</a>".format(pipeline_id)
 
 def fetch_file_content():
     # fetching file contents of github file_path
