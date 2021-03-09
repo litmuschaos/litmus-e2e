@@ -48,7 +48,7 @@ Portal-Setup:
 Cypress-Setup:
   when: always
   stage: cypress-setup
-  image: jonsy13/cypress:buster-slim
+  image: ${CYPRESS_IMAGE}
   tags:
     - litmus-portal
   script:
@@ -60,7 +60,7 @@ TCID-EKS-Portal-GUI-Auth:
   dependencies:
     - Portal-Setup
   image:
-    name: jonsy13/cypress:buster-slim
+    name: ${CYPRESS_IMAGE}
   tags:
     - litmus-portal
   script:
@@ -80,7 +80,7 @@ TCID-EKS-Portal-GUI-Auth:
   dependencies:
     - Portal-Setup
   image:
-    name: jonsy13/cypress:buster-slim
+    name: ${CYPRESS_IMAGE}
   tags:
     - litmus-portal
   artifacts:
