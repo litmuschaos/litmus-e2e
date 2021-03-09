@@ -4,7 +4,6 @@ stages:
   - cypress-setup
   - basic-auth-tests
   - gui-tests
-  - e2e-metrics
   - portal-cleanup
   - cluster-cleanup
 
@@ -122,26 +121,26 @@ TCID-EKS-Portal-GUI-BrowseWorkflows:
     - source url.txt
     - URL=$URL make browse-workflow-check
 
-e2e-metric:
-  when: always
-  stage: e2e-metrics
-  tags: 
-    - litmus-portal
-  script:
-    - make e2e-metrics
-  artifacts:
-    when: always
-    paths:
-      - .kube/
-  cache: {}
-
-portal-cleanup:
+Portal-Cleanup:
   when: always
   stage: portal-cleanup
   tags: 
     - litmus-portal
   script:
     - make uninstall-portal
+  artifacts:
+    when: always
+    paths:
+      - .kube/
+  cache: {}
+
+Pipeline Status Update:
+  when: always
+  stage: portal-cleanup
+  tags: 
+    - litmus-portal
+  script:
+    - make pipeline-status-update
   artifacts:
     when: always
     paths:

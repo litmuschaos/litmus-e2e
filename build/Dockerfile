@@ -21,7 +21,7 @@ RUN apk --update add \
 RUN sudo pip3 install --upgrade pip
 
 #Install AWS CLI
-RUN sudo -H pip3 install awscliv2 --upgrade
+RUN sudo -H pip3 install awscli --upgrade
 
 # Install Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl && kubectl version --client
@@ -35,7 +35,18 @@ RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/down
 # Install Helm
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 && chmod 700 get_helm.sh && ./get_helm.sh
 
+COPY --from=golang:1.13-alpine /usr/local/go/ /usr/local/go/
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+
 # Change default shell from ash to bash
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd  
 
+RUN python3 -m pip install pygithub 
+
+# Go Version
+RUN go version
+
 RUN aws --version
+
+RUN apk --update add build-base

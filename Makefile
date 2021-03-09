@@ -81,6 +81,14 @@ e2e-metrics:
 	@echo "----------------------------"
 	bash ./metrics/e2e-metrics
 
+.PHONY: pipeline-status-update
+pipeline-status-update:
+
+	@echo "------------------------"
+	@echo "Updating Pipeline Status"
+	@echo "------------------------"
+	@go test tests/pipeline-update_test.go -v -count=1
+
 .PHONY: uninstall-portal
 uninstall-portal:
 
