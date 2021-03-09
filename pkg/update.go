@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/Jonsy13/portal-e2e-aws/pkg/types"
+	"github.com/litmuschaos/litmus-e2e/pkg/types"
 
 	"k8s.io/klog"
 )

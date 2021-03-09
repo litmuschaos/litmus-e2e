@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Jonsy13/portal-e2e-aws/pkg"
-	"github.com/Jonsy13/portal-e2e-aws/pkg/types"
+	"github.com/litmuschaos/litmus-e2e/pkg"
+	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"

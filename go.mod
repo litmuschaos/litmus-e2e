@@ -1,4 +1,4 @@
-module github.com/Jonsy13/portal-e2e-aws
+module github.com/litmuschaos/litmus-e2e
 
 go 1.13
 

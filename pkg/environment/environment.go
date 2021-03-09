@@ -3,7 +3,7 @@ package environment
 import (
 	"os"
 
-	types "github.com/Jonsy13/portal-e2e-aws/pkg/types"
+	types "github.com/litmuschaos/litmus-e2e/pkg/types"
 )
 
 //GetENV fetches all the env variables from the runner pod
