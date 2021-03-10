@@ -55,7 +55,7 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 	klog.Info("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
 
 	// Recording job number for pipeline update
-	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", "ci", "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--pipeline", pipelineName, "--token", os.Getenv("GITHUB_TOKEN"))
+	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", testsDetails.Version, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--pipeline", pipelineName, "--token", os.Getenv("GITHUB_TOKEN"))
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()

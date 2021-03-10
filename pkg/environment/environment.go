@@ -9,6 +9,7 @@ import (
 //GetENV fetches all the env variables from the runner pod
 func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
+	testDetails.Version = Getenv("RUN_VERSION", "ci")
 }
 
 // Getenv fetch the env and set the default value, if any

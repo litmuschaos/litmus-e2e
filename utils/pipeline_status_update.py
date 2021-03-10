@@ -40,7 +40,7 @@ github_token = Github(token)
 
 def get_file_to_update(pipeline,tag):
        if tag == "ci":
-              return "portal-pipeline/pipeline-runs/portal.html"
+              return "portal-pipeline/pipeline-runs/portal-run.html"
        elif "RC" in tag:
               return "portal-pipeline/pipeline-runs/portal-rc.html"
        else:
