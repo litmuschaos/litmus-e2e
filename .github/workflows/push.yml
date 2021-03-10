@@ -1,0 +1,27 @@
+name: Cypress-Push
+
+on:
+  push:
+    branches:
+      - litmus-portal
+    paths:
+      - 'build/Dockerfile.Cypress'
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "::set-output name=img_tag::$(echo 'ci')"
+          echo "::set-output name=repoOwner::$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')"
+      - name: Docker login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+      - name: Build and Push the Docker Image
+        run: |
+          cd build
+          docker build . -t ${{steps.vars.outputs.repoOwner}}/cypress:${{ steps.vars.outputs.img_tag }} -f Dockerfile.Cypress 
+          docker push ${{steps.vars.outputs.repoOwner}}/cypress:${{ steps.vars.outputs.img_tag }}
