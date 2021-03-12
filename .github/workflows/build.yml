@@ -13,12 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Declare some variables
+      - name: Declare image-tag variable
         id: vars
         shell: bash
         run: |
           echo "::set-output name=img_tag::$(echo 'ci')"
       - name: Build the Docker Image
         run: |
-          cd build
-          docker build . -t cypress:${{ steps.vars.outputs.img_tag }} -f Dockerfile.Cypress
+          docker build . -t cypress:${{ steps.vars.outputs.img_tag }} -f build/Dockerfile.Cypress

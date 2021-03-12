@@ -15,7 +15,8 @@ RUN apk --update add \
     python3\
     py3-pip \
     git \
-    curl
+    curl \
+    build-base
 
 # Update pip version
 RUN sudo pip3 install --upgrade pip
@@ -43,10 +44,3 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd  
 
 RUN python3 -m pip install pygithub 
-
-# Go Version
-RUN go version
-
-RUN aws --version
-
-RUN apk --update add build-base

@@ -23,7 +23,7 @@ parser.add_argument("--time_stamp",
        help="time of gitlab pipeline run")
 
 parser.add_argument("--pipeline",
-help="the name of pipeline")
+       help="the name of pipeline")
 
 parser.add_argument("--token",
        help="github authentication token")
@@ -73,8 +73,8 @@ def fetch_file_content():
     else:
            version_name = "Release Version"
     # updating result's table if the table is already present
-    if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th></tr>\n')>0:
-        new_pipeline = ' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n </tr>\n'.format(pipeline_url,time_stamp,tag)
+    if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th>\n <th>Coverage</th>\n </tr>\n')>0:
+        new_pipeline = ' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n<td>{}</td> </tr>\n'.format(pipeline_url,time_stamp,tag,totalCoverage)
         index = content_list.index('  <th>'+version_name+'</th></tr>')
         content_list.insert(index+2,new_pipeline)
         for line in content_list:
@@ -89,8 +89,8 @@ def fetch_file_content():
 
     # creating result's table for first pipeline result entry 
     else:
-        updated_file_content =  '<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th></tr>\n'
-        updated_file_content = updated_file_content + (' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n </tr>\n'.format(pipeline_url,time_stamp,tag))
+        updated_file_content =  '<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th>\n <th>Coverage</th>\n </tr>\n'
+        updated_file_content = updated_file_content + (' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n <td>{}</td>\n </tr>\n'.format(pipeline_url,time_stamp,tag,totalCoverage))
         updated_file_content = updated_file_content + '</table>'
         index = len(content_list)
         content_list.insert(index, updated_file_content)

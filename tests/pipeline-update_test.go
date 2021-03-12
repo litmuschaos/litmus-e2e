@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
-
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
@@ -27,12 +27,11 @@ var _ = Describe("BDD of pipeline status update", func() {
 
 	// BDD for overall pipeline result update
 	Context("Check for the overall pipeline update", func() {
-
+		
 		testsDetails := types.TestDetails{}
-		if testsDetails.UpdateWebsite == "false" {
+		environment.GetENV(&testsDetails, "pipeline-update", "")
+		if testsDetails.UpdateWebsite == "true" {
 			It("Should check for the result updation", func() {
-
-				testsDetails := types.TestDetails{}
 				var err error
 				var out, stderr bytes.Buffer
 
