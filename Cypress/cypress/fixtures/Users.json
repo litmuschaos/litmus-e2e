@@ -1,7 +1,7 @@
 {
     "projectname":"litmus",
-    "AdminName":"v1",
-    "AdminPassword":"v1",
+    "AdminName":"admin",
+    "AdminPassword":"litmus",
     "AdminEmail":"admin@gmail.com",
     "NewName":"John",
     "NewPassword":"John123",

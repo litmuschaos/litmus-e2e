@@ -1,14 +1,11 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
 
 describe("Testing the My accounts section", () => {
   before("Clearing local storage", () => {
     cy.clearCookie("token");
     indexedDB.deleteDatabase("localforage");
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName, user.AdminPassword);
-    });
+    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
     cy.wait(8000);
     cy.contains("Congratulations").should("be.visible"); // confirmation of HomePage loaded.
@@ -33,7 +30,7 @@ describe("Testing the My accounts section", () => {
     cy.wait("@detailsResponse").its("status").should("eq", 200); //Request Done.
     cy.modalClose();
     cy.get("[data-cy=done]").should("not.exist");
-    cy.headerCheck(user.NewName, user.NewEmail);
+    // cy.headerCheck(user.NewName, user.NewEmail);
   });
 
   it("Changing the personal details with empty email field", () => {
@@ -44,7 +41,7 @@ describe("Testing the My accounts section", () => {
     cy.get("[data-cy=save]").click();
     cy.wait("@detailsResponse").its("status").should("eq", 200); //Request Done.
     cy.modalClose();
-    cy.headerCheck(user.NewName, "");
+    // cy.headerCheck(user.NewName, "");
   });
 
   it("Changing the personal details with empty fullname field", () => {
@@ -70,6 +67,7 @@ describe("Testing the My accounts section", () => {
 
   it("Changing the password by inputting incorrect current password", () => {
     cy.changePassword("abc", user.NewPassword, user.NewPassword);
+    cy.get("[data-cy=change-password] button").click();
     cy.wait("@passwordResponse").its("status").should("eq", 401); //Request Done.
     cy.contains("Error").should("be.visible");
     cy.modalClose();

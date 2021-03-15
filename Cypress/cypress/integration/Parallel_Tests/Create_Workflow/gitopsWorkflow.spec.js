@@ -18,7 +18,6 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=gitopsRadioButton] input[type=radio]").should(
       "not.be.checked"
     );
-    cy.get("[data-cy=connectButton] button").should("be.disabled");
     cy.get("[data-cy=gitopsRadioButton] input[type=radio]").check();
     cy.get("[data-cy=connectButton] button").should("be.enabled");
     cy.get("[data-cy=githubURLInput] input").clear().type("URL");

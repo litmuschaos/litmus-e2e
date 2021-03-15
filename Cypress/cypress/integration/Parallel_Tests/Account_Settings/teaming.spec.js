@@ -1,11 +1,12 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
+
 describe("Testing the Teaming section", () => {
   before("Clearing local storage", () => {
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName, user.AdminPassword);
-    });
+    cy.clearCookie("token");
+    indexedDB.deleteDatabase("localforage");
+    cy.requestLogin(user.AdminName, user.AdminPassword);
+    cy.visit("/");
     cy.wait(8000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
@@ -34,7 +35,12 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=createUser]").click();
     cy.server();
     cy.route("POST", Cypress.env("authURL") + "/create").as("createResponse");
-    cy.createUser("R", "vansh@gmail.com", "vansh", "litmus");
+    cy.createUser(
+      user.NewUserName,
+      user.NewUserEmail,
+      user.NewUserUserName,
+      user.NewUserPassword
+    );
     cy.get("[data-cy=createNewUserButton]").click();
     cy.wait("@createResponse"); //Request Done.
     cy.get("[data-cy=newUserDoneButton]").click();
@@ -44,10 +50,10 @@ describe("Testing the Teaming section", () => {
     cy.url().should("include", "/login");
     cy.server();
     cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
-    cy.login("vansh", "litmus"); //CHANGE NAME HERE
+    cy.login(user.NewUserUserName, user.NewUserPassword); //CHANGE NAME HERE
     cy.wait("@loginResponse").its("status").should("eq", 200);
     //Fill welcome modal!
-    cy.welcomeModalInputs("Project_01", "vansh", "litmus", "vansh@gmail.com"); //CHANGE MODAL DATA HERE
+    cy.welcomeModalInputs("Project_01", user.NewUserPassword); //CHANGE MODAL DATA HERE
     cy.wait(8000);
     cy.contains("Congratulations").should("be.visible");
     //Assert Login success
@@ -85,7 +91,7 @@ describe("Testing the Teaming section", () => {
   it("Search the new Member and invite them as Viewer", () => {
     //Search and send the invite
     cy.get("[data-cy=inviteNewMemberSearch]").within(() => {
-      cy.get("input").clear().type("vansh"); //Search invite HERE
+      cy.get("input").clear().type(user.NewUserUserName); //Search invite HERE
     });
     cy.get("[data-cy=modal]").within(() => {
       cy.get("[data-cy=inviteNewMemberTable]").within(() => {
@@ -107,7 +113,7 @@ describe("Testing the Teaming section", () => {
     //Login again as the intivation receipent
     cy.server();
     cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
-    cy.login("vansh", "litmus");
+    cy.login(user.NewUserUserName, user.NewUserPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert success
     cy.wait(3000);
@@ -143,9 +149,9 @@ describe("Testing the Teaming section", () => {
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
-    cy.get("[data-cy=teamingSearch] input").clear().type("vansh"); //Search teamMember "X" HERE
+    cy.get("[data-cy=teamingSearch] input").clear().type(user.NewUserUserName); //Search teamMember "X" HERE
     cy.get("[data-cy=teamingTableRow]")
-      .contains("vansh@gmail.com") //ASSERT HERE
+      .contains(user.NewUserEmail) //ASSERT HERE
       .should("be.visible");
   });
 });
