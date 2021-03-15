@@ -13,8 +13,8 @@ cluster_name="portal-e2e-litmus-"$CI_PIPELINE_ID
 # setup aws configuration
 echo '#### SETTING UP AWS CONFIGURATION ####'
 aws configure set default.region ${region}
-aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID_PORTAL}
+aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY_PORTAL}
 
 # creating an eks cluster with the given cluster info
 chmod +x build/eks/eks_bootstrap_script
