@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248864">248864</a>           |  Drain the node where application pod is scheduled           | Wed Mar 17 01:11:23 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248412">248412</a>           |  Drain the node where application pod is scheduled           | Mon Mar 15 09:48:47 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248142">248142</a>           |  Drain the node where application pod is scheduled           | Sat Mar 13 17:37:47 2021(IST)  | status | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248106">248106</a>           |  Drain the node where application pod is scheduled           | Sat Mar 13 13:48:58 2021(IST)  | radu | Passed :smiley: |
