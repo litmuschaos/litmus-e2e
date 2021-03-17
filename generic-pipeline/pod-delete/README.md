@@ -20,6 +20,7 @@
 
 | Job ID |   Test Description         | Execution Time | Release Tag   | Test Result   |
  |---------|---------------------------| --------------|--------|--------|
+|     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248840">248840</a>           |  unable to update pipeline result           | Wed Mar 17 00:38:52 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248480">248480</a>           |  unable to update pipeline result           | Mon Mar 15 15:14:51 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248423">248423</a>           |  unable to update pipeline result           | Mon Mar 15 09:37:20 2021(IST)  | ci | Passed :smiley: |
 |     <a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/-/jobs/248170">248170</a>           |  unable to update pipeline result           | Sat Mar 13 18:00:45 2021(IST)  | status | Passed :smiley: |
