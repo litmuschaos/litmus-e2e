@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^5.2.0"
+    "cypress": "^5.2.0",
+    "cypress-wait-until": "^1.7.1"
   }
 }

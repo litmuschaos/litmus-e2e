@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+import "cypress-wait-until";
 //This Script provides custom commands for tests.
 /* loginServer() command for stubbing a server 
 with /auth/login route with any status code and login details provided as argument.*/
@@ -125,4 +126,33 @@ Cypress.Commands.add("createUser", (Name, Email, Username, Password) => {
   Password === ""
     ? cy.get("[data-cy=passwordInput] input").clear()
     : cy.get("[data-cy=passwordInput] input").clear().type(Password);
+});
+
+//Custom Command for waiting for Self-Cluster to come in active state.
+Cypress.Commands.add("waitForSelfCluster", () => {
+  cy.visit("/targets");
+  // Checking Self-Cluster is there.
+  cy.get("[data-cy=browseClusterData]")
+    .eq(0)
+    .children()
+    .eq(1)
+    .contains("Self-Cluster");
+  // Waiting for subscriber to come in active state.
+  cy.waitUntil(
+    () =>
+      cy
+        .get("[data-cy=browseClusterData]")
+        .eq(0)
+        .children()
+        .eq(0)
+        .then(($div) => {
+          console.log($div.text());
+          return $div.text() == "Active" ? true : false;
+        }),
+    {
+      verbose: true,
+      interval: 500,
+      timeout: 30000,
+    }
+  );
 });
