@@ -131,7 +131,7 @@ Cypress.Commands.add("createUser", (Name, Email, Username, Password) => {
 //Custom Command for waiting for Self-Cluster to come in active state.
 Cypress.Commands.add("waitForSelfCluster", () => {
   cy.visit("/targets");
-  // Checking Self-Cluster is there.
+  // Checking if Self-Cluster is there.
   cy.get("[data-cy=browseClusterData]")
     .eq(0)
     .children()
@@ -152,7 +152,7 @@ Cypress.Commands.add("waitForSelfCluster", () => {
     {
       verbose: true,
       interval: 500,
-      timeout: 30000,
+      timeout: 30000, //Wait for 5 min
     }
   );
 });

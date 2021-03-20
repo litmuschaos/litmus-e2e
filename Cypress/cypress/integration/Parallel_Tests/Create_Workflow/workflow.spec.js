@@ -9,7 +9,7 @@ describe("Testing the create Workflow Utility", () => {
   });
 
   it("Checking the accessibility of the choose-cluster page", () => {
-    // cy.waitForSelfCluster();
+    cy.waitForSelfCluster();
     cy.visit("/create-workflow");
     cy.url().should("contain", "/create-workflow");
     cy.contains("Choose the target Kubernetes Agent").should("be.visible");

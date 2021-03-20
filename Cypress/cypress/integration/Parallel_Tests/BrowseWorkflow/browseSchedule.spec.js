@@ -1,14 +1,12 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
+
 describe("Testing the Browse Schedule Tab", () => {
   //Login before initialization of test cases
   before("Clearing local storage", () => {
     cy.clearCookie("token");
     indexedDB.deleteDatabase("localforage");
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName, user.AdminPassword);
-    });
+    cy.requestLogin(user.AdminName, user.AdminPassword);
   });
 
   beforeEach("Refreshing the page and Restarting the waiting server", () => {
@@ -31,7 +29,7 @@ describe("Testing the Browse Schedule Tab", () => {
     //Get WorkFlowSchedules data from the query
     cy.wait("@scheduleData").then((data) => {
       if (JSON.parse(data.xhr.responseText).data.getScheduledWorkflows.length) {
-        cy.get("[data-cy=browseScheduleData]").should("exist");
+        cy.get("[data-cy=workflowSchedulesTableRow]").should("exist");
         cy.log("Table data is present");
       } else if (
         JSON.parse(data.xhr.responseText).data.getScheduledWorkflows.length == 0
@@ -59,7 +57,7 @@ describe("Testing the Browse Schedule Tab", () => {
     //Get WorkFlowSchedules data from the query
     cy.wait("@scheduleData").then((data) => {
       if (JSON.parse(data.xhr.responseText).data.getScheduledWorkflows.length) {
-        cy.get("[data-cy=browseScheduleData]");
+        cy.get("[data-cy=workflowSchedulesTableRow]");
         cy.get("[data-cy=browseScheduleOptions]").first().click();
         cy.get("[data-cy=deleteSchedule]").first().should("exist"); //Delete Schedule Option
       } else {
@@ -85,7 +83,7 @@ describe("Testing the Browse Schedule Tab", () => {
             cy.log(data.workflow_name);
           }
         );
-        cy.get("[data-cy=browseScheduleData]");
+        cy.get("[data-cy=workflowSchedulesTableRow]");
         cy.get("[data-cy=browseScheduleOptions]").first().click();
         cy.get("[data-cy=deleteSchedule]").first().should("exist");
       } else {

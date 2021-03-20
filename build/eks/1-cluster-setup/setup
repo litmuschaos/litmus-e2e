@@ -20,6 +20,21 @@ aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY_PORTAL}
 chmod +x build/eks/eks_bootstrap_script
 ./build/eks/eks_bootstrap_script -c ${cluster_name} -n ${nodes} -r ${region} -m ${node_type} up
 
+node_group="eksctl-"${cluster_name}"-nodegroup-ng-*"
+
+# Getting SecurityGroup ID of node-group using group-name regex as filter
+export SG_ID=$(aws ec2 describe-security-groups \
+    --filters Name=group-name,Values=$node_group \
+    --query "SecurityGroups[0].GroupId")
+
+echo $SG_ID
+
+# Removing extra quotes from SecurityGroup ID
+SG_ID=$(sed -e 's/^"//' -e 's/"$//' <<< ${SG_ID})
+
+# Adding one inbound rule to Group with all permissions.
+OUTPUT=$(aws ec2 authorize-security-group-ingress --group-id ${SG_ID} --protocol all --cidr 0.0.0.0/0)
+
 # use context of $HOME/.kube/config
 mkdir $path/.kube
 mkdir $path/.kube/resources

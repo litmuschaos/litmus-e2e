@@ -9,7 +9,6 @@ describe("Testing the User management section", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
     cy.wait(8000);
-    cy.contains("Congratulations").should("be.visible"); //confirmation of HomePage loaded.
   });
   it("Checking the accessibility of the Settings", () => {
     cy.contains("Settings").click();

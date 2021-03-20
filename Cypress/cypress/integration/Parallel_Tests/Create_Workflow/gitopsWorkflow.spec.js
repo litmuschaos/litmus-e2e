@@ -9,7 +9,7 @@ describe("Testing the create Workflow Utility", () => {
   });
 
   it("Checking accessiblity of GitOps Panel", () => {
-    // cy.waitForSelfCluster();
+    cy.waitForSelfCluster();
     cy.visit("/settings");
     cy.get("[data-cy=gitOps]").click();
     cy.get("[data-cy=localRadioButton] input[type=radio]").should("be.checked");
