@@ -2,7 +2,7 @@
 import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
-describe("Testing the create Workflow Utility", () => {
+describe("Testing the create Custom Workflow Utility", () => {
   before("Clearing the Cookies and deleting the ", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.wait(8000); // Needs to be removed after frontend is fixed.
@@ -32,20 +32,68 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=StepperButtons]").should("be.visible");
     cy.get("[data-cy=StepperButtons]").children().eq(1).should("be.disabled");
     cy.get("[data-cy=StepperButtons]").children().eq(0).should("be.enabled");
-    cy.get("[data-cy=PredefinedWorkflowsPanel]").children().eq(1).click();
-    cy.get("[data-cy=EditWorkflowButton]").click();
-    cy.get("[data-cy=WorkflowNameInput] input")
+    cy.get("[data-cy=CustomWorkflowCard]").click();
+    cy.get("[data-cy=workflowNameInput] input", { timeout: 30000 })
       .click()
       .clear()
-      .type(workflows.nonRecurringworkflowName);
-    cy.get("[data-cy=WorkflowDescriptionInput] textarea")
+      .type(workflows.recurringWorkflowName);
+    cy.get("[data-cy=workflowDescriptionInput] textarea")
       .click()
       .clear()
-      .type(workflows.nonRecurringworkflowDescription);
-    cy.get("[data-cy=WorkflowDetailsModalButtons").children().eq(1).click();
-    cy.get("[data-cy=StepperButtons]").children().eq(1).should("be.enabled");
-    cy.get("[data-cy=StepperButtons]").children().eq(1).click();
-    // cy.contains("Tune the selected workflow").scrollIntoView().should("be.visible"); //Not able to come in View
+      .type(workflows.recurringWorkflowDescription);
+    cy.get("[data-cy=nextButton] button").should("be.disabled");
+    cy.get("[data-cy=uploadYamlRadioButton]").should("not.be.disabled");
+    cy.get("[data-cy=hubsDropDown]").click();
+    cy.get("[data-cy=hubName]").eq(0).should("have.text", "Chaos Hub");
+    cy.get("[data-cy=hubName]").eq(0).click();
+    cy.get("[data-cy=experimentDropDownArrow]").click();
+    cy.get("[data-cy=experimentDropDown]").should("be.visible");
+    cy.get("[data-cy=experimentName]")
+      .contains(/^pod-delete$/) // Regex for exact pod-delete match
+      .click();
+    cy.get("[data-cy=nextButton] button").should("be.enabled");
+    cy.get("[data-cy=nextButton] button").click();
+  });
+
+  it("Tuning an experiment", () => {
+    cy.get("[data-cy=selectedExperimentName]").should(
+      "have.text",
+      "generic/pod-delete"
+    );
+    cy.get("[data-cy=experimentSequence]").should(
+      "have.text",
+      "This is your first experiment"
+    );
+    cy.get("[data-cy=envVariables]").should("be.visible");
+    cy.get("[data-cy=addExperimentButton]").scrollIntoView().click();
+    cy.get("[data-cy=experimentRow]").should("be.visible");
+    cy.get("[data-cy=experimentRow]").should("have.length", 1); // First Experiment
+    cy.get("[data-cy=addMoreExperimentsButton").click();
+    cy.get("[data-cy=uploadYamlRadioButton] input[type=radio]")
+      .scrollIntoView()
+      .should("be.disabled");
+    cy.get("[data-cy=experimentDropDownArrow]").click();
+    cy.get("[data-cy=experimentDropDown]").should("be.visible");
+    cy.get("[data-cy=experimentName]")
+      .contains(/^container-kill$/) // Regex for exact pod-delete match
+      .click();
+    cy.get("[data-cy=nextButton] button").should("be.enabled");
+    cy.get("[data-cy=nextButton] button").click();
+    cy.get("[data-cy=selectedExperimentName]").should(
+      "have.text",
+      "generic/container-kill"
+    );
+    cy.get("[data-cy=experimentSequence]").should(
+      "have.text",
+      "This Experiment will execute after generic/pod-delete"
+    );
+    cy.get("[data-cy=envVariables]").should("be.visible");
+    cy.get("[data-cy=addExperimentButton]").scrollIntoView().click();
+    cy.get("[data-cy=experimentRow]").should("be.visible");
+    cy.get("[data-cy=experimentRow]").should("have.length", 2); // Second Experiment
+    cy.get("[data-cy=finishConstruction] button").click();
+    cy.get("[data-cy=revertChaosVerifyModal]").should("be.visible");
+    cy.get("[data-cy=constructButton] button").click();
   });
 
   it("Checking the workflow Editor Page", () => {
@@ -65,8 +113,12 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=ExperimentWeightSlider]").should("be.visible");
 
     // Code for Slider Manipulation
-    cy.get("[data-cy=WeightSlider]").invoke("val", 5).trigger("change").click();
-    cy.get("[data-cy=ExperimentWeight]").should("have.text", "5 points");
+    cy.get("[data-cy=WeightSlider]")
+      .eq(0)
+      .invoke("val", 5)
+      .trigger("change")
+      .click();
+    cy.get("[data-cy=ExperimentWeight]").eq(0).should("have.text", "5 points");
     cy.get("[data-cy=StepperButtons]").should("be.visible");
     cy.get("[data-cy=StepperButtons]").children().eq(1).click();
   });
@@ -102,7 +154,7 @@ describe("Testing the create Workflow Utility", () => {
       .eq(0)
       .children()
       .eq(1)
-      .should("have.text", workflows.nonRecurringworkflowName);
+      .should("have.text", workflows.recurringWorkflowName);
     cy.get("[data-cy=WorkflowRunsTableRow]")
       .eq(0)
       .children()
@@ -117,7 +169,7 @@ describe("Testing the create Workflow Utility", () => {
       .eq(0)
       .children()
       .eq(0)
-      .should("have.text", workflows.nonRecurringworkflowName);
+      .should("have.text", workflows.recurringWorkflowName);
     cy.get("[data-cy=workflowSchedulesTableRow]")
       .eq(0)
       .children()

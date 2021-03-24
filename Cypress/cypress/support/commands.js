@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+import "cypress-wait-until";
 //This Script provides custom commands for tests.
 /* loginServer() command for stubbing a server 
 with /auth/login route with any status code and login details provided as argument.*/
@@ -33,21 +34,14 @@ Cypress.Commands.add(
 );
 
 // Custom command for Inputting details in Welcome Modal.
-Cypress.Commands.add(
-  "welcomeModalInputs",
-  (ProjectName, Name, Password, Email) => {
-    cy.get("[data-cy=InputProjectName] input").clear().type(ProjectName);
-    cy.get("[data-cy=Continue]").click();
-    cy.get("[data-cy=InputName] input").clear().type(Name);
-    cy.get("[data-cy=startButton]").eq(0).click();
-    cy.get("[data-cy=InputPassword] input").each(($div) => {
-      cy.wrap($div).type(Password);
-    });
-    cy.get("[data-cy=startButton]").eq(0).click();
-    cy.get("[data-cy=InputEmail] input").clear().type(Email);
-    cy.get("[data-cy=startButton]").eq(0).click();
-  }
-);
+Cypress.Commands.add("welcomeModalInputs", (ProjectName, Password) => {
+  cy.get("[data-cy=InputProjectName] input").clear().type(ProjectName);
+  cy.get("[data-cy=Continue]").click();
+  cy.get("[data-cy=InputPassword] input").each(($div) => {
+    cy.wrap($div).type(Password);
+  });
+  cy.get("[data-cy=startButton]").eq(0).click();
+});
 
 //Custom command for Inputting Login Details.
 Cypress.Commands.add("login", (Username, Password) => {
@@ -79,7 +73,6 @@ Cypress.Commands.add(
     confPasword === ""
       ? cy.get("[data-cy=confPassword] input").clear()
       : cy.get("[data-cy=confPassword] input").clear().type(confPasword);
-    cy.get("[data-cy=change-password]").click();
   }
 );
 
@@ -116,7 +109,7 @@ Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
     .then((res) => {
       cy.setCookie("token", res.access_token);
     });
-    cy.visit("/");
+  cy.visit("/");
 });
 
 //Custom command for Inputting user Details.
@@ -133,4 +126,33 @@ Cypress.Commands.add("createUser", (Name, Email, Username, Password) => {
   Password === ""
     ? cy.get("[data-cy=passwordInput] input").clear()
     : cy.get("[data-cy=passwordInput] input").clear().type(Password);
+});
+
+//Custom Command for waiting for Self-Cluster to come in active state.
+Cypress.Commands.add("waitForSelfCluster", () => {
+  cy.visit("/targets");
+  // Checking if Self-Cluster is there.
+  cy.get("[data-cy=browseClusterData]")
+    .eq(0)
+    .children()
+    .eq(1)
+    .contains("Self-Cluster");
+  // Waiting for subscriber to come in active state.
+  cy.waitUntil(
+    () =>
+      cy
+        .get("[data-cy=browseClusterData]")
+        .eq(0)
+        .children()
+        .eq(0)
+        .then(($div) => {
+          console.log($div.text());
+          return $div.text() == "Active" ? true : false;
+        }),
+    {
+      verbose: true,
+      interval: 500,
+      timeout: 30000, //Wait for 5 min
+    }
+  );
 });

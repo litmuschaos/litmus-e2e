@@ -1,17 +1,14 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
+
 describe("Testing the User management section", () => {
   before("Clearing local storage", () => {
     cy.clearCookie("token");
     indexedDB.deleteDatabase("localforage");
     cy.server();
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName,user.AdminPassword);
-    });
+    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
     cy.wait(8000);
-    cy.contains("Congratulations").should("be.visible"); //confirmation of HomePage loaded.
   });
   it("Checking the accessibility of the Settings", () => {
     cy.contains("Settings").click();
@@ -19,11 +16,11 @@ describe("Testing the User management section", () => {
   });
   it("Checking the accessibility of User Management", () => {
     cy.server();
-    cy.route("GET", Cypress.env("authURL")+"/users").as("userResponse");
+    cy.route("GET", Cypress.env("authURL") + "/users").as("userResponse");
     cy.get("[data-cy=user-management]").click();
     cy.wait("@userResponse").then((data) => {
-      cy.wrap(data.responseBody.length).should("gte",1 );
-    }); 
+      cy.wrap(data.responseBody.length).should("gte", 1);
+    });
   });
   it("Checking the accessibility of Create new user", () => {
     cy.get("[data-cy=createUser]").click();
@@ -55,7 +52,7 @@ describe("Testing the User management section", () => {
   });
   it("Creating user by inputting all details", () => {
     cy.server();
-    cy.route("POST", Cypress.env("authURL")+"/create").as("createResponse");
+    cy.route("POST", Cypress.env("authURL") + "/create").as("createResponse");
     cy.createUser("Richard Hill", "richard@gmail.com", "richard124", "litmus");
     cy.get("[data-cy=createNewUserButton]").click();
     cy.wait("@createResponse");
@@ -64,26 +61,28 @@ describe("Testing the User management section", () => {
     cy.contains("richard124").should("be.visible");
   });
   it("Creating user by inputting all details", () => {
-      cy.get("[data-cy=searchField]").within(() => {
-        cy.get("input").clear().type("Richard Hill"); 
-      });
-      cy.get("[data-cy=userTableRow]").within(() => {
-        cy.get("[data-cy=editUser]").first().click(); 
-      });
-      cy.get("[data-cy=editProfile]").click();
-      cy.get("[data-cy=editPassword] input").clear().type("litmus@123");
-      cy.server();
-      cy.route("POST", Cypress.env("authURL")+"/reset/password").as("resetResponse");
-      cy.get("[data-cy=edit]").click();
-      cy.wait("@resetResponse").its("status").should("eq", 200);
-      cy.get("[data-cy=done]").should("be.visible");
-      cy.get("[data-cy=done]").click();
+    cy.get("[data-cy=searchField]").within(() => {
+      cy.get("input").clear().type("Richard Hill");
+    });
+    cy.get("[data-cy=userTableRow]").within(() => {
+      cy.get("[data-cy=editUser]").first().click();
+    });
+    cy.get("[data-cy=editProfile]").click();
+    cy.get("[data-cy=editPassword] input").clear().type("litmus@123");
+    cy.server();
+    cy.route("POST", Cypress.env("authURL") + "/reset/password").as(
+      "resetResponse"
+    );
+    cy.get("[data-cy=edit]").click();
+    cy.wait("@resetResponse").its("status").should("eq", 200);
+    cy.get("[data-cy=done]").should("be.visible");
+    cy.get("[data-cy=done]").click();
   });
   it("logging in from new user and checking the accesibility of non admin users", () => {
     cy.logout();
     cy.server();
-    cy.route("POST", Cypress.env("authURL")+"/login").as("loginResponse"); //Alias for Login Route
+    cy.route("POST", Cypress.env("authURL") + "/login").as("loginResponse"); //Alias for Login Route
     cy.login("richard124", "litmus@123");
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
- });
+  });
 });

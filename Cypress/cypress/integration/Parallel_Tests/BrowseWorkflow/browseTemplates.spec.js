@@ -1,5 +1,6 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
+
 describe("Testing the Templates Tab", () => {
   //Function to capitalize the first letter of a word
   const capitalize = (str) => {
@@ -7,10 +8,9 @@ describe("Testing the Templates Tab", () => {
   };
   //Login before initialization of test cases
   before("Clearing local storage", () => {
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName, user.AdminPassword);
-    });
+    cy.clearCookie("token");
+    indexedDB.deleteDatabase("localforage");
+    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.wait(8000);
   });
 

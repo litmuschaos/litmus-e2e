@@ -1,12 +1,12 @@
 /// <reference types="Cypress" />
-let user;
+import * as user from "../../../fixtures/Users.json";
+
 describe("Testing the Browse Workflow Tab", () => {
   //Login before initialization of test cases
   before("Clearing local storage", () => {
-    cy.fixture("Users").then((User) => {
-      user = User;
-      cy.requestLogin(user.AdminName, user.AdminPassword);
-    });
+    cy.clearCookie("token");
+    indexedDB.deleteDatabase("localforage");
+    cy.requestLogin(user.AdminName, user.AdminPassword);
   });
 
   beforeEach("Refreshing page and starting server", () => {
@@ -27,7 +27,7 @@ describe("Testing the Browse Workflow Tab", () => {
     //Get WorkFlowRuns data from the query
     cy.wait("@workflowData").then((data) => {
       if (JSON.parse(data.xhr.responseText).data.getWorkFlowRuns.length) {
-        cy.get("[data-cy=browseWorkflowData]").should("exist");
+        cy.get("[data-cy=WorkflowRunsTableRow]").should("exist");
         cy.log("Table data is present");
       } else if (
         JSON.parse(data.xhr.responseText).data.getWorkFlowRuns.length == 0
@@ -53,7 +53,7 @@ describe("Testing the Browse Workflow Tab", () => {
     //Get WorkFlowRuns data from the query
     cy.wait("@workflowData").then((data) => {
       if (JSON.parse(data.xhr.responseText).data.getWorkFlowRuns.length) {
-        cy.get("[data-cy=browseWorkflowData]");
+        cy.get("[data-cy=WorkflowRunsTableRow]");
         cy.get("[data-cy=browseWorkflowOptions]").first().click();
         cy.get("[data-cy=workflowDetails]").first().should("exist"); //Workflow Details Option
         cy.get("[data-cy=workflowAnalytics]").first().should("exist"); //Workflow Analytics Option
@@ -75,7 +75,7 @@ describe("Testing the Browse Workflow Tab", () => {
     //Get WorkFlowRuns data from the query
     cy.wait("@workflowData").then((data) => {
       if (JSON.parse(data.xhr.responseText).data.getWorkFlowRuns.length) {
-        cy.get("[data-cy=browseWorkflowData]");
+        cy.get("[data-cy=WorkflowRunsTableRow]");
         cy.get("[data-cy=workflowName]")
           .first()
           .then(($name) => {

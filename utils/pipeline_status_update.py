@@ -75,7 +75,7 @@ def fetch_file_content():
     # updating result's table if the table is already present
     if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th>\n <th>Coverage</th>\n </tr>\n')>0:
         new_pipeline = ' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n<td>{}</td> </tr>\n'.format(pipeline_url,time_stamp,tag,totalCoverage)
-        index = content_list.index('  <th>'+version_name+'</th></tr>')
+        index = content_list.index('  <th>'+version_name+'</th>')
         content_list.insert(index+2,new_pipeline)
         for line in content_list:
                count += line.count("<tr>")  
