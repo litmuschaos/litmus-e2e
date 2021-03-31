@@ -4,22 +4,25 @@ metadata:
   name: nginx-chaos
   namespace: default
 spec:
+  appinfo:
+    appkind: 'deployment'
+    applabel: 'run=nginx'
+    appns: 'default'
   annotationCheck: 'false'
   engineState: 'active'
   auxiliaryAppInfo: ''
-  chaosServiceAccount: node-cpu-hog-sa
-  monitoring: false
+  chaosServiceAccount: node-io-stress-sa
   jobCleanUpPolicy: 'delete'
   experiments:
-    - name: node-cpu-hog
+    - name: node-io-stress
       spec:
         components:
           env:
             - name: TOTAL_CHAOS_DURATION
-              value: '60'
-            
-            - name: NODE_CPU_CORE
-              value: ''
+              value: '120'
+
+            - name: FILESYSTEM_UTILIZATION_PERCENTAGE
+              value: '10'
             
             - name: TARGET_NODES
               value: ''

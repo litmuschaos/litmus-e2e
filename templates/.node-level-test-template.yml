@@ -133,13 +133,13 @@ TCID-EC2-KubeAWS-INFRA-EC2-TERMINATE:
     variables:
     - $NODE_LEVEL == "true" 
 
-TCID-EC2-GENERIC-INFRA-WITHOUT-APP-INFO:
+TCID-EC2-GENERIC-INFRA-WITH-APP-INFO:
   when: always
   stage: Engine Test
   tags:
     - node-level-test
   script:
-    - make without-app-info
+    - make with-app-info
   only:
     variables:
     - $NODE_LEVEL == "true"                         

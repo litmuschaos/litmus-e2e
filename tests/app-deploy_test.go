@@ -45,6 +45,10 @@ var _ = Describe("BDD of Application Deployment", func() {
 			err = exec.Command("kubectl", "apply", "-f", "../apps/nginx/nginx.yml").Run()
 			Expect(err).To(BeNil(), "Fail to create application and its components, due to {%v}", err)
 
+			By("Deploying Sample pod in default namespace")
+			err = exec.Command("kubectl", "run", "nginx", "--image=nginx").Run()
+			Expect(err).To(BeNil(), "Fail to create sample pod, due to {%v}", err)
+
 			//Get the status of nginx Application
 			By("Running Deployment Status Check")
 			err = pkg.DeploymentStatusCheck(&testsDetails, "nginx", "litmus", clients)

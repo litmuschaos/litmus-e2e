@@ -124,7 +124,9 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "namespace: default", "namespace: "+engineNamespace+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if testsDetails.AppNS != "" && testsDetails.AppLabel != "" {
+
+	appinfoErr := EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "appinfo:", "appinfo:")
+	if appinfoErr == nil {
 		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "appns: 'default'", "appns: "+testsDetails.AppNS+""); err != nil {
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}

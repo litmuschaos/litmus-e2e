@@ -4,11 +4,14 @@ metadata:
   name: nginx-chaos
   namespace: default
 spec:
+  appinfo:
+    appkind: 'deployment'
+    applabel: 'run=nginx'
+    appns: 'default'
   annotationCheck: 'false'
   engineState: 'active'
   auxiliaryAppInfo: ''
   chaosServiceAccount: node-taint-sa
-  monitoring: false
   jobCleanUpPolicy: 'delete'
   experiments:
     - name: node-taint

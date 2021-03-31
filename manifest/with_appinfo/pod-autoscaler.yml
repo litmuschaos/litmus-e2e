@@ -4,22 +4,23 @@ metadata:
   name: nginx-chaos
   namespace: default
 spec:
+  appinfo:
+    appkind: 'deployment'
+    applabel: 'run=nginx'
+    appns: 'default'
   annotationCheck: 'false'
   engineState: 'active'
   auxiliaryAppInfo: ''
-  chaosServiceAccount: node-io-stress-sa
-  monitoring: false
+  chaosServiceAccount: pod-autoscaler-sa
   jobCleanUpPolicy: 'delete'
   experiments:
-    - name: node-io-stress
+    - name: pod-autoscaler
       spec:
         components:
           env:
             - name: TOTAL_CHAOS_DURATION
-              value: '120'
+              value: '60'
 
-            - name: FILESYSTEM_UTILIZATION_PERCENTAGE
-              value: '10'
-            
-            - name: TARGET_NODES
-              value: ''
+            - name: REPLICA_COUNT
+              value: '5'
+              

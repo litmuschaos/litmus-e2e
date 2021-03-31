@@ -201,12 +201,12 @@ admin-mode-check:
 	@echo "------------------------"
 	@go test operator/admin-mode_test.go -v -count=1	
 
-.PHONY: without-app-info
-without-app-info:
+.PHONY: with-app-info
+with-app-info:
 	@echo "-----------------------------"
-	@echo "Running Without App info test"
+	@echo "Running With App info test"
 	@echo "-----------------------------"
-	@go test tests/without-appinfo_test.go -v -count=1 -timeout=30m		
+	@go test tests/with-appinfo_test.go -v -count=1 -timeout=30m		
 
 .PHONY: pod-affected-perc-ton-parallel
 pod-affected-perc-ton-parallel:
@@ -228,6 +228,13 @@ multiple-app-deploy:
 	@echo "Running Pod Level Chaos With Multiple app deploy"
 	@echo "------------------------------------------------"
 	@go test tests/multiple-app-deploy_test.go -v -count=1 -timeout=30m					
+
+.PHONY: env-from-secret-and-configmap
+env-from-secret-and-configmap:
+	@echo "------------------------------------------------------"
+	@echo "Running Pod Delete Chaos ENV from Secret and ConfigMap"
+	@echo "------------------------------------------------------"
+	@go test tests/env-from-secret-and-cm_test.go -v -count=1					
 
 .PHONY: app-cleanup
 app-cleanup:
