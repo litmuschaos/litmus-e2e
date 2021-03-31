@@ -19,7 +19,7 @@ func TestWithoutAppInfo(t *testing.T) {
 }
 
 //BDD Tests for node-cpu-hog without appinfo
-var _ = Describe("BDD of node-cpu-hog experiment", func() {
+var _ = Describe("BDDs to check the node level experiments without appinfo", func() {
 
 	// BDD for cleaning all components before running the test
 	Context("cleanup for litmus components", func() {
@@ -35,7 +35,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	})
 
 	// BDD TEST CASE 1
-	Context("Check for litmus components", func() {
+	Context("Check for node cpu hog experiment without appinfo", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -107,7 +107,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	})
 
 	// BDD TEST CASE 2
-	Context("Check for litmus components", func() {
+	Context("Check for node memory hog experiment without appinfo", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -179,7 +179,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for kubelet service kill experiment without appinfo", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -265,7 +265,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 	//Waiting for experiment job to get completed
 	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
+	Context("Check to uncordon the target node", func() {
 
 		It("Should uncordon the app node", func() {
 
@@ -291,7 +291,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 	})
 
 	// BDD TEST CASE 4
-	Context("Check for litmus components", func() {
+	Context("Check node drain experiment without appinfo", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -376,7 +376,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 		})
 	})
 	// BDD for uncordoning the application node
-	Context("Check for application node", func() {
+	Context("Check to uncordon the target node", func() {
 
 		It("Should uncordon the app node", func() {
 
