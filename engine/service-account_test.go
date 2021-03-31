@@ -11,7 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
-	"k8s.io/klog"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 )
 
 func TestSeriveAccount(t *testing.T) {
@@ -39,7 +39,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			// Checking the chaos operator running status
@@ -97,7 +97,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			//Checking chaosengine verdict

@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
 )
 
 //RunnerPodStatus will check the runner pod running state
@@ -19,7 +19,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	if err != nil {
 		return nil, errors.Errorf("Unable to get the runner pod, due to %v", err)
 	}
-	klog.Infof("name : %v \n", runner.Name)
+	log.Infof("name : %v \n", runner.Name)
 	//Running it for infinite time (say 3000 * 10)
 	//The Gitlab job will quit if it takes more time than default time (10 min)
 	for i := 0; i < 300; i++ {
@@ -29,7 +29,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 			if err != nil || runner.Status.Phase == "Succeeded" || runner.Status.Phase == "" {
 				return nil, errors.Errorf("Fail to get the runner pod status after sleep, due to %v", err)
 			}
-			klog.Infof("The Runner pod is in %v State \n", runner.Status.Phase)
+			log.Infof("The Runner pod is in %v State \n", runner.Status.Phase)
 		} else {
 			break
 		}
@@ -38,7 +38,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	if runner.Status.Phase != "Running" {
 		return nil, errors.Errorf("Runner pod fail to come in running state, due to %v", err)
 	}
-	klog.Info("Runner pod is in Running state")
+	log.Info("Runner pod is in Running state")
 
 	return nil, nil
 }
@@ -49,7 +49,7 @@ func DeploymentStatusCheck(testsDetails *types.TestDetails, deploymentName, depl
 	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
 	for count := 0; count < 20; count++ {
 		if sampleApp.Status.UnavailableReplicas != 0 {
-			klog.Infof("Application is Creating, Currently Unavaliable Count is: %v \n", sampleApp.Status.UnavailableReplicas)
+			log.Infof("Application is Creating, Currently Unavaliable Count is: %v \n", sampleApp.Status.UnavailableReplicas)
 			sampleApp, _ = clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
 			time.Sleep(5 * time.Second)
 
@@ -69,7 +69,7 @@ func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.Cl
 
 	for count := 0; count < 20; count++ {
 		if sampleApp.Status.UnavailableReplicas != 0 {
-			klog.Infof("Operator's Unavaliable Count is: %v", sampleApp.Status.UnavailableReplicas)
+			log.Infof("Operator's Unavaliable Count is: %v", sampleApp.Status.UnavailableReplicas)
 			sampleApp, _ = clients.KubeClient.AppsV1().Deployments(testsDetails.ChaosNamespace).Get(testsDetails.OperatorName, metav1.GetOptions{})
 			time.Sleep(5 * time.Second)
 			count++
@@ -80,7 +80,7 @@ func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.Cl
 			return errors.Errorf("%v fails to get in Running state, due to %v", testsDetails.OperatorName, err)
 		}
 	}
-	klog.Info("[Status]: Operator is in Running state")
+	log.Info("[Status]: Operator is in Running state")
 	return nil
 }
 
@@ -90,7 +90,7 @@ func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName stri
 	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(testsDetails.AppNS).Get(deploymentName, metav1.GetOptions{})
 	for count := 0; count < 20; count++ {
 		if sampleApp.Status.AvailableReplicas != 0 {
-			klog.Infof("Application is Deleting, Currently Avaliable Count is: %v \n", sampleApp.Status.AvailableReplicas)
+			log.Infof("Application is Deleting, Currently Avaliable Count is: %v \n", sampleApp.Status.AvailableReplicas)
 			sampleApp, _ = clients.KubeClient.AppsV1().Deployments(testsDetails.AppNS).Get(deploymentName, metav1.GetOptions{})
 			time.Sleep(5 * time.Second)
 
@@ -101,7 +101,7 @@ func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName stri
 			return errors.Errorf("%v termination fails, due to %v", deploymentName, err)
 		}
 	}
-	klog.Info("[Cleanup]: Application deleted successfully")
+	log.Info("[Cleanup]: Application deleted successfully")
 	return nil
 }
 
@@ -121,7 +121,7 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 				}
 				for _, pod := range PodList.Items {
 					if string(pod.Status.Phase) != "Running" {
-						klog.Infof("Currently, the experiment job pod is in %v State, Please Wait ...\n", pod.Status.Phase)
+						log.Infof("Currently, the experiment job pod is in %v State, Please Wait ...\n", pod.Status.Phase)
 						time.Sleep(5 * time.Second)
 					} else {
 						flag = true
@@ -138,7 +138,7 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 			}
 		}
 	}
-	klog.Info("[Status]: Pod is in Running state")
+	log.Info("[Status]: Pod is in Running state")
 
 	return nil
 }
@@ -154,7 +154,7 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 		}
 		if len(chaosEngine.Status.Experiments) == 0 {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
-			klog.Info("[Status]: Experiment initializing")
+			log.Info("[Status]: Experiment initializing")
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
 				return errors.Errorf("Experiment pod fail to initialise, due to %v", err)
 			}
@@ -166,7 +166,7 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 			}
 		} else if chaosEngine.Status.Experiments[0].Status != "Running" {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
-			klog.Infof("[Status]: Currently, the Chaos Pod is in %v state, Please Wait...", chaosEngine.Status.Experiments[0].Status)
+			log.Infof("[Status]: Currently, the Chaos Pod is in %v state, Please Wait...", chaosEngine.Status.Experiments[0].Status)
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
 				return errors.Errorf("Experiment pod fails to get in running state, due to %v", err)
 			}
@@ -174,7 +174,7 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 			break
 		}
 	}
-	klog.Info("[Status]: Chaos pod initiated successfully")
+	log.Info("[Status]: Chaos pod initiated successfully")
 	return nil
 }
 
@@ -190,10 +190,10 @@ func WaitForEngineCompletion(testsDetails *types.TestDetails, clients environmen
 			}
 
 			if string(chaosEngine.Status.EngineStatus) != "completed" {
-				klog.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
+				log.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
 				return errors.Errorf("Engine is not yet completed")
 			}
-			klog.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
+			log.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
 
 			return nil
 		})
@@ -213,10 +213,10 @@ func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environmen
 			}
 
 			if string(runner.Status.Phase) != "Succeeded" {
-				klog.Infof("Runner pod status is %v", runner.Status.Phase)
+				log.Infof("Runner pod status is %v", runner.Status.Phase)
 				return errors.Errorf("Runner pod is not yet completed")
 			}
-			klog.Infof("Runner pod status is %v", runner.Status.Phase)
+			log.Infof("Runner pod status is %v", runner.Status.Phase)
 
 			return nil
 		})

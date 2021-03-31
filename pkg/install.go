@@ -1,23 +1,18 @@
 package pkg
 
 import (
-	"bytes"
-	"fmt"
-	"os/exec"
 	"strconv"
 	"time"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
-	"k8s.io/klog"
 )
 
 //InstallGoRbac installs and configure rbac for running go based chaos
 func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
 
 	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.RbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
@@ -29,18 +24,14 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 		}
 	}
+	log.Info("[RBAC]: Installing RABC...")
 	//Creating rbac
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		errors.Errorf("Fail to create the rbac file, due to {%v}", err)
+		return errors.Errorf("fail to apply rbac file, err: %v", err)
 	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
+	log.Info("[RBAC]: Rbac installed successfully !!!")
 
 	return nil
 }
@@ -49,8 +40,6 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespace string) error {
 
 	// Fetch Chaos Experiment
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", testsDetails.ExperimentPath); err != nil {
 		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
@@ -75,29 +64,27 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	}
 	// Modify Lib
 	if testsDetails.Lib != "" {
-		klog.Info("[LIB]: LIB: " + testsDetails.Lib)
+		log.Info("[LIB]: LIB: " + testsDetails.Lib)
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB", "value: 'litmus'", "value: '"+testsDetails.Lib+"'"); err != nil {
 			return errors.Errorf("Fail to update the lib, due to %v", err)
 		}
 	}
 	// Modify Lib image
 	if testsDetails.LibImageCI != "" {
-		klog.Info("[LIB Image]: LIB image: " + testsDetails.LibImageCI + " !!!")
+		log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageCI + " !!!")
 		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB_IMAGE", "value: '"+testsDetails.LibImageDefault+"'", "value: '"+testsDetails.LibImageCI+"'"); err != nil {
 			return errors.Errorf("Fail to update the lib image, due to %v", err)
 		}
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Experiment]: Installing Experiment...")
+	//Creating experiment
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-exp.yaml", "-n", experimentNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
+		return errors.Errorf("fail to apply experiment file, err: %v", err)
 	}
-	klog.Infof("[ChaosExperiment]: " + out.String())
-	klog.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
+	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
 
 	return nil
 }
@@ -106,8 +93,6 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
 
 	// Fetch Chaos Engine
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
 		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
 	}
@@ -187,16 +172,14 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 			return errors.Errorf("Fail to Update the engine file, due to %v", err)
 		}
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Engine]: Installing ChaosEngine...")
+	//Creating engine
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-ce.yaml", "-n", engineNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
+		return errors.Errorf("fail to apply engine file, err: %v", err)
 	}
-	klog.Infof("[ChaosEngine]: " + out.String())
+	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")
 	time.Sleep(2 * time.Second)
 
 	return nil
@@ -204,13 +187,12 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 
 //InstallLitmus installs the latest version of litmus
 func InstallLitmus(testsDetails *types.TestDetails) error {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	klog.Info("Installing Litmus ...")
+
+	log.Info("Installing Litmus ...")
 	if err := DownloadFile("install-litmus.yaml", testsDetails.InstallLitmus); err != nil {
 		return errors.Errorf("Fail to fetch litmus operator file, due to %v", err)
 	}
-	klog.Info("Updating ChaosOperator Image ...")
+	log.Info("Updating ChaosOperator Image ...")
 	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
 		return errors.Errorf("Unable to update operator image, due to %v", err)
 
@@ -218,22 +200,17 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 	if err = EditKeyValue("install-litmus.yaml", "  - chaos-operator", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ImagePullPolicy); err != nil {
 		return errors.Errorf("Unable to update image pull policy, due to %v", err)
 	}
-	klog.Info("Updating Chaos Runner Image ...")
+	log.Info("Updating Chaos Runner Image ...")
 	if err := EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos/chaos-runner:latest\"", "value: '"+testsDetails.RunnerImage+"'"); err != nil {
 		return errors.Errorf("Unable to update runner image, due to %v", err)
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", "install-litmus.yaml")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	//Creating engine
+	command := []string{"apply", "-f", "install-litmus.yaml"}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the installation file, due to {%v}", err)
+		return errors.Errorf("fail to apply litmus installation file, err: %v", err)
 	}
-	klog.Infof("Result: " + out.String())
-
-	klog.Info("Litmus installed successfully !!!")
+	log.Info("Litmus installed successfully !!!")
 
 	return nil
 }
@@ -242,8 +219,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.AdminRbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
@@ -254,17 +230,13 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Fail to Modify admin rbac file, due to %v", err)
 	}
 	//Creating admin rbac
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", testsDetails.ChaosNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Admin]: Installing Litmus in Administrator Mode")
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", testsDetails.ChaosNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the admin rbac file, due to {%v}", err)
+		return errors.Errorf("fail to apply admin rbac file, err: %v", err)
 	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
+	log.Info("[Admin]: Admin RBAC installed successfully !!!")
 
 	return nil
 }

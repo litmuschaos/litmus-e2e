@@ -6,11 +6,11 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 )
 
 func TestEngineState(t *testing.T) {
@@ -37,7 +37,7 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-cpu-hog", "engine-state")
 
 			// Checking the chaos operator running status
@@ -71,7 +71,7 @@ var _ = Describe("BDD of engine-state test", func() {
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
 
 			//Waiting for chaosresult creation from experiment
-			klog.Info("[Wait]: waiting for chaosresult creation from experiment")
+			log.Info("[Wait]: waiting for chaosresult creation from experiment")
 			time.Sleep(15 * time.Second)
 
 			//Abort the chaos experiment
@@ -109,7 +109,7 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-cpu-hog", "engine-state")
 
 			//Checking chaosengine verdict

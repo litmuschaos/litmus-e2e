@@ -5,11 +5,11 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 )
 
 func TestEngineName(t *testing.T) {
@@ -36,7 +36,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status
@@ -119,7 +119,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "job-cleanup-policy-engine")
 
 			// Checking the chaos operator running status

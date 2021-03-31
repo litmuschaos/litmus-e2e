@@ -2,17 +2,16 @@ package operator
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 )
 
 func TestReconcileResiliency(t *testing.T) {
@@ -41,7 +40,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "reconsile-engine1")
 
 			// Checking the chaos operator running status
@@ -86,7 +85,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "container-kill", "reconsile-engine2")
 			testsDetails.ChaosNamespace = "litmus"
 
@@ -119,7 +118,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "reconsile-engine1")
 			testsDetails.ChaosNamespace = "default"
 
@@ -140,7 +139,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Getting the components in default namespace")
 			out1, err1 := exec.Command("kubectl", "get", "pods").Output()
 			if err1 != nil {
-				log.Fatal(err1)
+				log.Fatalf("error:", err1)
 			}
 			fmt.Printf("The output is: %s\n", out1)
 
@@ -148,7 +147,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("Getting the components in chaosNamespace namespace")
 			out2, err2 := exec.Command("kubectl", "get", "pods", "-n", testsDetails.ChaosNamespace).Output()
 			if err2 != nil {
-				log.Fatal(err2)
+				log.Fatalf("error:", err2)
 			}
 			fmt.Printf("The output is: %s\n", out2)
 		})

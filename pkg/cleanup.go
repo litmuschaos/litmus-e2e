@@ -6,23 +6,18 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
-	"k8s.io/klog"
 )
 
 // Cleanup will delete the chaosengine and chaosexperiment in all namespaces
 func Cleanup() error {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd := exec.Command("kubectl", "delete", "chaosexperiment,chaosresult,chaosengine", "--all", "--all-namespaces")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+
+	command := []string{"delete", "chaosexperiment,chaosresult,chaosengine", "--all", "--all-namespaces"}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Wrapf(err, "Fail to delete litmus components, due to:%v", err)
+		return errors.Errorf("Fail to delete litmus components, due to, err: %v", err)
 	}
 
 	return nil
@@ -37,12 +32,12 @@ func ChaosAbort(testsDetails *types.TestDetails) error {
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
+		log.Infof(fmt.Sprint(err) + ": " + stderr.String())
+		log.Infof("Error: %v", err)
 		return errors.Wrapf(err, "Fail to abort the Chaos, due to:%v", err)
 
 	}
-	klog.Info("[Abort]: Chaos Experiment Aborted !!!")
+	log.Info("[Abort]: Chaos Experiment Aborted !!!")
 	// waiting for engine verdict updation
 	time.Sleep(3 * time.Second)
 

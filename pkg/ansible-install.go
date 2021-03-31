@@ -1,14 +1,11 @@
 package pkg
 
 import (
-	"bytes"
-	"fmt"
-	"os/exec"
 	"time"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
-	"k8s.io/klog"
 )
 
 var (
@@ -19,8 +16,6 @@ var (
 func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
 
 	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	err = DownloadFile(testsDetails.ExperimentName+"-sa.yaml", testsDetails.AnsibleRbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
@@ -30,18 +25,14 @@ func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) e
 	if err != nil {
 		return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 	}
+	log.Info("[RBAC]: Installing RABC...")
 	//Creating rbac
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the rbac file, due to {%v}", err)
+		return errors.Errorf("fail to apply rbac file, err: %v", err)
 	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
+	log.Info("[RBAC]: Rbac installed successfully !!!")
 
 	return nil
 }
@@ -50,8 +41,6 @@ func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) e
 func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNamespace string) error {
 
 	// Fetch Chaos Experiment
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	if err = DownloadFile(testsDetails.ExperimentName+"-exp.yaml", testsDetails.AnsibleExperimentPath); err != nil {
 		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
@@ -60,17 +49,15 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
 
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Experiment]: Installing Experiment...")
+	//Creating experiment
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-exp.yaml", "-n", experimentNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
+		return errors.Errorf("fail to apply experiment file, err: %v", err)
 	}
-	klog.Infof("[ChaosExperiment]: " + out.String())
-	klog.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.AnsibleExperimentImage + " !!!")
+	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
+	log.Info("[ChaosExperiment]: Chaos Experiment created successfully with image: " + testsDetails.AnsibleExperimentImage + " !!!")
 
 	return nil
 }
@@ -79,8 +66,6 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
 
 	// Fetch Chaos Engine
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	if err = DownloadFile(testsDetails.ExperimentName+"-ce.yaml", testsDetails.AnsibleEnginePath); err != nil {
 		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
 	}
@@ -117,16 +102,14 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 		}
 	}
 
-	cmd := exec.Command("kubectl", "apply", "-f", testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Engine]: Installing ChaosEngine...")
+	//Creating engine
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-ce.yaml", "-n", engineNamespace}
+	err := Apply(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
+		return errors.Errorf("fail to apply engine file, err: %v", err)
 	}
-	klog.Infof("[ChaosEngine]: " + out.String())
+	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")
 	time.Sleep(2 * time.Second)
 
 	return nil
