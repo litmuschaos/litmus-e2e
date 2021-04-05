@@ -51,21 +51,10 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			testsDetails.TargetPod, TargetPodIP, HelperPod, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Fail to get the target pod details, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-loss
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-loss
-			By("[Install]: Installing chaos engine")
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -142,21 +131,10 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-loss
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-loss
-			By("[Install]: Installing chaos engine")
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -221,22 +199,10 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-loss
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-loss
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -310,23 +276,11 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-loss
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.Lib = "pumba"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-loss
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")

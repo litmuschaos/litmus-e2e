@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -42,7 +41,8 @@ var _ = Describe("BDD of Application Cleanup", func() {
 
 			//Removing Application
 			By("Deleting Application")
-			err = exec.Command("kubectl", "delete", "-f", "../nginx/nginx.yml").Run()
+			command := []string{"delete", "-f", "../apps/nginx/nginx.yml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to delete application and its components, due to {%v}", err)
 
 			//Get the status of sample Application

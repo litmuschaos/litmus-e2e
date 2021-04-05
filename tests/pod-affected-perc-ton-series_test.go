@@ -56,23 +56,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment
-			By("[Install]: Installing chaos experiment")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -127,24 +116,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for container-kill
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for container-kill
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -198,24 +175,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for disk-fill
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for disk-fill
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -271,23 +236,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			testsDetails.LibImageCI = testsDetails.LibImageNew
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-cpu-hog
-			By("[Install]: Installing chaos experiment")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-cpu-hog
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -342,24 +296,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-memory-hog
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-memory-hog
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -414,24 +356,12 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-corruption
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-corruption
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")

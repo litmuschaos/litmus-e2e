@@ -9,7 +9,7 @@ import (
 func NodeCordon(testsDetails *types.TestDetails) error {
 
 	command := []string{"cordon", testsDetails.ApplicationNodeName}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to cordon the node, err: %v", err)
 	}
@@ -20,7 +20,7 @@ func NodeCordon(testsDetails *types.TestDetails) error {
 func NodeUncordon(testsDetails *types.TestDetails) error {
 
 	command := []string{"uncordon", testsDetails.ApplicationNodeName}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to uncordon the node, err: %v", err)
 	}

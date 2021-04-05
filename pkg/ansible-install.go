@@ -28,7 +28,7 @@ func InstallAnsibleRbac(testsDetails *types.TestDetails, rbacNamespace string) e
 	log.Info("[RBAC]: Installing RABC...")
 	//Creating rbac
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to apply rbac file, err: %v", err)
 	}
@@ -52,7 +52,7 @@ func InstallAnsibleChaosExperiment(testsDetails *types.TestDetails, experimentNa
 	log.Info("[Experiment]: Installing Experiment...")
 	//Creating experiment
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-exp.yaml", "-n", experimentNamespace}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to apply experiment file, err: %v", err)
 	}
@@ -105,7 +105,7 @@ func InstallAnsibleChaosEngine(testsDetails *types.TestDetails, engineNamespace 
 	log.Info("[Engine]: Installing ChaosEngine...")
 	//Creating engine
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-ce.yaml", "-n", engineNamespace}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to apply engine file, err: %v", err)
 	}

@@ -56,24 +56,13 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			err = pkg.DeploymentStatusCheck(&testsDetails, "adminapp", "default", clients)
 			Expect(err).To(BeNil(), "Error Timeout, {%v}", err)
 
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			testsDetails.ChaosServiceAccount = "litmus-admin"
 			testsDetails.AppNS = "default"
 			testsDetails.AppLabel = "run=adminapp"
-
-			//Installing admin RBAC for the chaos
-			By("[Install]: Installing RBAC for pod-delete")
-			err = pkg.InstallAdminRbac(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing pod-delete chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for container-kill
-			By("[Install]: Installing chaos engine")
-			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "litmus"
@@ -123,24 +112,14 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			_, err = pkg.CreateNamespace(clients, "test")
 			Expect(err).To(BeNil(), "Namespace creation failed, due to {%v}", err)
 
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.ChaosNamespace = "test"
 			testsDetails.AppNS = "default"
 			testsDetails.AppLabel = "run=adminapp"
-			//Installing admin RBAC for the chaos
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallAdminRbac(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to create namespace, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing pod-delete chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for container-kill
-			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "test"

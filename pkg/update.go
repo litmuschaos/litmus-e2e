@@ -90,7 +90,7 @@ func GetImageTag(goExperimentImage string) string {
 func AddAnnotation(deployment, key, value, ns string) error {
 
 	command := []string{"annotate", "--overwrite", "deploy/" + deployment, key + "=" + value, "-n", ns}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("fail to modify annotation, err: %v", err)
 	}

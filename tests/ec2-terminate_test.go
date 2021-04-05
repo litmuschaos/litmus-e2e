@@ -43,24 +43,15 @@ var _ = Describe("BDD of ec2-terminate experiment", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate/rbac.yaml"
-			err = pkg.InstallGoRbac(&testsDetails, "")
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment
-			By("[Install]: Installing chaos experiment")
 			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate/experiment.yaml"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, "default")
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine
-			By("[Install]: Installing chaos engine")
-			testsDetails.AppLabel = ""
+			testsDetails.ChaosNamespace = "default"
+			testsDetails.AppNS = "default"
 			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate/engine.yaml"
-			err = pkg.InstallGoChaosEngine(&testsDetails, "default")
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")

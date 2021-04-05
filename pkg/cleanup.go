@@ -15,7 +15,7 @@ import (
 func Cleanup() error {
 
 	command := []string{"delete", "chaosexperiment,chaosresult,chaosengine", "--all", "--all-namespaces"}
-	err := Apply(command...)
+	err := Kubectl(command...)
 	if err != nil {
 		return errors.Errorf("Fail to delete litmus components, due to, err: %v", err)
 	}

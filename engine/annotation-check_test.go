@@ -46,27 +46,17 @@ var _ = Describe("BDD of annotation check test", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the annotation-check test
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
 			//Remove application annotation
 			By("[Annotate]: Remove the application annotation")
 			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "false", testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to add annotation before test, due to {%v}", err)
 
-			//Installing Chaos Engine for pod-delete
-			By("[Install]: Installing chaos engine")
-			//Providing wrong annotation-check
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			// Providing wrong annotation-check true
+			// in ChaosEngine and false in application
+			err = pkg.PrepareChaos(&testsDetails, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")

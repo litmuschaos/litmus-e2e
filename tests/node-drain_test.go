@@ -60,20 +60,10 @@ var _ = Describe("BDD of node-drain experiment", func() {
 			err = pkg.NodeCordon(&testsDetails)
 			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for node-cordon
-			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for node-cordon
-			By("[Install]: Installing chaos engine")
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			err = pkg.PrepareChaos(&testsDetails, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
