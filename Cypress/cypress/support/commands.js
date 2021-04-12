@@ -33,16 +33,6 @@ Cypress.Commands.add(
   }
 );
 
-// Custom command for Inputting details in Welcome Modal.
-Cypress.Commands.add("welcomeModalInputs", (ProjectName, Password) => {
-  cy.get("[data-cy=InputProjectName] input").clear().type(ProjectName);
-  cy.get("[data-cy=Continue]").click();
-  cy.get("[data-cy=InputPassword] input").each(($div) => {
-    cy.wrap($div).type(Password);
-  });
-  cy.get("[data-cy=startButton]").eq(0).click();
-});
-
 //Custom command for Inputting Login Details.
 Cypress.Commands.add("login", (Username, Password) => {
   cy.get("[data-cy=inputName] input").type(Username);
@@ -52,8 +42,18 @@ Cypress.Commands.add("login", (Username, Password) => {
 
 //Custom command for Logut.
 Cypress.Commands.add("logout", () => {
-  cy.get("[data-cy=header-dropdown]").click();
-  cy.get("[data-cy=logout]").click();
+  cy.get("[data-cy=headerProfileDropdown]").click();
+  cy.get("[data-cy=logoutButton] button").click();
+});
+
+//Custom function for getStarted Page.
+Cypress.Commands.add("getStarted", (newPassword, projectName) => {
+  cy.get("[data-cy=inputPassword] input").clear().type(newPassword);
+  cy.get("[data-cy=confirmInputPassword] input").clear().type(newPassword);
+  cy.get("[data-cy=nextButton] button").click();
+
+  cy.get("[data-cy=inputProjectName] input").clear().type(projectName);
+  cy.get("[data-cy=startButton] button").click();
 });
 
 //Custom command for changing password.
@@ -85,7 +85,7 @@ Cypress.Commands.add("modalClose", () => {
 //Custom command for checking header details.
 Cypress.Commands.add("headerCheck", (name, email) => {
   cy.get("[data-cy=full-name]").should("contain", name);
-  cy.get("[data-cy=header-dropdown]").click();
+  cy.get("[data-cy=headerProfileDropdown]").click();
   cy.get("[data-cy=name-header]").should("contain", name);
   email === ""
     ? cy.get("[data-cy=email-header]").should("contain", "")

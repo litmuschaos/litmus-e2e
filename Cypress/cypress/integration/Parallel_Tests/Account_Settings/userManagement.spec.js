@@ -8,7 +8,6 @@ describe("Testing the User management section", () => {
     cy.server();
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
-    cy.wait(8000);
   });
   it("Checking the accessibility of the Settings", () => {
     cy.contains("Settings").click();

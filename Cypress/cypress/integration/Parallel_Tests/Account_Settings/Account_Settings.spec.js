@@ -7,7 +7,6 @@ describe("Testing the My accounts section", () => {
     indexedDB.deleteDatabase("localforage");
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
-    cy.wait(8000);
   });
 
   it("Checking the accessibility of the Settings", () => {

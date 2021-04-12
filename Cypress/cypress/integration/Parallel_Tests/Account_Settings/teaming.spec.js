@@ -7,15 +7,15 @@ describe("Testing the Teaming section", () => {
     indexedDB.deleteDatabase("localforage");
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");
-    cy.wait(8000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
-    cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
   });
+
   it("Checking the accessibility of the Settings", () => {
     cy.contains("Settings").click();
     cy.contains("Settings").should("be.visible");
   });
+
   it("Checking the accessibility of Team Tab", () => {
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
@@ -53,14 +53,11 @@ describe("Testing the Teaming section", () => {
     cy.login(user.NewUserUserName, user.NewUserPassword); //CHANGE NAME HERE
     cy.wait("@loginResponse").its("status").should("eq", 200);
     //Fill welcome modal!
-    cy.welcomeModalInputs("Project_01", user.NewUserPassword); //CHANGE MODAL DATA HERE
-    cy.wait(8000);
+    cy.getStarted(user.NewUserPassword, "Project_01"); //CHANGE MODAL DATA HERE
     cy.contains("Congratulations").should("be.visible");
     //Assert Login success
-    cy.wait(3000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
-    cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
     //Logout again
     cy.logout();
     //Login now as admin
@@ -69,13 +66,10 @@ describe("Testing the Teaming section", () => {
     cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert Login success
-    cy.wait(3000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
-    cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
     //Visit the teaming section and go to "invite a new member"
     cy.contains("Settings").click();
-    cy.wait(3000);
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
@@ -116,21 +110,16 @@ describe("Testing the Teaming section", () => {
     cy.login(user.NewUserUserName, user.NewUserPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert success
-    cy.wait(3000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
-    cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
     //Go to Settings/Team section
     cy.contains("Settings").click();
-    cy.wait(3000);
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=my-account]").click();
-    cy.wait(3000); // CHECK
     cy.get("[data-cy=teaming]").click(); // CHECK
     cy.get("[data-cy=receivedTab]").click();
     cy.get("[data-cy=receivedInvitationAccept] button").click();
-    cy.wait(3000);
     //Logout
     cy.logout();
     //Login again as Admin to confirm that member has been added.
@@ -139,13 +128,10 @@ describe("Testing the Teaming section", () => {
     cy.login(user.AdminName, user.AdminPassword);
     cy.wait("@loginResponse").its("status").should("eq", 200); //Request Done.
     //Assert Login success
-    cy.wait(3000);
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
-    cy.get("[data-cy=quickActionCardComponent]").should("be.visible");
     //Visit the teaming section and go to "invite a new member"
     cy.contains("Settings").click();
-    cy.wait(3000);
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
