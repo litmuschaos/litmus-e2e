@@ -10,7 +10,11 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/normalize.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">    
+    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load("current", {packages:["corechart"]});
+    </script> 
   </head>
   
   <body>
@@ -21,69 +25,9 @@
     <section class="main-content">      
     <h2><b>Pod Level Nightly Build Details</b></h2>
     <p>Here are the details of latest few pipeline runs for pod level tests!</p>
+    <div id='piechart' style='width: 500px; height: 300px; text-align: center; margin: 3 auto;'>
+      <script type = 'text/javascript'>
 
-<table>
- <tr>
-  <th>Pipeline ID</th>
-  <th>Execution Time</th>
-  <th>Version</th></tr>
- <tr>
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13284">13284</a></td>
-  <td>Mon Jan 11 18:22:44 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13273">13273</a></td>
-  <td>Sat Jan  9 18:28:36 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13266">13266</a></td>
-  <td>Fri Jan  8 20:10:26 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13263">13263</a></td>
-  <td>Fri Jan  8 18:30:44 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13239">13239</a></td>
-  <td>Mon Jan  4 18:44:36 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13236">13236</a></td>
-  <td>Mon Jan  4 13:39:37 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13229">13229</a></td>
-  <td>Sun Jan  3 18:31:14 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13225">13225</a></td>
-  <td>Sat Jan  2 18:38:14 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13221">13221</a></td>
-  <td>Fri Jan  1 18:22:46 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13218">13218</a></td>
-  <td>Fri Jan  1 11:58:05 2021(IST)</td>
-  <td>ci</td>
- </tr>
-</table>
+      drawCoverageDetails(data);
+      </script>
+    </div>
