@@ -18,7 +18,7 @@ func TestGoPodAffectedPercentageSeries(t *testing.T) {
 }
 
 //BDD for testing experiment
-var _ = Describe("BDD of pod-delete experiment", func() {
+var _ = Describe("BDDs to check pod level experiment with affected percentage 100 and sequence in series", func() {
 
 	// BDD for cleaning all components before running the test
 	Context("cleanup for litmus components", func() {
@@ -34,7 +34,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 1
-	Context("Check for pod-delete experiment with pod", func() {
+	Context("Check for pod-delete experiment with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check for the pod delete experiment", func() {
 
@@ -92,7 +92,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 2
-	Context("Check for container kill experiment", func() {
+	Context("Check for container kill experiment with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check the container kill with pod affected percentage 100 and mode is parallel", func() {
 
@@ -152,7 +152,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for disk fill experiment", func() {
+	Context("Check for disk fill experiment with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check the disk fill experiment when pod affected percentage is 100 and mode is parallel", func() {
 
@@ -213,7 +213,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 4
-	Context("Check for litmus components", func() {
+	Context("Check pod cpu hog experiment with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 
@@ -275,7 +275,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 5
-	Context("Check for litmus components", func() {
+	Context("Check pod memory hog experiment with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 
@@ -336,7 +336,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	})
 
 	// BDD TEST CASE 6
-	Context("Check for litmus components", func() {
+	Context("Check pod netowork corruption with pod affected percentage 100 and sequence serial", func() {
 
 		It("Should check the experiment when pod affected percentage is 100 and mode is parallel", func() {
 

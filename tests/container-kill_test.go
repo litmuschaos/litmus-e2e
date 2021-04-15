@@ -150,7 +150,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 		})
 
 		// BDD TEST CASE 3
-		Context("Check for container kill experiment", func() {
+		Context("Check with annotation true for container kill experiment", func() {
 
 			It("Should check the container kill experiment when app is annotated", func() {
 
@@ -207,7 +207,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 		})
 
 		// BDD TEST CASE 4
-		Context("Check for pumba lib", func() {
+		Context("Check for pumba lib of container kill experiment", func() {
 
 			It("Should check the container-kill experiment when lib is set to pumba", func() {
 

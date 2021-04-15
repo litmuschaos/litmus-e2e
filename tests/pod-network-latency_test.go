@@ -23,7 +23,7 @@ func TestGoPodNetworkLatency(t *testing.T) {
 var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for pod network latency", func() {
+	Context("Check for pod network latency experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -93,7 +93,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 	// BDD TEST CASE 2
 	//Add abort-chaos for pod-network-latency experiment
-	Context("Abort-Chaos check of litmus component", func() {
+	Context("Abort-Chaos check for pod netowork latency experiment", func() {
 
 		It("Should check the abort of pod-network-latency experiment", func() {
 
@@ -163,7 +163,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for pod network experiment with annotation true", func() {
 
 		It("Should check the experiment when app is annotated", func() {
 

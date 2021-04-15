@@ -20,6 +20,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.ApplicationNodeName = Getenv("APPLICATION_NODE_NAME", "")
 	testDetails.NodeSelectorName = Getenv("APPLICATION_NODE_NAME", "")
 	testDetails.ImagePullPolicy = Getenv("IMAGE_PULL_POLICY", "Always")
+	testDetails.ExperimentImagePullPolicy = Getenv("EXPERIMENT_IMAGE_PULL_POLICY", "Always")
 	testDetails.ChaosDuration, _ = strconv.Atoi(Getenv("TOTAL_CHAOS_DURATION", ""))
 	testDetails.ChaosServiceAccount = Getenv("CHAOS_SERVICE_ACCOUNT", expName+"-sa")
 	testDetails.NewExperimentName = Getenv("NEW_EXPERIMENT_NAME", expName)

@@ -79,7 +79,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 		})
 
 		// BDD TEST CASE 3
-		Context("Check for disk fill experiment", func() {
+		Context("Check disk fill experiment with annotation true", func() {
 
 			It("Should check the disk fill experiment when app is annotated", func() {
 

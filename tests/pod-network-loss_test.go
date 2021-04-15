@@ -109,7 +109,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 
 	// BDD TEST CASE 2
 	//Add abort-chaos for pod-network-loss experiment
-	Context("Abort-Chaos check of litmus component", func() {
+	Context("Abort-Chaos check for pod network loss experiment", func() {
 
 		It("Should check the abort of pod-network-loss experiment", func() {
 
@@ -178,7 +178,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for litmus components", func() {
+	Context("Check for pod network loss experiment with annotation true", func() {
 
 		It("Should check the experiment when app is annotated", func() {
 
@@ -253,7 +253,7 @@ var _ = Describe("BDD of pod-network-loss experiment", func() {
 	})
 
 	// BDD TEST CASE 4
-	Context("Check for pumba lib", func() {
+	Context("Check for pumba lib of pod network loss experiment", func() {
 
 		It("Should check the pod-network-loss experiment when lib is set to pumba", func() {
 
