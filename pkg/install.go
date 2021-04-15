@@ -49,7 +49,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespa
 	}
 	// Modify experiment imagePullPolicy
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ExperimentImagePullPolicy); err != nil {
-		klog.Info("Field imagePullPolicy not defined")
+		log.Info("Field imagePullPolicy not defined")
 	}
 
 	if testsDetails.Sequence != "" {
