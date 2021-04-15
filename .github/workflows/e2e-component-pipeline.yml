@@ -23,7 +23,11 @@ on:
         default: 'Always'
       updateWebsite: 
         default: 'false'
-        
+    
+defaults:
+  run:
+    working-directory: /go/src   
+      
 jobs:
 
 ### Setup Litmus
@@ -43,10 +47,7 @@ jobs:
         
     runs-on: [self-hosted,component]
     ## Changing the working directory to image path we provided
-    ## As the default path is repository checkout path.
-    defaults:
-      run:
-        working-directory: /go/src      
+    ## As the default path is repository checkout path.      
     steps:
       - name: Litmus Infra Setup In Cluster-1
         run: |
@@ -64,21 +65,18 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
         
-    runs-on: [self-hosted,component]
-    defaults:
-      run:
-        working-directory: /go/src      
+    runs-on: [self-hosted,component]   
     steps:
       - name: Deploy App In Cluster-1
-        run: make build-litmus        
+        run: make app-deploy        
 
-      - name: Liveness In Cluster-1
-        if: ${{ always() }}
-        run: make build-litmus        
+      # - name: Liveness In Cluster-1
+      #   if: ${{ always() }}
+      #   run: make liveness        
 
-      - name: Auxiliary App In Cluster-1
-        if: ${{ always() }}
-        run: make build-litmus
+      # - name: Auxiliary App In Cluster-1
+      #   if: ${{ always() }}
+      #   run: make auxiliary-app
         
 ### Runing Component Tests        
         
@@ -98,10 +96,7 @@ jobs:
         UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
         
-    runs-on: [self-hosted,component]
-    defaults:
-      run:
-        working-directory: /go/src      
+    runs-on: [self-hosted,component]   
     steps:
       - name: TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY      
         run: make operator-reconcile-resiliency-check
@@ -151,10 +146,7 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
         
-    runs-on: [self-hosted,component]
-    defaults:
-      run:
-        working-directory: /go/src      
+    runs-on: [self-hosted,component]    
     steps:
       - name: Application Cleanup      
         run: make app-cleanup
@@ -173,10 +165,7 @@ jobs:
         KUBECONFIG: /root/.kube/config
         COMPONENT_TEST: "true"   
 
-    runs-on: [self-hosted,component]
-    defaults:
-      run:
-        working-directory: /go/src      
+    runs-on: [self-hosted,component]      
     steps:
       - name: Litmus Cleanup      
         run: make litmus-cleanup
