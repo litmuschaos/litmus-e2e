@@ -1,0 +1,115 @@
+name: Manual E2E Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      Tag:
+        description: "Image Tag of Litmus-Portal"
+        default: "ci"
+
+      Type:
+        description: "Helm or Manifest Configuration"
+        default: "Manifest"
+
+      Module:
+        description: "Which module to Test (By default All modules will be tested)"
+        default: "All"
+
+      FrontendImage:
+        description: "Frontend Image with tag (Only for manifest tests)"
+        default: "litmuschaos/litmusportal-frontend:ci"
+
+      GraphqlServerImage:
+        description: "GraphQL-server Image with tag (Only for manifest tests)"
+        default: "litmuschaos/litmusportal-server:ci"
+
+      AuthServerImage:
+        description: "Auth-server Image with tag (Only for manifest tests)"
+        default: "litmuschaos/litmusportal-auth-server:ci"
+
+# All Environments variables decalred and set here.
+env:
+  TAG: ${{github.event.inputs.Tag}}
+  TYPE: ${{github.event.inputs.Type}}
+  MODULE: ${{github.event.inputs.Module}}
+  FRONTENDIMAGE: "${{github.event.inputs.FrontendImage}}"
+  GRAPHQLIMAGE: "${{github.event.inputs.GraphqlServerImage}}"
+  AUTHIMAGE: "${{github.event.inputs.AuthServerImage}}"
+
+# Jobs for deploying and testing litmus-portal on a KinD Cluster
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{steps.getcommit.outputs.sha}}
+          fetch-depth: 0
+
+      - name: Setting up KinD Cluster
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.7.0"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context kind-kind
+          kind get kubeconfig --internal >$HOME/.kube/config
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      # If Type == Manifest, Then manifest will be updated with given images and deployed.
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        if: ${{env.TYPE == 'Manifest'}}
+        run: |
+          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+          chmod 755 ./.github/ImageUpdate.sh
+          ./.github/ImageUpdate.sh cluster-k8s-manifest.yml
+          kubectl apply -f cluster-k8s-manifest.yml
+        env:
+          FrontendImage: ${{env.FRONTENDIMAGE}}
+          BackendImage: ${{env.GRAPHQLIMAGE}}
+          AuthImage: ${{env.AUTHIMAGE}}
+
+      # If Type == Helm, Then Latest helm chart will be deployed.
+      - name: Deploying Litmus-Portal using **Helm chart**
+        if: ${{env.TYPE == 'Helm'}}
+        run: |
+          kubectl create ns litmus
+          git clone https://github.com/litmuschaos/litmus-helm
+          cd litmus-helm
+          helm install litmuschaos --namespace litmus ./charts/litmus-2-0-0-beta/
+
+      - name: Waiting for Litmus-Portal to be ready and port-forwarding the frontend port
+        run: |
+          kubectl get pods -n litmus
+          kubectl get deployments -o wide -n litmus
+          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
+          export frontendPodName=$(kubectl get pods -l component=litmusportal-frontend --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' -n litmus)
+          export frontendPodPort=$(kubectl get pod $frontendPodName --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}' --namespace litmus)
+          kubectl port-forward $frontendPodName -n litmus 3001:$frontendPodPort &
+
+      # Cloning the litmus-e2e repo for E2E tests.
+      - name: Cloning the litmus-e2e Repo
+        run: |
+          git clone https://github.com/litmuschaos/litmus-e2e.git -b litmus-portal
+
+      - name: Running basic tests (Login and Onbaording Tests)
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
+          working-directory: litmus-e2e/Cypress/
+          config-file: cypress.prod.json
+
+      - name: Run all E2E tests
+        if: always()
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          working-directory: litmus-e2e/Cypress/
+          config-file: cypress.prod.json
+
+      - name: Deleting KinD cluster
+        if: always()
+        run: kind delete cluster
