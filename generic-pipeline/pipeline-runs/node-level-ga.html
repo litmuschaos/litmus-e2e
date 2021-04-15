@@ -10,7 +10,11 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/normalize.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">    
+    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load("current", {packages:["corechart"]});
+    </script>  
   </head>
   
   <body>
@@ -21,33 +25,9 @@
     <section class="main-content">      
     <h2><b>Node Level GA Build Details</b></h2>
     <p>Here are the details of latest few pipeline runs for node level tests!</p>
-
-<table>
- <tr>
-  <th>Pipeline ID</th>
-  <th>Execution Time</th>
-  <th>Release Version</th></tr>
- <tr>
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13259">13259</a></td>
-  <td>Thu Jan  7 18:05:11 2021(IST)</td>
-  <td>1.11.2</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13254">13254</a></td>
-  <td>Wed Jan  6 18:05:07 2021(IST)</td>
-  <td>1.11.2</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13250">13250</a></td>
-  <td>Tue Jan  5 18:04:32 2021(IST)</td>
-  <td>1.11.2</td>
- </tr>
-
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13247">13247</a></td>
-  <td>Tue Jan  5 13:30:53 2021(IST)</td>
-  <td>1.11.2</td>
- </tr>
-</table>
+    <div id='piechart' style='width: 500px; height: 300px; text-align: center; margin: 3 auto;'>
+      <script type = 'text/javascript'>
+  
+      drawCoverageDetails(data);
+      </script>
+    </div>

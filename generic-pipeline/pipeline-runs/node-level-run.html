@@ -10,7 +10,11 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/normalize.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">    
+    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load("current", {packages:["corechart"]});
+    </script>  
   </head>
   
   <body>
@@ -21,94 +25,9 @@
     <section class="main-content">      
     <h2><b>Node Level Nightly Build Details</b></h2>
     <p>Here are the details of latest few pipeline runs for node level tests!</p>
-
-
-<table>
- <tr>
-  <th>Pipeline ID</th>
-  <th>Execution Time</th>
-  <th>Version</th></tr>
- <tr>
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13264">13264</a></td>
-  <td>Fri Jan  8 18:43:30 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13240">13240</a></td>
-  <td>Mon Jan  4 18:02:48 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13237">13237</a></td>
-  <td>Mon Jan  4 13:16:12 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13230">13230</a></td>
-  <td>Sun Jan  3 18:18:17 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13226">13226</a></td>
-  <td>Sat Jan  2 18:22:44 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13222">13222</a></td>
-  <td>Fri Jan  1 18:04:10 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13219">13219</a></td>
-  <td>Fri Jan  1 11:14:30 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13210">13210</a></td>
-  <td>Thu Dec 31 17:06:57 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13201">13201</a></td>
-  <td>Tue Dec 29 18:00:43 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13197">13197</a></td>
-  <td>Mon Dec 28 18:22:19 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13193">13193</a></td>
-  <td>Sun Dec 27 18:29:12 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13189">13189</a></td>
-  <td>Sat Dec 26 18:31:47 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13185">13185</a></td>
-  <td>Fri Dec 25 18:28:37 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13181">13181</a></td>
-  <td>Thu Dec 24 18:17:35 2020(IST)</td>
-  <td>ci</td>
- </tr>
-</table>
+    <div id='piechart' style='width: 500px; height: 300px; text-align: center; margin: 3 auto;'>
+      <script type = 'text/javascript'>
+  
+      drawCoverageDetails(data);
+      </script>
+    </div>

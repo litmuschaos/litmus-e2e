@@ -10,7 +10,11 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/normalize.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../../stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">    
+    <link rel="stylesheet" type="text/css" href="../../stylesheets/github-light.css" media="screen">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load("current", {packages:["corechart"]});
+    </script>    
   </head>
   
   <body>
@@ -21,111 +25,9 @@
     <section class="main-content">      
     <h2><b>Component Level Nightly Build Details</b></h2>
     <p>Here are the details of latest few pipeline runs for litmus component tests!</p>  
-
-<table>
- <tr>
-  <th>Pipeline ID</th>
-  <th>Execution Time</th>
-  <th>Version</th></tr>
- <tr>
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13286">13286</a></td>
-  <td>Mon Jan 11 19:13:36 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13275">13275</a></td>
-  <td>Sat Jan  9 19:13:49 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13269">13269</a></td>
-  <td>Fri Jan  8 20:03:05 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13265">13265</a></td>
-  <td>Fri Jan  8 19:11:28 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13238">13238</a></td>
-  <td>Mon Jan  4 13:24:48 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13231">13231</a></td>
-  <td>Sun Jan  3 19:11:42 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13223">13223</a></td>
-  <td>Fri Jan  1 19:12:12 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13220">13220</a></td>
-  <td>Fri Jan  1 11:26:20 2021(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13216">13216</a></td>
-  <td>Thu Dec 31 19:10:19 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13211">13211</a></td>
-  <td>Thu Dec 31 17:23:53 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13207">13207</a></td>
-  <td>Wed Dec 30 19:10:17 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13202">13202</a></td>
-  <td>Tue Dec 29 19:11:43 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13198">13198</a></td>
-  <td>Mon Dec 28 19:09:49 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13194">13194</a></td>
-  <td>Sun Dec 27 19:05:27 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13190">13190</a></td>
-  <td>Sat Dec 26 19:05:30 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
- <tr>
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13186">13186</a></td>
-  <td>Fri Dec 25 19:10:13 2020(IST)</td>
-  <td>ci</td>
- </tr>
-
-  <td><a href= "https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/13182">13182</a></td>
-  <td>Thu Dec 24 19:05:26 2020(IST)</td>
-  <td>ci</td>
- </tr>
-</table>
+    <div id='piechart' style='width: 500px; height: 300px; text-align: center; margin: 3 auto;'>
+      <script type = 'text/javascript'>
+  
+      drawCoverageDetails(data);
+      </script>
+    </div>
