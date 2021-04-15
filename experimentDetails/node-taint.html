@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="mystyle.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load('current', {packages: ['corechart', 'bar']});
+      google.charts.load('current', {'packages':['table']});
+    </script>
+  </head>
+  <body>
+    <h1><u>Node Taint Chaos</u></h1>
+    <br>
+    <p> Node Taint platform tested</p>
+    <br>
+    <div style="width: 1000px; text-align: center; margin: 0 auto;">
+      <img src="../images/platforms/GKE.png" alt="HTML5 Icon" style="width:60px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/EKS.png" alt="HTML5 Icon" style="width:140px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/AKS.svg" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/kubeadm.png" alt="HTML5 Icon" style="width:100px;height:60px; margin-right: 5px;">
+    </div>
+    <br><br>
+    <h1><u>Node Taint Experiment Details</u></h1>
+    <p>
+      Node taint the node where application pod is running and verifies if it is scheduled on another available node.
+      Here are the different experiment details.
+    </p>
+    <br>
+    <div id="chart_div" style="width: 500px; height: 800px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var data = [
+          ['Coverage', 'Actual Coverage','Expected Coverage'],
+          ['Validation test', 4.5, 13],
+        ]
+        drawExperimentDetails(data);
+      </script>
+    </div>
+    <br>
+    <div id="table_div" style="width: 800px; height: 200px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var dataApp = [
+          ['For development application',  true],
+          ['For stateful application',   false],
+          ['For development config application', false],
+        ]
+        drawAppDetails(dataApp);
+      </script>
+    </div>
+    <br>
+    <div id="table_div_app" style="width: 800px; height: 200px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var dataClu = [ 
+          ['Cluster Runtime Docker',  true],
+          ['Cluster Runtime Container',   false],
+          ['Cluster Runtime CRIO', false],
+        ]
+        drawClusterDetails(dataClu);
+      </script>
+    </div>
+    <br>
+  </body>
+</html>
