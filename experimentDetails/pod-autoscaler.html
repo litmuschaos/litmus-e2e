@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="mystyle.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type = "text/javascript" src="function.js">
+      google.charts.load('current', {packages: ['corechart', 'bar']});
+      google.charts.load('current', {'packages':['table']});
+    </script>
+  </head>
+  <body>
+    <h1><u>Pod Autoscaler Chaos</u></h1>
+    <br>
+    <p> Pod Autoscaler platform tested</p>
+    <br>
+    <div style="width: 1000px; text-align: center; margin: 10 auto;">
+      <img src="../images/platforms/GKE.png" alt="HTML5 Icon" style="width:60px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/EKS.png" alt="HTML5 Icon" style="width:120px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/AKS.svg" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/k3s.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/kind.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/minikube.svg" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/kubeadm.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/microk8s.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/okd.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+      <img src="../images/platforms/rancher.png" alt="HTML5 Icon" style="width:80px;height:60px; margin-right: 5px;">
+    </div>
+    <br><br>
+    <h1><u>Pod Autoscaler Experiment Details</u></h1>
+    <p>
+      Pod Autoscaler scale the application replicas and test the node autoscaling on cluster.
+      Here are the different experiment details.
+    </p>
+    <br>
+    <div id="chart_div" style="width: 500px; height: 800px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var data = [
+          ['Coverage', 'Actual Coverage','Expected Coverage'],
+          ['Validation test', 3, 14],
+        ]
+        drawExperimentDetails(data);
+      </script>
+    </div>
+    <br>
+    <div id="table_div" style="width: 800px; height: 200px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var dataApp = [
+          ['For development application',  true],
+          ['For stateful application',   false],
+          ['For development config application', false],
+        ]
+        drawAppDetails(dataApp);
+      </script>
+    </div>
+    <br>
+    <div id="table_div_app" style="width: 800px; height: 200px; text-align: center; margin: 10 auto;" >
+      <script type = "text/javascript">
+        var dataClu = [ 
+          ['Cluster Runtime Docker',  true],
+          ['Cluster Runtime Container',   true],
+          ['Cluster Runtime CRIO', false],
+        ]
+        drawClusterDetails(dataClu);
+      </script>
+    </div>
+    <br>
+  </body>
+</html>
