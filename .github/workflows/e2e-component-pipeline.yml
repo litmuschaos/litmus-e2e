@@ -41,10 +41,14 @@ jobs:
         IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"
         KUBECONFIG: /root/.kube/config
         
-    runs-on: self-hosted
+    runs-on: [self-hosted,component]
+    ## Changing the working directory to image path we provided
+    ## As the default path is repository checkout path.
+    defaults:
+      run:
+        working-directory: /go/src      
     steps:
       - name: Litmus Infra Setup In Cluster-1
-        working-directory: /go/src
         run: |
           make build-litmus
         
@@ -60,20 +64,20 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
         
-    runs-on: self-hosted
+    runs-on: [self-hosted,component]
+    defaults:
+      run:
+        working-directory: /go/src      
     steps:
       - name: Deploy App In Cluster-1
-        working-directory: /go/src
         run: make build-litmus        
 
       - name: Liveness In Cluster-1
         if: ${{ always() }}
-        working-directory: /go/src
         run: make build-litmus        
 
       - name: Auxiliary App In Cluster-1
         if: ${{ always() }}
-        working-directory: /go/src
         run: make build-litmus
         
 ### Runing Component Tests        
@@ -94,50 +98,44 @@ jobs:
         UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
         
-    runs-on: self-hosted
-    steps:
-      - name: TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY
+    runs-on: [self-hosted,component]
+    defaults:
+      run:
         working-directory: /go/src      
+    steps:
+      - name: TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY      
         run: make operator-reconcile-resiliency-check
 
       - name: TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make admin-mode-check
 
       - name: TCID-EC2-GENERIC-ENGINE-APP-INFO
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make appinfo
 
       - name: TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make annotation-check
         
       - name: TCID-EC2-GENERIC-ENGINE-ENGINE-STATE
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make engine-state
         
       - name: TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make job-cleanup-policy     
         
       - name: TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make service-account 
         
       - name: TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make experiment-image
         
       - name: TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD
-        if: ${{ always() }}
-        working-directory: /go/src        
+        if: ${{ always() }}        
         run: make target-pod          
 
 ### App Cleanup
@@ -153,10 +151,12 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
         
-    runs-on: self-hosted
-    steps:
-      - name: Application Cleanup
+    runs-on: [self-hosted,component]
+    defaults:
+      run:
         working-directory: /go/src      
+    steps:
+      - name: Application Cleanup      
         run: make app-cleanup
 
 ### Litmus Cleanup 
@@ -173,8 +173,10 @@ jobs:
         KUBECONFIG: /root/.kube/config
         COMPONENT_TEST: "true"   
 
-    runs-on: self-hosted
-    steps:
-      - name: Litmus Cleanup
+    runs-on: [self-hosted,component]
+    defaults:
+      run:
         working-directory: /go/src      
+    steps:
+      - name: Litmus Cleanup      
         run: make litmus-cleanup
