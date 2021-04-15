@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
 )
 
 // GetApplicationNode will give the node name of the application pod
@@ -28,7 +28,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 
 	testsDetails.Duration = 30
 	testsDetails.Delay = 1
-	klog.Info("[Wait]: Wating for ChaosEngine Verdict updation")
+	log.Info("[Wait]: Wating for ChaosEngine Verdict updation")
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
@@ -41,7 +41,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
 				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
 			}
-			klog.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
+			log.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
 
 			return nil
 		})
@@ -57,7 +57,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 
 	testsDetails.Duration = 30
 	testsDetails.Delay = 1
-	klog.Info("[Wait]: Wating for ChaosResult Verdict updation")
+	log.Info("[Wait]: Wating for ChaosResult Verdict updation")
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
@@ -70,7 +70,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 			if string(chaosResult.Status.ExperimentStatus.Verdict) == "Awaited" {
 				return errors.Errorf("Verdict of Chaos Engine is Awaited")
 			}
-			klog.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
+			log.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
 
 			return nil
 		})
@@ -87,7 +87,7 @@ func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients env
 	if err != nil || int(len(job.Items)) == 0 {
 		return errors.Errorf("failed to get the chaos jobs, due to %v", err)
 	}
-	klog.Info("[JOB]: The given job is present")
+	log.Info("[JOB]: The given job is present")
 	return nil
 }
 
@@ -114,7 +114,7 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 		return "", "", "", errors.Errorf("fail to get the podlist err: %v", err)
 	}
 
-	klog.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)
+	log.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)
 
 	// returns the target pod and target pod ip along with helper pod to ping
 	return PodList.Items[0].Name, PodList.Items[0].Status.PodIP, PodList.Items[1].Name, nil

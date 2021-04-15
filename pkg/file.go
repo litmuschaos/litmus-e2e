@@ -26,7 +26,7 @@ func EditFile(filepath, old, new string) error {
 			failFlag = false
 		}
 	}
-	if failFlag == true {
+	if failFlag {
 		return errors.Errorf("Error in updating \"%v\" please check the file", old)
 	}
 	output := strings.Join(lines, "\n")
@@ -53,7 +53,7 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 			failFlag = false
 		}
 	}
-	if failFlag == true {
+	if failFlag {
 		return errors.Errorf("Error in updating \"%v\" please check the file", oldvalue)
 	}
 	output := strings.Join(lines, "\n")

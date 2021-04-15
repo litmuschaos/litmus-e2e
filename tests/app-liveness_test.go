@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -43,7 +42,8 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 			//Deploying liveness for application
 			By("Deploying liveness pod for the applicaiton")
-			err = exec.Command("kubectl", "apply", "-f", "../nginx/liveness.yml").Run()
+			command := []string{"apply", "-f", "../apps/nginx/liveness.yml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to install liveness probe, due to {%v}", err)
 
 			//Get the status of liveness pod
