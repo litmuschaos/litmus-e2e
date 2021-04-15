@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -43,7 +42,8 @@ var _ = Describe("BDD of Auxilary app Deployment", func() {
 
 			//Deploying testpod application
 			By("Creating auxiliary application")
-			err = exec.Command("kubectl", "run", "testpod", "--image=nginx", "-n", testsDetails.ChaosNamespace).Run()
+			command := []string{"run", "testpod", "--image=nginx", "-n", testsDetails.ChaosNamespace}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to deploy auxiliary app, due to {%v}", err)
 
 			//Get the status of testpod Application

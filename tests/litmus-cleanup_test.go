@@ -3,9 +3,9 @@ package tests
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"testing"
 
+	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
@@ -44,50 +44,40 @@ var _ = Describe("BDD of litmus cleanup", func() {
 
 			//Deleting all chaosengines
 			By("Deleting all chaosengine")
-			err = exec.Command("kubectl", "delete", "chaosengine,chaosexperiment,chaosresult", "--all", "--all-namespaces").Run()
+			command := []string{"delete", "chaosengine,chaosexperiment,chaosresult", "--all", "--all-namespaces"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "failed to delete CRs")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			klog.Info("All CRs deleted successfully")
 
 			//Deleting crds
 			By("Delete chaosengine crd")
-			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml").Run()
+			command = []string{"delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/chaos_crds.yaml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "failed to delete crds")
-			if err != nil {
-				fmt.Println(err)
-			}
-
 			klog.Info("crds deleted successfully")
 
-			//Deleting rbacs
+			//Deleting rbac
 			By("Delete chaosengine rbac")
-			err = exec.Command("kubectl", "delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml").Run()
+			command = []string{"delete", "-f", "https://raw.githubusercontent.com/litmuschaos/chaos-operator/master/deploy/rbac.yaml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "failed to create rbac")
-			if err != nil {
-				fmt.Println(err)
-			}
 			klog.Info("rbac deleted sucessfully")
 
 			if os.Getenv("COMPONENT_TEST") == "true" {
 				//Delete test deployments from default namespace
 				By("Delete test deployments")
-				err = exec.Command("kubectl", "delete", "deploy", "testapp1", "adminapp", "testapp2").Run()
+				command = []string{"delete", "deploy", "testapp1", "adminapp", "testapp2"}
+				err = pkg.Kubectl(command...)
 				if err != nil {
 					fmt.Println("fail to delete the deployments from default namespace, due to ", err)
 				}
 
 				//Delete test namespace
 				By("Delete test namespace")
-				err = exec.Command("kubectl", "delete", "ns", "test").Run()
+				command = []string{"delete", "ns", "test"}
+				err = pkg.Kubectl(command...)
 				Expect(err).To(BeNil(), "Fail to delete test namespace")
-				if err != nil {
-					fmt.Println(err)
-				}
 			}
 		})
-
 	})
 })

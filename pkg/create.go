@@ -2,12 +2,12 @@ package pkg
 
 import (
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/pkg/errors"
 	appv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
 )
 
 // CreateDeployment will create a deployment
@@ -50,10 +50,10 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 	}
 	_, err := clients.KubeClient.AppsV1().Deployments(namespace).Create(deployment)
 	if err != nil {
-		klog.Infoln(""+deploymentName+" deployment is not created and error is ", err)
+		log.Infof(""+deploymentName+" deployment is not created and error is ", err)
 		return errors.Errorf("Fail to create "+deploymentName+" deployment, due to %v", err)
 	}
-	klog.Info("" + deploymentName + " deployment is created successfully !!!")
+	log.Info("" + deploymentName + " deployment is created successfully !!!")
 
 	return nil
 }
@@ -64,6 +64,6 @@ func CreateNamespace(clients environment.ClientSets, namespaceName string) (erro
 	if _, err := clients.KubeClient.CoreV1().Namespaces().Create(nsSpec); err != nil {
 		return nil, errors.Errorf("Fail to create "+namespaceName+" namespace, due to %v", err)
 	}
-	klog.Infof("%v namespace created successfully!!!", namespaceName)
+	log.Infof("%v namespace created successfully!!!", namespaceName)
 	return nil, nil
 }

@@ -5,11 +5,11 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	litmusexec "github.com/litmuschaos/litmus-e2e/pkg/exec"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
 )
 
 //ValidateTargetPodChaos will check if the chaos induced on target pod or not.
@@ -26,7 +26,7 @@ func ValidateTargetPodChaos(testsDetails *types.TestDetails, clients environment
 			return errors.Errorf("fail to induce chaos on target pod")
 		}
 	}
-	klog.Info("[Validate]: Induced chaos on target pod successfully")
+	log.Info("[Validate]: Induced chaos on target pod successfully")
 	return nil
 }
 
@@ -34,14 +34,14 @@ func ValidateTargetPodChaos(testsDetails *types.TestDetails, clients environment
 func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPod string, clients environment.ClientSets) error {
 
 	//waiting for sometime for chaos to begin
-	klog.Infof("[Wait]: Waiting for 15s before %v validation ...", testsDetails.ExperimentName)
+	log.Infof("[Wait]: Waiting for 15s before %v validation ...", testsDetails.ExperimentName)
 	time.Sleep(15 * time.Second)
 
-	klog.Infof("[Validation]: %v validation started", testsDetails.ExperimentName)
+	log.Infof("[Validation]: %v validation started", testsDetails.ExperimentName)
 	// It will contains all the pod & container details required for exec command
 	testsDetails.Duration = 10
 	testsDetails.Delay = 3
-	klog.Info("[Wait]: Wating for ChaosResult Verdict updation")
+	log.Info("[Wait]: Wating for ChaosResult Verdict updation")
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
@@ -51,10 +51,10 @@ func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPo
 			litmusexec.SetExecCommandAttributes(&execCommandDetails, HelperPod, "nginx", testsDetails.AppNS)
 			response, err := litmusexec.Exec(&execCommandDetails, clients, command)
 			if err != nil {
-				klog.Infof("[Validation]: Ping response is: %v", response)
+				log.Infof("[Validation]: Ping response is: %v", response)
 				return nil
 			}
-			klog.Infof("[Validation]: Ping response is: %v", response)
+			log.Infof("[Validation]: Ping response is: %v", response)
 			return errors.Errorf("network is not interrupted")
 
 		})

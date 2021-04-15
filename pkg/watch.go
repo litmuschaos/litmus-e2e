@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
 )
 
 // ChaosPodLogs is used to wait for the chaosPod to get completed and then prints the logs of it.
@@ -35,7 +35,7 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 				return errors.Errorf("chaos pod is in %v state", chaosPod.Status.Phase)
 			}
 			time.Sleep(10 * time.Second)
-			klog.Infof("[Status]: Currently, the Chaos Pod is in %v State, Please Wait for its completion", chaosPod.Status.Phase)
+			log.Infof("[Status]: Currently, the Chaos Pod is in %v State, Please Wait for its completion", chaosPod.Status.Phase)
 		} else {
 			break
 		}
@@ -43,7 +43,7 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 
 	//Getting the jobList after the job gets completed
 	jobPodName := (chaosEngine.Status.Experiments[0].ExpPod)
-	klog.Infof("JobPodName : %v \n\n\n", jobPodName)
+	log.Infof("JobPodName : %v \n\n\n", jobPodName)
 	// After the Job gets completed further commands will print the logs.
 	req := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).GetLogs(jobPodName, &v1.PodLogOptions{})
 	readCloser, err := req.Stream()
