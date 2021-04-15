@@ -9,18 +9,22 @@ import (
 )
 
 //ChaosResultVerdict checks the chaos result verdict
-func ChaosResultVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) (error, error) {
+func ChaosResultVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+
+	if err = WaitForChaosResultCompletion(testsDetails, clients); err != nil {
+		return errors.Errorf("engine state check failed, err %v", err)
+	}
 
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return nil, errors.Errorf("Fail to get the chaosresult, due to %v", err)
+		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
 	log.Infof("Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
 	if string(chaosResult.Status.ExperimentStatus.Verdict) != "Pass" {
-		return nil, errors.Errorf("Fail to get the chaosresult verdict as \"Pass\"")
+		return errors.Errorf("Fail to get the chaosresult verdict as \"Pass\"")
 	}
 
-	return nil, nil
+	return nil
 }
 
 //ChaosEngineVerdict checks the chaosengine verdict

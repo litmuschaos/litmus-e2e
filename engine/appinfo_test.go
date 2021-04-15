@@ -59,6 +59,7 @@ var _ = Describe("BDD of appinfo test", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			//Providing wrong appinfo
+
 			testsDetails.AppLabel = "run=dummy"
 			err = pkg.PrepareChaos(&testsDetails, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
@@ -113,14 +114,14 @@ var _ = Describe("BDD of appinfo test", func() {
 
 		})
 	})
-	// BDD for cleaning all components
-	Context("Cleanup litmus components", func() {
+	// // BDD for cleaning all components
+	// Context("Cleanup litmus components", func() {
 
-		It("Should delete all the litmus CRs", func() {
-			By("[Cleanup]: Removing Litmus Components")
-			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+	// 	It("Should delete all the litmus CRs", func() {
+	// 		By("[Cleanup]: Removing Litmus Components")
+	// 		err := pkg.Cleanup()
+	// 		Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
-		})
-	})
+	// 	})
+	// })
 })

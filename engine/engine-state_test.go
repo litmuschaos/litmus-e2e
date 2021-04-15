@@ -47,6 +47,7 @@ var _ = Describe("BDD of engine-state test", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 

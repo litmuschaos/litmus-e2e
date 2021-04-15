@@ -76,7 +76,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})

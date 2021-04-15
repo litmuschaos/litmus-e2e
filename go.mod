@@ -6,13 +6,12 @@ require (
 	cloud.google.com/go v0.54.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.8 // indirect
 	github.com/googleapis/gnostic v0.4.0 // indirect
-	github.com/litmuschaos/chaos-operator v0.0.0-20201115173546-a0fd95c76ed0
-	github.com/litmuschaos/litmus-go v0.0.0-20201115164915-ff26845ddb41
+	github.com/litmuschaos/chaos-operator v0.0.0-20210412053502-dd484bbadfb9
+	github.com/litmuschaos/litmus-go v0.0.0-20210415042401-c79b9ea0fdd2
 	github.com/onsi/ginkgo v1.12.0
 	github.com/onsi/gomega v1.9.0
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.6.0
-	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
+	github.com/sirupsen/logrus v1.7.0
 	k8s.io/api v0.17.3
 	k8s.io/apimachinery v0.17.3
 	k8s.io/client-go v12.0.0+incompatible

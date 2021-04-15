@@ -67,7 +67,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for engine completion and check again the job status
@@ -139,7 +139,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for engine completion and check again the job status

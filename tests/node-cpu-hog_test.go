@@ -47,6 +47,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
+			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 			//Checking runner pod running state
@@ -66,7 +67,7 @@ var _ = Describe("BDD of node-cpu-hog experiment", func() {
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict

@@ -24,15 +24,13 @@ func Kubectl(command ...string) error {
 		log.Infof("Error: %v", err)
 		return err
 	}
-	log.Infof(out.String())
+	log.Infof("%v", out.String())
 	return nil
 }
 
 func PrepareChaos(testsDetails *types.TestDetails, annotation bool) error {
 
-	testsDetails.LibImageCI = testsDetails.LibImageNew
 	testsDetails.AnnotationCheck = strconv.FormatBool(annotation)
-
 	//Installing RBAC for the experimen
 	log.Info("[Install]: Installing RBAC")
 	err = InstallGoRbac(testsDetails, testsDetails.ChaosNamespace)
