@@ -93,6 +93,12 @@ def fetch_file_content():
            version_name = "Version"
     else:
            version_name = "Release Version"
+    
+    index = content_list.index("      <script type = 'text/javascript'>")
+    del content_list[index+1]
+    content_list.insert(index+1,("var data = [['Total', 'Coverage'],['Passed',  {}],['Failed',  {}],]".format(coverage, str(100- int(coverage)))))
+    updated_file_content =  ('\n').join(content_list)
+
     # updating result's table if the table is already present
     if file_content.find('<table>\n <tr>\n  <th>Pipeline ID</th>\n  <th>Execution Time</th>\n  <th>'+version_name+'</th>\n <th>Coverage</th>\n </tr>\n')>0:
         new_pipeline = ' <tr>\n  <td>{}</td>\n  <td>{}</td>\n  <td>{}</td>\n<td>{}</td> </tr>\n'.format(pipeline_url,time_stamp,tag,totalCoverage)
