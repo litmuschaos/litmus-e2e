@@ -131,10 +131,8 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: "+testsDetails.JobCleanUpPolicy+""); err != nil {
 		return errors.Errorf("Fail to Update the engine file, due to %v", err)
 	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+	if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "engineState: 'active'", "  annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
+		return errors.Errorf("Fail to Update the engine file, err: %v", err)
 	}
 	// for ec2-terminate instance
 	if testsDetails.ExperimentName == "ec2-terminate" {
