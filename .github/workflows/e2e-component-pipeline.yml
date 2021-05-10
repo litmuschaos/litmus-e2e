@@ -159,6 +159,8 @@ jobs:
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
+        CI_PIPELINE_ID: ${{ github.run_id }}
+        COMPONENT_TEST: "true"
 
     runs-on: [self-hosted, component]
     steps:

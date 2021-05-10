@@ -196,6 +196,8 @@ jobs:
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
+        CI_PIPELINE_ID: ${{ github.run_id }}
+        POD_LEVEL: "true"
 
     runs-on: [self-hosted, pod-level]
     steps:
