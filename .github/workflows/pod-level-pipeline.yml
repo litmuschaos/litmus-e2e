@@ -37,8 +37,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
         OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
@@ -62,8 +62,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
@@ -89,8 +89,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws        
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws        
         - /etc/kubernetes:/etc/kubernetes
       env:
         GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"        
@@ -149,8 +149,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws        
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws        
         - /etc/kubernetes:/etc/kubernetes
       env:
         GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"        
@@ -182,8 +182,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws        
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws        
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
@@ -201,8 +201,8 @@ jobs:
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
-        - $HOME/.kube:/root/.kube
-        - $HOME/.aws:/root/.aws        
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws        
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
