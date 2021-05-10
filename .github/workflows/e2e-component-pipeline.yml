@@ -25,16 +25,16 @@ jobs:
 
   Setup_Litmus_Infra:
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ env.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-        OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
-        RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
-        IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"
+        OPERATOR_IMAGE: "${{ env.operatorImage }}"
+        OPERATOR_NAME: "${{ env.operatorName }}"
+        RUNNER_IMAGE: "${{ env.runnerImage }}"
+        IMAGE_PULL_POLICY: "${{ env.imagePullPolicy }}"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, component]
@@ -49,7 +49,7 @@ jobs:
   Setup_App_Deployment:
     needs: Setup_Litmus_Infra
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ env.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -76,18 +76,18 @@ jobs:
   Component_Test:
     needs: Setup_App_Deployment
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ env.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
-        NEW_LIB_IMAGE: "${{ github.event.inputs.newLibImage }}"
-        OLD_LIB_IMAGE: "${{ github.event.inputs.oldLibImage }}"
-        EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
-        CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
+        GO_EXPERIMENT_IMAGE: "${{ env.goExperimentImage }}"
+        NEW_LIB_IMAGE: "${{ env.newLibImage }}"
+        OLD_LIB_IMAGE: "${{ env.oldLibImage }}"
+        EXPERIMENT_IMAGE_PULL_POLICY: "${{ env.experimentImagePullPolicy }}"
+        CHAOS_NAMESPACE: "${{ env.chaosNamespace }}"
+        UPDATE_WEBSITE: "${{ env.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, component]
@@ -133,7 +133,7 @@ jobs:
     needs: Component_Test
     if: always()
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ env.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -152,15 +152,12 @@ jobs:
     needs: App_Cleanup
     if: always()
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
+      image: "${{ env.e2eTestImage }}"
       env:
         KUBECONFIG: /root/.kube/config
         CI_PIPELINE_ID: ${{ github.run_id }}
         COMPONENT_TEST: "true"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     runs-on: [self-hosted, component]
     steps:
@@ -173,7 +170,7 @@ jobs:
     needs: App_Cleanup
     if: always()
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ env.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
