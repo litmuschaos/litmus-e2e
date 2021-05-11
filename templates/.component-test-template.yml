@@ -1,0 +1,189 @@
+## litmus component test will trigger 
+## only when the COMPONENT_TEST variable is set to true
+
+Litmus Infra Setup In Cluster-1:
+  when: always
+  stage: install
+  tags:
+    - component-test
+  script:
+    - make build-litmus
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+Deploy App In Cluster-1:
+  when: always
+  stage: deploy
+  tags:
+    - component-test
+  script:
+    - make app-deploy
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+Liveness In Cluster-1:
+  when: always
+  stage: deploy
+  tags:
+    - component-test
+  script:
+    - make liveness
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+Auxiliary App In Cluster-1:
+  when: always
+  stage: deploy
+  tags:
+    - component-test
+  script:
+    - make auxiliary-app
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"
+
+TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make operator-reconcile-resiliency-check
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"            
+
+TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make admin-mode-check
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"      
+      
+TCID-EC2-GENERIC-ENGINE-APP-INFO:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make appinfo
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make annotation-check
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+TCID-EC2-GENERIC-ENGINE-ENGINE-STATE:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make engine-state
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+
+TCID-EC2-GENERIC-ENGINE-EXPERIMENT-NAME:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make experiment-404
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
+
+TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make job-cleanup-policy
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
+
+TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make service-account
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"        
+      
+TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make experiment-image
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"         
+      
+TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD:
+  when: always
+  stage: Component Checks
+  tags:
+    - component-test
+  script:
+    - make target-pod
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"
+
+App Cleanup In Cluster-1:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - component-test
+  script:
+    - make app-cleanup 
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"
+
+Litmus Cleanup In Cluster-1:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - component-test
+  script:
+    - make litmus-cleanup 
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"    
+  
+Pipeline Status Update:
+  when: always
+  stage: App Cleanup
+  tags:
+    - component-test
+  script:
+    - make pipeline-status-update
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"

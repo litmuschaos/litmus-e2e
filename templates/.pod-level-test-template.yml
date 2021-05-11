@@ -1,0 +1,315 @@
+## Pod level experiment test will trigger 
+## only if POD_LEVEL variable is set to true
+
+Litmus Infra Setup In Cluster-2:
+  when: always
+  stage: install
+  tags:
+    - pod-level-test
+  script:
+    - make build-litmus
+  only:
+    variables:
+    - $POD_LEVEL == "true"      
+
+Deploy App In Cluster-2:
+  when: always
+  stage: deploy
+  tags:
+    - pod-level-test
+  script:
+    - make app-deploy
+  only:
+    variables:
+    - $POD_LEVEL == "true"    
+       
+Liveness In Cluster-2:
+  when: always
+  stage: deploy
+  tags:
+    - pod-level-test
+  script:
+    - make liveness
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+Auxiliary App In Cluster-2:
+  when: always
+  stage: deploy
+  tags:
+    - pod-level-test
+  script:
+    - make auxiliary-app
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-DELETE:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-delete
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-CONTAINER-KILL:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make container-kill
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-CPU-HOG:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-cpu-hog
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-MEMORY-HOG:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-memory-hog
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-network-corruption
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-network-latency
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-network-loss
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-network-duplication
+  only:
+    variables:
+    - $POD_LEVEL == "true"       
+
+TCID-EC2-GENERIC-APP-POD-IO-STRESS:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make pod-io-stress
+  only:
+    variables:
+    - $POD_LEVEL == "true"        
+
+
+TCID-EC2-GENERIC-APP-DISK-FILL:
+  when: always
+  stage: Generic Experiment
+  tags:
+    - pod-level-test
+  script:
+    - make disk-fill
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+
+TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make pod-affected-perc-ton-parallel
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make pod-affected-perc-ton-series
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY:
+  when: always
+  stage: Experiment Tunables
+  tags:
+    - pod-level-test
+  script:
+    - make multiple-app-deploy
+  only:
+    variables:
+    - $MULTIPLE_APP == "true"               
+
+## Ansible Experiments will trigger 
+## only if ANSIBLE_JOB is set to true
+
+TCID-EC2-ANSIBLE-APP-POD-DELETE:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-delete
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-CONTAINER-KILL:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-container-kill
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-DISK-FILL:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-disk-fill
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-POD-CPU-HOG:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-cpu-hog
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-POD-MEMORY-HOG:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-memory-hog
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-CORRUPTION:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-network-corruption
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-LATENCY:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-network-latency
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"   
+
+TCID-EC2-ANSIBLE-APP-POD-NETWORK-LOSS:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - pod-level-test
+  script:
+    - make ansible-pod-network-loss
+  only:
+    variables:
+    - $POD_LEVEL_ANSIBLE_JOB == "true"    
+
+App Cleanup In Cluster-2:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - pod-level-test
+  script:
+    - make app-cleanup
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+
+Pipeline Update:
+  when: always
+  stage: App Cleanup
+  tags:
+    - pod-level-test
+  script:
+    - make pipeline-status-update
+  only:
+    variables:
+    - $POD_LEVEL == "true"
+    
+Litmus Cleanup In Cluster-2:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - pod-level-test
+  script:
+    - make litmus-cleanup
+  only:
+    variables:
+    - $POD_LEVEL == "true"    

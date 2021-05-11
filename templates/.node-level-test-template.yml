@@ -1,0 +1,222 @@
+## Node level experiment test will trigger 
+## only if POD_LEVEL variable is set to true
+
+Litmus Infra Setup In Cluster-3:
+  when: always
+  stage: install
+  tags:
+    - node-level-test
+  script:
+    - make build-litmus
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
+
+Deploy App In Cluster-3:
+  when: always
+  stage: deploy
+  tags:
+    - node-level-test
+  script:
+    - make app-deploy
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
+
+Liveness In Cluster-3:
+  when: always
+  stage: deploy
+  tags:
+    - node-level-test
+  script:
+    - make liveness
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
+
+Auxiliary App In Cluster-3:
+  when: always
+  stage: deploy
+  tags:
+    - node-level-test
+  script:
+    - make auxiliary-app
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
+
+TCID-EC2-GENERIC-INFRA-POD-AUTOSCALER:
+  when: always
+  stage: Infra Experiment   
+  tags:
+    - node-level-test
+  script:
+    - make pod-autoscaler 
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                
+
+TCID-EC2-GENERIC-INFRA-NODE-CPU-HOG:
+  when: always
+  stage: Infra Experiment
+  tags: 
+    - node-level-test
+  script:
+    - make node-cpu-hog
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                
+
+TCID-EC2-GENERIC-INFRA-NODE-MEMORY-HOG:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make node-memory-hog
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
+
+TCID-EC2-GENERIC-INFRA-NODE-DRAIN:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make node-drain
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
+
+TCID-EC2-GENERIC-INFRA-KUBELET-SERVICE-KILL:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make kubelet-service-kill
+  only:
+    variables:
+    - $NODE_LEVEL == "true"           
+
+TCID-EC2-GENERIC-INFRA-NODE-TAINT:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make node-taint
+  only:
+    variables:
+    - $NODE_LEVEL == "true"          
+      
+TCID-EC2-GENERIC-INFRA-NODE-IO-STRESS:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make node-io-stress
+  only:
+    variables:
+    - $NODE_LEVEL == "true"
+
+TCID-EC2-KubeAWS-INFRA-EC2-TERMINATE:
+  when: always
+  stage: Infra Experiment
+  tags:
+    - node-level-test
+  script:
+    - make ec2-terminate
+  only:
+    variables:
+    - $NODE_LEVEL == "true" 
+
+TCID-EC2-GENERIC-INFRA-WITHOUT-APP-INFO:
+  when: always
+  stage: Engine Test
+  tags:
+    - node-level-test
+  script:
+    - make without-app-info
+  only:
+    variables:
+    - $NODE_LEVEL == "true"                         
+
+TCID-EC2-ANSIBLE-INFRA-NODE-CPU-HOG:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - node-level-test
+  script:
+    - make ansible-node-cpu-hog
+  only:
+    variables:
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"
+
+TCID-EC2-ANSIBLE-INFRA-NODE-MEMORY-HOG:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - node-level-test
+  script:
+    - make ansible-node-memory-hog
+  only:
+    variables:
+    - $NODE_LEVEL_ANSIBLE_JOB == "true" 
+
+TCID-EC2-ANSIBLE-INFRA-KUBELET-SERVICE-KILL:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - node-level-test
+  script:
+    - make ansible-kubelet-service-kill
+  only:
+    variables:
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"
+    
+TCID-EC2-ANSIBLE-INFRA-NODE-DRAIN:
+  when: always
+  stage: Ansible Experiment 
+  tags:
+    - node-level-test
+  script:
+    - make ansible-node-drain
+  only:
+    variables:
+    - $NODE_LEVEL_ANSIBLE_JOB == "true"
+
+App Cleanup In Cluster-3:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - node-level-test
+  script:
+    - make app-cleanup 
+  only:
+    variables:
+    - $NODE_LEVEL == "true"
+
+Litmus Cleanup In Cluster-3:
+  when: always
+  stage: App Cleanup
+  tags: 
+    - node-level-test
+  script:
+    - make litmus-cleanup 
+  only:
+    variables:
+    - $NODE_LEVEL == "true"        
+
+Pipeline Status Check:
+  when: always
+  stage: App Cleanup
+  tags:
+    - node-level-test
+  script:
+    - make pipeline-status-update
+  only:
+    variables:
+    - $NODE_LEVEL == "true"
