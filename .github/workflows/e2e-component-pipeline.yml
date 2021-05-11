@@ -190,7 +190,7 @@ jobs:
     container:
       image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
 
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, component]
     steps:
       - name: Pipeline Update
         run: make pipeline-status-update
