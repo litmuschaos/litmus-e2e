@@ -32,15 +32,15 @@ jobs:
   Setup_Litmus_Infra:
     needs: Initialize_Variables
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        OPERATOR_IMAGE: "${{ needs.Variables_Setup.outputs.operatorImage }}"
-        OPERATOR_NAME: "${{ needs.Variables_Setup.outputs.operatorName }}"
-        RUNNER_IMAGE: "${{ needs.Variables_Setup.outputs.runnerImage }}"
+        OPERATOR_IMAGE: "${{ needs.Initialize_Variables.outputs.operatorImage }}"
+        OPERATOR_NAME: "${{ needs.Initialize_Variables.outputs.operatorName }}"
+        RUNNER_IMAGE: "${{ needs.Initialize_Variables.outputs.runnerImage }}"
         IMAGE_PULL_POLICY: "Always"
         KUBECONFIG: /root/.kube/config
 
@@ -56,7 +56,7 @@ jobs:
   Setup_App_Deployment:
     needs: [Setup_Litmus_Infra, Initialize_Variables]
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -83,15 +83,15 @@ jobs:
   Component_Test:
     needs: [Setup_App_Deployment, Initialize_Variables]
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ needs.Variables_Setup.outputs.goExperimentImage }}"
-        NEW_LIB_IMAGE: "${{ needs.Variables_Setup.outputs.newLibImage }}"
-        OLD_LIB_IMAGE: "${{ needs.Variables_Setup.outputs.oldLibImage }}"
+        GO_EXPERIMENT_IMAGE: "${{ needs.Initialize_Variables.outputs.goExperimentImage }}"
+        NEW_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.newLibImage }}"
+        OLD_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.oldLibImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "Always"
         CHAOS_NAMESPACE: "litmus"
         KUBECONFIG: /root/.kube/config
@@ -139,7 +139,7 @@ jobs:
     needs: [Component_Test, Initialize_Variables]
     if: always()
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -158,7 +158,7 @@ jobs:
     needs: [App_Cleanup, Initialize_Variables]
     if: always()
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -183,7 +183,7 @@ jobs:
       UPDATE_WEBSITE: "true"
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     container:
-      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
 
     runs-on: [self-hosted, component]
     steps:
