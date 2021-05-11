@@ -1,0 +1,24 @@
+---
+stages:
+  - setup
+  - install
+  - deploy
+  - Generic Experiment
+  - Experiment Tunables
+  - Infra Experiment
+  - Component Checks
+  - Engine Test
+  - Ansible Experiment 
+  - E2E Metrics
+  - App Cleanup
+  - Cleanup
+
+image: ${IMAGE_TO_RUN_JOBS}
+
+before_script:
+  - kubectl get nodes
+
+include:
+  - local: '/templates/.pod-level-test-template.yml'
+  - local: '/templates/.component-test-template.yml'
+  - local: '/templates/.node-level-test-template.yml'

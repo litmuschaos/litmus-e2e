@@ -9,7 +9,8 @@ defaults:
     working-directory: /go/src
 
 jobs:
-  ## Setup Variables
+  ### Setup Variables
+
   Variables_Setup:
     runs-on: ubuntu-latest
     defaults:
@@ -30,7 +31,7 @@ jobs:
       - run: |
           echo "Setting the variables for other Jobs"
 
-  ## Setup Litmus
+  ### Setup Litmus
 
   Setup_Litmus_Infra:
     needs: Variables_Setup
@@ -86,7 +87,7 @@ jobs:
   Component_Test:
     needs: [Setup_App_Deployment, Variables_Setup]
     container:
-      image: "${{ github.event.inputs.e2eTestImage }}"
+      image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -156,7 +157,7 @@ jobs:
       - name: Application Cleanup
         run: make app-cleanup
 
-  ## Litmus Cleanup
+  ### Litmus Cleanup
 
   Litmus_Cleanup:
     needs: [App_Cleanup, Variables_Setup]
@@ -188,6 +189,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     container:
       image: "${{ needs.Variables_Setup.outputs.e2eTestImage }}"
+
     runs-on: ubuntu-latest
     steps:
       - name: Pipeline Update
