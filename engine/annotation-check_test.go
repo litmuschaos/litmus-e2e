@@ -30,6 +30,9 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -55,7 +58,7 @@ var _ = Describe("BDD of annotation check test", func() {
 			By("[Prepare]: Prepare Chaos Execution")
 			// Providing wrong annotation-check true
 			// in ChaosEngine and false in application
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation

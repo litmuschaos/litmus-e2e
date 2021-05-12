@@ -31,6 +31,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -79,7 +81,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Fetching all the default ENV
@@ -97,7 +99,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing Chaos Experiment for container-kill
 			By("[Install]: Installing chaos experiment")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			/////////////////////////////////////////////////////
@@ -107,7 +109,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Creating Chaos-Engine for container-kill
 			By("[Install]: Install Chaos Engine for container-kill")
 			testsDetails.AppLabel = "run=testapp2"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking the runner pod status
@@ -126,7 +128,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("[Install]: Install Chaos Engine for pod-delete")
 			testsDetails.AppLabel = "run=testapp1"
 			testsDetails.AppNS = "default"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			// Checking the runner pod status

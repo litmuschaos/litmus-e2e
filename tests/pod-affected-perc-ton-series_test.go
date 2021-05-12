@@ -40,6 +40,9 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			klog.Info("POD DELETE EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -60,7 +63,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -98,6 +101,8 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("CONTAINER KILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
@@ -121,7 +126,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -158,6 +163,8 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
@@ -181,7 +188,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -219,6 +226,8 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD CPU HOG EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
@@ -243,7 +252,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -281,6 +290,8 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD MEMORY HOG EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
@@ -304,7 +315,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -342,6 +353,8 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD NETWORK CORRUPTION EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
 			//Getting kubeConfig and Generate ClientSets
@@ -365,7 +378,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state

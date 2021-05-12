@@ -1,10 +1,11 @@
 module github.com/litmuschaos/litmus-e2e
 
-go 1.14
+go 1.16
 
 require (
 	cloud.google.com/go v0.54.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.8 // indirect
+	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/googleapis/gnostic v0.4.0 // indirect
 	github.com/litmuschaos/chaos-operator v0.0.0-20210412053502-dd484bbadfb9
 	github.com/litmuschaos/litmus-go v0.0.0-20210415042401-c79b9ea0fdd2

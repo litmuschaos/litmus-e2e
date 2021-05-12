@@ -6,11 +6,14 @@ import (
 	"os/exec"
 	"strconv"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
+	"k8s.io/klog"
 )
 
+// Kubectl will run kubectl commands and print the output
 func Kubectl(command ...string) error {
 
 	var out, stderr bytes.Buffer
@@ -24,15 +27,18 @@ func Kubectl(command ...string) error {
 		log.Infof("Error: %v", err)
 		return err
 	}
-	log.Infof("%v", out.String())
+	klog.Infof("%v", out.String())
 	return nil
 }
 
-func PrepareChaos(testsDetails *types.TestDetails, annotation bool) error {
+//PrepareChaos install all the Chaos resourses like rbac, experiment and engine
+func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *types.ChaosExperiment, chaosEngine *types.ChaosEngine, clients environment.ClientSets, annotation bool) error {
 
 	testsDetails.AnnotationCheck = strconv.FormatBool(annotation)
-	//Installing RBAC for the experimen
+
+	//Installing RBAC for the experiment
 	log.Info("[Install]: Installing RBAC")
+
 	err = InstallGoRbac(testsDetails, testsDetails.ChaosNamespace)
 	if err != nil {
 		return errors.Errorf("Fail to install rbac, due to {%v}", err)
@@ -40,14 +46,14 @@ func PrepareChaos(testsDetails *types.TestDetails, annotation bool) error {
 
 	//Installing Chaos Experiment
 	log.Info("[Install]: Installing chaos experiment")
-	err = InstallGoChaosExperiment(testsDetails, testsDetails.ChaosNamespace)
+	err = InstallGoChaosExperiment(testsDetails, chaosExperiment, testsDetails.ChaosNamespace, clients)
 	if err != nil {
 		return errors.Errorf("Fail to install chaos experiment, due to {%v}", err)
 	}
 
 	//Installing Chaos Engine
 	log.Info("[Install]: Installing chaos engine")
-	err = InstallGoChaosEngine(testsDetails, testsDetails.ChaosNamespace)
+	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, clients)
 	if err != nil {
 		return errors.Errorf("Fail to install chaosengine, due to {%v}", err)
 	}

@@ -29,6 +29,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -49,7 +51,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -87,6 +89,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 				testsDetails := types.TestDetails{}
 				clients := environment.ClientSets{}
+				chaosExperiment := types.ChaosExperiment{}
+				chaosEngine := types.ChaosEngine{}
 
 				klog.Info("RUNNING CONTAINER-KILL ABORT CHAOS TEST!!!")
 				//Getting kubeConfig and Generate ClientSets
@@ -107,7 +111,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 				// Prepare Chaos Execution
 				By("[Prepare]: Prepare Chaos Execution")
 				testsDetails.LibImageCI = testsDetails.LibImageNew
-				err = pkg.PrepareChaos(&testsDetails, false)
+				err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 				Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 				//Checking runner pod running state
@@ -156,6 +160,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 				testsDetails := types.TestDetails{}
 				clients := environment.ClientSets{}
+				chaosExperiment := types.ChaosExperiment{}
+				chaosEngine := types.ChaosEngine{}
 
 				//Getting kubeConfig and Generate ClientSets
 				By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -176,7 +182,7 @@ var _ = Describe("BDD of container-kill experiment", func() {
 				// Prepare Chaos Execution
 				By("[Prepare]: Prepare Chaos Execution")
 				testsDetails.LibImageCI = testsDetails.LibImageNew
-				err = pkg.PrepareChaos(&testsDetails, true)
+				err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 				Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 				//Checking runner pod running state
@@ -213,6 +219,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 				testsDetails := types.TestDetails{}
 				clients := environment.ClientSets{}
+				chaosExperiment := types.ChaosExperiment{}
+				chaosEngine := types.ChaosEngine{}
 
 				klog.Info("RUNNING CONTAINER KILL PUMBA LIB TEST!!!")
 				//Getting kubeConfig and Generate ClientSets
@@ -240,13 +248,13 @@ var _ = Describe("BDD of container-kill experiment", func() {
 				By("[Install]: Installing chaos experiment")
 				testsDetails.LibImageCI = testsDetails.LibImageNew
 				testsDetails.Lib = "pumba"
-				err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+				err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 				Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 				//Installing Chaos Engine for container-kill
 				By("[Install]: Installing chaos engine")
 				testsDetails.AnnotationCheck = "true"
-				err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+				err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 				Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 				//Checking runner pod running state
@@ -292,8 +300,8 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 				//Fetching all the default ENV
 				By("[PreChaos]: Fetching all default ENVs")
-				klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 				environment.GetENV(&testsDetails, "container-kill", "go-engine1")
+				klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 
 				if testsDetails.UpdateWebsite == "true" {
 					//Getting chaosengine verdict
