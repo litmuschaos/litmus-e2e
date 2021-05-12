@@ -86,6 +86,7 @@ jobs:
 
   Pod_Level_Test:
     needs: Setup_App_Deployment
+    if: always()
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
@@ -146,6 +147,7 @@ jobs:
 
   Experiment_Tunables:
     needs: Pod_Level_Test
+    if: always()
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
