@@ -27,6 +27,8 @@ var _ = Describe("BDD of ec2-terminate experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -50,7 +52,7 @@ var _ = Describe("BDD of ec2-terminate experiment", func() {
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate/engine.yaml"
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state

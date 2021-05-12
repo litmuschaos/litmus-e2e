@@ -40,6 +40,9 @@ var _ = Describe("BDD of appinfo test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -61,7 +64,7 @@ var _ = Describe("BDD of appinfo test", func() {
 			//Providing wrong appinfo
 
 			testsDetails.AppLabel = "run=dummy"
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation

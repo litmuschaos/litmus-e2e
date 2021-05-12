@@ -29,6 +29,8 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -49,7 +51,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -104,6 +106,8 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("RUNNING POD--CPU-HOG ABORT CHAOS TEST!!!")
 			//Getting kubeConfig and Generate ClientSets
@@ -124,7 +128,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -174,6 +178,8 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -194,7 +200,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state

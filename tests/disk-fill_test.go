@@ -28,6 +28,8 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -48,7 +50,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -85,6 +87,8 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 				testsDetails := types.TestDetails{}
 				clients := environment.ClientSets{}
+				chaosExperiment := types.ChaosExperiment{}
+				chaosEngine := types.ChaosEngine{}
 
 				//Getting kubeConfig and Generate ClientSets
 				By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -110,13 +114,13 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 				//Installing Chaos Experiment for disk-fill
 				By("[Install]: Installing chaos experiment")
 				testsDetails.LibImageCI = testsDetails.LibImageNew
-				err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+				err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 				Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 				//Installing Chaos Engine for disk-fill
 				By("[Install]: Installing chaos engine")
 				testsDetails.AnnotationCheck = "true"
-				err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+				err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 				Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 				//Checking runner pod running state

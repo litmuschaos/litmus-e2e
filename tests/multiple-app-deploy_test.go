@@ -52,6 +52,9 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			klog.Info("POD DELETE EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 
 			//Getting kubeConfig and Generate ClientSets
@@ -72,7 +75,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -110,6 +113,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("CONTAINER KILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -132,7 +137,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -169,6 +174,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -191,7 +198,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -229,6 +236,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD CPU HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -252,7 +261,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -290,6 +299,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD MEMORY HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -312,7 +323,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Chaos pod running status check
@@ -345,6 +356,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD NETWORK CORRUPTION EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -367,7 +380,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
 			testsDetails.LibImageCI = testsDetails.LibImageNew
-			err = pkg.PrepareChaos(&testsDetails, true)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
