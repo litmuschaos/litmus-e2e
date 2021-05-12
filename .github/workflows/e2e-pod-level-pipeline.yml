@@ -1,5 +1,5 @@
 ---
-name: Pod-Level-Pipeline
+name: Scheduled-Pod-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight

@@ -86,6 +86,7 @@ jobs:
         
   Component_Test:
     needs: Setup_App_Deployment
+    if: always()
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
