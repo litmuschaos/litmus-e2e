@@ -1,5 +1,5 @@
 ---
-name: Component-Pipeline
+name: Pod-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight
@@ -21,7 +21,7 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
 
     steps:
       - name: Litmus Infra Setup In Cluster-1
@@ -41,7 +41,7 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
     steps:
       - name: Deploy App In Cluster-1
         run: make app-deploy
@@ -55,9 +55,9 @@ jobs:
     #   if: ${{ always() }}
     #   run: make auxiliary-app
 
-  ### Runing Component Tests
+  ### Runing Pod Level Tests
 
-  Component_Test:
+  Pod_Level_Test:
     needs: Setup_App_Deployment
     if: always()
     container:
@@ -69,47 +69,51 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
     steps:
-      - name: TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY
-        run: make operator-reconcile-resiliency-check
+      - name: TCID-EC2-GENERIC-APP-POD-DELETE
+        run: make pod-delete
 
-      - name: TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE
+      - name: TCID-EC2-GENERIC-APP-CONTAINER-KILL
         if: ${{ always() }}
-        run: make admin-mode-check
+        run: make container-kill
 
-      - name: TCID-EC2-GENERIC-ENGINE-APP-INFO
+      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG
         if: ${{ always() }}
-        run: make appinfo
+        run: make pod-cpu-hog
 
-      - name: TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK
+      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
         if: ${{ always() }}
-        run: make annotation-check
+        run: make pod-memory-hog
 
-      - name: TCID-EC2-GENERIC-ENGINE-ENGINE-STATE
+      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION
         if: ${{ always() }}
-        run: make engine-state
+        run: make pod-network-corruption
 
-      - name: TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY
+      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY
         if: ${{ always() }}
-        run: make job-cleanup-policy
+        run: make pod-network-latency
 
-      - name: TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT
+      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS
         if: ${{ always() }}
-        run: make service-account
+        run: make pod-network-loss
 
-      - name: TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
+      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION
         if: ${{ always() }}
-        run: make experiment-image
+        run: make pod-network-duplication
 
-      - name: TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD
+      #       - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
+      #         if: ${{ always() }}
+      #         run: make pod-io-stress
+
+      - name: TCID-EC2-GENERIC-APP-DISK-FILL
         if: ${{ always() }}
-        run: make target-pod
+        run: make disk-fill
 
-  ### App Cleanup
+  ### Runing Experiment Tunables
 
-  App_Cleanup:
-    needs: Component_Test
+  Experiment_Tunables:
+    needs: Pod_Level_Test
     if: always()
     container:
       image: "litmuschaos/litmus-e2e:ci"
@@ -120,7 +124,34 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
+    steps:
+      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
+        run: make pod-affected-perc-ton-parallel
+
+      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
+        if: ${{ always() }}
+        run: make pod-affected-perc-ton-series
+
+      - name: TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY
+        if: ${{ always() }}
+        run: make multiple-app-deploy
+
+  ### App Cleanup
+
+  App_Cleanup:
+    needs: Experiment_Tunables
+    if: always()
+    container:
+      image: "litmuschaos/litmus-e2e:ci"
+      volumes:
+        - /home/ubuntu/.kube:/root/.kube
+        - /home/ubuntu/.aws:/root/.aws
+        - /etc/kubernetes:/etc/kubernetes
+      env:
+        KUBECONFIG: /root/.kube/config
+
+    runs-on: [self-hosted, pod-level]
     steps:
       - name: Application Cleanup
         run: make app-cleanup
@@ -138,9 +169,9 @@ jobs:
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
-        COMPONENT_TEST: "true"
+        POD_LEVEL: "true"
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
     steps:
       - name: Litmus Cleanup
         run: make litmus-cleanup
@@ -148,17 +179,17 @@ jobs:
   ### Website Update
 
   Pipeline_Update:
-    if: always()
     needs: Litmus_Cleanup
+    if: always()
     env:
       CI_PIPELINE_ID: ${{ github.run_id }}
-      COMPONENT_TEST: "true"
+      POD_LEVEL: "true"
       UPDATE_WEBSITE: "true"
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     container:
       image: "litmuschaos/litmus-e2e:ci"
 
-    runs-on: [self-hosted, component]
+    runs-on: [self-hosted, pod-level]
     steps:
       - name: Pipeline Update
         run: make pipeline-status-update

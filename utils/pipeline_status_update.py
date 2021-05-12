@@ -80,7 +80,7 @@ content_list = file_content.split('\n')
 file_update_retries = 5
 
 # github pipeline url using pipeline_id
-pipeline_url ="<a href= \"https://gitlab.mayadata.io/litmuschaos/litmus-e2e/pipelines/{0}\">{0}</a>".format(pipeline_id)
+pipeline_url ="<a href= \"https://github.com/litmuschaos/litmus-e2e/actions/runs/{0}\">{0}</a>".format(pipeline_id)
 
 def fetch_file_content():
     # fetching file contents of github file_path
