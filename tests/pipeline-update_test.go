@@ -47,18 +47,6 @@ var _ = Describe("BDD of pipeline status update", func() {
 			It("Should check for the result updation", func() {
 
 				//TODO: Need new logic for checking the result updation
-				
-				// var err error
-				// var out, stderr bytes.Buffer
-				// //Setup metrics to get pipeline details
-				// //Creating rbac
-				// cmdStop := exec.Command("bash", "../metrics/e2e-metrics", "stop")
-				// cmdStop.Stdout = &out
-				// cmdStop.Stderr = &stderr
-				// err = cmdStop.Run()
-				// klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-				// Expect(err).To(BeNil(), "Fail to setup metrics for pipeline, due to {%v}", err)
-
 			})
 		} else {
 			klog.Info("[SKIP]: Skip updating the result on website")

@@ -9,40 +9,16 @@ defaults:
     working-directory: /go/src
 
 jobs:
-  ### Setup Variables
-
-  Initialize_Variables:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ ## We are not using container here
-    outputs:
-      e2eTestImage: "litmuschaos/litmus-e2e:ci"
-      goExperimentImage: "litmuschaos/go-runner:ci"
-      newLibImage: "litmuschaos/go-runner:ci"
-      oldLibImage: "litmuschaos/go-runner:latest"
-      operatorImage: "litmuschaos/chaos-operator:ci"
-      runnerImage: "litmuschaos/chaos-runner:ci"
-
-    steps:
-      - run: |
-          echo "Setting the variables for other Jobs"
-
   ### Setup Litmus
 
   Setup_Litmus_Infra:
-    needs: Initialize_Variables
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        OPERATOR_IMAGE: "${{ needs.Initialize_Variables.outputs.operatorImage }}"
-        OPERATOR_NAME: "${{ needs.Initialize_Variables.outputs.operatorName }}"
-        RUNNER_IMAGE: "${{ needs.Initialize_Variables.outputs.runnerImage }}"
-        IMAGE_PULL_POLICY: "Always"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, pod-level]
@@ -55,9 +31,9 @@ jobs:
   ### Setup App
 
   Setup_App_Deployment:
-    needs: [Setup_Litmus_Infra, Initialize_Variables]
+    needs: Setup_Litmus_Infra
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -82,19 +58,15 @@ jobs:
   ### Runing Pod Level Tests
 
   Pod_Level_Test:
-    needs: [Setup_App_Deployment, Initialize_Variables]
+    needs: Setup_App_Deployment
+    if: always()
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ needs.Initialize_Variables.outputs.goExperimentImage }}"
-        NEW_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.newLibImage }}"
-        OLD_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.oldLibImage }}"
-        EXPERIMENT_IMAGE_PULL_POLICY: "Always"
-        CHAOS_NAMESPACE: "litmus"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, pod-level]
@@ -141,19 +113,14 @@ jobs:
   ### Runing Experiment Tunables
 
   Experiment_Tunables:
-    needs: [Pod_Level_Test, Initialize_Variables]
+    needs: Pod_Level_Test
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ needs.Initialize_Variables.outputs.goExperimentImage }}"
-        NEW_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.newLibImage }}"
-        OLD_LIB_IMAGE: "${{ needs.Initialize_Variables.outputs.oldLibImage }}"
-        EXPERIMENT_IMAGE_PULL_POLICY: "Always"
-        CHAOS_NAMESPACE: "litmus"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, pod-level]
@@ -172,10 +139,10 @@ jobs:
   ### App Cleanup
 
   App_Cleanup:
-    needs: [Experiment_Tunables, Initialize_Variables]
+    needs: Experiment_Tunables
     if: always()
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -191,10 +158,10 @@ jobs:
   ### Litmus Cleanup
 
   Litmus_Cleanup:
-    needs: [App_Cleanup, Initialize_Variables]
+    needs: App_Cleanup
     if: always()
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
         - /home/ubuntu/.aws:/root/.aws
@@ -211,7 +178,7 @@ jobs:
   ### Website Update
 
   Pipeline_Update:
-    needs: [Litmus_Cleanup, Initialize_Variables]
+    needs: Litmus_Cleanup
     if: always()
     env:
       CI_PIPELINE_ID: ${{ github.run_id }}
@@ -219,7 +186,7 @@ jobs:
       UPDATE_WEBSITE: "true"
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     container:
-      image: "${{ needs.Initialize_Variables.outputs.e2eTestImage }}"
+      image: "litmuschaos/litmus-e2e:ci"
 
     runs-on: [self-hosted, pod-level]
     steps:
