@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -45,10 +44,6 @@ var _ = Describe("BDD of Application Deployment", func() {
 			command := []string{"apply", "-f", "../apps/nginx/nginx.yml"}
 			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to create application and its components, due to {%v}", err)
-
-			By("Deploying Sample pod in default namespace")
-			err = exec.Command("kubectl", "run", "nginx", "--image=nginx").Run()
-			Expect(err).To(BeNil(), "Fail to create sample pod, due to {%v}", err)
 
 			//Get the status of nginx Application
 			By("Running Deployment Status Check")

@@ -1,4 +1,4 @@
-# cretaing secret
+# creating secret
 ---
 apiVersion: v1
 kind: Secret
@@ -10,7 +10,7 @@ stringData:
   chaosDuration: "30"
   lib: "litmus"
   
-# cretaing configMap
+# creating configMap
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -22,7 +22,7 @@ data:
   force: "false"
   sequence: "parallel"
 
-# cretaing chaos experiment
+# creating chaos experiment
 ---
 apiVersion: litmuschaos.io/v1alpha1
 description:
@@ -78,7 +78,7 @@ spec:
       
     labels:
       name: pod-delete
-# cretaing chaos engine
+# creating chaos engine
 ---
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
@@ -88,7 +88,7 @@ metadata:
 spec:
   appinfo:
     appns: 'litmus'
-    applabel: 'app=nginx'
+    applabel: 'run=nginx'
     appkind: 'deployment'
   annotationCheck: 'false'
   engineState: 'active'

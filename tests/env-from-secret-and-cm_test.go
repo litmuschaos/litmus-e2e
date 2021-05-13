@@ -60,7 +60,6 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			err = cmd.Run()
 			if err != nil {
 				klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-				klog.Infof("Error: %v", err)
 				Expect(err).To(BeNil(), "Fail to create the experiment file, due to {%v}", err)
 			}
 			klog.Infof("[PodDeleteChaos]: " + out.String())

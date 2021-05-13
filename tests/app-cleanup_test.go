@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -45,10 +44,6 @@ var _ = Describe("BDD of Application Cleanup", func() {
 			command := []string{"delete", "-f", "../apps/nginx/nginx.yml"}
 			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to delete application and its components, due to {%v}", err)
-
-			By("Deleting Sample pod in default namespace")
-			err = exec.Command("kubectl", "delete", "pod", "nginx").Run()
-			Expect(err).To(BeNil(), "Fail to create sample nginx pod from default namespace, due to {%v}", err)
 
 			//Get the status of sample Application
 			err = pkg.DeploymentCleanupCheck(&testsDetails, "nginx", clients)

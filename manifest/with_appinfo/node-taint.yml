@@ -7,12 +7,12 @@ spec:
   appinfo:
     appkind: 'deployment'
     applabel: 'run=nginx'
-    appns: 'default'
+    appns: 'litmus'
   annotationCheck: 'false'
   engineState: 'active'
   auxiliaryAppInfo: ''
   chaosServiceAccount: node-taint-sa
-  jobCleanUpPolicy: 'delete'
+  jobCleanUpPolicy: 'retain'
   experiments:
     - name: node-taint
       spec:
