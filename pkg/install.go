@@ -2,22 +2,98 @@ package pkg
 
 import (
 	"bytes"
-	"fmt"
-	"os/exec"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 
+	yamlChe "github.com/ghodss/yaml"
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
-	"k8s.io/klog"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+
+	"k8s.io/apimachinery/pkg/api/meta"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	yamlutil "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/restmapper"
 )
+
+var err error
+
+//CreateChaosResource creates litmus components with given inputs
+func CreateChaosResource(fileData []byte, namespace string, clients environment.ClientSets) error {
+
+	decoder := yamlutil.NewYAMLOrJSONDecoder(bytes.NewReader(fileData), 100)
+
+	// for loop to install all the resouces
+	for {
+		//runtime defines conversions between generic types and structs to map query strings to struct objects.
+		var rawObj runtime.RawExtension
+		if err = decoder.Decode(&rawObj); err != nil {
+			// if the object is null, successfully installed all manifest
+			if rawObj.Raw == nil {
+				return nil
+			}
+			return err
+		}
+
+		// NewDecodingSerializer adds YAML decoding support to a serializer that supports JSON.
+		obj, gvk, err := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme).Decode(rawObj.Raw, nil, nil)
+		unstructuredMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
+		if err != nil {
+			return err
+		}
+		unstructuredObj := &unstructured.Unstructured{Object: unstructuredMap}
+
+		// GetAPIGroupResources uses the provided discovery client to gather
+		// discovery information and populate a slice of APIGroupResources.
+		gr, err := restmapper.GetAPIGroupResources(clients.KubeClient.DiscoveryClient)
+		if err != nil {
+			return err
+		}
+
+		mapper := restmapper.NewDiscoveryRESTMapper(gr)
+
+		// RESTMapping returns a struct representing the resource path and conversion interfaces a
+		// RESTClient should use to operate on the provided group/kind in order of versions.
+		mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
+		if err != nil {
+			return err
+		}
+
+		//ResourceInterface is an API interface to a specific resource under a dynamic client
+		var dri dynamic.ResourceInterface
+		if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+			unstructuredObj.SetNamespace(namespace)
+			dri = clients.DynamicClient.Resource(mapping.Resource).Namespace(unstructuredObj.GetNamespace())
+		} else {
+			dri = clients.DynamicClient.Resource(mapping.Resource)
+		}
+
+		// Create Chaos Resource using dynamic resource interface
+		if _, err := dri.Create(unstructuredObj, v1.CreateOptions{}); err != nil {
+			if !k8serrors.IsAlreadyExists(err) {
+				return err
+			} else {
+				// Updating present resource
+				log.Infof("[Status]: Updating %v", unstructuredObj.GetKind())
+				dri.Update(unstructuredObj, v1.UpdateOptions{})
+			}
+		}
+	}
+}
 
 //InstallGoRbac installs and configure rbac for running go based chaos
 func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
 
 	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.RbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
@@ -29,181 +105,198 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 		}
 	}
+	log.Info("[RBAC]: Installing RABC...")
 	//Creating rbac
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", rbacNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
+	err := Kubectl(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		errors.Errorf("Fail to create the rbac file, due to {%v}", err)
+		return errors.Errorf("fail to apply rbac file, err: %v", err)
 	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
+	log.Info("[RBAC]: Rbac installed successfully !!!")
 
 	return nil
 }
 
 //InstallGoChaosExperiment installs the given go based chaos experiment
-func InstallGoChaosExperiment(testsDetails *types.TestDetails, experimentNamespace string) error {
+func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *types.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
 
-	// Fetch Chaos Experiment
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", testsDetails.ExperimentPath); err != nil {
-		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
+	// map to trace all the key corresponding Experiment variables
+	environments := make(map[string]string)
+
+	//Fetch Experiment file
+	res, err := http.Get(testsDetails.ExperimentPath)
+	if err != nil {
+		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
-	// Modify the spec of experiemnt file
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "image: \"litmuschaos/go-runner:latest\"", "image: "+testsDetails.GoExperimentImage); err != nil {
-		return errors.Errorf("Fail to Update the experiment file, due to %v", err)
+
+	// ReadAll reads from response until an error or EOF and returns the data it read.
+	fileInput, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Errorf("Fail to read data from response: %v", err)
 	}
+
+	// Unmarshal decodes the fileInput into chaosExperiment
+	err = yamlChe.Unmarshal([]byte(fileInput), &chaosExperiment)
+	if err != nil {
+		log.Errorf("error when unmarshalling: %v", err)
+	}
+
+	// Modify the goExperimentImage
+	chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
+
 	// Modify experiment imagePullPolicy
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ExperimentImagePullPolicy); err != nil {
-		klog.Info("Field imagePullPolicy not defined")
+	chaosExperiment.Spec.Definition.ImagePullPolicy = testsDetails.ExperimentImagePullPolicy
+
+	// Modify Sequence for Experiment
+	if testsDetails.Sequence != "" {
+		environments["SEQUENCE"] = testsDetails.Sequence
 	}
 
-	if testsDetails.Sequence != "" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "SEQUENCE", "value: 'parallel'", "value: '"+testsDetails.Sequence+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
+	// Modify Pod Affected Percentage
 	if testsDetails.PodsAffectedPercentage != "" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "PODS_AFFECTED_PERC", "value: ''", "value: '"+testsDetails.PodsAffectedPercentage+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+		environments["PODS_AFFECTED_PERC"] = testsDetails.PodsAffectedPercentage
 	}
+
+	// Modify Target Pods
 	if testsDetails.TargetPod != "" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "TARGET_PODS", "value: ''", "value: '"+testsDetails.TargetPod+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+		environments["TARGET_PODS"] = testsDetails.TargetPod
 	}
 	// Modify Lib
 	if testsDetails.Lib != "" {
-		klog.Info("[LIB]: LIB: " + testsDetails.Lib)
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB", "value: 'litmus'", "value: '"+testsDetails.Lib+"'"); err != nil {
-			return errors.Errorf("Fail to update the lib, due to %v", err)
+		environments["LIB"] = testsDetails.Lib
+	}
+
+	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageNew + " !!!")
+	// Modify Lib Image
+	environments["LIB_IMAGE"] = testsDetails.LibImageNew
+
+	// update all the values corresponding to keys from the ENV's in Experiment
+	for key, value := range chaosExperiment.Spec.Definition.Env {
+		_, ok := environments[value.Name]
+		if ok {
+			chaosExperiment.Spec.Definition.Env[key].Value = environments[value.Name]
 		}
 	}
-	// Modify Lib image
-	if testsDetails.LibImageCI != "" {
-		klog.Info("[LIB Image]: LIB image: " + testsDetails.LibImageCI + " !!!")
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "LIB_IMAGE", "value: '"+testsDetails.LibImageDefault+"'", "value: '"+testsDetails.LibImageCI+"'"); err != nil {
-			return errors.Errorf("Fail to update the lib image, due to %v", err)
-		}
-	}
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-exp.yaml", "-n", experimentNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+
+	// Marshal serializes the value provided into a YAML document.
+	fileData, err := json.Marshal(chaosExperiment)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the experiment file, due to {%v}", err)
+		return errors.Errorf("fail to marshal ChaosExperiment %v", err)
 	}
-	klog.Infof("[ChaosExperiment]: " + out.String())
-	klog.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+
+	log.Info("[Experiment]: Installing Experiment...")
+
+	//Creating experiment
+	if err = CreateChaosResource(fileData, testsDetails.ChaosNamespace, clients); err != nil {
+		return errors.Errorf("fail to apply experiment file, err: %v", err)
+	}
+	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
+	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
 
 	return nil
 }
 
 //InstallGoChaosEngine installs the given go based chaos engine
-func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace string) error {
+func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
 
-	// Fetch Chaos Engine
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	if err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", testsDetails.EnginePath); err != nil {
-		return errors.Errorf("Fail to fetch the engine file, due to %v", err)
+	// map to trace all the key corresponding Experiment variables
+	environments := make(map[string]string)
+
+	//Fetch Engine file
+	res, err := http.Get(testsDetails.EnginePath)
+	if err != nil {
+		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
-	// Add imagePullPolicy of chaos-runner to Always
-	if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy", "  components:\n    runner:\n      imagePullPolicy: Always"); err != nil {
-		return errors.Errorf("Fail to add a new line due to %v", err)
+
+	// ReadAll reads from response until an error or EOF and returns the data it read.
+	fileInput, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Errorf("Fail to read data from response: %v", err)
 	}
+
+	// Unmarshal decodes the fileInput into chaosEngine
+	err = yamlChe.Unmarshal([]byte(fileInput), &chaosEngine)
+	if err != nil {
+		log.Errorf("error when unmarshalling: %v", err)
+	}
+
+	// Add JobCleanUpPolicy of chaos-runner to retain
+	chaosEngine.Spec.JobCleanUpPolicy = testsDetails.JobCleanUpPolicy
+
+	// Add ImagePullPolicy of chaos-runner to Always
+	chaosEngine.Spec.Components.Runner.ImagePullPolicy = testsDetails.ImagePullPolicy
+
 	// Modify the spec of engine file
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: nginx-chaos", "name: "+testsDetails.EngineName+""); err != nil {
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: nginx-network-chaos", "name: "+testsDetails.EngineName+""); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "namespace: default", "namespace: "+engineNamespace+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
+	chaosEngine.Metadata.Name = testsDetails.EngineName
+	chaosEngine.Metadata.Namespace = engineNamespace
 
-	appinfoErr := EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "appinfo:", "appinfo:")
-	if appinfoErr == nil {
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "appns: 'default'", "appns: "+testsDetails.AppNS+""); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "applabel: 'app=nginx'", "applabel: "+testsDetails.AppLabel+""); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+	// If ChaosEngine contain App Info then update it
+	if chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "" {
+		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
+		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
 	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "chaosServiceAccount: "+testsDetails.ExperimentName+"-sa", "chaosServiceAccount: "+testsDetails.ChaosServiceAccount+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "name: "+testsDetails.ExperimentName+"", "name: "+testsDetails.NewExperimentName+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "jobCleanUpPolicy: 'delete'", "jobCleanUpPolicy: "+testsDetails.JobCleanUpPolicy+""); err != nil {
-		return errors.Errorf("Fail to Update the engine file, due to %v", err)
-	}
-	if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'true'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "annotationCheck: 'false'", "annotationCheck: '"+testsDetails.AnnotationCheck+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
-	}
+	chaosEngine.Spec.ChaosServiceAccount = testsDetails.ChaosServiceAccount
+	chaosEngine.Spec.Experiments[0].Name = testsDetails.NewExperimentName
+	chaosEngine.Spec.AnnotationCheck = testsDetails.AnnotationCheck
+
 	// for ec2-terminate instance
 	if testsDetails.ExperimentName == "ec2-terminate" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "EC2_INSTANCE_ID", "value: ''", "value: '"+testsDetails.InstanceID+"'"); err != nil {
-			return errors.Errorf("Fail to update the instance id engine file, due to %v", err)
-		}
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "REGION", "value: ''", "value: '"+testsDetails.Region+"'"); err != nil {
-			return errors.Errorf("Fail to update the region engine file, due to %v", err)
-		}
+		environments["EC2_INSTANCE_ID"] = testsDetails.InstanceID
+		environments["REGION"] = testsDetails.Region
 	}
+
 	// for experiments like pod network latency
 	if testsDetails.NetworkLatency != "" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "NETWORK_LATENCY", "value: '2000'", "value: '"+testsDetails.NetworkLatency+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+		environments["NETWORK_LATENCY"] = testsDetails.NetworkLatency
 	}
-	// for experiments like pod cpu and memory hog
-	if testsDetails.ExperimentName == "pod-cpu-hog" {
-		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.CPUKillCommand+""); err != nil {
-			return errors.Errorf("Failed to add the chaos kill command,due to %v", err)
-		}
-	} else if testsDetails.ExperimentName == "pod-memory-hog" {
-		if err = AddAfterMatch("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "value: '60'", "\n            - name: CHAOS_KILL_COMMAND\n              value: "+testsDetails.MemoryKillCommand+""); err != nil {
-			return errors.Errorf("Failed to add the chaos kill command,due to %v", err)
-		}
-	}
-	// for experiments like disk-fill
+
+	// update Engine if FillPercentage if it does not match criteria
 	if testsDetails.FillPercentage != 80 {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "FILL_PERCENTAGE", "value: '80'", "value: '"+strconv.Itoa(testsDetails.FillPercentage)+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
-		}
+		environments["FILL_PERCENTAGE"] = strconv.Itoa(testsDetails.FillPercentage)
 	}
+
+	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
-		if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODE", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
-			if err = EditKeyValue("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "TARGET_NODES", "value: 'node-01'", "value: '"+testsDetails.ApplicationNodeName+"'"); err != nil {
-				return errors.Errorf("Fail to Update the engine file, due to %v", err)
-			}
-		}
-		if err = EditFile("/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "kubernetes.io/hostname: 'node02'", "kubernetes.io/hostname: '"+testsDetails.NodeSelectorName+"'"); err != nil {
-			return errors.Errorf("Fail to Update the engine file, due to %v", err)
+		environments["TARGET_NODES"] = testsDetails.ApplicationNodeName
+		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector.KubernetesIoHostname = testsDetails.NodeSelectorName
+	}
+	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
+	if testsDetails.ExperimentName == "pod-cpu-hog" {
+		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
+		slice := struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		}{"CHAOS_KILL_COMMAND", testsDetails.CPUKillCommand}
+		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
+
+	} else if testsDetails.ExperimentName == "pod-memory-hog" {
+		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
+		slice := struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		}{"CHAOS_KILL_COMMAND", testsDetails.MemoryKillCommand}
+		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
+	}
+	// update all the value corresponding to keys from the ENV's in Engine
+	for key, value := range chaosEngine.Spec.Experiments[0].Spec.Components.Env {
+		_, ok := environments[value.Name]
+		if ok {
+			chaosEngine.Spec.Experiments[0].Spec.Components.Env[key].Value = environments[value.Name]
 		}
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-ce.yaml", "-n", engineNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+
+	// Marshal serializes the values provided into a YAML document.
+	fileData, err := json.Marshal(chaosEngine)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the engine file, due to {%v}", err)
+		return errors.Errorf("Fail to marshal ChaosEngine %v", err)
 	}
-	klog.Infof("[ChaosEngine]: " + out.String())
+
+	//Creating chaos engine
+	log.Info("[Engine]: Installing ChaosEngine...")
+	if err = CreateChaosResource(fileData, testsDetails.ChaosNamespace, clients); err != nil {
+		return errors.Errorf("fail to apply engine file, err: %v", err)
+	}
+	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")
 	time.Sleep(2 * time.Second)
 
 	return nil
@@ -211,13 +304,12 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, engineNamespace strin
 
 //InstallLitmus installs the latest version of litmus
 func InstallLitmus(testsDetails *types.TestDetails) error {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	klog.Info("Installing Litmus ...")
+
+	log.Info("Installing Litmus ...")
 	if err := DownloadFile("install-litmus.yaml", testsDetails.InstallLitmus); err != nil {
 		return errors.Errorf("Fail to fetch litmus operator file, due to %v", err)
 	}
-	klog.Info("Updating ChaosOperator Image ...")
+	log.Info("Updating ChaosOperator Image ...")
 	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
 		return errors.Errorf("Unable to update operator image, due to %v", err)
 
@@ -225,22 +317,17 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 	if err = EditKeyValue("install-litmus.yaml", "  - chaos-operator", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ImagePullPolicy); err != nil {
 		return errors.Errorf("Unable to update image pull policy, due to %v", err)
 	}
-	klog.Info("Updating Chaos Runner Image ...")
+	log.Info("Updating Chaos Runner Image ...")
 	if err := EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos/chaos-runner:latest\"", "value: '"+testsDetails.RunnerImage+"'"); err != nil {
 		return errors.Errorf("Unable to update runner image, due to %v", err)
 	}
-	cmd := exec.Command("kubectl", "apply", "-f", "install-litmus.yaml")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	//Creating engine
+	command := []string{"apply", "-f", "install-litmus.yaml"}
+	err := Kubectl(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the installation file, due to {%v}", err)
+		return errors.Errorf("fail to apply litmus installation file, err: %v", err)
 	}
-	klog.Infof("Result: " + out.String())
-
-	klog.Info("Litmus installed successfully !!!")
+	log.Info("Litmus installed successfully !!!")
 
 	return nil
 }
@@ -249,8 +336,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	//Fetch RBAC file
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.AdminRbacPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
@@ -261,17 +347,13 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Fail to Modify admin rbac file, due to %v", err)
 	}
 	//Creating admin rbac
-	cmd := exec.Command("kubectl", "apply", "-f", "/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "-n", testsDetails.ChaosNamespace)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+	log.Info("[Admin]: Installing Litmus in Administrator Mode")
+	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", testsDetails.ChaosNamespace}
+	err := Kubectl(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Fail to create the admin rbac file, due to {%v}", err)
+		return errors.Errorf("fail to apply admin rbac file, err: %v", err)
 	}
-	klog.Infof("[RBAC]: " + out.String())
-	klog.Info("[RBAC]: Rbac installed successfully !!!")
+	log.Info("[Admin]: Admin RBAC installed successfully !!!")
 
 	return nil
 }

@@ -15,7 +15,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.ChaosNamespace = Getenv("CHAOS_NAMESPACE", "litmus")
 	testDetails.AppNS = Getenv("APP_NS", "litmus")
 	testDetails.AppLabel = Getenv("APP_LABEL", "run=nginx")
-	testDetails.JobCleanUpPolicy = Getenv("JOB_CLEANUP_POLICY", "'retain'")
+	testDetails.JobCleanUpPolicy = Getenv("JOB_CLEANUP_POLICY", "retain")
 	testDetails.AnnotationCheck = Getenv("ANNOTATION_CHECK", "false")
 	testDetails.ApplicationNodeName = Getenv("APPLICATION_NODE_NAME", "")
 	testDetails.NodeSelectorName = Getenv("APPLICATION_NODE_NAME", "")
@@ -40,6 +40,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "litmuschaos/chaos-runner:ci")
 	testDetails.LibImageDefault = Getenv("OLD_LIB_IMAGE", "litmuschaos/go-runner:latest")
 	testDetails.LibImageNew = Getenv("NEW_LIB_IMAGE", "litmuschaos/go-runner:ci")
+	testDetails.LibImageCI = ""
 
 	// All Links for running chaos testing
 	testDetails.RbacPath = Getenv("RBAC_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/"+expName+"/rbac.yaml")

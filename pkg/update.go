@@ -8,21 +8,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
-
-	"k8s.io/klog"
 )
 
 //UpdateResultTable will update the result of pipelines in a table on github using python update script
 func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *types.TestDetails) error {
 
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+	var out, stderr bytes.Buffer
 
 	//Updating the result table
-	klog.Infof("The job_id for the job is: %v", os.Getenv("CI_JOB_ID"))
-	klog.Infof("The testVerdict for the experiment is: %v", testVerdict+"ed")
+	log.Infof("The job_id for the job is: %v", os.Getenv("CI_JOB_ID"))
+	log.Infof("The testVerdict for the experiment is: %v", testVerdict+"ed")
 	//Setup emoji with test result
 	if testVerdict == "Pass" {
 		testVerdict = testVerdict + "ed :smiley:"
@@ -37,13 +35,13 @@ func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *type
 	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--tag", imageTag, "--test_desc", experimentDetails, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", testsDetails.ExperimentName)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
 		return err
 	}
-	klog.Infof("Result: " + out.String())
-	klog.Info("[Table]: Pipeline Result table updated successfully !!!")
+	log.Infof("Result: " + out.String())
+	log.Info("[Table]: Pipeline Result table updated successfully !!!")
 
 	return nil
 }
@@ -54,7 +52,7 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 	var out, stderr bytes.Buffer
 	var pipelineName string
 	//Updating the result table
-	klog.Info("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
+	log.Infof("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
 
 	if os.Getenv("POD_LEVEL") == "true" {
 		pipelineName = "pod-level"
@@ -89,16 +87,11 @@ func GetImageTag(goExperimentImage string) string {
 
 // AddAnnotation will add or update annotation on an application
 func AddAnnotation(deployment, key, value, ns string) error {
-	var out, stderr bytes.Buffer
-	cmd := exec.Command("kubectl", "annotate", "--overwrite", "deploy/"+deployment, key+"="+value, "-n", ns)
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
+
+	command := []string{"annotate", "--overwrite", "deploy/" + deployment, key + "=" + value, "-n", ns}
+	err := Kubectl(command...)
 	if err != nil {
-		klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
-		klog.Infof("Error: %v", err)
-		return errors.Errorf("Unable to modify annotation")
+		return errors.Errorf("fail to modify annotation, err: %v", err)
 	}
-	klog.Infof("[Annotation] " + out.String())
 	return nil
 }

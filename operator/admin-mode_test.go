@@ -5,11 +5,11 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 )
 
 func TestAdminModeTest(t *testing.T) {
@@ -30,6 +30,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -39,7 +41,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "adminengine")
 
 			// Checking the chaos operator running status
@@ -66,13 +68,13 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -93,7 +95,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 		})
@@ -106,6 +108,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 		It("Should check for creation of runner pod", func() {
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -115,7 +119,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "adminengine")
 
 			//Create Namespace for the test
@@ -133,13 +137,13 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
 			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -160,7 +164,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 		})
 	})

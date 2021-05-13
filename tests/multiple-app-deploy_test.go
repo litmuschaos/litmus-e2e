@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -41,7 +40,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Add Multiple application deployment
 			By("Deploying Auxiliary Application")
-			err := exec.Command("kubectl", "apply", "-f", "../apps/alpine/alpine.yml").Run()
+			command := []string{"apply", "-f", "../apps/alpine/alpine.yml"}
+			err := pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to create multiple deployment, due to {%v}", err)
 		})
 	})
@@ -52,6 +52,9 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			klog.Info("POD DELETE EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 
 			//Getting kubeConfig and Generate ClientSets
@@ -69,22 +72,11 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment
-			By("[Install]: Installing chaos experiment")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -103,7 +95,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -121,6 +113,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("CONTAINER KILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -139,23 +133,12 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for container-kill
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for container-kill
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -174,7 +157,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -191,6 +174,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -209,23 +194,12 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for disk-fill
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for disk-fill
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -244,7 +218,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -262,6 +236,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD CPU HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -281,22 +257,12 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			testsDetails.LibImageCI = testsDetails.LibImageNew
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-cpu-hog
-			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-cpu-hog
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -315,7 +281,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -333,6 +299,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD MEMORY HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -351,28 +319,12 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-memory-hog
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-memory-hog
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
-
-			//Checking runner pod running state
-			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
@@ -386,7 +338,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -404,6 +356,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
 
 			klog.Info("POD NETWORK CORRUPTION EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -422,23 +376,12 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the experiment
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-network-corruption
-			By("[Install]: Installing chaos experiment")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "50"
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-network-corruption
-			By("[Install]: Installing chaos engine")
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			testsDetails.LibImageCI = testsDetails.LibImageNew
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -457,7 +400,7 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
-			_, err = pkg.ChaosResultVerdict(&testsDetails, clients)
+			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Checking chaosengine verdict
@@ -470,8 +413,9 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 	It("Should delete multiple application deployment", func() {
 		//Delete Multiple application deployment
-		By("Deleting Deployment Application")
-		err := exec.Command("kubectl", "delete", "-f", "../apps/alpine/alpine.yml").Run()
+		By("Deploying Auxiliary Application")
+		command := []string{"delete", "-f", "../apps/alpine/alpine.yml"}
+		err := pkg.Kubectl(command...)
 		Expect(err).To(BeNil(), "Fail to delete multiple application, due to {%v}", err)
 	})
 })

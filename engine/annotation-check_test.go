@@ -5,12 +5,12 @@ import (
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 )
 
 func TestAnnotationCheck(t *testing.T) {
@@ -30,6 +30,9 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -38,7 +41,7 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "annotation-check-engine")
 
 			// Checking the chaos operator running status
@@ -46,27 +49,17 @@ var _ = Describe("BDD of annotation check test", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the annotation-check test
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
 			//Remove application annotation
 			By("[Annotate]: Remove the application annotation")
 			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "false", testsDetails.ChaosNamespace)
 			Expect(err).To(BeNil(), "Fail to add annotation before test, due to {%v}", err)
 
-			//Installing Chaos Engine for pod-delete
-			By("[Install]: Installing chaos engine")
-			//Providing wrong annotation-check
-			testsDetails.AnnotationCheck = "true"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
+			// Providing wrong annotation-check true
+			// in ChaosEngine and false in application
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
@@ -106,7 +99,7 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "annotation-check-engine")
 
 			//Revert the application annotation

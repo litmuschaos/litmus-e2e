@@ -42,7 +42,8 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 			//Deploying Sample application
 			By("Deploying Sample Application")
-			err = exec.Command("kubectl", "apply", "-f", "../apps/nginx/nginx.yml").Run()
+			command := []string{"apply", "-f", "../apps/nginx/nginx.yml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to create application and its components, due to {%v}", err)
 
 			By("Deploying Sample pod in default namespace")
@@ -56,5 +57,4 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 		})
 	})
-
 })

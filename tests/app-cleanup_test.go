@@ -41,8 +41,9 @@ var _ = Describe("BDD of Application Cleanup", func() {
 			environment.GetENV(&testsDetails, "app-cleanup", "")
 
 			//Removing Application
-			By("Deleting Application from litmus namespace")
-			err = exec.Command("kubectl", "delete", "-f", "../apps/nginx/nginx.yml", "-n", "litmus").Run()
+			By("Deleting Application")
+			command := []string{"delete", "-f", "../apps/nginx/nginx.yml"}
+			err = pkg.Kubectl(command...)
 			Expect(err).To(BeNil(), "Fail to delete application and its components, due to {%v}", err)
 
 			By("Deleting Sample pod in default namespace")
@@ -55,5 +56,4 @@ var _ = Describe("BDD of Application Cleanup", func() {
 
 		})
 	})
-
 })

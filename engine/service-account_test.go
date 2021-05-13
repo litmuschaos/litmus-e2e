@@ -11,7 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
-	"k8s.io/klog"
+	"github.com/litmuschaos/litmus-e2e/pkg/log"
 )
 
 func TestSeriveAccount(t *testing.T) {
@@ -31,6 +31,9 @@ var _ = Describe("BDD of serviceaccount test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
+			chaosExperiment := types.ChaosExperiment{}
+			chaosEngine := types.ChaosEngine{}
+
 			var err error
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -39,7 +42,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			// Checking the chaos operator running status
@@ -47,22 +50,12 @@ var _ = Describe("BDD of serviceaccount test", func() {
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Installing RBAC for the serviceaccount test
-			By("[Install]: Installing RBAC")
-			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
-
-			//Installing Chaos Experiment for pod-delete
-			By("[Install]: Installing chaos experiment")
-			err = pkg.InstallGoChaosExperiment(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
-
-			//Installing Chaos Engine for pod-delete
-			By("[Install]: Installing chaos engine")
+			// Prepare Chaos Execution
+			By("[Prepare]: Prepare Chaos Execution")
 			//Providing wrong serviceaccount
 			testsDetails.ChaosServiceAccount = "dummy-sa"
-			err = pkg.InstallGoChaosEngine(&testsDetails, testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to install chaos engine, due to {%v}", err)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
+			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod creation
 			//Runner Pod Should Not Get Created due to invalid sa name
@@ -97,7 +90,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+			log.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "serviceaccount-engine")
 
 			//Checking chaosengine verdict
