@@ -12,17 +12,30 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoNodeMemoryHog(t *testing.T) {
+func TestWithAppInfo(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for node-memory-hog experiment
-var _ = Describe("BDD of node-memory-hog experiment", func() {
+//BDD Tests for node-cpu-hog with appinfo
+var _ = Describe("BDDs to check the node level experiments with appinfo", func() {
+
+	// BDD for cleaning all components before running the test
+	Context("cleanup for litmus components", func() {
+
+		It("Should delete all the litmus CRs", func() {
+
+			By("[Cleanup]: Removing Litmus Components")
+			err := pkg.Cleanup()
+			if err != nil {
+				klog.Info("Fail to delete all litmus components")
+			}
+		})
+	})
 
 	// BDD TEST CASE 1
-	Context("Check for node memory hog experiment", func() {
+	Context("Check for kubelet service kill experiment with appinfo", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -40,15 +53,33 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-memory-hog", "go-engine6")
+			environment.GetENV(&testsDetails, "node-taint", "node-taint-engine-with-appinfo")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
+			// Getting application node name
+			By("[Prepare]: Getting application node name")
+			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
+
+			// Getting other node for nodeSelector in engine
+			testsDetails.NodeSelectorName, err = pkg.GetSelectorNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Error in getting node selector name, due to {%v}", err)
+			Expect(testsDetails.NodeSelectorName).NotTo(BeEmpty(), "Unable to get node name for node selector, due to {%v}", err)
+
+			//Cordon the application node
+			By("Cordoning Application Node")
+			err = pkg.NodeCordon(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to Cordon the app node, due to {%v}", err)
+
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
+			testsDetails.AppLabel = "run=nginx"
+			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/with_appinfo/node-taint.yml"
+			testsDetails.JobCleanUpPolicy = "retain"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -76,13 +107,14 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-
 		})
 	})
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
 
-		It("Should check for the result updation", func() {
+	//Waiting for experiment job to get completed
+	// BDD for uncordoning the application node
+	Context("Check to uncordon the target node", func() {
+
+		It("Should uncordon the app node", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -90,27 +122,18 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-memory-hog", "go-engine6")
+			// Getting application node name
+			By("[Prepare]: Getting application node name")
+			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
 
-			if testsDetails.UpdateWebsite == "true" {
-				//Getting chaosengine verdict
-				By("Getting Verdict of Chaos Engine")
-				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+			//Uncordon the application node
+			By("Uncordoning Application Node")
+			err = pkg.NodeUncordon(&testsDetails)
+			Expect(err).To(BeNil(), "Fail to uncordon the app node, due to {%v}", err)
 
-				//Updating the pipeline result table
-				By("Updating the pipeline result table")
-				err = pkg.UpdateResultTable("Exhaust Memory resources on the Kubernetes Node", ChaosEngineVerdict, &testsDetails)
-				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-			} else {
-				klog.Info("[SKIP]: Skip updating the result on website")
-			}
 		})
 	})
 })

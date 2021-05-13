@@ -52,5 +52,4 @@ var _ = Describe("BDD of Application Deployment", func() {
 
 		})
 	})
-
 })

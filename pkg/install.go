@@ -25,6 +25,8 @@ import (
 	"k8s.io/client-go/restmapper"
 )
 
+var err error
+
 //CreateChaosResource creates litmus components with given inputs
 func CreateChaosResource(fileData []byte, namespace string, clients environment.ClientSets) error {
 
@@ -165,8 +167,11 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	}
 
 	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageNew + " !!!")
+
 	// Modify Lib Image
-	environments["LIB_IMAGE"] = testsDetails.LibImageNew
+	if chaosExperiment.Spec.Definition.Image == testsDetails.LibImageDefault {
+		environments["LIB_IMAGE"] = testsDetails.LibImageNew
+	}
 
 	// update all the values corresponding to keys from the ENV's in Experiment
 	for key, value := range chaosExperiment.Spec.Definition.Env {
@@ -255,11 +260,14 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.Ch
 
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
-		environments["TARGET_NODES"] = testsDetails.ApplicationNodeName
+		environments["TARGET_NODE"] = testsDetails.ApplicationNodeName
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector.KubernetesIoHostname = testsDetails.NodeSelectorName
 	}
+
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
-	if testsDetails.ExperimentName == "pod-cpu-hog" {
+	switch testsDetails.ExperimentName {
+
+	case "pod-cpu-hog":
 		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
 		slice := struct {
 			Name  string `json:"name"`
@@ -267,7 +275,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.Ch
 		}{"CHAOS_KILL_COMMAND", testsDetails.CPUKillCommand}
 		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
 
-	} else if testsDetails.ExperimentName == "pod-memory-hog" {
+	case "pod-memory-hog":
 		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
 		slice := struct {
 			Name  string `json:"name"`
@@ -275,6 +283,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.Ch
 		}{"CHAOS_KILL_COMMAND", testsDetails.MemoryKillCommand}
 		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
 	}
+
 	// update all the value corresponding to keys from the ENV's in Engine
 	for key, value := range chaosEngine.Spec.Experiments[0].Spec.Components.Env {
 		_, ok := environments[value.Name]

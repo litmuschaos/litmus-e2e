@@ -155,6 +155,17 @@ TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD:
     variables:
     - $COMPONENT_TEST == "true"
 
+TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP:
+  when: always
+  stage: Component Checks 
+  tags:
+    - component-test
+  script:
+    - make env-from-secret-and-configmap
+  only:
+    variables:
+    - $COMPONENT_TEST == "true"    
+
 App Cleanup In Cluster-1:
   when: always
   stage: App Cleanup

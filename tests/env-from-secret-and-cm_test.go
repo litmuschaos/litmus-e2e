@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"bytes"
+	"fmt"
+	"os/exec"
 	"testing"
 
 	"github.com/litmuschaos/litmus-e2e/pkg"
@@ -12,45 +15,54 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoNodeMemoryHog(t *testing.T) {
-
+func TestGoEnvFromSecretAndConfigMap(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for node-memory-hog experiment
-var _ = Describe("BDD of node-memory-hog experiment", func() {
+//BDD for testing experiment
+var _ = Describe("BDD of pod-delete experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for node memory hog experiment", func() {
+	Context("Check for pod-delete experiment", func() {
 
-		It("Should check for creation of runner pod", func() {
+		It("Should check for the pod delete experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
 
+			var out, stderr bytes.Buffer
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
 			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-memory-hog", "go-engine6")
+			// engineName form manifest/env_from_secret_configMap/pod-delete.yml
+			environment.GetENV(&testsDetails, "pod-delete", "env-from-secret-and-cm-test")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			// Prepare Chaos Execution
-			By("[Prepare]: Prepare Chaos Execution")
-			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			//Installing RBAC for the experiment
+			By("[Install]: Installing RBAC")
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+
+			//Setup and run pod-delete chaosexperiment
+			cmd := exec.Command("kubectl", "apply", "-f", "../manifest/env_from_secret_configMap/pod-delete.yml")
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err = cmd.Run()
+			if err != nil {
+				klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+				Expect(err).To(BeNil(), "Fail to create the experiment file, due to {%v}", err)
+			}
+			klog.Infof("[PodDeleteChaos]: " + out.String())
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -72,17 +84,8 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-			//Checking chaosengine verdict
-			By("Checking the Verdict of Chaos Engine")
-			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-
 		})
-	})
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		It("Should check for the result updation", func() {
+		It("Should check for the verdict of pod-delete experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -95,22 +98,13 @@ var _ = Describe("BDD of node-memory-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-memory-hog", "go-engine6")
+			environment.GetENV(&testsDetails, "pod-delete", "env-from-secret-and-cm-test")
 
-			if testsDetails.UpdateWebsite == "true" {
-				//Getting chaosengine verdict
-				By("Getting Verdict of Chaos Engine")
-				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
+			//Checking chaosengine verdict
+			By("Checking the Verdict of Chaos Engine")
+			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 
-				//Updating the pipeline result table
-				By("Updating the pipeline result table")
-				err = pkg.UpdateResultTable("Exhaust Memory resources on the Kubernetes Node", ChaosEngineVerdict, &testsDetails)
-				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-			} else {
-				klog.Info("[SKIP]: Skip updating the result on website")
-			}
 		})
 	})
 })

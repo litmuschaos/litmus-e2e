@@ -16,8 +16,7 @@ import (
 //UpdateResultTable will update the result of pipelines in a table on github using python update script
 func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *types.TestDetails) error {
 
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+	var out, stderr bytes.Buffer
 
 	//Updating the result table
 	log.Infof("The job_id for the job is: %v", os.Getenv("CI_JOB_ID"))
@@ -36,7 +35,7 @@ func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *type
 	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--tag", imageTag, "--test_desc", experimentDetails, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", testsDetails.ExperimentName)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
 		return err

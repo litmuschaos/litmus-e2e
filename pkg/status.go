@@ -58,7 +58,7 @@ func DeploymentStatusCheck(testsDetails *types.TestDetails, deploymentName, depl
 			break
 		}
 		if count == 19 {
-			return errors.Errorf("%v fails to get in Running state, due to %v", deploymentName, err)
+			return errors.Errorf("%v fails to get in Running state", deploymentName)
 		}
 	}
 	return nil
@@ -78,7 +78,7 @@ func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.Cl
 			break
 		}
 		if count == 19 {
-			return errors.Errorf("%v fails to get in Running state, due to %v", testsDetails.OperatorName, err)
+			return errors.Errorf("%v fails to get in Running state", testsDetails.OperatorName)
 		}
 	}
 	log.Info("[Status]: Operator is in Running state")
@@ -99,7 +99,7 @@ func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName stri
 			break
 		}
 		if count == 19 {
-			return errors.Errorf("%v termination fails, due to %v", deploymentName, err)
+			return errors.Errorf("%v termination fails", deploymentName)
 		}
 	}
 	log.Info("[Cleanup]: Application deleted successfully")

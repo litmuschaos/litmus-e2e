@@ -49,7 +49,6 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -113,7 +112,6 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 
 				//Installing Chaos Experiment for disk-fill
 				By("[Install]: Installing chaos experiment")
-				testsDetails.LibImageCI = testsDetails.LibImageNew
 				err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
 				Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 

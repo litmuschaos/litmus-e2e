@@ -1,0 +1,119 @@
+# creating secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+  namespace: litmus
+type: Opaque
+stringData:
+  chaosDuration: "30"
+  lib: "litmus"
+  
+# creating configMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap
+  namespace: litmus
+data:
+  chaosInterval: "10"
+  force: "false"
+  sequence: "parallel"
+
+# creating chaos experiment
+---
+apiVersion: litmuschaos.io/v1alpha1
+description:
+  message: |
+    Deletes a pod belonging to a deployment/statefulset/daemonset
+kind: ChaosExperiment
+metadata:
+  name: pod-delete
+  namespace: litmus
+  labels:
+    name: pod-delete
+spec:
+  definition:
+    scope: Namespaced
+    image: "litmuschaos/go-runner:ci"
+    imagePullPolicy: Always
+    args:
+    - -c
+    - ./experiments -name pod-delete
+    command:
+    - /bin/bash
+    env:
+
+    - name: TOTAL_CHAOS_DURATION
+      valueFrom:
+        secretKeyRef:
+          name: mysecret
+          key: chaosDuration
+
+    - name: CHAOS_INTERNAL
+      valueFrom:
+        configMapKeyRef:
+          name: myconfigmap
+          key: chaosInterval
+
+    - name: FORCE
+      valueFrom:
+        configMapKeyRef:
+          name: myconfigmap
+          key: force
+
+    - name: LIB
+      valueFrom:
+        secretKeyRef:
+          name: mysecret
+          key: lib   
+
+    - name: SEQUENCE
+      valueFrom:
+        configMapKeyRef:
+          name: myconfigmap
+          key: sequence
+      
+    labels:
+      name: pod-delete
+# creating chaos engine
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: env-from-secret-and-cm-test
+  namespace: litmus
+spec:
+  appinfo:
+    appns: 'litmus'
+    applabel: 'run=nginx'
+    appkind: 'deployment'
+  annotationCheck: 'false'
+  engineState: 'active'
+  chaosServiceAccount: pod-delete-sa
+  jobCleanUpPolicy: 'retain'
+  experiments:
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: chaosDuration
+
+            - name: CHAOS_INTERNAL
+              valueFrom:
+                configMapKeyRef:
+                  name: myconfigmap
+                  key: chaosInterval
+
+            - name: FORCE
+              valueFrom:
+                configMapKeyRef:
+                  name: myconfigmap
+                  key: force
+

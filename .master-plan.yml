@@ -133,9 +133,9 @@ spec:
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
       test/status: "Done"    
       
-  - tcid: TCID-EC2-GENERIC-INFRA-WITHOUT-APP-INFO
-    name: "TCID-EC2-GENERIC-INFRA-WITHOUT-APP-INFO"
-    description: "Test the experiment without providing appinfo"
+  - tcid: TCID-EC2-GENERIC-INFRA-WITH-APP-INFO
+    name: "TCID-EC2-GENERIC-INFRA-WITH-APP-INFO"
+    description: "Test the experiment with providing appinfo"
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, appinfo"
@@ -479,7 +479,17 @@ spec:
       test/feature: "Generic"
       test/tags: "target-pod, experiment"
       git/location: ""
-      test/status: "Done"   
+      test/status: "Done"  
+      
+
+  - tcid: TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
+    name: "TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP"
+    description: "Test the experiment with envs from secret and configmap"
+    labels:
+      test/feature: "Generic"
+      test/tags: "crds, validation,secrets,configmaps"
+      git/location: ""
+      test/status: "Done"      
 
   - tcid: TCID-EC2-GENERIC-RBAC-LESS-PERMISSION
     name: "TCID-EC2-GENERIC-RBAC-LESS-PERMISSION"
@@ -489,5 +499,3 @@ spec:
       test/tags: "rbac, permission"
       git/location: ""
       test/status: "Not Done"
-
-

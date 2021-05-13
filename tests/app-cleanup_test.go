@@ -51,5 +51,4 @@ var _ = Describe("BDD of Application Cleanup", func() {
 
 		})
 	})
-
 })

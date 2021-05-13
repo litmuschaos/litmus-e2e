@@ -50,7 +50,6 @@ var _ = Describe("BDD of Application Deployment", func() {
 			By("liveness pod status check")
 			err = pkg.PodStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "iveness pod status check faied, due to {%v}", err)
-
 			klog.Info("Liveness pod established successfully !!!")
 
 		})
