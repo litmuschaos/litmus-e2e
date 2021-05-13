@@ -36,7 +36,7 @@ set PLATFORM 5
 set NAMESPACE litmus
 set SERVICE_ACCOUNT litmus
 
-set timeout -1
+set timeout 300
 
 ## Connecting new agent
 spawn litmusctl agent connect
