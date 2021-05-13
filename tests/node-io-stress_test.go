@@ -49,7 +49,6 @@ var _ = Describe("BDD of node-io-stress experiment", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 

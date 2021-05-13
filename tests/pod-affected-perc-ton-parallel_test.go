@@ -123,7 +123,6 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -184,7 +183,6 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -241,13 +239,11 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -309,7 +305,6 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -371,7 +366,6 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.LibImageCI = testsDetails.LibImageNew
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 

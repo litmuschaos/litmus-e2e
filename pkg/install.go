@@ -167,8 +167,9 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	}
 
 	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageNew + " !!!")
+
 	// Modify Lib Image
-	if testsDetails.LibImageCI != "" {
+	if chaosExperiment.Spec.Definition.Image == testsDetails.LibImageDefault {
 		environments["LIB_IMAGE"] = testsDetails.LibImageNew
 	}
 
