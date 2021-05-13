@@ -46,7 +46,6 @@ jobs:
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted,node-level]
-    ## Changing the working directory to image path we provided
     ## As the default path is repository checkout path.      
     steps:
       - name: Litmus Infra Setup In Cluster-3
@@ -157,7 +156,7 @@ jobs:
         
 ### App Cleanup
   App_Cleanup:
-    needs: Experiment_Tunables
+    needs: Engine_Test
     if: always()
     container: 
       image: "${{ github.event.inputs.e2eTestImage }}"

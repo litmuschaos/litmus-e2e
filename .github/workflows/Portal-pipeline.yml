@@ -54,10 +54,10 @@ jobs:
       - name: Deploying Litmus-Portal using **k8s-manifest**
         if: ${{env.TYPE == 'Manifest'}}
         run: |
-          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
-          chmod 755 ./.github/ImageUpdate.sh
-          ./.github/ImageUpdate.sh cluster-k8s-manifest.yml
-          kubectl apply -f cluster-k8s-manifest.yml
+          wget https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+          chmod 755 ./utils/ImageUpdate.sh
+          ./utils/ImageUpdate.sh litmus-2.0.0-Beta.yaml
+          kubectl apply -f litmus-2.0.0-Beta.yaml
         env:
           FrontendImage: ${{env.FRONTENDIMAGE}}
           BackendImage: ${{env.GRAPHQLIMAGE}}
@@ -68,7 +68,7 @@ jobs:
         if: ${{env.TYPE == 'Helm'}}
         run: |
           kubectl create ns litmus
-          git clone https://github.com/jonsy13/litmus-helm
+          git clone https://github.com/litmuschaos/litmus-helm
           cd litmus-helm
           helm install litmuschaos --namespace litmus ./charts/litmus-2-0-0-beta/
 
@@ -113,10 +113,10 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
           kubectl config use-context kind-External-Agent
           sudo apt-get install expect
-          chmod 755 .github/litmusctl.sh
-          .github/litmusctl.sh "http://localhost:3001" 1
+          chmod 755 litmusctl/litmusctl.sh
+          litmusctl/litmusctl.sh "http://localhost:3001" 1
 
-      # Additional Tests wrt External Agent will be added from here
+      # TODO: Additional Tests wrt External Agent will be added from here
 
       #Deleting both clusters
       - name: Deleting All kind clusters
