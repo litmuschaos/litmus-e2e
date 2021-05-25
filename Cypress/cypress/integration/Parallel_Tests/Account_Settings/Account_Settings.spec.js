@@ -14,30 +14,32 @@ describe("Testing the My accounts section", () => {
     cy.contains("My Account").should("be.visible");
   });
 
-  it("Checking the accessibility of My Accounts", () => {
+  it("Checking the accessibility of My Accounts Tab", () => {
     cy.get("[data-cy=my-account]").click();
     cy.contains("Personal Details").should("be.visible");
   });
 
   it("Changing the personal details by inputting all details", () => {
-    cy.server();
-    cy.route("POST", Cypress.env("apiURL") + "/query").as("detailsResponse");
+    cy.intercept("POST", Cypress.env("authURL") + "/update/details").as(
+      "detailsResponse"
+    );
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear().type(user.NewEmail);
-    cy.get("[data-cy=save]").click();
-    cy.wait("@detailsResponse").its("status").should("eq", 200); //Request Done.
+    cy.get("[data-cy=save] button").click();
+    cy.wait("@detailsResponse").its("response.statusCode").should("eq", 200); //Request Done.
     cy.modalClose();
     cy.get("[data-cy=done]").should("not.exist");
     // cy.headerCheck(user.NewName, user.NewEmail);
   });
 
   it("Changing the personal details with empty email field", () => {
-    cy.server();
-    cy.route("POST", Cypress.env("apiURL") + "/query").as("detailsResponse");
+    cy.intercept("POST", Cypress.env("authURL") + "/update/details").as(
+      "detailsResponse"
+    );
     cy.get("[data-cy=InputName] input").clear().type(user.NewName);
     cy.get("[data-cy=InputEmail] input").clear();
-    cy.get("[data-cy=save]").click();
-    cy.wait("@detailsResponse").its("status").should("eq", 200); //Request Done.
+    cy.get("[data-cy=save] button").click();
+    cy.wait("@detailsResponse").its("response.statusCode").should("eq", 200); //Request Done.
     cy.modalClose();
     // cy.headerCheck(user.NewName, "");
   });

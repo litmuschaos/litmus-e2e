@@ -9,24 +9,18 @@ describe("Testing the create Workflow Utility", () => {
     cy.visit("/create-workflow");
   });
 
-  // beforeEach("Starting Workflow Scheduling", () => {});
-
-  it("Running Predefined Workflows with predefined configurations", () => {
+  it("Running Workflows by uploading it", () => {
     cy.chooseAgent(0);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-    cy.chooseWorkflow(0, 1);
+    cy.chooseWorkflow(3, "");
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
       workflows.nonRecurringworkflowDescription,
       0
     );
-    cy.GraphqlWait(
-      "GetPredefinedExperimentYAML",
-      "PredefinedExperimentYAMLWait"
-    );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.wait("@PredefinedExperimentYAMLWait");
+    cy.wait(1000); // Needs to be removed with frontend enhancement
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.rScoreEditor(5);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -37,6 +31,7 @@ describe("Testing the create Workflow Utility", () => {
       workflows.nonRecurringworkflowDescription,
       0
     );
+    cy.wait(1000);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=GoToWorkflowButton]").click();

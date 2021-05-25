@@ -17,20 +17,20 @@ describe("Testing the accessibility of Getting Started Page", () => {
 
   it("Using getStarted page without inputting only one password", () => {
     cy.get("[data-cy=inputPassword] input").clear().type(" ");
-    cy.get("[data-cy=nextButton] button").should("be.disabled");
+    cy.get("[data-cy=finishButton] button").should("be.disabled");
   });
 
   it("Using getStarted by inputting both password fields as empty", () => {
     cy.get("[data-cy=inputPassword] input").clear().type(" ");
     cy.get("[data-cy=confirmInputPassword] input").clear().type(" ");
-    cy.get("[data-cy=nextButton] button").should("be.disabled");
+    cy.get("[data-cy=finishButton] button").should("be.disabled");
   });
 
   it("Using getStarted by inputting both password fields different", () => {
     cy.get("[data-cy=inputPassword] input").clear().type(user.AdminPassword);
     cy.get("[data-cy=confirmInputPassword] input").clear().type("litmus1");
     cy.contains("Password is not same").should("be.visible");
-    cy.get("[data-cy=nextButton] button").should("be.disabled");
+    cy.get("[data-cy=finishButton] button").should("be.disabled");
   });
 
   it("Using getStarted by inputting both password fields correctly", () => {
@@ -38,17 +38,8 @@ describe("Testing the accessibility of Getting Started Page", () => {
     cy.get("[data-cy=confirmInputPassword] input")
       .clear()
       .type(user.AdminPassword);
-    cy.get("[data-cy=nextButton] button").should("be.enabled");
-    cy.get("[data-cy=nextButton] button").click();
-  });
-
-  it("Using getStarted by inputting set Project input as empty string or space", () => {
-    cy.get("[data-cy=inputProjectName] input").clear().type(" ");
-    cy.get("[data-cy=startButton] button").should("be.disabled");
-  });
-
-  it("Using getStarted by inputting set Project input correctly", () => {
-    cy.get("[data-cy=inputProjectName] input").clear().type("myProject");
-    cy.get("[data-cy=startButton] button").should("be.enabled");
+    cy.get("[data-cy=finishButton] button").should("be.enabled");
+    cy.get("[data-cy=finishButton] button").click();
+    cy.url().should("contain", "/home");
   });
 });
