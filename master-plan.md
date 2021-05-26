@@ -15,7 +15,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, kill"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-delete"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-delete"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-CONTAINER-KILL
@@ -24,7 +24,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, container"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/container-kill"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/container-kill"
       test/status: "Not Done"
 ```
 
