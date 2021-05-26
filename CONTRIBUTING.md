@@ -21,7 +21,7 @@ The Litmus E2E uses [GitLab](https://litmuschaos.github.io/litmus-e2e/) pipeline
 
 
 * Find an issue to work on or create a new issue. The issues are maintained at [litmuschaos/litmus](https://github.com/litmuschaos/litmus/issues). For new contributors, you can pick up from a list of [good first issues](https://github.com/litmuschaos/litmus/issues?q=is%3Aissue+is%3Aopen+label%3Aarea%2Flitmus-docs+label%3A%22good+first+issue%22+)
-* You can also pick a test to add from [master-plan.yml](https://github.com/litmuschaos/litmus-e2e/blob/generic/.master-plan.yml) with label `test/status: "Not Done"` or propose a new test in master-plan.yml
+* You can also pick a test to add from [master-plan.yml](https://github.com/litmuschaos/litmus-e2e/blob/master/.master-plan.yml) with label `test/status: "Not Done"` or propose a new test in master-plan.yml
 * Claim your issue by commenting your intent to work on it to avoid duplication of efforts.
 * Fork the repository on GitHub.
 * Create a branch from where you want to base your work (usually master).

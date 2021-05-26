@@ -13,7 +13,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, kill"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-delete"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-delete"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-CONTAINER-KILL
@@ -22,7 +22,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, container"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/container-kill"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/container-kill"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-CPU-HOG
@@ -31,7 +31,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, cpu,container"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-cpu-hog"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-cpu-hog"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
@@ -40,7 +40,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, memory"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-memory-hog"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-memory-hog"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION
@@ -49,7 +49,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, network, corruption"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-corruption"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-network-corruption"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY
@@ -58,7 +58,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, network, latency"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-latency"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-network-latency"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS
@@ -67,7 +67,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, network, loss"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-loss"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-network-loss"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION
@@ -76,7 +76,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, network, duplication"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-network-duplication"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-network-duplication"
       test/status: "Not Done"
 
   - tcid: TCID-EC2-GENERIC-APP-DISK-FILL
@@ -85,7 +85,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, ephemeral, disk"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-fill"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/disk-fill"
       test/status: "Done" 
       
   - tcid: TCID-EC2-GENERIC-APP-POD-IO-STRESS
@@ -94,7 +94,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, io, stress"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-io-stress"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
@@ -130,7 +130,7 @@ spec:
     labels:
       test/feature: "Generic-App"
       test/tags: "pod, io, stress"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/pod-io-stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/pod-io-stress"
       test/status: "Done"    
       
   - tcid: TCID-EC2-GENERIC-INFRA-WITH-APP-INFO
@@ -152,7 +152,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "node, cpu, spike"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/disk-fill"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/disk-fill"
       test/status: "Done" 
 
   - tcid: TCID-EC2-GENERIC-INFRA-NODE-MEMORY-HOG
@@ -161,7 +161,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "node, memory, hog"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-memory-hog"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-memory-hog"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-INFRA-NODE-DRAIN
@@ -170,7 +170,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "node, drain"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-drain"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-drain"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-INFRA-KUBELET-SERVICE-KILL
@@ -179,7 +179,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "kubelet, service, kill"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/kubelet-service-kill"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/kubelet-service-kill"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-INFRA-NODE-TAINT
@@ -188,7 +188,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "node, taint"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-taint"
       test/status: "Done"
 
   - tcid: TCID-EC2-GENERIC-INFRA-NODE-IO-STRESS
@@ -197,7 +197,7 @@ spec:
     labels:
       test/feature: "Generic-Infra"
       test/tags: "node, io,disk,stress"
-      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-io-stress"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-io-stress"
       test/status: "Done"      
 
   # -------------------------------------------------
