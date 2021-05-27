@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	yamlChe "github.com/ghodss/yaml"
@@ -166,12 +167,20 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 		environments["LIB"] = testsDetails.Lib
 	}
 
-	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageNew + " !!!")
-
-	// Modify Lib Image
-	if chaosExperiment.Spec.Definition.Image == testsDetails.LibImageDefault {
-		environments["LIB_IMAGE"] = testsDetails.LibImageNew
+	// Get lib image
+	var libImage string
+	for _, value := range chaosExperiment.Spec.Definition.Env {
+		if value.Name == "LIB_IMAGE" {
+			libImage = value.Value
+		}
 	}
+
+	// Modify LIB Image
+	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
+		testsDetails.LibImage = testsDetails.GoExperimentImage
+	}
+	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImage + " !!!")
+	environments["LIB_IMAGE"] = testsDetails.LibImage
 
 	// update all the values corresponding to keys from the ENV's in Experiment
 	for key, value := range chaosExperiment.Spec.Definition.Env {
