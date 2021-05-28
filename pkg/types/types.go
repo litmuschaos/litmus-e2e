@@ -32,8 +32,7 @@ type TestDetails struct {
 	Delay                     int
 	Duration                  int
 	TargetPod                 string
-	LibImageDefault           string
-	LibImageNew               string
+	LibImage                  string
 	FillPercentage            int
 	CPUKillCommand            string
 	MemoryKillCommand         string
