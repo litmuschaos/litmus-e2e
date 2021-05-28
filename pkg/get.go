@@ -120,3 +120,13 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 	return PodList.Items[0].Name, PodList.Items[0].Status.PodIP, PodList.Items[1].Name, nil
 
 }
+
+// GetUID will return the uid from chaosengine
+func GetUID(engineName, namespace string, clients environment.ClientSets) (string, error) {
+
+	chaosEngine, err := clients.LitmusClient.ChaosEngines(namespace).Get(engineName, metav1.GetOptions{})
+	if err != nil {
+		return "", errors.Errorf("fail to get the chaosengine %v err: %v", engineName, err)
+	}
+	return string(chaosEngine.UID), nil
+}
