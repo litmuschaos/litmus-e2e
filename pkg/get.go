@@ -121,19 +121,12 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 
 }
 
-// GetUID will return the uid from experiment label
-func GetUID(engineName, namespace string, clients environment.ClientSets) (error, string) {
+// GetUID will return the uid from chaosengine
+func GetUID(engineName, namespace string, clients environment.ClientSets) (string, error) {
 
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(namespace).Get(engineName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("fail to get the chaosengine %v err: %v", engineName, err), ""
+		return "", errors.Errorf("fail to get the chaosengine %v err: %v", engineName, err)
 	}
-	if len(chaosEngine.Status.Experiments) == 0 {
-		return errors.Errorf("fail to get the chaos pod for the test"), ""
-	}
-	chaosPod, err := clients.KubeClient.CoreV1().Pods(namespace).Get(chaosEngine.Status.Experiments[0].ExpPod, metav1.GetOptions{})
-	if err != nil {
-		return errors.Errorf("fail to get the chaos pod. err: %v", err), ""
-	}
-	return nil, chaosPod.Labels["chaosUID"]
+	return string(chaosEngine.UID), nil
 }

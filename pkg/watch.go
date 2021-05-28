@@ -21,7 +21,7 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 	if err := printChaosPodLogs(testsDetails, clients); err != nil {
 		return err
 	}
-	err, uid := GetUID(testsDetails.EngineName, testsDetails.ChaosNamespace, clients)
+	uid, err := GetUID(testsDetails.EngineName, testsDetails.ChaosNamespace, clients)
 	if err != nil {
 		return errors.Errorf("fail to get uid from experiment label,err: %v", err)
 	}
