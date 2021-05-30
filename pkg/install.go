@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	yamlChe "github.com/ghodss/yaml"
@@ -151,16 +152,27 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	// Modify experiment imagePullPolicy
 	chaosExperiment.Spec.Definition.ImagePullPolicy = corev1.PullPolicy(testsDetails.ExperimentImagePullPolicy)
 
+	// Get lib image
+	var libImage string
+	for _, value := range chaosExperiment.Spec.Definition.ENVList {
+		if value.Name == "LIB_IMAGE" {
+			libImage = value.Value
+		}
+	}
+
+	// Modify LIB Image
+	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
+		testsDetails.LibImage = testsDetails.GoExperimentImage
+	}
+
 	// Modify ENV's
 	envDetails.SetEnv("SEQUENCE", testsDetails.Sequence).
 		SetEnv("PODS_AFFECTED_PERC", testsDetails.PodsAffectedPercentage).
 		SetEnv("TARGET_PODS", testsDetails.TargetPod).
-		SetEnv("LIB", testsDetails.Lib)
+		SetEnv("LIB", testsDetails.Lib).
+		SetEnv("LIB_IMAGE", testsDetails.LibImage)
 
-	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImageNew + " !!!")
-	if chaosExperiment.Spec.Definition.Image == testsDetails.LibImageDefault {
-		envDetails.SetEnv("LIB_IMAGE", testsDetails.LibImageNew)
-	}
+	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImage + " !!!")
 
 	// update all the values corresponding to keys from the ENV's in Experiment
 	for key, value := range chaosExperiment.Spec.Definition.ENVList {
@@ -240,9 +252,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	}
 
 	// for experiments like pod network latency
-	if testsDetails.NetworkLatency != "" {
-		envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
-	}
+	envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
 
 	// update Engine if FillPercentage if it does not match criteria
 	if testsDetails.FillPercentage != 80 {
@@ -252,16 +262,24 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
 		envDetails.SetEnv("TARGET_NODE", testsDetails.ApplicationNodeName)
+		if chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector == nil {
+			chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector = map[string]string{}
+		}
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
 	switch testsDetails.ExperimentName {
-
 	case "pod-cpu-hog":
-		envDetails.SetEnv("CHAOS_KILL_COMMAND", testsDetails.CPUKillCommand)
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.CPUKillCommand,
+		})
 	case "pod-memory-hog":
-		envDetails.SetEnv("CHAOS_KILL_COMMAND", testsDetails.MemoryKillCommand)
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.MemoryKillCommand,
+		})
 	}
 
 	// update all the value corresponding to keys from the ENV's in Engine
