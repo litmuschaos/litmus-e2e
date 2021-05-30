@@ -52,6 +52,9 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 	} else {
 		buf := new(bytes.Buffer)
 		_, err = io.Copy(buf, readCloser)
+		if err != nil {
+			return err
+		}
 		fmt.Println("Experiment logs : \n\n", buf.String())
 	}
 

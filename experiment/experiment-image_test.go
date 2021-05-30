@@ -3,6 +3,7 @@ package experiment
 import (
 	"testing"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
@@ -29,8 +30,8 @@ var _ = Describe("BDD of experiment image test", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			var err error
 			//Getting kubeConfig and Generate ClientSets

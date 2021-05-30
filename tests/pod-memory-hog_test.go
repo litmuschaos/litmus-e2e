@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
@@ -29,8 +30,8 @@ var _ = Describe("BDD of pod-memory-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -89,8 +90,8 @@ var _ = Describe("BDD of pod-memory-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("RUNNING POD-MEMORY-HOG ABORT CHAOS TEST!!!")
 			//Getting kubeConfig and Generate ClientSets
@@ -159,8 +160,8 @@ var _ = Describe("BDD of pod-memory-hog experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")

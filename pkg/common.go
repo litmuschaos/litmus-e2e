@@ -6,12 +6,19 @@ import (
 	"os/exec"
 	"strconv"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
+
 	"k8s.io/klog"
 )
+
+// ENVDetails contains the ENV details
+type ENVDetails struct {
+	ENV map[string]string
+}
 
 // Kubectl will run kubectl commands and print the output
 func Kubectl(command ...string) error {
@@ -32,7 +39,7 @@ func Kubectl(command ...string) error {
 }
 
 //PrepareChaos install all the Chaos resourses like rbac, experiment and engine
-func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *types.ChaosExperiment, chaosEngine *types.ChaosEngine, clients environment.ClientSets, annotation bool) error {
+func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, chaosEngine *v1alpha1.ChaosEngine, clients environment.ClientSets, annotation bool) error {
 
 	testsDetails.AnnotationCheck = strconv.FormatBool(annotation)
 
@@ -58,4 +65,12 @@ func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *types.ChaosE
 		return errors.Errorf("Fail to install chaosengine, due to {%v}", err)
 	}
 	return nil
+}
+
+// SetEnv sets the env inside envDetails struct
+func (envDetails *ENVDetails) SetEnv(key, value string) *ENVDetails {
+	if value != "" {
+		envDetails.ENV[key] = value
+	}
+	return envDetails
 }

@@ -130,7 +130,7 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 
 					}
 				}
-				if flag == true {
+				if flag {
 					break
 				}
 				if count == 19 {

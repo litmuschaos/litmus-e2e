@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"testing"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
@@ -31,8 +32,8 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
