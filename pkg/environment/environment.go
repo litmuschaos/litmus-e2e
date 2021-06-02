@@ -50,6 +50,8 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.InstallLitmus = Getenv("INSTALL_LITMUS", "https://litmuschaos.github.io/litmus/litmus-operator-latest.yaml")
 	testDetails.AdminRbacPath = Getenv("ADMIN_RBAC_PATH", "https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml")
 
+	// Portal Envs
+	testDetails.Version = Getenv("RUN_VERSION", "ci")
 }
 
 // Getenv fetch the env and set the default value, if any

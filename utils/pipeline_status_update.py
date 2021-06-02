@@ -46,6 +46,8 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-run.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-run.html"
+              elif pipeline == "portal-e2e"
+                     return "portal-pipeline/pipeline-runs/portal-run.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
        elif "RC" in tag:
@@ -55,6 +57,8 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-rc.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-rc.html"
+              elif pipeline == "portal-e2e"
+                     return "portal-pipeline/pipeline-runs/portal-rc.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
        else:
@@ -64,6 +68,8 @@ def get_file_to_update(pipeline,tag):
                      return "generic-pipeline/pipeline-runs/node-level-ga.html"
               elif pipeline == "component":
                      return "generic-pipeline/pipeline-runs/litmus-component-ga.html"
+              elif pipeline == "portal-e2e"
+                     return "portal-pipeline/pipeline-runs/portal-ga.html"
               else:
                      raise Exception('Sorry, no pipeline found with name '+pipeline)
 
