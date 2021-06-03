@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	appv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -60,7 +59,7 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 
 // CreateNamespace is used to create a namespace
 func CreateNamespace(clients environment.ClientSets, namespaceName string) (error, error) {
-	nsSpec := &v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespaceName}}
+	nsSpec := &apiv1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespaceName}}
 	if _, err := clients.KubeClient.CoreV1().Namespaces().Create(nsSpec); err != nil {
 		return nil, errors.Errorf("Fail to create "+namespaceName+" namespace, due to %v", err)
 	}

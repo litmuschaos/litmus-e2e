@@ -3,6 +3,7 @@ package tests
 import (
 	"testing"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
@@ -52,8 +53,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("POD DELETE EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 
@@ -113,8 +114,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("CONTAINER KILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -173,8 +174,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -234,8 +235,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("POD CPU HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -295,8 +296,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("POD MEMORY HOG EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets
@@ -351,8 +352,8 @@ var _ = Describe("BDDs of pod level experiments to check the multiple deploy fea
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
-			chaosExperiment := types.ChaosExperiment{}
-			chaosEngine := types.ChaosEngine{}
+			chaosExperiment := v1alpha1.ChaosExperiment{}
+			chaosEngine := v1alpha1.ChaosEngine{}
 
 			klog.Info("POD NETWORK CORRUPTION EXPERIMENT WITH PODS_AFFECTED_PERC=50 AND SEQUENCE=PARALLEL")
 			//Getting kubeConfig and Generate ClientSets

@@ -29,7 +29,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 	testsDetails.Duration = 30
 	testsDetails.Delay = 1
 	log.Info("[Wait]: Wating for ChaosEngine Verdict updation")
-	err := retry.
+	if err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
 		Try(func(attempt uint) error {
@@ -44,7 +44,9 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 			log.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
 
 			return nil
-		})
+		}); err != nil {
+		return "", err
+	}
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosengine, due to %v", err)
@@ -58,7 +60,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 	testsDetails.Duration = 30
 	testsDetails.Delay = 1
 	log.Info("[Wait]: Wating for ChaosResult Verdict updation")
-	err := retry.
+	if err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
 		Try(func(attempt uint) error {
@@ -73,7 +75,9 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 			log.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
 
 			return nil
-		})
+		}); err != nil {
+		return "", err
+	}
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
 		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)

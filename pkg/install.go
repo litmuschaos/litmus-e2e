@@ -10,10 +10,12 @@ import (
 	"time"
 
 	yamlChe "github.com/ghodss/yaml"
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -46,7 +48,7 @@ func CreateChaosResource(fileData []byte, namespace string, clients environment.
 		}
 
 		// NewDecodingSerializer adds YAML decoding support to a serializer that supports JSON.
-		obj, gvk, err := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme).Decode(rawObj.Raw, nil, nil)
+		obj, gvk, _ := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme).Decode(rawObj.Raw, nil, nil)
 		unstructuredMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
 		if err != nil {
 			return err
@@ -119,10 +121,12 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 }
 
 //InstallGoChaosExperiment installs the given go based chaos experiment
-func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *types.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
+func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
 
-	// map to trace all the key corresponding Experiment variables
-	environments := make(map[string]string)
+	// contains all the envs
+	envDetails := ENVDetails{
+		ENV: map[string]string{},
+	}
 
 	//Fetch Experiment file
 	res, err := http.Get(testsDetails.ExperimentPath)
@@ -146,30 +150,11 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
 
 	// Modify experiment imagePullPolicy
-	chaosExperiment.Spec.Definition.ImagePullPolicy = testsDetails.ExperimentImagePullPolicy
-
-	// Modify Sequence for Experiment
-	if testsDetails.Sequence != "" {
-		environments["SEQUENCE"] = testsDetails.Sequence
-	}
-
-	// Modify Pod Affected Percentage
-	if testsDetails.PodsAffectedPercentage != "" {
-		environments["PODS_AFFECTED_PERC"] = testsDetails.PodsAffectedPercentage
-	}
-
-	// Modify Target Pods
-	if testsDetails.TargetPod != "" {
-		environments["TARGET_PODS"] = testsDetails.TargetPod
-	}
-	// Modify Lib
-	if testsDetails.Lib != "" {
-		environments["LIB"] = testsDetails.Lib
-	}
+	chaosExperiment.Spec.Definition.ImagePullPolicy = corev1.PullPolicy(testsDetails.ExperimentImagePullPolicy)
 
 	// Get lib image
 	var libImage string
-	for _, value := range chaosExperiment.Spec.Definition.Env {
+	for _, value := range chaosExperiment.Spec.Definition.ENVList {
 		if value.Name == "LIB_IMAGE" {
 			libImage = value.Value
 		}
@@ -179,14 +164,21 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
 		testsDetails.LibImage = testsDetails.GoExperimentImage
 	}
+
+	// Modify ENV's
+	envDetails.SetEnv("SEQUENCE", testsDetails.Sequence).
+		SetEnv("PODS_AFFECTED_PERC", testsDetails.PodsAffectedPercentage).
+		SetEnv("TARGET_PODS", testsDetails.TargetPod).
+		SetEnv("LIB", testsDetails.Lib).
+		SetEnv("LIB_IMAGE", testsDetails.LibImage)
+
 	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImage + " !!!")
-	environments["LIB_IMAGE"] = testsDetails.LibImage
 
 	// update all the values corresponding to keys from the ENV's in Experiment
-	for key, value := range chaosExperiment.Spec.Definition.Env {
-		_, ok := environments[value.Name]
+	for key, value := range chaosExperiment.Spec.Definition.ENVList {
+		_, ok := envDetails.ENV[value.Name]
 		if ok {
-			chaosExperiment.Spec.Definition.Env[key].Value = environments[value.Name]
+			chaosExperiment.Spec.Definition.ENVList[key].Value = envDetails.ENV[value.Name]
 		}
 	}
 
@@ -209,10 +201,12 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 }
 
 //InstallGoChaosEngine installs the given go based chaos engine
-func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
 
-	// map to trace all the key corresponding Experiment variables
-	environments := make(map[string]string)
+	// contains all the envs
+	envDetails := ENVDetails{
+		ENV: map[string]string{},
+	}
 
 	//Fetch Engine file
 	res, err := http.Get(testsDetails.EnginePath)
@@ -233,14 +227,14 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.Ch
 	}
 
 	// Add JobCleanUpPolicy of chaos-runner to retain
-	chaosEngine.Spec.JobCleanUpPolicy = testsDetails.JobCleanUpPolicy
+	chaosEngine.Spec.JobCleanUpPolicy = v1alpha1.CleanUpPolicy(testsDetails.JobCleanUpPolicy)
 
 	// Add ImagePullPolicy of chaos-runner to Always
-	chaosEngine.Spec.Components.Runner.ImagePullPolicy = testsDetails.ImagePullPolicy
+	chaosEngine.Spec.Components.Runner.ImagePullPolicy = corev1.PullPolicy(testsDetails.ImagePullPolicy)
 
 	// Modify the spec of engine file
-	chaosEngine.Metadata.Name = testsDetails.EngineName
-	chaosEngine.Metadata.Namespace = engineNamespace
+	chaosEngine.ObjectMeta.Name = testsDetails.EngineName
+	chaosEngine.ObjectMeta.Namespace = engineNamespace
 
 	// If ChaosEngine contain App Info then update it
 	if chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "" {
@@ -253,51 +247,46 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *types.Ch
 
 	// for ec2-terminate instance
 	if testsDetails.ExperimentName == "ec2-terminate" {
-		environments["EC2_INSTANCE_ID"] = testsDetails.InstanceID
-		environments["REGION"] = testsDetails.Region
+		envDetails.SetEnv("EC2_INSTANCE_ID", testsDetails.InstanceID).
+			SetEnv("REGION", testsDetails.Region)
 	}
 
 	// for experiments like pod network latency
-	if testsDetails.NetworkLatency != "" {
-		environments["NETWORK_LATENCY"] = testsDetails.NetworkLatency
-	}
+	envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
 
 	// update Engine if FillPercentage if it does not match criteria
 	if testsDetails.FillPercentage != 80 {
-		environments["FILL_PERCENTAGE"] = strconv.Itoa(testsDetails.FillPercentage)
+		envDetails.SetEnv("FILL_PERCENTAGE", strconv.Itoa(testsDetails.FillPercentage))
 	}
 
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
-		environments["TARGET_NODE"] = testsDetails.ApplicationNodeName
-		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector.KubernetesIoHostname = testsDetails.NodeSelectorName
+		envDetails.SetEnv("TARGET_NODE", testsDetails.ApplicationNodeName)
+		if chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector == nil {
+			chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector = map[string]string{}
+		}
+		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
 	switch testsDetails.ExperimentName {
-
 	case "pod-cpu-hog":
-		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
-		slice := struct {
-			Name  string `json:"name"`
-			Value string `json:"value"`
-		}{"CHAOS_KILL_COMMAND", testsDetails.CPUKillCommand}
-		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
-
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.CPUKillCommand,
+		})
 	case "pod-memory-hog":
-		val := chaosEngine.Spec.Experiments[0].Spec.Components.Env
-		slice := struct {
-			Name  string `json:"name"`
-			Value string `json:"value"`
-		}{"CHAOS_KILL_COMMAND", testsDetails.MemoryKillCommand}
-		chaosEngine.Spec.Experiments[0].Spec.Components.Env = append(val, slice)
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.MemoryKillCommand,
+		})
 	}
 
 	// update all the value corresponding to keys from the ENV's in Engine
-	for key, value := range chaosEngine.Spec.Experiments[0].Spec.Components.Env {
-		_, ok := environments[value.Name]
+	for key, value := range chaosEngine.Spec.Experiments[0].Spec.Components.ENV {
+		_, ok := envDetails.ENV[value.Name]
 		if ok {
-			chaosEngine.Spec.Experiments[0].Spec.Components.Env[key].Value = environments[value.Name]
+			chaosEngine.Spec.Experiments[0].Spec.Components.ENV[key].Value = envDetails.ENV[value.Name]
 		}
 	}
 
