@@ -12,7 +12,7 @@ describe("Testing the Teaming section", () => {
   });
 
   it("Checking the accessibility of the Settings", () => {
-    cy.contains("Settings").click();
+    cy.visit("/settings");
     cy.contains("Settings").should("be.visible");
   });
 
@@ -67,7 +67,7 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
     //Visit the teaming section and go to "invite a new member"
-    cy.contains("Settings").click();
+    cy.visit("/settings");
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");
@@ -110,7 +110,7 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
     //Go to Settings/Team section
-    cy.contains("Settings").click();
+    cy.visit("/settings");
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=my-account]").click();
@@ -127,7 +127,7 @@ describe("Testing the Teaming section", () => {
     cy.get("[data-cy=headerComponent]").should("be.visible");
     cy.get("[data-cy=sidebarComponent]").should("be.visible");
     //Visit the teaming section and go to "invite a new member"
-    cy.contains("Settings").click();
+    cy.visit("/settings");
     cy.contains("My Account").should("be.visible");
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=toolBarComponent]").should("be.visible");

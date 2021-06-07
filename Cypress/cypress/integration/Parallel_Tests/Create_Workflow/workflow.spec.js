@@ -27,6 +27,7 @@ describe("Testing the create Workflow Utility", () => {
     );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait("@PredefinedExperimentYAMLWait");
+    cy.wait(1000);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.rScoreEditor(5);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();

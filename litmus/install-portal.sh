@@ -2,7 +2,7 @@
 
 source litmus/utils.sh
 
-path=$(pwd)
+# path=$(pwd)
 default_portal_port=9091
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
@@ -44,14 +44,16 @@ verify_deployment_image $version litmusportal-frontend litmus
 verify_deployment_image $version litmusportal-server litmus
 
 if [[ "$loadBalancer" == "true" ]];then
-    # Getting The LoadBalancer IP for accessing Litmus-Portal
+    # # Getting The LoadBalancer IP for accessing Litmus-Portal
     kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus
 
     wait_for_loadbalancer litmusportal-frontend-service litmus
 
-    IP=$(kubectl get svc litmusportal-frontend-service -n litmus --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}"); 
+    IP=$(eval "kubectl get svc litmusportal-frontend-service -n litmus --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
 
     URL=http://$IP:$default_portal_port
+
+    echo $URL
 
     # Waiting for URL to be active
     wait_for_url $URL
@@ -59,5 +61,10 @@ if [[ "$loadBalancer" == "true" ]];then
     echo "URL to access Litmus-Portal: $URL"
 
 else
-    kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
+    # kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
+    export NODE_NAME=$(kubectl -n litmus get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+    export NODE_IP=$(kubectl -n litmus get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+    export NODE_PORT=$(kubectl -n litmus get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+    export AccessURL="http://$NODE_IP:$NODE_PORT"
+    echo "URL=$AccessURL" >> $GITHUB_ENV
 fi

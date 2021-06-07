@@ -21,8 +21,8 @@ describe("Testing the accessibility of Getting Started Page", () => {
   });
 
   it("Using getStarted by inputting both password fields as empty", () => {
-    cy.get("[data-cy=inputPassword] input").clear().type(" ");
-    cy.get("[data-cy=confirmInputPassword] input").clear().type(" ");
+    cy.get("[data-cy=inputPassword] input").clear();
+    cy.get("[data-cy=confirmInputPassword] input").clear();
     cy.get("[data-cy=finishButton] button").should("be.disabled");
   });
 

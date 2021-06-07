@@ -6,6 +6,7 @@
   "defaultCommandTimeout": 10000,
   "chromeWebSecurity": false,
   "video": false,
+  "experimentalNetworkStubbing":true,
   "env": {
     "authURL" : "http://localhost:3000",
     "apiURL" : "http://localhost:8080"

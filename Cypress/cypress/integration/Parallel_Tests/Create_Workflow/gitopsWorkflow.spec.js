@@ -24,6 +24,6 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=accessTokenInput] input").should("be.visible");
     cy.get("[data-cy=sshKeyRadioButton] input[type=radio]").check();
     cy.get("[data-cy=sshKeyBox]").should("be.visible");
-    cy.get("[data-cy=sshKeyCopyButton] button").click();
+    // cy.get("[data-cy=sshKeyCopyButton] button").click();
   });
 });

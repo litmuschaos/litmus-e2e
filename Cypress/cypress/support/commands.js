@@ -24,7 +24,7 @@ Cypress.Commands.add("waitForCluster", (agentName) => {
     {
       verbose: true,
       interval: 500,
-      timeout: 30000, //Wait for 5 min
+      timeout: 60000,
     }
   );
 });

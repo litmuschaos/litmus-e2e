@@ -35,7 +35,8 @@ function wait_for_loadbalancer(){
         exit 1
         else
         echo "Waiting for end point..."; 
-        IP=$(kubectl get svc $SVC -n $Namespace --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}"); 
+        IP=$(eval "kubectl get svc litmusportal-frontend-service -n ${namespace} --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
+        echo "IP"
         [ -z "$IP" ] && sleep 10; 
         fi
     done; 
@@ -52,20 +53,34 @@ function show_resources(){
 function wait_for_pods(){
     namespace=$1
     timeout="$2s" # Added "s" for seconds
-    kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=360s
+    kubectl wait --for=condition=Ready pods --all --namespace ${namespace} --timeout=720s
+    kubectl get pods -n ${namespace}
 }
 
 ## Function for verifying deployment
 function verify_deployment(){
     deployment=$1
     namespace=$2
-    DEPLOYMENT=$(eval "kubectl get deployments -n ${namespace} | awk '/${deployment}/'")
-    if [[ -z "$DEPLOYMENT" ]];then
-        echo "$deployment deployment not found in $namespace namespace"
+
+    RETRY=0; RETRY_MAX=40;
+
+    while [[ $RETRY -lt $RETRY_MAX ]]; do
+        DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/$deployment /'" | awk '{print $1}') # list of multiple deployments when starting with the same name
+        if [[ -z "$DEPLOYMENT_LIST" ]]; then
+        RETRY=$((RETRY+1))
+        echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
+        sleep 15
+        else
+        echo "Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST}"
+        break
+        fi
+    done
+
+    if [[ $RETRY == "$RETRY_MAX" ]]; then
+        print_error "Could not find deployment ${deployment} in namespace ${namespace}"
         exit 1
-    else
-        echo "$deployment deployment found in $namespace namespace"
     fi
+
 }
 
 ## Function for verifying pod in a given namespace
@@ -95,8 +110,9 @@ function verify_namespace(){
 
 ## Function to update images in portal manifests, Currently specific to Portal Only
 function manifest_image_update(){
-    version=$1
-    manifest_name=$2
+    version="$1"
+    manifest_name="$2"
+    echo "$2"
     sed -i -e "s|litmuschaos/litmusportal-frontend:ci|litmuschaos/litmusportal-frontend:$version|g" $manifest_name
     sed -i -e "s|litmuschaos/litmusportal-server:ci|litmuschaos/litmusportal-server:$version|g" $manifest_name
     sed -i -e "s|litmuschaos/litmusportal-auth-server:ci|litmuschaos/litmusportal-auth-server:$version|g" $manifest_name
