@@ -143,7 +143,6 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
           PORTAL_NAMESPACE: "scope"
-          LITMUS_PORTAL_NAMESPACE: "scope"
 
       - uses: AbsaOSS/k3d-action@v1.4.0
         name: "Create 2nd Cluster"
