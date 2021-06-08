@@ -51,6 +51,9 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 
 	var out, stderr bytes.Buffer
 	var pipelineName string
+
+	imageTag := GetImageTag(testsDetails.GoExperimentImage)
+
 	//Updating the result table
 	log.Infof("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
 
@@ -60,9 +63,11 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 		pipelineName = "node-level"
 	} else if os.Getenv("COMPONENT_TEST") == "true" {
 		pipelineName = "component"
+	} else if os.Getenv("PORTAL_TEST") == "true" {
+		pipelineName = "portal-e2e"
+		imageTag = testsDetails.Version
 	}
 
-	imageTag := GetImageTag(testsDetails.GoExperimentImage)
 	// Recording job number for pipeline update
 	cmd := exec.Command("python3", "-u", "../utils/pipeline_status_update.py", "--pipeline_id", os.Getenv("CI_PIPELINE_ID"), "--tag", imageTag, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--coverage", coverageData, "--pipeline", pipelineName, "--token", os.Getenv("GITHUB_TOKEN"))
 	cmd.Stdout = &out

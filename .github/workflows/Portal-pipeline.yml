@@ -1,92 +1,56 @@
-name: Portal-E2E Pipeline
+name: Portal-E2E K3S Pipeline
 on:
   workflow_dispatch:
     inputs:
       Tag:
         default: "ci"
 
-      Type:
-        default: "Manifest"
-
       Module:
         default: "All"
-
-      FrontendImage:
-        default: "litmuschaos/litmusportal-frontend:ci"
-
-      GraphqlServerImage:
-        default: "litmuschaos/litmusportal-server:ci"
-
-      AuthServerImage:
-        default: "litmuschaos/litmusportal-auth-server:ci"
 
 # All Environments variables declared and set here.
 env:
   TAG: "${{github.event.inputs.Tag}}"
-  TYPE: "${{github.event.inputs.Type}}"
   MODULE: "${{github.event.inputs.Module}}"
-  FRONTENDIMAGE: "${{github.event.inputs.FrontendImage}}"
-  GRAPHQLIMAGE: "${{github.event.inputs.GraphqlServerImage}}"
-  AUTHIMAGE: "${{github.event.inputs.AuthServerImage}}"
+  SELF_AGENT: "self-agent"
+  EXTERNAL_AGENT: "external-agent"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
 jobs:
-  Kind:
-    runs-on: ubuntu-latest
+  Cluster-Scope-Mode:
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: "litmus-portal"
-          fetch-depth: 0
 
-      - name: Setting up Main Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 1st Cluster"
         with:
-          name: "Portal-Agent"
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: --agents 1
 
       - name: Configuring and Testing the Cluster Installation
         run: |
-          kubectl cluster-info --context kind-Portal-Agent
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
-      # If Type == Manifest, Then manifest will be updated with given images and deployed.
       - name: Deploying Litmus-Portal using **k8s-manifest**
-        if: ${{env.TYPE == 'Manifest'}}
         run: |
-          wget https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
-          chmod 755 ./utils/ImageUpdate.sh
-          ./utils/ImageUpdate.sh litmus-2.0.0-Beta.yaml
-          kubectl apply -f litmus-2.0.0-Beta.yaml
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
         env:
-          FrontendImage: ${{env.FRONTENDIMAGE}}
-          BackendImage: ${{env.GRAPHQLIMAGE}}
-          AuthImage: ${{env.AUTHIMAGE}}
+          PORTAL_VERSION: "ci"
+          LOAD_BALANCER: "false"
 
-      # If Type == Helm, Then Latest helm chart will be deployed.
-      - name: Deploying Litmus-Portal using **Helm chart**
-        if: ${{env.TYPE == 'Helm'}}
-        run: |
-          kubectl create ns litmus
-          git clone https://github.com/litmuschaos/litmus-helm
-          cd litmus-helm
-          helm install litmuschaos --namespace litmus ./charts/litmus-2-0-0-beta/
-
-      - name: Waiting for Litmus-Portal to be ready and port-forwarding the frontend port
-        run: |
-          kubectl get pods -n litmus
-          kubectl get deployments -o wide -n litmus
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
-          kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
-
-      - name: Setting up Agent Cluster
-        uses: engineerd/setup-kind@v0.5.0
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 2nd Cluster"
         with:
-          name: "External-Agent"
+          cluster-name: ${{ env.EXTERNAL_AGENT }}
+          args: --agents 1
 
       - name: Configuring and Testing the Agent Installation
         run: |
-          kubectl cluster-info --context kind-External-Agent
+          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -105,22 +69,154 @@ jobs:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
           working-directory: Cypress/
           config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Registering External Agent in Cluster Mode
+      - name: Verifying the Control-plane components
+        run: |
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
+          chmod 755 ./litmus/control-plane-components-check.sh
+          ./litmus/control-plane-components-check.sh
+        env:
+          LITMUS_PORTAL_NAMESPACE: "litmus"
+
+      - name: Running Parallel tests
+        uses: cypress-io/github-action@v2
+        if: always()
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+
+      # - name: Registering External Agent in Cluster Mode
+      #   if: always()
+      #   run: |
+      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
+      #     sudo apt-get install expect
+      #     chmod 755 litmus/litmusctl-register.sh
+      #     litmus/litmusctl-register.sh "$URL" 1
+
+      # TODO: Additional Tests will be added from here
+
+      - name: Portal Cleanup
         if: always()
         run: |
-          kubectl config use-context kind-Portal-Agent
-          kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
-          kubectl config use-context kind-External-Agent
-          sudo apt-get install expect
-          chmod 755 litmusctl/litmusctl.sh
-          litmusctl/litmusctl.sh "http://localhost:3001" 1
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
+          chmod 755 ./litmus/uninstall-portal.sh
+          ./litmus/uninstall-portal.sh
+        env:
+          PORTAL_VERSION: "ci"
 
-      # TODO: Additional Tests wrt External Agent will be added from here
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: Cypress/cypress/screenshots
 
-      #Deleting both clusters
-      - name: Deleting All kind clusters
+  Namespaced-Scope-Mode:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 1st Cluster"
+        with:
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: --agents 3
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        run: |
+          chmod 755 ./litmus/install-portal-namespaced.sh
+          ./litmus/install-portal-namespaced.sh
+        env:
+          PORTAL_VERSION: "ci"
+          LOAD_BALANCER: "false"
+          PORTAL_NAMESPACE: "scope"
+
+      - uses: AbsaOSS/k3d-action@v1.4.0
+        name: "Create 2nd Cluster"
+        with:
+          cluster-name: ${{ env.EXTERNAL_AGENT }}
+          args: --agents 3
+
+      - name: Configuring and Testing the Agent Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Installing LitmusCTL on Agent Cluster
+        run: |
+          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/litmusctl
+          litmusctl version
+
+      - name: Running basic tests (Login and Onboarding Tests)
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+
+      - name: Verifying the Control-plane components
+        run: |
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
+          chmod 755 ./litmus/control-plane-components-check.sh
+          ./litmus/control-plane-components-check.sh
+        env:
+          LITMUS_PORTAL_NAMESPACE: "scope"
+
+      - name: Running Parallel tests
+        uses: cypress-io/github-action@v2
+        if: always()
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Parallel_Tests/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+
+      # - name: Registering External Agent in Cluster Mode
+      #   if: always()
+      #   run: |
+      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
+      #     sudo apt-get install expect
+      #     chmod 755 litmus/litmusctl-register.sh
+      #     litmus/litmusctl-register.sh "http://localhost:3001" 1
+
+      # TODO: Additional Tests will be added from here
+
+      - name: Portal Cleanup
         if: always()
         run: |
-          kind delete cluster --name=Portal-Agent
-          kind delete cluster --name=External-Agent
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
+          chmod 755 ./litmus/uninstall-portal-namespaced.sh
+          ./litmus/uninstall-portal-namespaced.sh
+        env:
+          PORTAL_VERSION: "ci"
+          PORTAL_NAMESPACE: "scope"
+
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: Cypress/cypress/screenshots
