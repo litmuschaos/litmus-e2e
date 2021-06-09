@@ -1,40 +1,38 @@
-
 ---
 name: Pod-Level-Pipeline
 on:
   workflow_dispatch:
     inputs:
       e2eTestImage:
-        default: 'litmuschaos/litmus-e2e:ci'
+        default: "litmuschaos/litmus-e2e:ci"
       goExperimentImage:
-        default: 'litmuschaos/go-runner:ci'
-      newLibImage:
-        default: 'litmuschaos/go-runner:ci'
-      oldLibImage:
-        default: 'litmuschaos/go-runner:latest'        
+        default: "litmuschaos/go-runner:ci"
+      libImage:
+        default: "litmuschaos/go-runner:ci"
       operatorImage:
-        default: 'litmuschaos/chaos-operator:ci'
+        default: "litmuschaos/chaos-operator:ci"
       runnerImage:
-        default: 'litmuschaos/chaos-runner:ci'
+        default: "litmuschaos/chaos-runner:ci"
+      expTunnableNS:
+        default: "experiments-tunnable"
       chaosNamespace:
-        default: 'litmus'
+        default: "litmus"
       imagePullPolicy:
-        default: 'Always'
+        default: "Always"
       experimentImagePullPolicy:
-        default: 'Always'
-      updateWebsite: 
-        default: 'false'
+        default: "Always"
+      updateWebsite:
+        default: "false"
 
 defaults:
   run:
-    working-directory: /go/src   
+    working-directory: /go/src
 
 jobs:
-
-### Setup Litmus
+  ### Setup Litmus
 
   Setup_Litmus_Infra:
-    container: 
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
@@ -42,24 +40,24 @@ jobs:
         - /etc/kubernetes:/etc/kubernetes
       env:
         OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-        OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"        
+        OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
         RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
         IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted,pod-level]
+    runs-on: [self-hosted, pod-level]
     ## Changing the working directory to image path we provided
-    ## As the default path is repository checkout path.      
+    ## As the default path is repository checkout path.
     steps:
       - name: Litmus Infra Setup In Cluster-1
         run: |
           make build-litmus
-        
-### Setup App
+
+  ### Setup App
 
   Setup_App_Deployment:
-    needs:  Setup_Litmus_Infra
-    container: 
+    needs: Setup_Litmus_Infra
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
@@ -68,149 +66,156 @@ jobs:
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted,pod-level]   
+    runs-on: [self-hosted, pod-level]
     steps:
       - name: Deploy App In Cluster-1
-        run: make app-deploy        
+        run: make app-deploy
 
     ## TODO: Make use of app liveness check and aux app
-      # - name: Liveness In Cluster-1
-      #   if: ${{ always() }}
-      #   run: make liveness        
+    # - name: Liveness In Cluster-1
+    #   if: ${{ always() }}
+    #   run: make liveness
 
-      # - name: Auxiliary App In Cluster-1
-      #   if: ${{ always() }}
-      #   run: make auxiliary-app
+    # - name: Auxiliary App In Cluster-1
+    #   if: ${{ always() }}
+    #   run: make auxiliary-app
 
-### Runing Pod Level Tests        
+  ### Runing Pod Level Tests
 
   Pod_Level_Test:
     needs: Setup_App_Deployment
     if: always()
-    container: 
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws        
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"        
-        NEW_LIB_IMAGE: "${{ github.event.inputs.newLibImage }}" 
-        OLD_LIB_IMAGE: "${{ github.event.inputs.oldLibImage }}"                
+        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+        LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
         CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted,pod-level]   
+    runs-on: [self-hosted, pod-level]
     steps:
-      - name: TCID-EC2-GENERIC-APP-POD-DELETE      
+      - name: TCID-EC2-GENERIC-APP-POD-DELETE
         run: make pod-delete
 
       - name: TCID-EC2-GENERIC-APP-CONTAINER-KILL
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make container-kill
 
       - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make pod-cpu-hog
 
       - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make pod-memory-hog
 
       - name: TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make pod-network-corruption
 
       - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY
-        if: ${{ always() }}        
-        run: make pod-network-latency     
+        if: ${{ always() }}
+        run: make pod-network-latency
 
       - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS
-        if: ${{ always() }}        
-        run: make pod-network-loss 
+        if: ${{ always() }}
+        run: make pod-network-loss
 
       - name: TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make pod-network-duplication
 
-#       - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
-#         if: ${{ always() }}        
-#         run: make pod-io-stress          
+      #       - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
+      #         if: ${{ always() }}
+      #         run: make pod-io-stress
 
       - name: TCID-EC2-GENERIC-APP-DISK-FILL
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make disk-fill
-        
-### Runing Experiment Tunables        
+
+  ### Runing Experiment Tunables
 
   Experiment_Tunables:
-    needs: Pod_Level_Test
+    needs: Setup_Litmus_Infra
     if: always()
-    container: 
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws        
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"        
-        NEW_LIB_IMAGE: "${{ github.event.inputs.newLibImage }}" 
-        OLD_LIB_IMAGE: "${{ github.event.inputs.oldLibImage }}"                
+        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+        LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
-        CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
+        APP_NS: "${{ github.event.inputs.expTunnableNS }}"
+        APP_LABEL: "app=nginx"
         UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted,pod-level]   
+    runs-on: [self-hosted, pod-level]
     steps:
-      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL      
+      - name: Create Namespace and deploy Application
+        run: |
+          kubectl create ns ${{ env.CHAOS_NAMESPACE }}
+          kubectl create deploy nginx --image=nginx -n ${{ env.CHAOS_NAMESPACE }}
+          kubectl wait --for=condition=Ready pods --all --namespace ${{ env.CHAOS_NAMESPACE }} --timeout=90s
+
+      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
+        if: ${{ always() }}
         run: make pod-affected-perc-ton-parallel
 
       - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
-        if: ${{ always() }}        
+        if: ${{ always() }}
         run: make pod-affected-perc-ton-series
-        
+
       - name: TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY
-        if: ${{ always() }}        
-        run: make multiple-app-deploy        
-        
-### App Cleanup
+        if: ${{ always() }}
+        run: make multiple-app-deploy
+
+  ### App Cleanup
 
   App_Cleanup:
     needs: Experiment_Tunables
     if: always()
-    container: 
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws        
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted,pod-level]    
+    runs-on: [self-hosted, pod-level]
     steps:
-      - name: Application Cleanup      
+      - name: Application Cleanup
         run: make app-cleanup
 
-### Litmus Cleanup 
+  ### Litmus Cleanup
 
   Litmus_Cleanup:
     needs: App_Cleanup
     if: always()
-    container: 
+    container:
       image: "${{ github.event.inputs.e2eTestImage }}"
       volumes:
         - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws        
+        - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
         KUBECONFIG: /root/.kube/config
-        POD_LEVEL: "true"   
+        POD_LEVEL: "true"
 
-    runs-on: [self-hosted,pod-level]      
+    runs-on: [self-hosted, pod-level]
     steps:
-      - name: Litmus Cleanup      
+      - name: Litmus Cleanup
         run: make litmus-cleanup

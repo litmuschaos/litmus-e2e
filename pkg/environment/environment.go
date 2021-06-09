@@ -26,7 +26,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.NewExperimentName = Getenv("NEW_EXPERIMENT_NAME", expName)
 	testDetails.Delay, _ = strconv.Atoi(Getenv("DELAY", "5"))
 	testDetails.Duration, _ = strconv.Atoi(Getenv("DURATION", "90"))
-	testDetails.FillPercentage, _ = strconv.Atoi(Getenv("FILL_PERCENTAGE", "80"))
+	testDetails.FillPercentage, _ = strconv.Atoi(Getenv("FILL_PERCENTAGE", "20"))
 	testDetails.CPUKillCommand = Getenv("CPU_KILL_COMMAND", "kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
 	testDetails.MemoryKillCommand = Getenv("MEMORY_KILL_COMMAND", "kill -9 $(ps afx | grep \"[dd] if /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
 	testDetails.InstanceID = Getenv("INSTANCE_ID", "i-0ce7b2857f08c85d0")
