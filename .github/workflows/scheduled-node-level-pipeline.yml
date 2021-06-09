@@ -9,7 +9,6 @@ defaults:
     working-directory: /go/src
 
 jobs:
-
   ### Setup Litmus
   Setup_Litmus_Infra:
     container:
@@ -114,10 +113,6 @@ jobs:
     steps:
       - name: TCID-EC2-GENERIC-INFRA-WITH-APP-INFO
         run: make with-app-info
-
-      - name: TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
-        if: always()
-        run: make env-from-secret-and-configmap
 
   ### App Cleanup
   App_Cleanup:

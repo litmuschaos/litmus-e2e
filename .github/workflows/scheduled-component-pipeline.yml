@@ -106,6 +106,10 @@ jobs:
         if: ${{ always() }}
         run: make target-pod
 
+      - name: TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
+        if: always()
+        run: make env-from-secret-and-configmap
+
   ### App Cleanup
 
   App_Cleanup:
