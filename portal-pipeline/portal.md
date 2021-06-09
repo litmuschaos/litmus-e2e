@@ -8,21 +8,18 @@ filename: portal
 
 **Latest Pipeline Status**
 
-[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/litmus-portal/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/litmus-portal)
+[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/Portal-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/Portal-pipeline.yml)
 
 # **Pipeline Jobs**
 
 ### **Auth,Teaming and User-Management Tests**
 
-- [TCID-EKS-Portal-GUI-AccountSettings](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/testcases/TCID-EKS-Portal-GUI-AccountSettings.md)
-- [TCID-EKS-Portal-GUI-Auth](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/testcases/TCID-EKS-Portal-GUI-Auth.md)
-- [TCID-EKS-Portal-GUI-Routes](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/testcases/TCID-EKS-Portal-GUI-Routes.md)
-- [TCID-EKS-Portal-GUI-Teaming](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/testcases/TCID-EKS-Portal-GUI-Teaming.md)
-- [TCID-EKS-Portal-GUI-User-Management](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/testcases/TCID-EKS-Portal-GUI-User-Management.md)
+- [TCID-EKS-Portal-GUI-AccountSettings](https://github.com/Jonsy13/litmus-e2e/blob/gh-pages/testcases/TCID-EKS-Portal-GUI-AccountSettings.md)
+- [TCID-EKS-Portal-GUI-Auth](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/gh-pages/TCID-EKS-Portal-GUI-Auth.md)
+- [TCID-EKS-Portal-GUI-Routes](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/gh-pages/TCID-EKS-Portal-GUI-Routes.md)
+- [TCID-EKS-Portal-GUI-Teaming](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/gh-pages/TCID-EKS-Portal-GUI-Teaming.md)
+- [TCID-EKS-Portal-GUI-User-Management](https://github.com/Jonsy13/litmus-e2e/blob/litmus-portal/gh-pages/TCID-EKS-Portal-GUI-User-Management.md)
 
-# **Pipeline Runs**
-
-<a href="pipeline-runs/https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/litmus-portal"><img alt="pipeline status" src="https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/litmus-portal/pipeline.svg" /></a>
 
 ## Daily Nightly Builds
 

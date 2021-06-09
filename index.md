@@ -2,19 +2,18 @@
 title: Home
 layout: template
 filename: index
---- 
-
+---
 
 # **LitmusChaos E2E**
 
 LitmusChaos is a toolset to do [cloud-native chaos engineering](https://dev.to/umamukkara/chaos-engineering-for-cloud-native-systems-2fjn). It takes a cloud-native approach to create, manage and monitor chaos. Chaos is orchestrated using the Kubernetes Custom Resource Definitions (CRDs) which are called ChaosEngine, ChaosExperiment and ChaosResult. For a higher performance we need these components to work accurately according to our hypothesis between every upgrade and updates which brings the need of <b>LitmusChaos E2E</b>.<br>
 The Litmus E2E is broadly divided in three categories Generic, OpenEBS. LitmusPortal managed by respective branch in litmus-e2e repository.
 
-## **Branch Details**
+## **Pipeline Details**
 
 <table>
   <tr>
-    <th>Branch</th>
+    <th>Pipeline</th>
     <th>Description</th>
   </tr>
   <tr>
@@ -80,9 +79,11 @@ The Generic pipeline covers the test for litmus generic experiments which includ
 </table>
 
 # **OpenEBS E2E Pipeline**
+
 It contains the openebs e2e BDDs for OpenEBS experiments. A stateful application (percona) is deployed using cstor (OpenEBS Storage class). The chaos is performed on the different OpenEBS components with the same application.At the end, the application, litmus, and OpenEBS all are uninstalled gracefully.
 
 ## **Different Stages:**
+
 <table style="width:100%">
   <tr>
     <th>Stages</th>
@@ -119,40 +120,42 @@ It contains the openebs e2e BDDs for OpenEBS experiments. A stateful application
 </table>
 
 # **Litmus Portal E2E Pipeline**
-It contains litmus-portal BDD tests using Cypress. Currently, it contains Cypress E2E tests for functionalities like login, Welcome Modal, User management and Browse Schedules.
+
+It contains litmus-portal BDD tests using Cypress and Bash Scripts. Currently, it contains Cypress E2E tests for functionalities like login, Welcome Modal, User management, Workflow Scheduling and Browse Workflows/Schedules.
 
 ## **Different Stages:**
+
 <table style="width:100%">
   <tr>
     <th>Stages</th>
     <th>Description</th>
   </tr>
   <tr>
-    <td>Setup</td>
-    <td>This stage is used for connecting to the OnPrem cluster which is a 4 node cluster(1 master and 3 worker) and clone the litmus-e2e folder.</td>
+    <td>Cluster-Setup</td>
+    <td>This Step is used to create a Testing cluster (For Nightly builds, 3-node K3S Cluster) for deploying Litmus-Portal.</td>
   </tr>
   <tr>
     <td>Portal-Setup</td>
-    <td>This stage is used for deploying the litmus-portal on OnPrem cluster and also verifies if all pods and services are ready or not.</td>
+    <td>This Step is used to deploy litmus-portal on created cluster and verifies all control-plane resources are configured correctly and are in Ready State.</td>
   </tr>
   <tr>
-    <td>Test-Setup</td>
-    <td>This stage is used for installing Cypress for first time and warming up the cached dependencies of Cypress.</td>
+    <td>Litmus-Portal Authentication Tests</td>
+    <td>This step is used for testing Portal Login/Onboarding Features.</td>
   </tr>
   <tr>
-    <td>Pre-Test-Setup</td>
-    <td>This stage is used for doing pre-test checkups such as login and welcome-modal functionalities.</td>
+    <td>Execution plane components check</td>
+    <td>This step is used for verifying all execution plane components created after Portal login such as Workflow Controller, Subscriber and Event-tracker, etc.</td>
   </tr>
   <tr>
-    <td>Cypress-Test</td>
-    <td>This stage is used for testing different functionalities of litmus-portal such as User-management, Creation of workflows and browsing of workflows,etc</td>
+    <td>Post Login features Tests</td>
+    <td>This step is used for testing post login features such as Workflow Scheduling, Teaming, Account Settings and Browse Workflows, etc.</td>
   </tr>
   <tr>
     <td>Portal-Cleanup</td>
-    <td>This stage is used for deleting the all resources of litmus-portal from the cluster.</td>
+    <td>This stage is used for uninstalling litmus-portal and verifying the uninstallation.</td>
   </tr>
   <tr>
     <td>Cluster Cleanup</td>
-    <td>In this stage, the litmus-e2e repo is removed and cluster gets disconnected.</td>
+    <td>In this stage, The Cluster created for testing is destroyed and artifacts (Screenshots of failed Cypress tests) are saved for later use.</td>
   </tr>
 </table>
