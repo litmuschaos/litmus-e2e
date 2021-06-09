@@ -3,7 +3,6 @@
 source litmus/utils.sh
 
 # path=$(pwd)
-default_portal_port=9091
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
 
@@ -44,21 +43,9 @@ verify_deployment_image $version litmusportal-frontend litmus
 verify_deployment_image $version litmusportal-server litmus
 
 if [[ "$loadBalancer" == "true" ]];then
-    # # Getting The LoadBalancer IP for accessing Litmus-Portal
-    kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus
-
+    kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n litmus
     wait_for_loadbalancer litmusportal-frontend-service litmus
-
-    IP=$(eval "kubectl get svc litmusportal-frontend-service -n litmus --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
-
-    URL=http://$IP:$default_portal_port
-
-    echo $URL
-
-    # Waiting for URL to be active
-    wait_for_url $URL
-
-    echo "URL to access Litmus-Portal: $URL"
+    echo "Backend LoadBalancer service is active now"
 
 else
     # kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
