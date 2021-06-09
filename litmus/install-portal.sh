@@ -47,11 +47,11 @@ if [[ "$loadBalancer" == "true" ]];then
     wait_for_loadbalancer litmusportal-frontend-service litmus
     echo "Backend LoadBalancer service is active now"
 
-else
-    # kubectl port-forward svc/litmusportal-frontend-service 3001:9091 -n litmus &
-    export NODE_NAME=$(kubectl -n litmus get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
-    export NODE_IP=$(kubectl -n litmus get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
-    export NODE_PORT=$(kubectl -n litmus get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
-    export AccessURL="http://$NODE_IP:$NODE_PORT"
-    echo "URL=$AccessURL" >> $GITHUB_ENV
 fi
+
+export NODE_NAME=$(kubectl -n litmus get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+export NODE_IP=$(kubectl -n litmus get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+export NODE_PORT=$(kubectl -n litmus get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+export AccessURL="http://$NODE_IP:$NODE_PORT"
+echo "URL=$AccessURL" >> $GITHUB_ENV
+
