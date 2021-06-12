@@ -165,12 +165,11 @@ jobs:
     steps:
       - name: Create Namespace and deploy Application
         run: |
-          kubectl create ns ${{ env.CHAOS_NAMESPACE }}
-          kubectl create deploy nginx --image=nginx -n ${{ env.CHAOS_NAMESPACE }}
-          kubectl wait --for=condition=Ready pods --all --namespace ${{ env.CHAOS_NAMESPACE }} --timeout=90s
+          kubectl create ns ${CHAOS_NAMESPACE}
+          kubectl create deploy nginx --image=nginx -n ${CHAOS_NAMESPACE}
+          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
 
       - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
-        if: ${{ always() }}
         run: make pod-affected-perc-ton-parallel
 
       - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES

@@ -66,7 +66,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			klog.Infof("[PodDeleteChaos]: " + out.String())
 
 			// TODO: Wait dynamically for runner pod
-			time.Sleep(1*time.Second)
+			time.Sleep(3 * time.Second)
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
