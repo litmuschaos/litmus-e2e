@@ -168,6 +168,7 @@ jobs:
           kubectl create ns ${CHAOS_NAMESPACE}
           kubectl create deploy nginx --image=nginx -n ${CHAOS_NAMESPACE}
           kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
+          kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
         run: make pod-affected-perc-ton-parallel

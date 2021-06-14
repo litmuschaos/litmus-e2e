@@ -15,6 +15,9 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 	deployment := &appv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: deploymentName,
+			Labels: map[string]string{
+				"run": deploymentName,
+			},
 		},
 		Spec: appv1.DeploymentSpec{
 			Replicas: Int32Ptr(1),
