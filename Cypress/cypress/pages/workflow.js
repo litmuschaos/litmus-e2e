@@ -41,7 +41,7 @@ Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
   } else if (option == 2) {
     cy.get("[data-cy=myHubsRadioButton] :radio").check();
     cy.get("[data-cy=myHubsRadioButton] :radio").should("be.checked");
-    cy.get("[data-cy=myHubDropDown]").click();
+    cy.get("[data-cy=myHubDropDown]").eq(1).click();
     cy.get("[data-cy=hubOption]").eq(subOption).click();
   } else if (option == 3) {
     cy.get("[data-cy=uploadYAMLRadioButton] :radio").check();

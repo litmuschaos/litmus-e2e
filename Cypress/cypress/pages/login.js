@@ -23,8 +23,7 @@ Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
     .then((res) => {
       cy.setCookie("token", res.access_token);
     });
-  cy.location().then((loc) => {        
-    console.log(loc.pathname)
+  cy.location().then((loc) => {
     loc.pathname === '/getStarted' ? cy.getStarted('litmus') : null;
   })
   cy.wait(500)

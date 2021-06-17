@@ -7,13 +7,14 @@
 import * as user from "../../fixtures/Users.json";
 import * as workflows from "../../fixtures/Workflows.json";
 
-const setup = () => {    
+export const setup = (doWaitForCluster) => {    
     cy.requestLogin(user.AdminName, user.AdminPassword);    
-    cy.waitForCluster("Self-Agent");    
+    if(doWaitForCluster){
+        cy.waitForCluster("Self-Agent")
+    }
 }
 
 const visitChooseWorkflowPage = () => {
-    setup();
     cy.visit('/create-workflow');
     cy.chooseAgent(0);
     cy.get("[data-cy=ControlButtons] Button").click();
@@ -40,10 +41,27 @@ export const loginSmokeTest = () => {
     cy.log("Attempting Login With Correct Credentials");
     cy.login(user.AdminName, user.AdminPassword);
     cy.intercept({
-        url: 'http://localhost:8080/query',
+        url: Cypress.env("apiURL") + '/query',
     }).as('login');
     cy.wait('@login').its('response.statusCode').should('eq',200)
     cy.log("Login Successfully");    
+}
+
+const finishingSteps = () => {    
+    // Click Next on Reliability Score Page
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();    
+    // Click Next on Schedule Page
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    // Click Finish on Verify & Commit Page
+    cy.verifyDetails(
+      workflows.nonRecurringworkflowName,
+      workflows.nonRecurringworkflowDescription,
+      0
+    );
+    cy.get("[data-cy=ControlButtons] Button").eq(0).click();
+    // Click Go to Workflow on Modal
+    cy.get("[data-cy=FinishModal]").should("be.visible");
+    cy.get("[data-cy=GoToWorkflowButton]").click();
 }
 
 /**
@@ -56,7 +74,7 @@ export const loginSmokeTest = () => {
 const schedule = () => {
     // Wait for GraphQL to fetch experiment
     cy.intercept({
-        url: 'http://localhost:8080/query'
+        url: Cypress.env("apiURL") + '/query'
     }).as('getHubExperiment');
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
@@ -74,29 +92,35 @@ const schedule = () => {
     cy.wait('@PredefinedExperimentYAMLWait').its('response.statusCode').should('eq',200)
     // Click Next on Tune Workflow Page
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    // Click Next on Reliability Score Page
-    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    // Click Next on Schedule Page
-    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    // Click Finish on Verify & Commit Page
-    cy.verifyDetails(
-      workflows.nonRecurringworkflowName,
-      workflows.nonRecurringworkflowDescription,
-      0
-    );
-    cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-    // Click Go to Workflow on Modal
-    cy.get("[data-cy=FinishModal]").should("be.visible");
-    cy.get("[data-cy=GoToWorkflowButton]").click();
+    finishingSteps();
 }
 
-const schedulePreDefinedWorkflow = () => {
+export const preDefinedWorkflowSmokeTest = () => {
+    cy.clearCookie("token");
+    cy.requestLogin(user.AdminName, user.AdminPassword);
+    visitChooseWorkflowPage();
     cy.chooseWorkflow(0,0); // Choosing Podtato Head Predefined Workflow
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     schedule();
 }
 
-export const workflowSmokeTest = () => {
+export const customWorkflowSmokeTest = () => {
+    cy.clearCookie("token");
+    cy.requestLogin(user.AdminName, user.AdminPassword);
     visitChooseWorkflowPage();
-    schedulePreDefinedWorkflow();
+    cy.chooseWorkflow(2, 0); // Choosing Podtato Head Predefined Workflow
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    cy.configureWorkflowSettings(
+      workflows.nonRecurringworkflowName,
+      workflows.nonRecurringworkflowDescription,
+      0
+    );
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    cy.get("[data-cy=addExperimentButton]").click();
+    cy.get("input").clear().type("container-kill");
+    cy.get("[data-cy=ExperimentList]").should("be.visible");    
+    cy.get("[data-cy=ExperimentList] :radio").check();
+    cy.get("[data-cy=AddExperimentDoneButton]").click();
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    // finishingSteps()
 }
