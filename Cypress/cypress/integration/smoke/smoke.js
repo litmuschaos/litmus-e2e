@@ -7,8 +7,7 @@
 import * as user from "../../fixtures/Users.json";
 import * as workflows from "../../fixtures/Workflows.json";
 
-export const setup = (doWaitForCluster) => {    
-    cy.requestLogin(user.AdminName, user.AdminPassword);    
+export const setup = (doWaitForCluster) => {          
     if(doWaitForCluster){
         cy.waitForCluster("Self-Agent")
     }
@@ -47,7 +46,7 @@ export const loginSmokeTest = () => {
     cy.log("Login Successfully");    
 }
 
-const finishingSteps = () => {    
+const finishingSteps = () => {
     // Click Next on Reliability Score Page
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();    
     // Click Next on Schedule Page
@@ -71,44 +70,41 @@ const finishingSteps = () => {
  * Scenario 3 => Schedule a Template 
  */
 
-const schedule = () => {
+const schedule = (isCustom) => {
     // Wait for GraphQL to fetch experiment
-    cy.intercept({
+    !isCustom ? cy.intercept({
         url: Cypress.env("apiURL") + '/query'
-    }).as('getHubExperiment');
+    }).as('getHubExperiment') : null;
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
       workflows.nonRecurringworkflowDescription,
       0
     );
-    cy.wait('@getHubExperiment').its('response.statusCode').should('eq',200)
+    !isCustom ? cy.wait('@getHubExperiment').its('response.statusCode').should('eq',200) : null;
     // Click Next on Workflow Settings Page
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     // Wait for GraphQL to fetch Predefined YAML
-    cy.GraphqlWait(
+    !isCustom ? cy.GraphqlWait(
       "GetPredefinedExperimentYAML",
       "PredefinedExperimentYAMLWait"
-    );
-    cy.wait('@PredefinedExperimentYAMLWait').its('response.statusCode').should('eq',200)
+    ) : null;
+    !isCustom ? cy.wait('@PredefinedExperimentYAMLWait').its('response.statusCode').should('eq',200) : null;
+    cy.wait(1000); // Wait for dagre animation to finish
     // Click Next on Tune Workflow Page
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     finishingSteps();
 }
 
-export const preDefinedWorkflowSmokeTest = () => {
-    cy.clearCookie("token");
-    cy.requestLogin(user.AdminName, user.AdminPassword);
+export const preDefinedWorkflowSmokeTest = () => {    
     visitChooseWorkflowPage();
     cy.chooseWorkflow(0,0); // Choosing Podtato Head Predefined Workflow
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     schedule();
 }
 
-export const customWorkflowSmokeTest = () => {
-    cy.clearCookie("token");
-    cy.requestLogin(user.AdminName, user.AdminPassword);
+export const customWorkflowSmokeTest = () => {    
     visitChooseWorkflowPage();
-    cy.chooseWorkflow(2, 0); // Choosing Podtato Head Predefined Workflow
+    cy.chooseWorkflow(2, 0); // Choosing ChaosHub
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
@@ -121,6 +117,16 @@ export const customWorkflowSmokeTest = () => {
     cy.get("[data-cy=ExperimentList]").should("be.visible");    
     cy.get("[data-cy=ExperimentList] :radio").check();
     cy.get("[data-cy=AddExperimentDoneButton]").click();
+    cy.wait(1000); // Wait for dagre animation to finish
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    // finishingSteps()
+    finishingSteps()
+}
+
+export const uploadWorkflowSmokeTest = () => {
+    visitChooseWorkflowPage();
+    cy.chooseWorkflow(3, ""); // Choosing Upload Workflow Radio Button
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    schedule({
+        isCustom: true
+    });
 }

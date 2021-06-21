@@ -3,7 +3,7 @@
  * It will go through the sub smoke tests written in smoke.js
  */
 
-import { customWorkflowSmokeTest, loginSmokeTest, preDefinedWorkflowSmokeTest, setup } from './smoke';
+import { customWorkflowSmokeTest, loginSmokeTest, preDefinedWorkflowSmokeTest, setup, uploadWorkflowSmokeTest } from './smoke';
 
 it('Smoke Test Login Page', () => {
     loginSmokeTest();
@@ -11,8 +11,8 @@ it('Smoke Test Login Page', () => {
 
 describe("Smoke Test Workflow V2", () => {
     
-    // Logs in and Checks if cluster is present or not
-    it("Setup the Portal", () => {
+    // Checks if cluster is present or not
+    it("Checks for Agent in the Portal", () => {
         setup({
             doWaitForCluster: true
         });
@@ -26,5 +26,10 @@ describe("Smoke Test Workflow V2", () => {
     // Schedules a Custom Workflow
     it('Custom Workflow Scheduling', () => {
         customWorkflowSmokeTest();
+    })
+
+    // Upload and Schedules a Custom Workflow
+    it('Uploaded Workflow Scheduling', () => {
+        uploadWorkflowSmokeTest();
     })
 })
