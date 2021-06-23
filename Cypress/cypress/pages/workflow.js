@@ -35,8 +35,9 @@ Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
       .children()
       .eq(subOption)
       .within(() => {
-        cy.get("[type=radio]").check();
-        cy.get("[type-radio]").should("be.checked");
+        // cy.get("[type=radio]").check();
+        // cy.get("[type-radio]").should("be.checked");
+        cy.get("[type=radio]").click();
       });
   } else if (option == 2) {
     cy.get("[data-cy=myHubsRadioButton] :radio").check();

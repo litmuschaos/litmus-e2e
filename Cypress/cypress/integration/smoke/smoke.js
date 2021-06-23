@@ -122,6 +122,23 @@ export const customWorkflowSmokeTest = () => {
     finishingSteps()
 }
 
+export const templateWorkflowSmokeTest = () => {
+    cy.visit('/workflows')
+    cy.get("[role=tab]").eq(1).click();
+    cy.get("[data-cy=browseScheduleOptions]").click();
+    cy.get("[data-cy=saveTemplate]").click();
+    cy.get("[data-testid=inputField]").eq(0).clear().type(workflows.nonRecurringworkflowName);
+    cy.get("[data-testid=inputField]").eq(1).clear().type(workflows.nonRecurringworkflowDescription);
+    cy.get("[data-cy=saveTemplateButton]").click();
+    visitChooseWorkflowPage();
+    cy.chooseWorkflow(1, 0); // Choosing Template Workflow Radio Button
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    schedule({
+        isCustom: true
+    });
+
+}
+
 export const uploadWorkflowSmokeTest = () => {
     visitChooseWorkflowPage();
     cy.chooseWorkflow(3, ""); // Choosing Upload Workflow Radio Button

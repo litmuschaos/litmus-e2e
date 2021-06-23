@@ -3,7 +3,7 @@
  * It will go through the sub smoke tests written in smoke.js
  */
 
-import { customWorkflowSmokeTest, loginSmokeTest, preDefinedWorkflowSmokeTest, setup, uploadWorkflowSmokeTest } from './smoke';
+import { customWorkflowSmokeTest, loginSmokeTest, preDefinedWorkflowSmokeTest, templateWorkflowSmokeTest, uploadWorkflowSmokeTest } from './smoke';
 
 it('Smoke Test Login Page', () => {
     loginSmokeTest();
@@ -21,6 +21,11 @@ describe("Smoke Test Workflow V2", () => {
     // Schedules a Predefined Workflow
     it('Predefined Workflow Scheduling', () => {
         preDefinedWorkflowSmokeTest();
+    })
+
+    // Schedules a Custom Workflow from Template
+    it('Template Workflow Scheduling', () => {
+        templateWorkflowSmokeTest();
     })
 
     // Schedules a Custom Workflow
