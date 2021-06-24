@@ -34,6 +34,9 @@ Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 	} else if (option == 1) {
 		cy.get("[data-cy=templateWorkflowsRadioButton] :radio").check();
+		cy.get("[data-cy=templateWorkflowsRadioButton] :radio").should(
+			"be.checked"
+		);
 		cy.get("[data-cy=templateWorkflowsRadioGroup]")
 			.children()
 			.eq(subOption)
