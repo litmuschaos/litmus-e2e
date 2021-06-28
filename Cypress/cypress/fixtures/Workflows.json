@@ -4,5 +4,6 @@
 	"recurringWorkflowName": "recurringworkflow2",
 	"recurringWorkflowDescription": "recurringworkflowdescription2",
 	"customWorkflow": "custom-workflow-1",
-	"customWorkflowDescription": "custom-workflow-description-1"
+	"customWorkflowDescription": "custom-workflow-description-1",
+	"extraLargeName": "abcdefghijklmnopqrstuvwxyz-abcdefghijklmnopqrstuvwxyzz-"
 }

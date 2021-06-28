@@ -90,9 +90,12 @@ Cypress.Commands.add("rScoreEditor", (value) => {
 
 /// ************************** Workflow Schedule Selection Page ***********
 
-Cypress.Commands.add("selectSchedule", (option) => {
+Cypress.Commands.add("selectSchedule", (option, subOption) => {
 	cy.get("[data-cy=ScheduleOptions]").should("be.visible");
 	cy.get("[type=radio]").eq(option).check();
+
+	if(option === 1)
+		cy.get("[data-cy=RecurringSchedule] :radio").eq(subOption).check();
 });
 
 /// ************************** Verify and Commit Page **********************

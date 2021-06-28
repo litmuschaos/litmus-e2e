@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
-import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
+import * as workflows from "../../../fixtures/Workflows.json";
 
 describe("Testing the workflow creation wizard using Templates", () => {
 	before("Clearing the Cookies and deleting the Cookies", () => {
@@ -13,7 +13,21 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.chooseAgent(0);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(0, 0);
+		
+		// Providing a name of 55 characters which should fail
+		// Maximum allowed length is 54 characters
+		cy.configureWorkflowSettings(
+			workflows.extraLargeName,
+			workflows.nonRecurringworkflowDescription,
+			0
+		);
 
+		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+
+		// Check if Alert exists
+		cy.get("[role=alert]").should("be.visible");
+
+		// Provide the correct details
 		cy.configureWorkflowSettings(
 			workflows.nonRecurringworkflowName,
 			workflows.nonRecurringworkflowDescription,
