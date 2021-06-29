@@ -71,12 +71,10 @@ jobs:
       - name: Verifying the Control-plane components
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
-          chmod 755 ./litmus/control-plane-components-check.sh
-          ./litmus/control-plane-components-check.sh
-        env:
-          LITMUS_PORTAL_NAMESPACE: "litmus"
+          source ./litmus/utils.sh
+          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} litmus
 
-      - name: Running Parallel tests
+      - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
         if: always()
         continue-on-error: false
@@ -137,7 +135,6 @@ jobs:
         env:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
-          PORTAL_NAMESPACE: "scope"
           LITMUS_PORTAL_NAMESPACE: "scope"
 
       - uses: AbsaOSS/k3d-action@v1.4.0
@@ -174,12 +171,10 @@ jobs:
       - name: Verifying the Control-plane components
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
-          chmod 755 ./litmus/control-plane-components-check.sh
-          ./litmus/control-plane-components-check.sh
-        env:
-          LITMUS_PORTAL_NAMESPACE: "scope"
+          source ./litmus/utils.sh
+          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} scope
 
-      - name: Running Parallel tests
+      - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
         if: always()
         continue-on-error: false

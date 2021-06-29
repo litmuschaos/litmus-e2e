@@ -24,13 +24,13 @@ describe("Checking functionality of Login Page", () => {
   it("Testing the only single input sign in [ Should not be possible ]", () => {
     cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse");
     cy.login(user.AdminName, " ");
-    cy.wait("@loginResponse").its("response.statusCode").should("eq", 401);
+    cy.wait("@loginResponse").its("response.statusCode").should("not.eq", 200);
     cy.contains("Wrong Credentials").should("be.visible");
     cy.url().should("include", "/login");
     cy.get("[data-cy=inputName] input").clear();
     cy.get("[data-cy=inputPassword] input").clear();
     cy.login(" ", user.AdminPassword);
-    cy.wait("@loginResponse").its("response.statusCode").should("eq", 401);
+    cy.wait("@loginResponse").its("response.statusCode").should("not.eq", 200);
     cy.contains("Wrong Credentials").should("be.visible");
   });
 
@@ -38,7 +38,7 @@ describe("Checking functionality of Login Page", () => {
     cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse");
     cy.login("john", "1234");
     cy.url().should("include", "/login");
-    cy.wait("@loginResponse").its("response.statusCode").should("eq", 401);
+    cy.wait("@loginResponse").its("response.statusCode").should("not.eq", 200);
     cy.contains("Wrong Credentials").should("be.visible");
   });
 
@@ -46,7 +46,7 @@ describe("Checking functionality of Login Page", () => {
     cy.intercept("POST", Cypress.env("authURL") + "/login").as("loginResponse");
     cy.login(" ", " ");
     cy.url().should("include", "/login");
-    cy.wait("@loginResponse").its("response.statusCode").should("eq", 401);
+    cy.wait("@loginResponse").its("response.statusCode").should("not.eq", 200);
     cy.contains("Wrong Credentials").should("be.visible");
   });
 
