@@ -2,8 +2,8 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
-describe("Testing the workflow creation wizard using PreDefined Experiments", () => {
-	before("Clearing the Cookies and deleting the Cookies", () => {
+describe("Testing the workflow creation wizard using Custom Experiments from Hub", () => {
+	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
 		cy.waitForCluster("Self-Agent");
 		cy.visit("/create-workflow");
@@ -40,10 +40,17 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		 */
 		cy.get("[data-cy=addExperimentButton]").should("be.visible");
 		cy.get("[data-cy=addExperimentButton]").click();
+		/**
+		 * Waiting for the add experiment modal to open
+		 */
 		cy.wait(1000);
 		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("pod");
 		cy.get("[data-cy=ExperimentList] :radio").eq(0).check();
 		cy.get("[data-cy=AddExperimentDoneButton]").click();
+		/**
+		 * Waiting for the dagre animation to complete after closing the
+		 * add experiment modal
+		 */
 		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
