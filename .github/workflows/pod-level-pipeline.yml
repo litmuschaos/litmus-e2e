@@ -166,7 +166,7 @@ jobs:
       - name: Create Namespace and deploy Application
         run: |
           kubectl create ns ${CHAOS_NAMESPACE}
-          kubectl create deploy nginx --image=nginx -n ${CHAOS_NAMESPACE}
+          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
           kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
@@ -180,6 +180,12 @@ jobs:
       - name: TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY
         if: ${{ always() }}
         run: make multiple-app-deploy
+
+      - name: Experiment Tunables Cleanup
+        if: ${{ always() }}
+        run: |
+          kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
+          kubectl delete ns ${CHAOS_NAMESPACE}
 
   ### App Cleanup
 
