@@ -73,11 +73,15 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Verifying the Control-plane components
+      - name: Verifying the execution-plane components
+        if: always()
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} litmus
+          verify_all_components ${COMPONENTS} litmus
+          wait_for_pods litmus 720
+        env:
+          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -140,7 +144,7 @@ jobs:
         env:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
-          PORTAL_NAMESPACE: "scope"
+          LITMUS_PORTAL_NAMESPACE: "scope"
 
       - uses: AbsaOSS/k3d-action@v1.4.0
         name: "Create 2nd Cluster"
@@ -173,11 +177,15 @@ jobs:
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Verifying the Control-plane components
+      - name: Verifying the execution-plane components
+        if: always()
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${{ secrets.CONTROL_PLANE_COMPONENTS }} litmus
+          verify_all_components ${COMPONENTS} scope
+          wait_for_pods scope 720
+        env:
+          COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
