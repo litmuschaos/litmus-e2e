@@ -85,7 +85,7 @@ describe("Testing CRUD operation with MyHub", () => {
 		cy.get("[data-cy=myHubAlert]").should("be.visible");
 	});
 
-	it("Update an existing MyHub details (Update operation)", () => {
+	it("Deleting a MyHub", () => {
 		cy.GraphqlWait("deleteMyHub", "deleteExisitingMyHub");
 		cy.get("[data-cy=myHubCardOption]").eq(1).click();
 		cy.get("[data-cy=myHubOptions]").should("be.visible");
