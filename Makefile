@@ -230,11 +230,11 @@ multiple-app-deploy:
 	@go test tests/multiple-app-deploy_test.go -v -count=1 -timeout=30m
 
 .PHONY: run-history
-multiple-app-deploy:
+run-history:
 	@echo "------------------------------------------------"
 	@echo "Running Run History Check"
 	@echo "------------------------------------------------"
-	@go test components/run-history-test.go -v -count=1					
+	@go test components/result/run-history-test.go -v -count=1					
 
 .PHONY: env-from-secret-and-configmap
 env-from-secret-and-configmap:

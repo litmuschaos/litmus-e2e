@@ -136,6 +136,7 @@ func GetUID(engineName, namespace string, clients environment.ClientSets) (strin
 	return string(chaosEngine.UID), nil
 }
 
+// GetRunHistoryStatus fetches the chaos result run history
 func GetRunHistoryStatus(testsDetails *types.TestDetails, clients environment.ClientSets) v1alpha1.HistoryDetails {
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {

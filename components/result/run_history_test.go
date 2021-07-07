@@ -25,7 +25,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 	// BDD TEST CASE 1
 	Context("Run history check for passed run", func() {
 
-		It("Should check for the run history of experiment when experiment passed once", func() {
+		It("Should check for the run history in the chaos result when experiment is passed", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -83,7 +83,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		})
 
 		// Unable to run with the same engine name, so consecutive run history check is not possible right now
-		It("Should check for the run history of experiment when experiment passed twice", func() {
+		It("Should check for the run history in the chaos result when experiment is passed", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -143,7 +143,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 	Context("Run history check for failed run", func() {
 
-		It("Should check for the run history of experiment when experiment failed once", func() {
+		It("Should check for the run history in the chaos result when experiment fails", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -205,7 +205,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		})
 
 		// Unable to run with the same engine name, so consecutive run history check is not possible right now
-		It("Should check for the run history of experiment when experiment failed twice", func() {
+		It("Should check for the run history in the chaos result when experiment fails", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -269,7 +269,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 	Context("Run history check for stopped run", func() {
 
-		It("Should check for the run history of experiment when experiment stopped once", func() {
+		It("Should check for the run history in the chaos result when experiment is aborted", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -337,7 +337,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 		})
 
 		// Unable to run with the same engine name, so consecutive run history check is not possible right now
-		It("Should check for the run history of experiment when experiment stopped twice", func() {
+		It("Should check for the run history in the chaos result when experiment is aborted", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}

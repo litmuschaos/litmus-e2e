@@ -6,6 +6,7 @@ import (
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -48,6 +49,7 @@ func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.Cli
 	return nil
 }
 
+// ChaosRunHistoryVerdict checks the chaos result run history according to the ChaosResultVerdict
 func ChaosRunHistoryVerdict(testsDetails *types.TestDetails, clients environment.ClientSets, previousRunHistory v1alpha1.HistoryDetails) error {
 
 	if err = WaitForChaosResultCompletion(testsDetails, clients); err != nil {
@@ -58,18 +60,29 @@ func ChaosRunHistoryVerdict(testsDetails *types.TestDetails, clients environment
 	if err != nil {
 		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
-	// log.Infof("Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
-	// log.Infof("Chaos Run history is: %v", chaosResult.Status.History)
-	// log.Infof("Previous Chaos Run history is: %v", previousRunHistory)
-	if string(chaosResult.Status.ExperimentStatus.Verdict) == "Pass" {
+
+	log.InfoWithValues("The chaos result previous run history is as follows", logrus.Fields{
+		"Passed Runs":  previousRunHistory.PassedRuns,
+		"Failed Runs":  previousRunHistory.FailedRuns,
+		"Stopped Runs": previousRunHistory.StoppedRuns,
+	})
+
+	log.InfoWithValues("The chaos result current run history is as follows", logrus.Fields{
+		"Passed Runs":  chaosResult.Status.History.PassedRuns,
+		"Failed Runs":  chaosResult.Status.History.FailedRuns,
+		"Stopped Runs": chaosResult.Status.History.StoppedRuns,
+	})
+
+	switch chaosResult.Status.ExperimentStatus.Verdict {
+	case "Pass":
 		if chaosResult.Status.History.PassedRuns != previousRunHistory.PassedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Passed Runs\"")
 		}
-	} else if string(chaosResult.Status.ExperimentStatus.Verdict) == "Fail" {
+	case "Fail":
 		if chaosResult.Status.History.FailedRuns != previousRunHistory.FailedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Failed Runs\"")
 		}
-	} else if string(chaosResult.Status.ExperimentStatus.Verdict) == "Stopped" {
+	case "Stopped":
 		if chaosResult.Status.History.StoppedRuns != previousRunHistory.StoppedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Stopped Runs\"")
 		}
