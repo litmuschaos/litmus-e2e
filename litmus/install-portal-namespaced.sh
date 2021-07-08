@@ -1,12 +1,9 @@
 #!/bin/bash
 
 source litmus/utils.sh
-# source utils.sh
 
-path=$(pwd)
 version=${PORTAL_VERSION}
 loadBalancer=${LOAD_BALANCER}
-LITMUS_PORTAL_NAMESPACE=${PORTAL_NAMESPACE}
 
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
@@ -21,20 +18,19 @@ cat ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 # Applying the manifest
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 
-# TODO: To be Removed
+echo -e "\n-------- Pods running in Portal namespace-----------\n"
 kubectl get pods -n ${LITMUS_PORTAL_NAMESPACE}
 
-echo "-------- Waiting for all pods to be ready-----------"
-# Waiting for pods to be ready (timeout - 180s)
+echo -e "\n-------- Waiting for all pods to be ready-----------\n"
+# Waiting for pods to be ready (timeout - 360s)
 wait_for_pods ${LITMUS_PORTAL_NAMESPACE} 360
 
-echo "------------- Verifying Namespace, Deployments, pods and Images for Litmus-Portal ------------------"
+echo -e "\n------------- Verifying Namespace, Deployments, pods and Images for Litmus-Portal ------------------\n"
 # Namespace verification
 verify_namespace ${LITMUS_PORTAL_NAMESPACE}
 
 # Deployments verification
-verify_deployment litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}
-verify_deployment litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
+verify_all_components litmusportal-frontend,litmusportal-server ${LITMUS_PORTAL_NAMESPACE}
 
 # Pods verification
 verify_pod litmusportal-frontend ${LITMUS_PORTAL_NAMESPACE}

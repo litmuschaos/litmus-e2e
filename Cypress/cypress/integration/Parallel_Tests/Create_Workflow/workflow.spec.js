@@ -13,6 +13,7 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(0, 1);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    cy.wait(500); // Waiting for Workflow Details to get filled
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
       workflows.nonRecurringworkflowDescription,
@@ -49,19 +50,19 @@ describe("Testing the create Workflow Utility", () => {
       .find("tr")
       .eq(1)
       .then(($div) => {
-        cy.wrap($div).find("td").eq(0).should("have.text", "Running"); // Matching Status
+        cy.wrap($div).find("td").eq(1).should("have.text", "Running"); // Matching Status
         cy.wrap($div)
           .find("td")
-          .eq(1)
+          .eq(2)
           .should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
-        cy.wrap($div).find("td").eq(2).should("have.text", "Self-Agent"); // Matching Target Agent
+        cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
         // cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
         // cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
       });
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("scheduleDetails", "listSchedules");
+    cy.GraphqlWait("workflowListDetails", "listSchedules");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);

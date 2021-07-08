@@ -71,7 +71,7 @@ function verify_deployment(){
         echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
         sleep 15
         else
-        echo "Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST}"
+        echo "Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST} ✓"
         break
         fi
     done
@@ -92,7 +92,7 @@ function verify_pod(){
         echo "$pod pod not found in $namespace namespace"
         exit 1
     else
-        echo "$pod pod found in $namespace namespace"
+        echo "$pod pod found in $namespace namespace ✓"
     fi
 }
 
@@ -104,7 +104,7 @@ function verify_namespace(){
         echo "$namespace Namespace not found"
         exit 1
     else
-        echo "$namespace namespace found"
+        echo "$namespace namespace found ✓"
     fi 
 }
 
@@ -130,6 +130,18 @@ function verify_deployment_image(){
         echo "$deployment deployment is not having the image ${image}"
         exit 1
     else 
-        echo "$deployment deployment with image ${image} verified"
+        echo "$deployment deployment with image ${image} verified ✓"
     fi
+}
+
+## Function to verify all given deployments(comma-separated) in a given namespace
+function verify_all_components(){
+    components=$1
+    namespace=$2
+    echo "Verifying all required Deployments"
+
+    for i in $(echo $components | sed "s/,/ /g")
+    do
+        verify_deployment ${i} ${namespace}
+    done
 }
