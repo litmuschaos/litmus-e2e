@@ -38,7 +38,6 @@ jobs:
         - /etc/kubernetes:/etc/kubernetes
       env:
         OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-        OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
         RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
         IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"
         KUBECONFIG: /root/.kube/config

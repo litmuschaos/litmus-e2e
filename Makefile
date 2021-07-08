@@ -177,13 +177,21 @@ node-io-stress:
 	@echo "------------------------------------------"
 	@go test tests/node-io-stress_test.go -v -count=1	
 
-.PHONY: ec2-terminate
-ec2-terminate:
+.PHONY: ec2-terminate-by-id
+ec2-terminate-by-id:
 
 	@echo "------------------------------------------"
-	@echo "Running ec2-terminate experiment"
+	@echo "Running ec2-terminate-by-id experiment"
 	@echo "------------------------------------------"
-	@go test tests/ec2-terminate_test.go -v -count=1			
+	@go test platform/aws/ec2-terminate-by-id_test.go -v -count=1 -timeout=20m
+
+.PHONY: ec2-terminate-by-tag
+ec2-terminate-by-tag:
+
+	@echo "------------------------------------------"
+	@echo "Running ec2-terminate-by-tag experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ec2-terminate-by-tag_test.go -v -count=1 -timeout=20m			
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
