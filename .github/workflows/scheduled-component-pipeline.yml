@@ -109,6 +109,10 @@ jobs:
       - name: TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
         if: always()
         run: make env-from-secret-and-configmap
+      
+      - name: TCID-EC2-GENERIC-RUN-HISTORY
+        if: ${{ always() }}
+        run: make run-history
 
   ### App Cleanup
 
