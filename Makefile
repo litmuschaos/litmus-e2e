@@ -234,7 +234,7 @@ run-history:
 	@echo "------------------------------------------------"
 	@echo "Running Run History Check"
 	@echo "------------------------------------------------"
-	@go test components/result/run-history-test.go -v -count=1					
+	@go test components/result/run-history_test.go -v -count=1					
 
 .PHONY: env-from-secret-and-configmap
 env-from-secret-and-configmap:
@@ -470,7 +470,7 @@ experiment-image:
 	@echo "---------------------------------------------------"
 	@echo "Running Experiment Image Check For Chaos Experiment"
 	@echo "---------------------------------------------------"
-	@go test components/engine/service-account_test.go -v -count=1
+	@go test components/experiment/experiment-image_test.go -v -count=1
 
 .PHONY: target-pod
 target-pod:
