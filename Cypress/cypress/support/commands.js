@@ -2,8 +2,9 @@
 //This Script provides plugins and common utilities for tests.
 
 //// ******************* Plugins Added *****************************
-import "cypress-wait-until";
+import '@4tw/cypress-drag-drop';
 import "cypress-file-upload";
+import "cypress-wait-until";
 
 //Custom Command for waiting for required Agent to come in active state.
 Cypress.Commands.add("waitForCluster", (agentName) => {
