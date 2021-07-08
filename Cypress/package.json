@@ -5,6 +5,10 @@
   "main": "index.js",
   "scripts": {
     "tests": "cypress run",
+    "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:firefox": "cypress run --browser firefox",
+    "cy:run:edge": "cypress run --browser edge",
+    "cy:run:electron": "cypress run --browser electron",
     "BasicSetup_Tests": "cypress run --config testFiles='Basic_Setup/**/*.spec.js' --config-file cypress.prod.json",
     "Community_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Community/*.spec.js' --config-file cypress.prod.json",
     "Routes_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Routes/*.spec.js' --config-file cypress.prod.json",
@@ -20,6 +24,7 @@
   "license": "ISC",
   "devDependencies": {
     "cypress": "^7.3.0",
+    "cypress-audit": "^1.0.0",
     "cypress-file-upload": "^5.0.7",
     "cypress-wait-until": "^1.7.1"
   }
