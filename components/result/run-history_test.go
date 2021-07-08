@@ -79,7 +79,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			// Checking the chaosresult run history verdict
 			By("[Verdict]: Checking the chaosresult run history verdict")
-			err = pkg.ChaosRunHistoryVerdict(&testsDetails, clients, runHistory)
+			err = pkg.CheckRunHistoryUpdate(&testsDetails, clients, runHistory)
 			Expect(err).To(BeNil(), "ChaosResult Run History Check failed, due to {%v}", err)
 		})
 	})
@@ -142,7 +142,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			// Checking the chaosresult run history verdict
 			By("[Verdict]: Checking the chaosresult run history verdict")
-			err = pkg.ChaosRunHistoryVerdict(&testsDetails, clients, runHistory)
+			err = pkg.CheckRunHistoryUpdate(&testsDetails, clients, runHistory)
 			Expect(err).To(BeNil(), "ChaosResult Run History check failed, due to {%v}", err)
 
 		})
@@ -212,7 +212,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			// Checking the chaosresult run history verdict
 			By("[Verdict]: Checking the chaosresult run history verdict")
-			err = pkg.ChaosRunHistoryVerdict(&testsDetails, clients, runHistory)
+			err = pkg.CheckRunHistoryUpdate(&testsDetails, clients, runHistory)
 			Expect(err).To(BeNil(), "ChaosResult Run History check failed, due to {%v}", err)
 
 		})

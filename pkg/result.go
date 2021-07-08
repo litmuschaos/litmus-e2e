@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"strings"
+
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
@@ -49,8 +51,8 @@ func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.Cli
 	return nil
 }
 
-// ChaosRunHistoryVerdict checks the chaos result run history according to the ChaosResultVerdict
-func ChaosRunHistoryVerdict(testsDetails *types.TestDetails, clients environment.ClientSets, previousRunHistory v1alpha1.HistoryDetails) error {
+// CheckRunHistoryUpdate checks the chaos result run history according to the ChaosResultVerdict
+func CheckRunHistoryUpdate(testsDetails *types.TestDetails, clients environment.ClientSets, previousRunHistory v1alpha1.HistoryDetails) error {
 
 	if err = WaitForChaosResultCompletion(testsDetails, clients); err != nil {
 		return errors.Errorf("engine state check failed, err %v", err)
@@ -73,16 +75,16 @@ func ChaosRunHistoryVerdict(testsDetails *types.TestDetails, clients environment
 		"Stopped Runs": chaosResult.Status.History.StoppedRuns,
 	})
 
-	switch chaosResult.Status.ExperimentStatus.Verdict {
-	case "Pass":
+	switch strings.ToLower(chaosResult.Status.ExperimentStatus.Verdict) {
+	case "pass":
 		if chaosResult.Status.History.PassedRuns != previousRunHistory.PassedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Passed Runs\"")
 		}
-	case "Fail":
+	case "fail":
 		if chaosResult.Status.History.FailedRuns != previousRunHistory.FailedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Failed Runs\"")
 		}
-	case "Stopped":
+	case "stopped":
 		if chaosResult.Status.History.StoppedRuns != previousRunHistory.StoppedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Stopped Runs\"")
 		}
