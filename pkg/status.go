@@ -20,7 +20,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	if err != nil {
 		return nil, errors.Errorf("Unable to get the runner pod, due to %v", err)
 	}
-	log.Infof("name : %v ", runner.Name)
+	log.Infof("[Info]: Runner name : %v ", runner.Name)
 	//Running it for infinite time (say 3000 * 10)
 	//The Gitlab job will quit if it takes more time than default time (10 min)
 	for i := 0; i < 300; i++ {
@@ -39,7 +39,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	if runner.Status.Phase != "Running" {
 		return nil, errors.Errorf("Runner pod fail to come in running state, due to %v", err)
 	}
-	log.Info("Runner pod is in Running state")
+	log.Info("[Status]: Runner pod is in Running state")
 
 	return nil, nil
 }

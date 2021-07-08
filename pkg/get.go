@@ -3,6 +3,7 @@ package pkg
 import (
 	"time"
 
+	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
@@ -39,7 +40,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 			}
 
 			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
-				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
+				return errors.Errorf("Verdict of Chaos Engine is Awaited")
 			}
 			log.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
 
@@ -133,4 +134,17 @@ func GetUID(engineName, namespace string, clients environment.ClientSets) (strin
 		return "", errors.Errorf("fail to get the chaosengine %v err: %v", engineName, err)
 	}
 	return string(chaosEngine.UID), nil
+}
+
+// GetRunHistoryStatus fetches the chaos result run history
+func GetRunHistoryStatus(testsDetails *types.TestDetails, clients environment.ClientSets) v1alpha1.HistoryDetails {
+	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
+	if err != nil {
+		return v1alpha1.HistoryDetails{
+			PassedRuns:  0,
+			FailedRuns:  0,
+			StoppedRuns: 0,
+		}
+	}
+	return chaosResult.Status.History
 }

@@ -227,7 +227,14 @@ multiple-app-deploy:
 	@echo "------------------------------------------------"
 	@echo "Running Pod Level Chaos With Multiple app deploy"
 	@echo "------------------------------------------------"
-	@go test tests/multiple-app-deploy_test.go -v -count=1 -timeout=30m					
+	@go test tests/multiple-app-deploy_test.go -v -count=1 -timeout=30m
+
+.PHONY: run-history
+run-history:
+	@echo "------------------------------------------------"
+	@echo "Running Run History Check"
+	@echo "------------------------------------------------"
+	@go test components/result/run-history_test.go -v -count=1					
 
 .PHONY: env-from-secret-and-configmap
 env-from-secret-and-configmap:
@@ -414,7 +421,7 @@ annotation-check:
 	@echo "-----------------------------------------"
 	@echo "Running Annotation Check For Chaos Engine"
 	@echo "-----------------------------------------"
-	@go test engine/annotation-check_test.go -v -count=1
+	@go test components/engine/annotation-check_test.go -v -count=1
 
 
 .PHONY: appinfo
@@ -423,7 +430,7 @@ appinfo:
 	@echo "---------------------------------------"
 	@echo "Running App Info Check For Chaos Engine"
 	@echo "---------------------------------------"
-	@go test engine/appinfo_test.go -v -count=1
+	@go test components/engine/appinfo_test.go -v -count=1
 
 .PHONY: engine-state
 engine-state:
@@ -431,7 +438,7 @@ engine-state:
 	@echo "---------------------------------------"
 	@echo "Running App Info Check For Chaos Engine"
 	@echo "---------------------------------------"
-	@go test engine/engine-state_test.go -v -count=1
+	@go test components/engine/engine-state_test.go -v -count=1
 
 .PHONY: experiment-404
 experiment-404:
@@ -439,7 +446,7 @@ experiment-404:
 	@echo "----------------------------------------------"
 	@echo "Running Experiment Name Check For Chaos Engine"
 	@echo "----------------------------------------------"
-	@go test engine/experiment-404_test.go -v -count=1
+	@go test components/engine/experiment-404_test.go -v -count=1
 
 .PHONY: job-cleanup-policy
 job-cleanup-policy:
@@ -447,7 +454,7 @@ job-cleanup-policy:
 	@echo "-------------------------------------------------"
 	@echo "Running Job Cleanup Policy Check For Chaos Engine"
 	@echo "-------------------------------------------------"
-	@go test engine/job-cleanup-policy_test.go -v -count=1
+	@go test components/engine/job-cleanup-policy_test.go -v -count=1
 
 .PHONY: service-account
 service-account:
@@ -455,7 +462,7 @@ service-account:
 	@echo "----------------------------------------------"
 	@echo "Running Service Account Check For Chaos Engine"
 	@echo "----------------------------------------------"
-	@go test engine/service-account_test.go -v -count=1
+	@go test components/engine/service-account_test.go -v -count=1
 
 .PHONY: experiment-image
 experiment-image:
@@ -463,7 +470,7 @@ experiment-image:
 	@echo "---------------------------------------------------"
 	@echo "Running Experiment Image Check For Chaos Experiment"
 	@echo "---------------------------------------------------"
-	@go test engine/service-account_test.go -v -count=1
+	@go test components/experiment/experiment-image_test.go -v -count=1
 
 .PHONY: target-pod
 target-pod:
@@ -471,4 +478,4 @@ target-pod:
 	@echo "-----------------------------"
 	@echo "Running Target pod chaos test"
 	@echo "-----------------------------"
-	@go test experiment/target-pod_test.go -v -count=1
+	@go test components/experiment/target-pod_test.go -v -count=1
