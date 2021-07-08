@@ -61,13 +61,13 @@ func ChaosRunHistoryVerdict(testsDetails *types.TestDetails, clients environment
 		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
 	}
 
-	log.InfoWithValues("The chaos result previous run history is as follows", logrus.Fields{
+	log.InfoWithValues("The chaos result previous run history is as followed", logrus.Fields{
 		"Passed Runs":  previousRunHistory.PassedRuns,
 		"Failed Runs":  previousRunHistory.FailedRuns,
 		"Stopped Runs": previousRunHistory.StoppedRuns,
 	})
 
-	log.InfoWithValues("The chaos result current run history is as follows", logrus.Fields{
+	log.InfoWithValues("The chaos result current run history is as followed", logrus.Fields{
 		"Passed Runs":  chaosResult.Status.History.PassedRuns,
 		"Failed Runs":  chaosResult.Status.History.FailedRuns,
 		"Stopped Runs": chaosResult.Status.History.StoppedRuns,

@@ -40,7 +40,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 			}
 
 			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
-				return errors.Errorf("Vverdict of Chaos Engine is Awaited")
+				return errors.Errorf("Verdict of Chaos Engine is Awaited")
 			}
 			log.Infof("Chaos Engine Verdict is %v", chaosEngine.Status.Experiments[0].Verdict)
 
