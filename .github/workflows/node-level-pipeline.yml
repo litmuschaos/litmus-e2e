@@ -122,6 +122,10 @@ jobs:
         if: always()
         run: make node-io-stress
 
+      - name: TCID-EC2-GENERIC-INFRA-NODE-LABEL
+        if: always()
+        run: make node-label
+
   ### Runing Experiment Tunables
   Engine_Test:
     needs: Node_Level_Test
