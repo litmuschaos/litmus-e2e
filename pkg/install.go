@@ -251,6 +251,12 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	case "ec2-terminate-by-tag":
 		envDetails.SetEnv("INSTANCE_TAG", testsDetails.InstanceTag).
 			SetEnv("REGION", testsDetails.Region)
+	case "ebs-loss-by-id":
+		envDetails.SetEnv("EBS_VOLUME_ID", testsDetails.EBSVolumeID).
+			SetEnv("REGION", testsDetails.Region)
+	case "ebs-loss-by-tag":
+		envDetails.SetEnv("EBS_VOLUME_TAG", testsDetails.EBSVolumeTag).
+			SetEnv("REGION", testsDetails.Region)
 	}
 
 	// for experiments like pod network latency

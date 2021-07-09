@@ -31,6 +31,8 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.MemoryKillCommand = Getenv("MEMORY_KILL_COMMAND", "kill -9 $(ps afx | grep \"[dd] if /dev/zero\" | awk '{print$1}' | tr '\\n' ' ')")
 	testDetails.InstanceID = Getenv("EC2_INSTANCE_ID", "")
 	testDetails.InstanceTag = Getenv("EC2_INSTANCE_TAG", "")
+	testDetails.EBSVolumeID = Getenv("EBS_VOLUME_ID", "")
+	testDetails.EBSVolumeTag = Getenv("EBS_VOLUME_TAG", "")
 	testDetails.Region = Getenv("REGION", "us-west-1")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 

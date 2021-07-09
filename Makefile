@@ -191,7 +191,23 @@ ec2-terminate-by-tag:
 	@echo "------------------------------------------"
 	@echo "Running ec2-terminate-by-tag experiment"
 	@echo "------------------------------------------"
-	@go test platform/aws/ec2-terminate-by-tag_test.go -v -count=1 -timeout=20m			
+	@go test platform/aws/ec2-terminate-by-tag_test.go -v -count=1 -timeout=20m		
+
+.PHONY: ebs-loss-by-id
+ebs-loss-by-id:
+
+	@echo "------------------------------------------"
+	@echo "Running ebs-loss-by-id experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ebs-loss-by-id_test.go -v -count=1 -timeout=20m		
+
+.PHONY: ebs-loss-by-tag
+ebs-loss-by-tag:
+
+	@echo "------------------------------------------"
+	@echo "Running ebs-loss-by-tag experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ebs-loss-by-tag_test.go -v -count=1 -timeout=20m					
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
