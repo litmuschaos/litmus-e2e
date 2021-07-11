@@ -268,6 +268,16 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
+	// update Target Node(s) details
+	if testsDetails.TargetNodes != "" {
+		envDetails.SetEnv("TARGET_NODES", testsDetails.TargetNodes)
+	}
+
+	// update Node Label details
+	if testsDetails.NodeLabel != "" {
+		envDetails.SetEnv("NODE_LABEL", testsDetails.NodeLabel)
+	}
+
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
 	switch testsDetails.ExperimentName {
 	case "pod-cpu-hog":

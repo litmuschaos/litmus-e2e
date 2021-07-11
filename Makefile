@@ -237,7 +237,7 @@ run-history:
 	@go test components/result/run-history_test.go -v -count=1
 
 .PHONY: node-label-selector
-node-label:
+node-label-selector:
 	@echo "-----------------------------------"
 	@echo "Running Node Label Selector Check"
 	@echo "-----------------------------------"
