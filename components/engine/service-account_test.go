@@ -62,7 +62,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 			//Runner Pod Should Not Get Created due to invalid sa name
 			//The chaos pod logs should not get printed
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Runner pod created even with invalid service account name")
 
 			//Chaos pod running status check

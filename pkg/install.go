@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	yamlChe "github.com/ghodss/yaml"
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
@@ -245,9 +244,18 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	chaosEngine.Spec.Experiments[0].Name = testsDetails.NewExperimentName
 	chaosEngine.Spec.AnnotationCheck = testsDetails.AnnotationCheck
 
-	// for ec2-terminate instance
-	if testsDetails.ExperimentName == "ec2-terminate" {
+	switch testsDetails.ExperimentName {
+	case "ec2-terminate-by-id":
 		envDetails.SetEnv("EC2_INSTANCE_ID", testsDetails.InstanceID).
+			SetEnv("REGION", testsDetails.Region)
+	case "ec2-terminate-by-tag":
+		envDetails.SetEnv("INSTANCE_TAG", testsDetails.InstanceTag).
+			SetEnv("REGION", testsDetails.Region)
+	case "ebs-loss-by-id":
+		envDetails.SetEnv("EBS_VOLUME_ID", testsDetails.EBSVolumeID).
+			SetEnv("REGION", testsDetails.Region)
+	case "ebs-loss-by-tag":
+		envDetails.SetEnv("EBS_VOLUME_TAG", testsDetails.EBSVolumeTag).
 			SetEnv("REGION", testsDetails.Region)
 	}
 
@@ -302,8 +310,6 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 		return errors.Errorf("fail to apply engine file, err: %v", err)
 	}
 	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")
-	time.Sleep(2 * time.Second)
-
 	return nil
 }
 

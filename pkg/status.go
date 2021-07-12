@@ -13,22 +13,22 @@ import (
 )
 
 //RunnerPodStatus will check the runner pod running state
-func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, clients environment.ClientSets) (error, error) {
+func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, clients environment.ClientSets) error {
 
 	//Fetching the runner pod and Checking if it gets in Running state or not
+	if err = CheckRunnerPodCreation(testsDetails.EngineName, runnerNamespace, clients); err != nil {
+		return errors.Errorf("fail to get the runner pod, due to %v", err)
+	}
 	runner, err := clients.KubeClient.CoreV1().Pods(runnerNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
 	if err != nil {
-		return nil, errors.Errorf("Unable to get the runner pod, due to %v", err)
+		return errors.Errorf("Unable to get the runner pod, due to %v", err)
 	}
-	log.Infof("[Info]: Runner name : %v ", runner.Name)
-	//Running it for infinite time (say 3000 * 10)
-	//The Gitlab job will quit if it takes more time than default time (10 min)
 	for i := 0; i < 300; i++ {
 		if string(runner.Status.Phase) != "Running" {
 			time.Sleep(1 * time.Second)
 			runner, err = clients.KubeClient.CoreV1().Pods(runnerNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
 			if err != nil || runner.Status.Phase == "Succeeded" || runner.Status.Phase == "" {
-				return nil, errors.Errorf("Fail to get the runner pod status after sleep, due to %v", err)
+				return errors.Errorf("Fail to get the runner pod status after sleep, due to %v", err)
 			}
 			log.Infof("The Runner pod is in %v State ", runner.Status.Phase)
 		} else {
@@ -37,11 +37,32 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	}
 
 	if runner.Status.Phase != "Running" {
-		return nil, errors.Errorf("Runner pod fail to come in running state, due to %v", err)
+		return errors.Errorf("Runner pod fail to come in running state, due to %v", err)
 	}
 	log.Info("[Status]: Runner pod is in Running state")
 
-	return nil, nil
+	return nil
+}
+
+// CheckRunnerPodCreation will check for the create of runner pod
+func CheckRunnerPodCreation(engineName, runnerNS string, clients environment.ClientSets) error {
+	err := retry.
+		Times(uint(10 / 2)).
+		Wait(time.Duration(2) * time.Second).
+		Try(func(attempt uint) error {
+			runner, err := clients.KubeClient.CoreV1().Pods(runnerNS).Get(engineName+"-runner", metav1.GetOptions{})
+			if err != nil {
+				return errors.Errorf("Unable to get the runner pod, due to %v", err)
+			}
+			if runner.Name == "" {
+				log.Info("waiting for runner pod creation")
+				return errors.Errorf("runner pod is yet not created")
+			}
+			log.Infof("[Info]: Runner pod Name %v", runner.Name)
+
+			return nil
+		})
+	return err
 }
 
 //DeploymentStatusCheck checks running status of deployment with deployment name and namespace
