@@ -224,17 +224,17 @@ jobs:
         run: |
           aws ec2 terminate-instances --instance-ids ${{ env.INSTANCE_ONE }} --region us-west-1
 
-      - name: Waiting for EC2 instance to get terminated
+      - name: Waiting for EBS volume to be available
         if: always()
         run: |
           for i in range {0..30};do
-            instance_status=$(aws ec2 describe-instance-status --instance-id ${{ env.INSTANCE_ONE }} --query 'InstanceStatuses[*].InstanceState.Name' --output text)
+            volume_status="$(aws ec2 describe-volumes --volume-ids ${{ env.VOLUME_ID }} --query 'Volumes[*].State' --output text)"
             echo "ec2 instance status is: ${instance_status}"
-            if [ -z "$instance_status" ];then
-              echo "The ec2 instance is terminated"
+            if [  "$volume_status" == "available" ];then
+              echo "The volume is available"
               break
             fi
-            sleep 3
+            sleep 2
           done
 
       - name: Delete EBS Volume
