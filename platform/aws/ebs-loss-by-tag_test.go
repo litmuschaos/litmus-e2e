@@ -13,7 +13,7 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoEC2TerminateByTag(t *testing.T) {
+func TestGoEBSLossByTag(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }

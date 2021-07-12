@@ -94,7 +94,7 @@ jobs:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EC2_INSTANCE_TAG: "${{ env.INSTANCE_TAG }}"
           REGION: ${{ secrets.REGION }}
-        run: make ec2-terminate-by-id       
+        run: make ec2-terminate-by-tag       
 
       - name: Terminate target EC2 instances
         if: always()
