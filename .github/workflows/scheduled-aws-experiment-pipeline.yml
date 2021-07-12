@@ -51,7 +51,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # if you have/need it
-          aws-region: us-west-1
+          aws-region: ${{ secrets.REGION }}
           
       - name: Creating target EC2 instances
         if: always()
@@ -62,13 +62,13 @@ jobs:
           --key-name udit-litmus-e2e \
           --security-group-ids sg-06925d6218d07e795 \
           --subnet-id subnet-9c2ba8fa \
-          --region us-west-1 \
+          --region ${{ secrets.REGION }} \
           --tag-specifications 'ResourceType=instance,Tags=[{Key=runNumber,Value=${{ github.run_number }}}]'
           
       - name: Get the target instance name
         if: always()
         run: |
-          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=${{ github.run_number }} Name=instance-state-name,Values=pending,running --region us-west-1 --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
+          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=${{ github.run_number }} Name=instance-state-name,Values=pending,running --region ${{ secrets.REGION }} --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
           instance_list=($instances)
           echo "inst1: ${instance_list[0]} inst2: ${instance_list[1]}"
           echo "INSTANCE_ONE=${instance_list[0]}" >> $GITHUB_ENV
@@ -85,7 +85,7 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EC2_INSTANCE_ID: "${{ env.INSTANCE_ONE }},${{ env.INSTANCE_TWO }}"
-          REGION: us-west-1
+          REGION: ${{ secrets.REGION }}
         run: make ec2-terminate-by-id
 
       - name: Run EC2 Terminate By Tag experiment in serial & parallel mode
@@ -93,13 +93,13 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EC2_INSTANCE_TAG: "${{ env.INSTANCE_TAG }}"
-          REGION: us-west-1
+          REGION: ${{ secrets.REGION }}
         run: make ec2-terminate-by-id       
 
       - name: Terminate target EC2 instances
         if: always()
         run: |
-          aws ec2 terminate-instances --instance-ids ${{ env.INSTANCE_ONE }} ${{ env.INSTANCE_TWO }} --region us-west-1
+          aws ec2 terminate-instances --instance-ids ${{ env.INSTANCE_ONE }} ${{ env.INSTANCE_TWO }} --region ${{ secrets.REGION }}
 
   AWS_EBS_Loss:
     runs-on: ubuntu-latest
@@ -147,7 +147,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # if you have/need it
-          aws-region: us-west-1
+          aws-region: ${{ secrets.REGION }}
           
       - name: Creating EC2 instances
         if: always()
@@ -159,8 +159,8 @@ jobs:
           --key-name udit-litmus-e2e \
           --security-group-ids sg-06925d6218d07e795 \
           --subnet-id subnet-9c2ba8fa \
-          --placement AvailabilityZone=us-west-1b \
-          --region us-west-1 \
+          --placement AvailabilityZone=${{ secrets.AVAILABILITY_ZONE }} \
+          --region ${{ secrets.REGION }} \
           --tag-specifications 'ResourceType=instance,Tags=[{Key=runNumber,Value=${{ github.run_number }}}]'
 
       - name: Create EBS volumes
@@ -169,20 +169,20 @@ jobs:
           aws ec2 create-volume \
           --volume-type gp2 \
           --size 4 \
-          --availability-zone us-west-1b \
-          --region us-west-1 \
+          --availability-zone ${{ secrets.AVAILABILITY_ZONE }} \
+          --region ${{ secrets.REGION }} \
           --tag-specifications 'ResourceType=volume,Tags=[{Key=runNumber,Value=${{ github.run_number }}}]'
           
       - name: Get the EC2 instance ID
         if: always()
         run: |
-          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=${{ github.run_number }} Name=instance-state-name,Values=pending,running --region us-west-1 --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
+          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=${{ github.run_number }} Name=instance-state-name,Values=pending,running --region ${{ secrets.REGION }} --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
           instance_list=($instances)
           echo "INSTANCE_ONE=${instance_list[0]}" >> $GITHUB_ENV
           
       - name: Get the EBS volume ID
         run: |
-          volumes=$(aws ec2 describe-volumes --filters Name=tag-value,Values=${{ github.run_number }} Name=availability-zone,Values=us-west-1b --query "Volumes[*].{ID:VolumeId}" --output text)
+          volumes=$(aws ec2 describe-volumes --filters Name=tag-value,Values=${{ github.run_number }} Name=availability-zone,Values=${{ secrets.AVAILABILITY_ZONE }} --query "Volumes[*].{ID:VolumeId}" --output text)
           echo "VOLUME_ID=${volumes}" >> $GITHUB_ENV         
           
       - name: Litmus Infra Setup
@@ -202,7 +202,7 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EBS_VOLUME_ID: "${{ env.VOLUME_ID }}"
-          REGION: us-west-1
+          REGION: ${{ secrets.REGION }}
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -213,7 +213,7 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EBS_VOLUME_TAG: "runNumber:${{ github.run_number }}"
-          REGION: us-west-1
+          REGION: ${{ secrets.REGION }}
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -222,7 +222,7 @@ jobs:
       - name: Terminate EC2 instance
         if: always()
         run: |
-          aws ec2 terminate-instances --instance-ids ${{ env.INSTANCE_ONE }} --region us-west-1
+          aws ec2 terminate-instances --instance-ids ${{ env.INSTANCE_ONE }} --region ${{ secrets.REGION }}
 
       - name: Waiting for EBS volume to be available
         if: always()
@@ -240,4 +240,4 @@ jobs:
       - name: Delete EBS Volume
         if: always()
         run: |
-          aws ec2 delete-volume --volume-id "${{ env.VOLUME_ID }}" --region us-west-1
+          aws ec2 delete-volume --volume-id "${{ env.VOLUME_ID }}" --region ${{ secrets.REGION }}
