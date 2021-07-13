@@ -21,7 +21,7 @@ Litmus-Portal is a Cloud-native application, Developers need a cluster for deplo
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```
 
-- Clone the [Litmus-e2e]("https://github.com/litmuschaos/litmus-e2e.git") repository, checkout to your branch and change directory to Cypress -
+- Clone the [Litmus-e2e]("https://github.com/litmuschaos/litmus-e2e") repository, checkout to your branch and change directory to Cypress -
 
 ```
 git clone https://github.com/litmuschaos/litmus-e2e.git && cd litmus-e2e
@@ -68,7 +68,7 @@ If you're writing a _new test_ , you will have to add it inside the integrations
 - **Parallel Test or Post-Authentication Tests -** Tests which are independent and can be executed parallely (Workflow Scheduling/Analytics/Account-Settings, etc).
 - **Smoke Tests -** Tests required for a PR to qualify a minimum criteria. It gives us confidence that a new feature won't break other existing features.
 
-If you want use some mock data in your tests, add the same in fixtures directory and import it into your test, so that it will be reusable and scalable.  
+If you want use some mock data in your tests, add the same in fixtures directory and import it into your test, so that it will be reusable and scalable.
 
 If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow]("https://github.com/litmuschaos/litmus-e2e/blob/master/.github/workflows/Portal-pipeline.yml")
 
@@ -81,6 +81,11 @@ A sample PR flow is outlined [here](https://guides.github.com/introduction/flow/
 These are minor guidelines or support points for new contributors -
 
 - While writing new tests, please use data-cy=\* parameters to access different components on UI.
+  For e.g.
+
+```
+<Button data-cy="ButtonFeature"/>
+```
 
 - Try not to test same scenario repeatedly. For e.g. The login feature is already tested in login test, so we should avoid testing it again while writing new test, as all scenarios starts from login only.
 
