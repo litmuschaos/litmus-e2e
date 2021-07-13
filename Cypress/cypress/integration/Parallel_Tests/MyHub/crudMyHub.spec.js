@@ -38,7 +38,7 @@ describe("Testing CRUD operation with MyHub", () => {
 			.find("input")
 			.eq(0)
 			.clear()
-			.type("https://github.com/amityt/amit-chaos-hub");
+			.type("https://github.com/litmuschaos/chaos-charts");
 		cy.get("[data-cy=githubBranchInput]")
 			.find("input")
 			.eq(0)
@@ -68,12 +68,12 @@ describe("Testing CRUD operation with MyHub", () => {
 			.find("input")
 			.eq(0)
 			.clear()
-			.type("https://github.com/amityt/amit-chaos-hub", { force: true });
+			.type("https://github.com/litmuschaos/chaos-charts", { force: true });
 		cy.get("[data-cy=githubBranchInput]")
 			.find("input")
 			.eq(0)
 			.clear()
-			.type("new-branch");
+			.type("v1.13.x");
 		cy.get("[data-cy=MyHubSubmit]")
 			.should("be.enabled")
 			.click()
@@ -101,7 +101,5 @@ describe("Testing CRUD operation with MyHub", () => {
 			.then(($div) => {
 				cy.wrap($div).click();
 			});
-
-		cy.get("[data-cy=myHubAlert]").should("be.visible");
 	});
 });
