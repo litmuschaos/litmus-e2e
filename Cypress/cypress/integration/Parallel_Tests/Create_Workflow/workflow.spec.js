@@ -124,8 +124,10 @@ describe("Testing the create Workflow Utility", () => {
   it("Check the Workflow Visualization", () => {
     cy.GraphqlWait("workflowDetails", "listWorkflows");
     cy.visit("/workflows");
+    cy.get("[data-cy=runs]").click();
     cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
-    cy.get("[data-cy=workflowName]").click();
+    // Clicking on first workflow in table as it is latest one
+    cy.get("[data-cy=workflowName]").eq(0).click({ force: true });
     cy.get("[data-cy=dagreGraphWorkflowLevel]").should("be.visible");
     cy.get(".ChaosEngine").should("be.visible");
     cy.get(".ChaosEngine").click();
@@ -168,9 +170,11 @@ describe("Testing the create Workflow Utility", () => {
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=GoToWorkflowButton]").click();
 
-    cy.get("[role=tab]").eq(1).click();
-    cy.get("[data-cy=browseScheduleOptions]").eq(0).click();
-    cy.get("[data-cy=editSchedule]").click();
+    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.get("[data-cy=browseSchedule]").click();
+    cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+    cy.wait(1000);
+    cy.get("[data-cy=editSchedule]").eq(0).click({ force: true });
     cy.get("[data-cy=edit]").click();
     cy.selectSchedule(1, 2);
     cy.get("[data-cy=VerifyButton]").click();
