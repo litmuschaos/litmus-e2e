@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
+      - uses: AbsaOSS/k3d-action@v1.5.0
         name: "Create 1st Cluster"
         with:
           cluster-name: ${{ env.SELF_AGENT }}
@@ -42,7 +42,7 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
+      - uses: AbsaOSS/k3d-action@v1.5.0
         name: "Create 2nd Cluster"
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
@@ -121,11 +121,11 @@ jobs:
           path: Cypress/cypress/screenshots
 
   Namespaced-Scope-Mode:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
+      - uses: AbsaOSS/k3d-action@v1.5.0
         name: "Create 1st Cluster"
         with:
           cluster-name: ${{ env.SELF_AGENT }}
@@ -146,7 +146,7 @@ jobs:
           LOAD_BALANCER: "false"
           LITMUS_PORTAL_NAMESPACE: "scope"
 
-      - uses: AbsaOSS/k3d-action@v1.4.0
+      - uses: AbsaOSS/k3d-action@v1.5.0
         name: "Create 2nd Cluster"
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}

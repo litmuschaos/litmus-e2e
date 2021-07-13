@@ -61,12 +61,14 @@ Whenever we add a new test, it will be visible in Cypress Test Runner.
 
 If you're writing a _new test_ , you will have to add it inside the integrations directory.
 
-Currently, we have 3 categories of tests -
+**Currently, we have 3 categories of tests -**
 
 - **Basic Tests or Pre-Authentication Tests -** Tests to be executed to test login/Onboarding Features.
 
 - **Parallel Test or Post-Authentication Tests -** Tests which are independent and can be executed parallely (Workflow Scheduling/Analytics/Account-Settings, etc).
 - **Smoke Tests -** Tests required for a PR to qualify a minimum criteria. It gives us confidence that a new feature won't break other existing features.
+
+If you want use some mock data in your tests, add the same in fixtures directory and import it into your test, so that it will be reusable and scalable.  
 
 If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow]("https://github.com/litmuschaos/litmus-e2e/blob/master/.github/workflows/Portal-pipeline.yml")
 
