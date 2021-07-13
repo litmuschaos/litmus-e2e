@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 1st Cluster"
+        name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
           args: --agents 1
@@ -43,7 +43,7 @@ jobs:
           LOAD_BALANCER: "false"
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 2nd Cluster"
+        name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
           args: --agents 1
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 1st Cluster"
+        name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
           args: --agents 3
@@ -147,7 +147,7 @@ jobs:
           LITMUS_PORTAL_NAMESPACE: "scope"
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 2nd Cluster"
+        name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
           args: --agents 3
