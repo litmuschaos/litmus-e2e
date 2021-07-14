@@ -32,7 +32,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.InstanceID = Getenv("INSTANCE_ID", "i-0ce7b2857f08c85d0")
 	testDetails.Region = Getenv("REGION", "us-west-1")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
-	testDetails.TargetNodes = Getenv("TARGET_NODES", "gke-my-first-cluster-1-default-pool-b60c6163-5q2r")
+	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
 
 	//All Images for running chaos test
