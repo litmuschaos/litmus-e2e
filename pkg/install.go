@@ -18,6 +18,7 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -30,7 +31,7 @@ import (
 var err error
 
 //CreateChaosResource creates litmus components with given inputs
-func CreateChaosResource(fileData []byte, namespace string, clients environment.ClientSets) error {
+func CreateChaosResource(testsDetails *types.TestDetails, fileData []byte, namespace string, clients environment.ClientSets) error {
 
 	decoder := yamlutil.NewYAMLOrJSONDecoder(bytes.NewReader(fileData), 100)
 
@@ -84,12 +85,52 @@ func CreateChaosResource(fileData []byte, namespace string, clients environment.
 			if !k8serrors.IsAlreadyExists(err) {
 				return err
 			} else {
-				// Updating present resource
-				log.Infof("[Status]: Updating %v", unstructuredObj.GetKind())
-				dri.Update(unstructuredObj, v1.UpdateOptions{})
+				log.Infof("[Status]: Updated", unstructuredObj.GetKind())
+				if unstructuredObj.GetKind() == "ChaosEngine" {
+					return UpdateEngine(testsDetails, clients)
+				} else if unstructuredObj.GetKind() == "ChaosExperiment" {
+					return UpdateExperiment(testsDetails, clients)
+				}
 			}
 		}
 	}
+}
+
+// UpdateEngine updating engine
+func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	engine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	// setting the EngineState of chaosEngine to Active
+	engine.Spec.EngineState = v1alpha1.EngineStateActive
+
+	// Set all environments
+	SetEngineVar(engine, testsDetails)
+
+	_, err = clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Update(engine)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateExperiment updating experiment
+func UpdateExperiment(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, metav1.GetOptions{})
+	if err != nil {
+		return errors.Errorf("[Error Get] : %v", err)
+	}
+
+	// Set all environments
+	SetExperimentVar(experiment, testsDetails)
+
+	_, err = clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Update(experiment)
+	if err != nil {
+		return errors.Errorf("[Error Get] : %v", err)
+	}
+	return nil
 }
 
 //InstallGoRbac installs and configure rbac for running go based chaos
@@ -119,30 +160,12 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	return nil
 }
 
-//InstallGoChaosExperiment installs the given go based chaos experiment
-func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
+// SetExperimentVar setting up variables of experiment
+func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *types.TestDetails) {
 
 	// contains all the envs
 	envDetails := ENVDetails{
 		ENV: map[string]string{},
-	}
-
-	//Fetch Experiment file
-	res, err := http.Get(testsDetails.ExperimentPath)
-	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
-	}
-
-	// ReadAll reads from response until an error or EOF and returns the data it read.
-	fileInput, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Errorf("Fail to read data from response: %v", err)
-	}
-
-	// Unmarshal decodes the fileInput into chaosExperiment
-	err = yamlChe.Unmarshal([]byte(fileInput), &chaosExperiment)
-	if err != nil {
-		log.Errorf("error when unmarshalling: %v", err)
 	}
 
 	// Modify the goExperimentImage
@@ -180,35 +203,13 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 			chaosExperiment.Spec.Definition.ENVList[key].Value = envDetails.ENV[value.Name]
 		}
 	}
-
-	// Marshal serializes the value provided into a YAML document.
-	fileData, err := json.Marshal(chaosExperiment)
-	if err != nil {
-		return errors.Errorf("fail to marshal ChaosExperiment %v", err)
-	}
-
-	log.Info("[Experiment]: Installing Experiment...")
-
-	//Creating experiment
-	if err = CreateChaosResource(fileData, testsDetails.ChaosNamespace, clients); err != nil {
-		return errors.Errorf("fail to apply experiment file, err: %v", err)
-	}
-	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
-	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
-
-	return nil
 }
 
-//InstallGoChaosEngine installs the given go based chaos engine
-func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+//InstallGoChaosExperiment installs the given go based chaos experiment
+func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
 
-	// contains all the envs
-	envDetails := ENVDetails{
-		ENV: map[string]string{},
-	}
-
-	//Fetch Engine file
-	res, err := http.Get(testsDetails.EnginePath)
+	//Fetch Experiment file
+	res, err := http.Get(testsDetails.ExperimentPath)
 	if err != nil {
 		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
 	}
@@ -219,10 +220,39 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 		log.Errorf("Fail to read data from response: %v", err)
 	}
 
-	// Unmarshal decodes the fileInput into chaosEngine
-	err = yamlChe.Unmarshal([]byte(fileInput), &chaosEngine)
+	// Unmarshal decodes the fileInput into chaosExperiment
+	err = yamlChe.Unmarshal([]byte(fileInput), &chaosExperiment)
 	if err != nil {
 		log.Errorf("error when unmarshalling: %v", err)
+	}
+
+	// Initialise experiment
+	SetExperimentVar(chaosExperiment, testsDetails)
+
+	// Marshal serializes the value provided into a YAML document.
+	fileData, err := json.Marshal(chaosExperiment)
+	if err != nil {
+		return errors.Errorf("fail to marshal ChaosExperiment %v", err)
+	}
+
+	log.Info("[Experiment]: Installing Experiment...")
+
+	//Creating experiment
+	if err = CreateChaosResource(testsDetails, fileData, testsDetails.ChaosNamespace, clients); err != nil {
+		return errors.Errorf("fail to apply experiment file, err: %v", err)
+	}
+	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
+	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+
+	return nil
+}
+
+// SetEngineVar setting up variables of engine
+func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails) {
+
+	// contains all the envs
+	envDetails := ENVDetails{
+		ENV: map[string]string{},
 	}
 
 	// Add JobCleanUpPolicy of chaos-runner to retain
@@ -233,7 +263,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 
 	// Modify the spec of engine file
 	chaosEngine.ObjectMeta.Name = testsDetails.EngineName
-	chaosEngine.ObjectMeta.Namespace = engineNamespace
+	chaosEngine.ObjectMeta.Namespace = testsDetails.ChaosNamespace
 
 	// If ChaosEngine contain App Info then update it
 	if chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "" {
@@ -276,6 +306,14 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
+	// NODE_LABEL for Node-memory-hog and node-cpu-hog
+	if testsDetails.NodeLabel != "" {
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "NODE_LABEL",
+			Value: testsDetails.NodeLabel,
+		})
+	}
+
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
 	switch testsDetails.ExperimentName {
 	case "pod-cpu-hog":
@@ -297,6 +335,31 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 			chaosEngine.Spec.Experiments[0].Spec.Components.ENV[key].Value = envDetails.ENV[value.Name]
 		}
 	}
+}
+
+//InstallGoChaosEngine installs the given go based chaos engine
+func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+
+	//Fetch Engine file
+	res, err := http.Get(testsDetails.EnginePath)
+	if err != nil {
+		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+	}
+
+	// ReadAll reads from response until an error or EOF and returns the data it read.
+	fileInput, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Errorf("Fail to read data from response: %v", err)
+	}
+
+	// Unmarshal decodes the fileInput into chaosEngine
+	err = yamlChe.Unmarshal([]byte(fileInput), &chaosEngine)
+	if err != nil {
+		log.Errorf("error when unmarshalling: %v", err)
+	}
+
+	// Initialise engine
+	SetEngineVar(chaosEngine, testsDetails)
 
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)
@@ -306,7 +369,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 
 	//Creating chaos engine
 	log.Info("[Engine]: Installing ChaosEngine...")
-	if err = CreateChaosResource(fileData, testsDetails.ChaosNamespace, clients); err != nil {
+	if err = CreateChaosResource(testsDetails, fileData, testsDetails.ChaosNamespace, clients); err != nil {
 		return errors.Errorf("fail to apply engine file, err: %v", err)
 	}
 	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")

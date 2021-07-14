@@ -47,4 +47,6 @@ type TestDetails struct {
 	PodsAffectedPercentage    string
 	Sequence                  string
 	Version                   string
+	TargetNodes               string
+	NodeLabel                 string
 }
