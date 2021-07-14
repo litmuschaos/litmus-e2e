@@ -268,11 +268,13 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
+	// update Target Node Details
 	if testsDetails.TargetNodes != "" {
 		log.Infof("[Info] Target Nodes: %v", testsDetails.TargetNodes)
 		envDetails.SetEnv("TARGET_NODES", testsDetails.TargetNodes)
 	}
 
+	// update Node Label Details
 	if testsDetails.NodeLabel != "" {
 		log.Infof("[Info] Node Label: %v", testsDetails.NodeLabel)
 		envDetails.SetEnv("NODE_LABEL", testsDetails.NodeLabel)
