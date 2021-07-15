@@ -92,7 +92,7 @@ jobs:
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-          EC2_INSTANCE_TAG: "${{ env.INSTANCE_TAG }}"
+          EC2_INSTANCE_TAG: "runNumber:ec2_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
         run: make ec2-terminate-by-tag       
 
@@ -176,13 +176,13 @@ jobs:
       - name: Get the EC2 instance ID
         if: always()
         run: |
-          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=${{ github.run_number }} Name=instance-state-name,Values=pending,running --region ${{ secrets.REGION }} --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
+          instances=$(aws ec2 describe-instances --filters Name=tag-value,Values=ebs_${{ github.run_number }} Name=instance-state-name,Values=pending,running --region ${{ secrets.REGION }} --query 'Reservations[*].Instances[*].{Instance:InstanceId}' --output text)
           instance_list=($instances)
           echo "INSTANCE_ONE=${instance_list[0]}" >> $GITHUB_ENV
           
       - name: Get the EBS volume ID
         run: |
-          volumes=$(aws ec2 describe-volumes --filters Name=tag-value,Values=${{ github.run_number }} Name=availability-zone,Values=${{ secrets.AVAILABILITY_ZONE }} --query "Volumes[*].{ID:VolumeId}" --output text)
+          volumes=$(aws ec2 describe-volumes --filters Name=tag-value,Values=ebs_${{ github.run_number }} Name=availability-zone,Values=${{ secrets.AVAILABILITY_ZONE }} --query "Volumes[*].{ID:VolumeId}" --output text)
           echo "VOLUME_ID=${volumes}" >> $GITHUB_ENV         
           
       - name: Litmus Infra Setup
@@ -212,7 +212,7 @@ jobs:
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-          EBS_VOLUME_TAG: "runNumber:${{ github.run_number }}"
+          EBS_VOLUME_TAG: "runNumber:ebs_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
