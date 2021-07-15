@@ -276,12 +276,12 @@ run-history:
 	@echo "------------------------------------------------"
 	@go test components/result/run-history_test.go -v -count=1
 
-.PHONY: node-label-selector
-node-label-selector:
+.PHONY: node-selector
+node-selector:
 	@echo "-----------------------------------"
 	@echo "Running Node Label Selector Check"
 	@echo "-----------------------------------"
-	@go test tests/node-label-selector_test.go -v -count=1
+	@go test tests/node-selector_test.go -v -count=1
 
 .PHONY: env-from-secret-and-configmap
 env-from-secret-and-configmap:

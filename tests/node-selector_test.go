@@ -15,13 +15,13 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoNodeLabelSelector(t *testing.T) {
+func TestGoNodeSelector(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-var _ = Describe("BDD of Node Label selector", func() {
+var _ = Describe("BDD of Node selector", func() {
 	Context("Test for target node selection by node name", func() {
 		It("Execute the node-cpu-hog experiment using a valid TARGET_NODES value", func() {
 			testsDetails := types.TestDetails{}
