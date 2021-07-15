@@ -14,17 +14,17 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoPodCpuHog(t *testing.T) {
+func TestGoMemoryHogExec(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for pod-cpu-hog experiment
-var _ = Describe("BDD of pod-cpu-hog experiment", func() {
+//BDD Tests for pod-memory-hog-exec experiment
+var _ = Describe("BDD of pod-memory-hog-exec experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check pod-cpu-hog experiment", func() {
+	Context("Check for pod-memory-hog-exec", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -42,7 +42,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-mem-exec-en")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -74,42 +74,26 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-		})
-		// BDD for checking chaosengine Verdict
-		It("Should check for the verdict of experiment", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
-
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+
 		})
 	})
 
 	// BDD TEST CASE 2
 	//Add abort-chaos for the chaos experiment
-	Context("Abort-Chaos check for pod cpu hog experiment", func() {
+	Context("Abort-Chaos for pod memory hog experiment", func() {
 
-		It("Should check the abort of pod-cpu-hog experiment", func() {
+		It("Should check the abort of pod-memory-hog-exec experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 			chaosExperiment := v1alpha1.ChaosExperiment{}
 			chaosEngine := v1alpha1.ChaosEngine{}
 
-			klog.Info("RUNNING POD--CPU-HOG ABORT CHAOS TEST!!!")
+			klog.Info("RUNNING pod-memory-hog-exec ABORT CHAOS TEST!!!")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -118,7 +102,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-hog-abort")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-memory-hog-exec-abort")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -167,11 +151,10 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			Expect(chaosEngineVerdict).To(Equal("Stopped"), "ChaosEngine Verdict is not Stopped, due to {%v}", err)
 
 		})
-
 	})
 
 	// BDD TEST CASE 3
-	Context("Check pod cpu hog experiment with annotation true", func() {
+	Context("Check pod memory hog experiment with annotation true", func() {
 
 		It("Should check the experiment when app is annotated", func() {
 
@@ -189,7 +172,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-hog-annotated")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-memory-hog-exec-annotated")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -231,7 +214,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 	// BDD for pipeline result update
 	Context("Check for the result update", func() {
-		// BDD for pipeline result update
+
 		It("Should check for the result updation", func() {
 
 			testsDetails := types.TestDetails{}
@@ -245,7 +228,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-mem-exec-en")
 
 			if testsDetails.UpdateWebsite == "true" {
 				//Getting chaosengine verdict
@@ -256,16 +239,27 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 				//Getting chaosengine verdict for abort test
 				By("Getting Verdict of Chaos Engine for abort test")
-				testsDetails.EngineName = "pod-cpu-hog-abort"
+				testsDetails.EngineName = "pod-memory-hog-exec-abort"
 				ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 				if ChaosEngineVerdictForAbort != "Stopped" {
 					ChaosEngineVerdict = "Fail"
 					klog.Error("Abort chaos test verdict is not Pass")
 				}
+
+				//Getting chaosengine verdict for annotation test
+				By("Getting Verdict of Chaos Engine for annotation test")
+				testsDetails.EngineName = "pod-memory-hog-exec-annotated"
+				ChaosEngineVerdictForAnnotate, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
+				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+				if ChaosEngineVerdictForAnnotate != "Pass" {
+					ChaosEngineVerdict = "Fail"
+					klog.Error("Annotation test verdict is not Pass")
+				}
+
 				//Updating the pipeline result table
 				By("Updating the pipeline result table")
-				err = pkg.UpdateResultTable("Consume CPU resources on the application container", ChaosEngineVerdict, &testsDetails)
+				err = pkg.UpdateResultTable("Consume memory resources on the application container", ChaosEngineVerdict, &testsDetails)
 				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
 			} else {
 				klog.Info("[SKIP]: Skip updating the result on website")

@@ -116,6 +116,14 @@ jobs:
         if: ${{ always() }}
         run: make pod-memory-hog
 
+      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG
+        if: ${{ always() }}
+        run: make pod-cpu-hog-exec
+
+      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
+        if: ${{ always() }}
+        run: make pod-memory-hog-exec        
+
       - name: TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION
         if: ${{ always() }}
         run: make pod-network-corruption
@@ -161,7 +169,7 @@ jobs:
         UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
         KUBECONFIG: /root/.kube/config
 
-    runs-on: [self-hosted, pod-level]
+    runs-on: [self-hosted, pod-level-exp-tunable]
     steps:
       - name: Create Namespace and deploy Application
         run: |
