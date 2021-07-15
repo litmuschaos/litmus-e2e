@@ -89,6 +89,14 @@ pod-cpu-hog:
 	@echo "--------------------------------"
 	@go test tests/pod-cpu-hog_test.go -v -count=1
 
+.PHONY: pod-cpu-hog-exec
+pod-cpu-hog-exec:
+
+	@echo "-------------------------------"
+	@echo "Running pod-cpu-hog-exec experiment"
+	@echo "--------------------------------"
+	@go test tests/pod-cpu-hog-exec_test.go -v -count=1
+
 .PHONY: node-cpu-hog
 node-cpu-hog:
 
@@ -128,6 +136,14 @@ pod-memory-hog:
 	@echo "Running pod-memory-hog experiment"
 	@echo "---------------------------------"
 	@go test tests/pod-memory-hog_test.go -v -count=1
+
+.PHONY: pod-memory-hog-exec
+pod-memory-hog-exec:
+
+	@echo "---------------------------------"
+	@echo "Running pod-memory-hog-exec experiment"
+	@echo "---------------------------------"
+	@go test tests/pod-memory-hog-exec_test.go -v -count=1
 
 .PHONY: kubelet-service-kill
 kubelet-service-kill:
@@ -215,7 +231,7 @@ ebs-loss-by-tag:
 	@echo "--------------------------------------------"
 	@echo "Running  Operator Reconcile Resiliency Check"
 	@echo "--------------------------------------------"
-	@go test operator/reconcile-resiliency_test.go -v -count=1
+	@go test components/operator/reconcile-resiliency_test.go -v -count=1
 
 .PHONY: admin-mode-check
 admin-mode-check:
@@ -223,7 +239,7 @@ admin-mode-check:
 	@echo "------------------------"
 	@echo "Running Admin Mode Check"
 	@echo "------------------------"
-	@go test operator/admin-mode_test.go -v -count=1	
+	@go test components/operator/admin-mode_test.go -v -count=1	
 
 .PHONY: with-app-info
 with-app-info:

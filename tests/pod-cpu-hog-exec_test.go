@@ -14,17 +14,17 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoPodCpuHog(t *testing.T) {
+func TestGoPodCpuHogExec(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for pod-cpu-hog experiment
-var _ = Describe("BDD of pod-cpu-hog experiment", func() {
+//BDD Tests for pod-cpu-hog-exec experiment
+var _ = Describe("BDD of pod-cpu-hog-exec experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check pod-cpu-hog experiment", func() {
+	Context("Check pod-cpu-hog-exec experiment", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -42,7 +42,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
+			environment.GetENV(&testsDetails, "pod-cpu-hog-exec", "pod-cpu-exec-en")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -89,7 +89,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
+			environment.GetENV(&testsDetails, "pod-cpu-hog-exec", "pod-cpu-exec-en")
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
@@ -102,7 +102,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 	//Add abort-chaos for the chaos experiment
 	Context("Abort-Chaos check for pod cpu hog experiment", func() {
 
-		It("Should check the abort of pod-cpu-hog experiment", func() {
+		It("Should check the abort of pod-cpu-hog-exec experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -118,7 +118,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-hog-abort")
+			environment.GetENV(&testsDetails, "pod-cpu-hog-exec", "pod-cpu-hog-exec-abort")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -189,7 +189,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-hog-annotated")
+			environment.GetENV(&testsDetails, "pod-cpu-hog-exec", "pod-cpu-hog-exec-annotated")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -245,7 +245,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
+			environment.GetENV(&testsDetails, "pod-cpu-hog-exec", "pod-cpu-exec-en")
 
 			if testsDetails.UpdateWebsite == "true" {
 				//Getting chaosengine verdict
@@ -256,7 +256,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 				//Getting chaosengine verdict for abort test
 				By("Getting Verdict of Chaos Engine for abort test")
-				testsDetails.EngineName = "pod-cpu-hog-abort"
+				testsDetails.EngineName = "pod-cpu-hog-exec-abort"
 				ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 				if ChaosEngineVerdictForAbort != "Stopped" {
