@@ -89,6 +89,14 @@ pod-cpu-hog:
 	@echo "--------------------------------"
 	@go test tests/pod-cpu-hog_test.go -v -count=1
 
+.PHONY: pod-cpu-hog-exec
+pod-cpu-hog-exec:
+
+	@echo "-------------------------------"
+	@echo "Running pod-cpu-hog-exec experiment"
+	@echo "--------------------------------"
+	@go test tests/pod-cpu-hog-exec_test.go -v -count=1
+
 .PHONY: node-cpu-hog
 node-cpu-hog:
 
@@ -128,6 +136,14 @@ pod-memory-hog:
 	@echo "Running pod-memory-hog experiment"
 	@echo "---------------------------------"
 	@go test tests/pod-memory-hog_test.go -v -count=1
+
+.PHONY: pod-memory-hog-exec
+pod-memory-hog-exec:
+
+	@echo "---------------------------------"
+	@echo "Running pod-memory-hog-exec experiment"
+	@echo "---------------------------------"
+	@go test tests/pod-memory-hog-exec_test.go -v -count=1
 
 .PHONY: kubelet-service-kill
 kubelet-service-kill:
@@ -177,13 +193,37 @@ node-io-stress:
 	@echo "------------------------------------------"
 	@go test tests/node-io-stress_test.go -v -count=1	
 
-.PHONY: ec2-terminate
-ec2-terminate:
+.PHONY: ec2-terminate-by-id
+ec2-terminate-by-id:
 
 	@echo "------------------------------------------"
-	@echo "Running ec2-terminate experiment"
+	@echo "Running ec2-terminate-by-id experiment"
 	@echo "------------------------------------------"
-	@go test tests/ec2-terminate_test.go -v -count=1			
+	@go test platform/aws/ec2-terminate-by-id_test.go -v -count=1 -timeout=20m
+
+.PHONY: ec2-terminate-by-tag
+ec2-terminate-by-tag:
+
+	@echo "------------------------------------------"
+	@echo "Running ec2-terminate-by-tag experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ec2-terminate-by-tag_test.go -v -count=1 -timeout=20m		
+
+.PHONY: ebs-loss-by-id
+ebs-loss-by-id:
+
+	@echo "------------------------------------------"
+	@echo "Running ebs-loss-by-id experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ebs-loss-by-id_test.go -v -count=1 -timeout=20m		
+
+.PHONY: ebs-loss-by-tag
+ebs-loss-by-tag:
+
+	@echo "------------------------------------------"
+	@echo "Running ebs-loss-by-tag experiment"
+	@echo "------------------------------------------"
+	@go test platform/aws/ebs-loss-by-tag_test.go -v -count=1 -timeout=20m					
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
@@ -191,7 +231,7 @@ ec2-terminate:
 	@echo "--------------------------------------------"
 	@echo "Running  Operator Reconcile Resiliency Check"
 	@echo "--------------------------------------------"
-	@go test operator/reconcile-resiliency_test.go -v -count=1
+	@go test components/operator/reconcile-resiliency_test.go -v -count=1
 
 .PHONY: admin-mode-check
 admin-mode-check:
@@ -199,7 +239,7 @@ admin-mode-check:
 	@echo "------------------------"
 	@echo "Running Admin Mode Check"
 	@echo "------------------------"
-	@go test operator/admin-mode_test.go -v -count=1	
+	@go test components/operator/admin-mode_test.go -v -count=1	
 
 .PHONY: with-app-info
 with-app-info:

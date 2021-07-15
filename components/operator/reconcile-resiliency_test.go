@@ -114,7 +114,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Checking the runner pod status
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Fetching all the default ENV
@@ -134,7 +134,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			// Checking the runner pod status
 			By("[Status]: Runner pod running status check")
 			testsDetails.AppNS = "default"
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Visualising the components at default namespace

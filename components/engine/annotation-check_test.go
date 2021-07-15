@@ -64,7 +64,7 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).NotTo(BeNil(), "[TEST FAILED]: Runner pod created when the application is not annotated")
 
 			//Chaos pod running status check

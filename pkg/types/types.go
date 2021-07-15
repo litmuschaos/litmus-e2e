@@ -39,6 +39,9 @@ type TestDetails struct {
 	NetworkLatency            string
 	UpdateWebsite             string
 	InstanceID                string
+	InstanceTag               string
+	EBSVolumeID               string
+	EBSVolumeTag              string
 	Region                    string
 	Lib                       string
 	PodsAffectedPercentage    string

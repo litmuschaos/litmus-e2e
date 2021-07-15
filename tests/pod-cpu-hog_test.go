@@ -42,7 +42,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "go-engine8")
+			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -56,7 +56,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Chaos pod running status check
@@ -89,7 +89,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "go-engine8")
+			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
@@ -132,7 +132,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Chaos pod running status check
@@ -203,7 +203,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
-			_, err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
 			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
 			//Chaos pod running status check
@@ -245,7 +245,7 @@ var _ = Describe("BDD of pod-cpu-hog experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-cpu-hog", "go-engine8")
+			environment.GetENV(&testsDetails, "pod-cpu-hog", "pod-cpu-engine")
 
 			if testsDetails.UpdateWebsite == "true" {
 				//Getting chaosengine verdict

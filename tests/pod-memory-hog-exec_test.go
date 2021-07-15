@@ -14,17 +14,17 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoPodNetworkLatency(t *testing.T) {
+func TestGoMemoryHogExec(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for pod-network-latency experiment
-var _ = Describe("BDD of pod-network-latency experiment", func() {
+//BDD Tests for pod-memory-hog-exec experiment
+var _ = Describe("BDD of pod-memory-hog-exec experiment", func() {
 
 	// BDD TEST CASE 1
-	Context("Check for pod network latency experiment", func() {
+	Context("Check for pod-memory-hog-exec", func() {
 
 		It("Should check for creation of runner pod", func() {
 
@@ -32,9 +32,6 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			clients := environment.ClientSets{}
 			chaosExperiment := v1alpha1.ChaosExperiment{}
 			chaosEngine := v1alpha1.ChaosEngine{}
-
-			var TargetPodIP string
-			var HelperPod string
 
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
@@ -45,20 +42,15 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-latency", "go-engine13")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-mem-exec-en")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-			//Get Target pod name and IP
-			testsDetails.TargetPod, TargetPodIP, HelperPod, err = pkg.GetAppNameAndIP(testsDetails.AppLabel, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Fail to get the target pod details, due to {%v}", err)
-
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.NetworkLatency = "60000"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -70,10 +62,6 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
-
-			//Validate network chaos
-			err = pkg.ValidateNetworkChaos(&testsDetails, TargetPodIP, HelperPod, clients)
-			Expect(err).To(BeNil(), "Network chaos validation falied, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
@@ -95,17 +83,17 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 	})
 
 	// BDD TEST CASE 2
-	//Add abort-chaos for pod-network-latency experiment
-	Context("Abort-Chaos check for pod netowork latency experiment", func() {
+	//Add abort-chaos for the chaos experiment
+	Context("Abort-Chaos for pod memory hog experiment", func() {
 
-		It("Should check the abort of pod-network-latency experiment", func() {
+		It("Should check the abort of pod-memory-hog-exec experiment", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
 			chaosExperiment := v1alpha1.ChaosExperiment{}
 			chaosEngine := v1alpha1.ChaosEngine{}
 
-			klog.Info("RUNNING POD-NETWORK-LATENCY ABORT CHAOS TEST!!!")
+			klog.Info("RUNNING pod-memory-hog-exec ABORT CHAOS TEST!!!")
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
@@ -114,7 +102,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-latency", "pod-net-lat-abort")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-memory-hog-exec-abort")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -123,7 +111,6 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.NetworkLatency = "60000"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
@@ -167,7 +154,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 	})
 
 	// BDD TEST CASE 3
-	Context("Check for pod network experiment with annotation true", func() {
+	Context("Check pod memory hog experiment with annotation true", func() {
 
 		It("Should check the experiment when app is annotated", func() {
 
@@ -185,7 +172,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-latency", "pnlat-annotated")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-memory-hog-exec-annotated")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -194,8 +181,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.NetworkLatency = "60000"
-			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
+			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
@@ -242,20 +228,18 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-network-latency", "go-engine13")
+			environment.GetENV(&testsDetails, "pod-memory-hog-exec", "pod-mem-exec-en")
 
 			if testsDetails.UpdateWebsite == "true" {
-				//Updating the pipeline result table
-				By("Updating the pipeline result table")
-				//Getting chaosengine verdict for experiment test
-				By("Getting Verdict of Chaos Engine for experiment test")
+				//Getting chaosengine verdict
+				By("Getting Verdict of Chaos Engine")
 				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
 
 				//Getting chaosengine verdict for abort test
 				By("Getting Verdict of Chaos Engine for abort test")
-				testsDetails.EngineName = "pod-net-lat-abort"
+				testsDetails.EngineName = "pod-memory-hog-exec-abort"
 				ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 				if ChaosEngineVerdictForAbort != "Stopped" {
@@ -265,7 +249,7 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 
 				//Getting chaosengine verdict for annotation test
 				By("Getting Verdict of Chaos Engine for annotation test")
-				testsDetails.EngineName = "pnlat-annotated"
+				testsDetails.EngineName = "pod-memory-hog-exec-annotated"
 				ChaosEngineVerdictForAnnotate, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 				if ChaosEngineVerdictForAnnotate != "Pass" {
@@ -273,11 +257,14 @@ var _ = Describe("BDD of pod-network-latency experiment", func() {
 					klog.Error("Annotation test verdict is not Pass")
 				}
 
-				err = pkg.UpdateResultTable("Inject Network Latency Into Application Pod", ChaosEngineVerdict, &testsDetails)
+				//Updating the pipeline result table
+				By("Updating the pipeline result table")
+				err = pkg.UpdateResultTable("Consume memory resources on the application container", ChaosEngineVerdict, &testsDetails)
 				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
 			} else {
 				klog.Info("[SKIP]: Skip updating the result on website")
 			}
+
 		})
 	})
 })
