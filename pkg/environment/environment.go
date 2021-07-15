@@ -35,8 +35,9 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.EBSVolumeTag = Getenv("EBS_VOLUME_TAG", "")
 	testDetails.Region = Getenv("REGION", "us-west-1")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
-	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
-	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	testDetails.TargetNodes = Getenv("TARGET_NODES", "minikube")
+	testDetails.NodeLabel = Getenv("NODE_LABEL", "beta.kubernetes.io/arch=amd64")
+
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")
 	testDetails.GoExperimentImage = Getenv("GO_EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")

@@ -41,7 +41,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			// Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "run-history-passed")
+			environment.GetENV(&testsDetails, "pod-delete", "run-history")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator running status")
@@ -101,7 +101,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "run-history-failed")
+			environment.GetENV(&testsDetails, "pod-delete", "run-history")
 
 			// Changing app name in testDetails to get a failed verdict
 			testsDetails.AppLabel = "abcXYZ"
@@ -165,7 +165,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "run-history-stopped")
+			environment.GetENV(&testsDetails, "pod-delete", "run-history")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")

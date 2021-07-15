@@ -85,7 +85,6 @@ func CreateChaosResource(testsDetails *types.TestDetails, fileData []byte, names
 			if !k8serrors.IsAlreadyExists(err) {
 				return err
 			} else {
-				log.Infof("[Status]: Updated", unstructuredObj.GetKind())
 				if unstructuredObj.GetKind() == "ChaosEngine" {
 					return UpdateEngine(testsDetails, clients)
 				} else if unstructuredObj.GetKind() == "ChaosExperiment" {
@@ -304,6 +303,11 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector = map[string]string{}
 		}
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
+	}
+
+	// NODE_LABEL for Node-memory-hog and node-cpu-hog
+	if testsDetails.NodeLabel != "" {
+		envDetails.SetEnv("TARGET_NODES", testsDetails.TargetNodes)
 	}
 
 	// NODE_LABEL for Node-memory-hog and node-cpu-hog
