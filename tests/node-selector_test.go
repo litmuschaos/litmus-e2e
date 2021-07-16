@@ -95,7 +95,7 @@ var _ = Describe("BDD of Node selector", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4")
+			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4-1")
 
 			// Set incorrect target node string
 			testsDetails.TargetNodes = utils.GetRandomString(20)
@@ -157,7 +157,7 @@ var _ = Describe("BDD of Node selector", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4")
+			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4-2")
 
 			// Set TargetNodes to an empty string in order to use NodeLabel
 			testsDetails.TargetNodes = ""
@@ -215,7 +215,7 @@ var _ = Describe("BDD of Node selector", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4")
+			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4-3")
 
 			// Set TargetNodes to an empty string in order to use NodeLabel
 			testsDetails.TargetNodes = ""
@@ -280,7 +280,7 @@ var _ = Describe("BDD of Node selector", func() {
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4")
+			environment.GetENV(&testsDetails, "node-cpu-hog", "go-engine4-4")
 
 			// Set TargetNodes to an empty string
 			testsDetails.TargetNodes = ""
