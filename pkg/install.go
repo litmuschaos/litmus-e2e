@@ -107,7 +107,7 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 		}
 	}
-	log.Info("[RBAC]: Installing RABC...")
+	log.Info("[RBAC]: Installing RBAC...")
 	//Creating rbac
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
 	err := Kubectl(command...)
