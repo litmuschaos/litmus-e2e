@@ -269,7 +269,11 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
 		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
 	}
-	chaosEngine.Spec.ChaosServiceAccount = testsDetails.ChaosServiceAccount
+	if testsDetails.ChaosServiceAccount != "" {
+		chaosEngine.Spec.ChaosServiceAccount = testsDetails.ChaosServiceAccount
+	} else {
+		chaosEngine.Spec.ChaosServiceAccount = testsDetails.ExperimentName + "-sa"
+	}
 	chaosEngine.Spec.Experiments[0].Name = testsDetails.NewExperimentName
 	chaosEngine.Spec.AnnotationCheck = testsDetails.AnnotationCheck
 
@@ -320,12 +324,12 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 
 	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
 	switch testsDetails.ExperimentName {
-	case "pod-cpu-hog":
+	case "pod-cpu-hog-exec":
 		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
 			Name:  "CHAOS_KILL_COMMAND",
 			Value: testsDetails.CPUKillCommand,
 		})
-	case "pod-memory-hog":
+	case "pod-memory-hog-exec":
 		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
 			Name:  "CHAOS_KILL_COMMAND",
 			Value: testsDetails.MemoryKillCommand,

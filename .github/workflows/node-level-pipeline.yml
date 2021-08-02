@@ -19,8 +19,8 @@ on:
         default: "Always"
       experimentImagePullPolicy:
         default: "Always"
-      updateWebsite:
-        default: "false"
+      chaosServiceAccount:
+        default: ""
 
 defaults:
   run:
@@ -90,7 +90,8 @@ jobs:
         LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
         CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
+        UPDATE_WEBSITE: "false"
+        CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, node-level]
@@ -137,7 +138,8 @@ jobs:
         LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
         CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        UPDATE_WEBSITE: "${{ github.event.inputs.updateWebsite }}"
+        UPDATE_WEBSITE: "false"
+        CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
         KUBECONFIG: /root/.kube/config
 
     runs-on: [self-hosted, node-level]
