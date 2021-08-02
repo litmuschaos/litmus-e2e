@@ -102,9 +102,9 @@ jobs:
         if: ${{ always() }}
         run: make pod-network-duplication
 
-      #       - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
-      #         if: ${{ always() }}
-      #         run: make pod-io-stress
+      - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
+        if: ${{ always() }}
+        run: make pod-io-stress
 
       - name: TCID-EC2-GENERIC-APP-DISK-FILL
         if: ${{ always() }}
