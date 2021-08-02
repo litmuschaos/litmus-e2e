@@ -279,7 +279,7 @@ run-history:
 .PHONY: node-selector
 node-selector:
 	@echo "-----------------------------------"
-	@echo "Running Node Label Selector Check"
+	@echo "Running Node Selector Check"
 	@echo "-----------------------------------"
 	@go test tests/node-selector_test.go -v -count=1
 
