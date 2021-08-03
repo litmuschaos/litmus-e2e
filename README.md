@@ -67,7 +67,7 @@ The Pod-Level pipeline covers the tests for litmus pod-level generic experiments
   </tr>
   <tr>
     <td>Experiment Tunables</td>
-    <td>This stage includes the test to check the performance of litmus components.</td>
+    <td>This stage includes tests for different tunable variables of pod-level experiments.</td>
   </tr>
   <tr>
     <td>App-cleanup</td>
@@ -104,7 +104,7 @@ The Node-Level pipeline covers the tests for litmus node-level generic experimen
   </tr>
   <tr>
     <td>Engine Test</td>
-    <td>This stage includes the test to check the performance of litmus components.</td>
+    <td>This stage includes the test to check application-info tunablility for ChaosEngines.</td>
   </tr>
   <tr>
     <td>App-cleanup</td>
