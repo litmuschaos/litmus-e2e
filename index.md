@@ -22,11 +22,11 @@ The Litmus E2E is broadly divided in 2 categories Generic & Litmus-Portal.
   </tr>
   <tr>
     <td>Node-Level pipeline</td>
-    <td>It contains the test cases (GO BDDs) for node-level generic experiments. 
+    <td>It contains the test cases (GO BDDs) for node-level generic experiments.</td>
   </tr>
   <tr>
     <td>Component-Level pipeline</td>
-    <td>It contains the test cases (GO BDDs) for component-level generic experiments. 
+    <td>It contains the test cases (GO BDDs) for component-level generic experiments.</td>
   </tr>
   <tr>
     <td>Litmus-Portal pipeline</td>
@@ -42,7 +42,7 @@ To view the details of the last few pipelines runs:
   > For Pod-Level/Node-Level/Component-Level pipelines, click on `Generic` Button.
 - Inside it contains the details of every job along with pipeline details.
 
-# Pod-Level E2E Pipeline:
+# **Pod-Level E2E Pipeline**
 
 The Pod-Level pipeline covers the tests for litmus pod-level generic experiments which include some before and after chaos validation and performance checks for different litmus components.
 
@@ -79,7 +79,7 @@ The Pod-Level pipeline covers the tests for litmus pod-level generic experiments
   </tr>
 </table>
 
-# Node-level E2E Pipeline
+# **Node-level E2E Pipeline**
 
 The Node-Level pipeline covers the tests for litmus node-level generic experiments which include some before and after chaos validation and performance checks for different litmus components.
 
@@ -116,7 +116,7 @@ The Node-Level pipeline covers the tests for litmus node-level generic experimen
   </tr>
 </table>
 
-# Component-level E2E Pipeline
+# **Component-level E2E Pipeline**
 
 The Component-Level pipeline covers the tests for litmus component-level generic experiments which include some before and after chaos validation and performance checks for different litmus components.
 

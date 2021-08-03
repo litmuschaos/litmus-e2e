@@ -26,11 +26,11 @@ This repository contains the Litmus E2E pipelines for testing the chaos and litm
   </tr>
   <tr>
     <td>Node-Level pipeline</td>
-    <td>It contains the test cases (GO BDDs) for node-level generic experiments. 
+    <td>It contains the test cases (GO BDDs) for node-level generic experiments.</td>
   </tr>
   <tr>
     <td>Component-Level pipeline</td>
-    <td>It contains the test cases (GO BDDs) for component-level generic experiments. 
+    <td>It contains the test cases (GO BDDs) for component-level generic experiments.</td> 
   </tr>
   <tr>
     <td>Litmus-Portal pipeline</td>

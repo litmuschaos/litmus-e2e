@@ -8,7 +8,7 @@ filename: portal
 
 **Latest Pipeline Status**
 
-[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/Portal-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/Portal-pipeline.yml)
+[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-Portal-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-Portal-pipeline.yml)
 
 # **Pipeline Jobs**
 
