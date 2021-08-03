@@ -2,14 +2,17 @@
 title: Generic
 layout: template
 filename: generic
---- 
+---
 
 # **Generic E2E Pipeline Execution Details**
 
 **Latest Pipeline Status**
 
-[![pipeline status](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg)](https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic)
+[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-component-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-component-pipeline.yml)
 
+[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-node-level-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-node-level-pipeline.yml)
+
+[![pipeline status](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-pod-level-pipeline.yml/badge.svg)](https://github.com/litmuschaos/litmus-e2e/actions/workflows/scheduled-pod-level-pipeline.yml)
 
 <table>
 <tr>
@@ -28,42 +31,37 @@ filename: generic
 
 ### **Experiment Tests**
 
-- [TCID-VMWx-GENERIC-APP-POD-DELETE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-delete/README.md)
-- [TCID-VMWx-GENERIC-APP-CONTAINER-KILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/container-kill/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-CPU-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-cpu-hog/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-memory-hog/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-NETWORK-CORRUPTION](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-network-corruption/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-NETWORK-LATENCY](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-network-latency/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-NETWORK-LOSS](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-network-loss/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-NETWORK-DUPLICATION](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-network-duplication/README.md)
-- [TCID-VMWx-GENERIC-APP-POD-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/pod-memory-hog/README.md)
-- [TCID-VMWx-GENERIC-APP-DISK-FILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/disk-fill/README.md)
-- [TCID-VMWx-GENERIC-INFRA-NODE-CPU-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-cpu-hog/README.md)
-- [TCID-VMWx-GENERIC-INFRA-NODE-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-memory-hog/README.md)
-- [TCID-VMWx-GENERIC-INFRA-NODE-DRAIN](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/node-drain/README.md)
-- [TCID-VMWx-GENERIC-INFRA-KUBELET-SERVICE-KILL](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/kubelet-service-kill/README.md)
-- [TCID-VMWx-GENERIC-INFRA-NODE-TAINT](https://github.com/litmuschaos/litmus-e2e/tree/master/generic-pipeline/node-taint/README.md)
+- [TCID-EC2-GENERIC-APP-POD-DELETE](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-delete/README.md)
+- [TCID-EC2-GENERIC-APP-CONTAINER-KILL](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/container-kill/README.md)
+- [TCID-EC2-GENERIC-APP-POD-CPU-HOG](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-cpu-hog/README.md)
+- [TCID-EC2-GENERIC-APP-POD-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-memory-hog/README.md)
+- [TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-network-corruption/README.md)
+- [TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-network-latency/README.md)
+- [TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-network-loss/README.md)
+- [TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-network-duplication/README.md)
+- [TCID-EC2-GENERIC-APP-POD-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/pod-memory-hog/README.md)
+- [TCID-EC2-GENERIC-APP-DISK-FILL](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/disk-fill/README.md)
+- [TCID-EC2-GENERIC-INFRA-NODE-CPU-HOG](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/node-cpu-hog/README.md)
+- [TCID-EC2-GENERIC-INFRA-NODE-MEMORY-HOG](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/node-memory-hog/README.md)
+- [TCID-EC2-GENERIC-INFRA-NODE-DRAIN](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/node-drain/README.md)
+- [TCID-EC2-GENERIC-INFRA-KUBELET-SERVICE-KILL](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/kubelet-service-kill/README.md)
+- [TCID-EC2-GENERIC-INFRA-NODE-TAINT](https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-taint/README.md)
 
-- [TCID-VMWx-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/experiment-image/README.md)
+- [TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/experiment-image/README.md)
 
 ### **Operator Tests**
 
-- [TCID-VMWx-GENERIC-OPERATOR-RECONCILE-RESILIENCY](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/reconcile-resiliency/README.md)
-- [TCID-VMWx-GENERIC-OPERATOR-ADMIN-MODE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/admin-mode/README.md)
+- [TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/reconcile-resiliency/README.md)
+- [TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/admin-mode/README.md)
 
 ### **Engine Tests**
 
-- [TCID-VMWx-GENERIC-ENGINE-ANNOTATION-CHECK](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/annotation-check/README.md)
-- [TCID-VMWx-GENERIC-ENGINE-APP-INFO](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/appinfo/README.md)
-- [TCID-VMWx-GENERIC-ENGINE-ENGINE-STATE](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/engine-state/README.md)
-- [TCID-VMWx-GENERIC-ENGINE-EXPERIMENT-NAME](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/experiment-404/README.md)
-- [TCID-VMWx-GENERIC-ENGINE-JOB-CLEANUP-POLICY](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/job-cleanup-policy/README.md)
-- [TCID-VMWx-GENERIC-ENGINE-SERVICE-ACCOUNT](https://github.com/litmuschaos/litmus-e2e/blob/master/generic-pipeline/service-account/README.md)
-
-# **Pipeline Runs**
-
-<a href="pipeline-runs/https://gitlab.mayadata.io/litmuschaos/litmus-e2e/commits/generic"><img alt="pipeline status" src="https://gitlab.mayadata.io/litmuschaos/litmus-e2e/badges/generic/pipeline.svg" /></a>
-
+- [TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/annotation-check/README.md)
+- [TCID-EC2-GENERIC-ENGINE-APP-INFO](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/appinfo/README.md)
+- [TCID-EC2-GENERIC-ENGINE-ENGINE-STATE](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/engine-state/README.md)
+- [TCID-EC2-GENERIC-ENGINE-EXPERIMENT-NAME](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/experiment-404/README.md)
+- [TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/job-cleanup-policy/README.md)
+- [TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/generic-pipeline/service-account/README.md)
 
 ## Daily Nightly Builds
 
@@ -93,6 +91,7 @@ filename: generic
       <b>Component Nightly Build</b>
       </a>
       </td>
+
   </tr>
 
 </table>
@@ -125,10 +124,10 @@ filename: generic
       <b>Component RC Build</b>
       </a>
       </td>
+
   </tr>
 
 </table>
-
 
 ## General Availability(GA) Build
 
@@ -158,6 +157,7 @@ filename: generic
       <b>Component GA Build</b>
       </a>
       </td>
+
   </tr>
 
 </table>
