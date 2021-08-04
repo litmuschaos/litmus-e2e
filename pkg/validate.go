@@ -61,3 +61,20 @@ func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPo
 
 	return err
 }
+
+//ValidateNodeName validates a given target node name with the target node name present in the chaos result
+func ValidateNodeName(nodeName string, clients environment.ClientSets, testsDetails *types.TestDetails) error {
+
+	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
+	if err != nil {
+		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+	}
+
+	for _, target := range chaosResult.Status.History.Targets {
+		if target.Name == nodeName {
+			return nil
+		}
+	}
+
+	return errors.Errorf("failed to inject chaos in the target node")
+}

@@ -196,9 +196,17 @@ spec:
     description: "Give IO Stress on the Kubernetes Node"
     labels:
       test/feature: "Generic-Infra"
-      test/tags: "node, io,disk,stress"
+      test/tags: "node, io, disk, stress"
       git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-io-stress"
-      test/status: "Done"      
+      test/status: "Done"
+
+  - tcid: TCID-EC2-GENERIC-INFRA-NODE-SELECTOR
+    name: "TCID-EC2-GENERIC-INFRA-NODE-SELECTOR"
+    description: "Node selector functionality for given target node or node label"
+    labels:
+      test/feature: "Generic-Infra"
+      test/tags: "node, selector"
+      git/location: "https://github.com/litmuschaos/litmus-e2e/tree/gh-pages/generic-pipeline/node-selector"
 
   # -------------------------------------------------
   # Kubernetes Kube AWS chaos experiment BDD Tests

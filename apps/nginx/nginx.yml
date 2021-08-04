@@ -7,7 +7,7 @@ metadata:
     run: nginx
   annotations:
     litmuschaos.io/chaos: "true"
-  namespace: default
+  namespace: litmus
 spec:
   replicas: 3
   selector:

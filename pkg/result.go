@@ -1,8 +1,6 @@
 package pkg
 
 import (
-	"strings"
-
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
@@ -75,16 +73,16 @@ func CheckRunHistoryUpdate(testsDetails *types.TestDetails, clients environment.
 		"Stopped Runs": chaosResult.Status.History.StoppedRuns,
 	})
 
-	switch strings.ToLower(chaosResult.Status.ExperimentStatus.Verdict) {
-	case "pass":
+	switch chaosResult.Status.ExperimentStatus.Verdict {
+	case v1alpha1.ResultVerdictPassed:
 		if chaosResult.Status.History.PassedRuns != previousRunHistory.PassedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Passed Runs\"")
 		}
-	case "fail":
+	case v1alpha1.ResultVerdictFailed:
 		if chaosResult.Status.History.FailedRuns != previousRunHistory.FailedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Failed Runs\"")
 		}
-	case "stopped":
+	case v1alpha1.ResultVerdictStopped:
 		if chaosResult.Status.History.StoppedRuns != previousRunHistory.StoppedRuns+1 {
 			return errors.Errorf("Fail to get the run history to update \"Stopped Runs\"")
 		}
