@@ -314,12 +314,6 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		envDetails.SetEnv("TARGET_NODES", testsDetails.TargetNodes)
 	}
 
-	// update Node Label Details
-	if testsDetails.NodeLabel != "" {
-		log.Infof("[Info] Node Label: %v", testsDetails.NodeLabel)
-		envDetails.SetEnv("NODE_LABEL", testsDetails.NodeLabel)
-	}
-
 	// NODE_LABEL for Node-memory-hog and node-cpu-hog
 	if testsDetails.NodeLabel != "" {
 		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{

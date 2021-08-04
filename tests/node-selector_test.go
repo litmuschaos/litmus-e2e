@@ -34,13 +34,16 @@ var _ = Describe("BDD of Node selector", func() {
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-			testsDetails.ExperimentName = "node-cpu-hog"
-
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-cpu-hog", "node-selector-engine")
+			klog.Infof("[PreReq]: Fetched the ENVs for the %v test", testsDetails.ExperimentName)
+
+			//Setting random node as the target node
+			nodeDetails, err := pkg.GetRandomNode(clients)
+			Expect(err).To(BeNil(), "Fail to fetch random node, due to {%v}", err)
+			testsDetails.TargetNodes = nodeDetails.Name
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -50,7 +53,7 @@ var _ = Describe("BDD of Node selector", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Fail to prepare chaos, due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -70,7 +73,11 @@ var _ = Describe("BDD of Node selector", func() {
 			// Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosResult Verdict check failed, due to {%v}", err)
+
+			// Validate if the target node name is present in the chaos result
+			err = pkg.ValidateNodeName(nodeDetails.Name, clients, &testsDetails)
+			Expect(err).To(BeNil(), "ChaosResult Verdict check failed, due to {%v}", err)
 
 			// Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
@@ -89,13 +96,11 @@ var _ = Describe("BDD of Node selector", func() {
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-			testsDetails.ExperimentName = "node-cpu-hog"
-
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-cpu-hog", "node-selector-engine-1")
+			klog.Infof("[PreReq]: Fetched the ENVs for the %v test", testsDetails.ExperimentName)
 
 			// Set incorrect target node string
 			testsDetails.TargetNodes = utils.GetRandomString(20)
@@ -151,16 +156,19 @@ var _ = Describe("BDD of Node selector", func() {
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-			testsDetails.ExperimentName = "node-cpu-hog"
-
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-cpu-hog", "node-selector-engine-2")
+			klog.Infof("[PreReq]: Fetched the ENVs for the %v test", testsDetails.ExperimentName)
 
-			// Set TargetNodes to an empty string in order to use NodeLabel
-			testsDetails.TargetNodes = ""
+			//Deriving node label of a random node and assigning it to the NodeLabel
+			nodeDetails, err := pkg.GetRandomNode(clients)
+			Expect(err).To(BeNil(), "Fail to fetch random node, due to {%v}", err)
+			for key, value := range nodeDetails.Labels {
+				testsDetails.NodeLabel = key + "=" + value
+				break
+			}
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
@@ -209,16 +217,11 @@ var _ = Describe("BDD of Node selector", func() {
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-			testsDetails.ExperimentName = "node-cpu-hog"
-
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-cpu-hog", "node-selector-engine-3")
-
-			// Set TargetNodes to an empty string in order to use NodeLabel
-			testsDetails.TargetNodes = ""
+			klog.Infof("[PreReq]: Fetched the ENVs for the %v test", testsDetails.ExperimentName)
 
 			// Set an incorrect NodeLabel
 			testsDetails.NodeLabel = fmt.Sprintf("%s=%s", utils.GetRandomString(5), utils.GetRandomString(20))
@@ -274,19 +277,11 @@ var _ = Describe("BDD of Node selector", func() {
 			err := clients.GenerateClientSetFromKubeConfig()
 			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-			testsDetails.ExperimentName = "node-cpu-hog"
-
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
 			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "node-cpu-hog", "node-selector-engine-4")
-
-			// Set TargetNodes to an empty string
-			testsDetails.TargetNodes = ""
-
-			// Set NodeLabel to an empty string
-			testsDetails.NodeLabel = ""
+			klog.Infof("[PreReq]: Fetched the ENVs for the %v test", testsDetails.ExperimentName)
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")

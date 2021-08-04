@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
@@ -9,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/litmuschaos/litmus-go/pkg/utils/retry"
 	"github.com/pkg/errors"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -147,4 +149,16 @@ func GetRunHistoryStatus(testsDetails *types.TestDetails, clients environment.Cl
 		}
 	}
 	return chaosResult.Status.History
+}
+
+//GetRandomNode returns a random node name
+func GetRandomNode(clients environment.ClientSets) (*v1.Node, error) {
+	nodes, err := clients.KubeClient.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil || len(nodes.Items) == 0 {
+		return nil, errors.Errorf("Fail to get nodes, due to %v", err)
+	}
+
+	index := rand.Intn(len(nodes.Items))
+
+	return &nodes.Items[index], nil
 }
