@@ -119,7 +119,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 func UpdateExperiment(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("[Error Get] : %v", err)
+		return errors.Errorf("fail to update experiment, err: %v", err)
 	}
 
 	// Set all environments
@@ -127,7 +127,7 @@ func UpdateExperiment(testsDetails *types.TestDetails, clients environment.Clien
 
 	_, err = clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Update(experiment)
 	if err != nil {
-		return errors.Errorf("[Error Get] : %v", err)
+		return errors.Errorf("fail to get experiment,err: %v", err)
 	}
 	return nil
 }
@@ -184,6 +184,8 @@ func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 	// Modify LIB Image
 	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
 		testsDetails.LibImage = testsDetails.GoExperimentImage
+	} else {
+		testsDetails.LibImage = libImage
 	}
 
 	// Modify ENV's
@@ -193,7 +195,7 @@ func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 		SetEnv("LIB", testsDetails.Lib).
 		SetEnv("LIB_IMAGE", testsDetails.LibImage)
 
-	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImage + " !!!")
+	log.Info("[LIB Image]: Lib image is " + testsDetails.LibImage + " !!!")
 
 	// update all the values corresponding to keys from the ENV's in Experiment
 	for key, value := range chaosExperiment.Spec.Definition.ENVList {
