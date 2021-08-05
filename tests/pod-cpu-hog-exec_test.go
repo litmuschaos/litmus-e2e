@@ -231,7 +231,6 @@ var _ = Describe("BDD of pod-cpu-hog-exec experiment", func() {
 
 	// BDD for pipeline result update
 	Context("Check for the result update", func() {
-		// BDD for pipeline result update
 		It("Should check for the result updation", func() {
 
 			testsDetails := types.TestDetails{}

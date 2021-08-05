@@ -116,11 +116,11 @@ jobs:
         if: ${{ always() }}
         run: make pod-memory-hog
 
-      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG
+      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG-EXEC
         if: ${{ always() }}
         run: make pod-cpu-hog-exec
 
-      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
+      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG-EXEC
         if: ${{ always() }}
         run: make pod-memory-hog-exec        
 
