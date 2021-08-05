@@ -2,7 +2,7 @@
 
 **Litmus-Portal Pipeline** provides E2E test cases for Litmus-portal UI, which can be used for
 
-- Testing individual PRs in Litmus/Litmus-Helm Repositories
+- Testing individual PRs in [Litmus](http://github.com/litmuschaos/litmus)/[Litmus-Helm](https://github.com/litmuschaos/litmus-helm) Repositories
 - Manual Tests
 - Nightly builds
 
@@ -11,11 +11,11 @@
 We use the End to End Testing Framework - **Cypress** for testing Litmus-Portal.
 As Cypress is a npm package, for writing tests developers have to install LTS version of npm before writing tests.
 
-Litmus-Portal is a Cloud-native application, Developers need a cluster for deploying litmus-Portal. We advise our contributors to use KIND/K3S Clusters as they can be brought up and destroyed quickly.
+Litmus-Portal is a Cloud-native application that can be configured and managed easily. A developer needs to have a cluster for deploying litmus-Portal. We have used KIND/K3S Clusters to deploy portal in CI as their stable releases are generally recommended for CI usage in particular.
 
 ### Setup
 
-- Firstly we will need a cluster to deploy Litmus-Portal. Developers can use any K8s Cluster. For deploying Litmus-Portal, execute the below command -
+- Firstly we need a k8s cluster to deploy the litmus portal, users can use any K8s Cluster. After that, you need to run the following command to install portal:
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml

@@ -11,7 +11,6 @@ describe("Testing the accessibility of Getting Started Page", () => {
 
   it("Visiting the getStarted page after Login", () => {
     cy.url().should("contain", "/getStarted");
-    cy.contains("Set your new Password").should("be.visible");
     cy.log("Reached the getting started page Successfully");
   });
 
