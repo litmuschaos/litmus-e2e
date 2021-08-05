@@ -18,7 +18,6 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -97,7 +96,7 @@ func CreateChaosResource(testsDetails *types.TestDetails, fileData []byte, names
 
 // UpdateEngine updating engine
 func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSets) error {
-	engine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
+	engine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, v1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -117,7 +116,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 
 // UpdateExperiment updating experiment
 func UpdateExperiment(testsDetails *types.TestDetails, clients environment.ClientSets) error {
-	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, metav1.GetOptions{})
+	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, v1.GetOptions{})
 	if err != nil {
 		return errors.Errorf("fail to update experiment, err: %v", err)
 	}
@@ -147,7 +146,7 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
 		}
 	}
-	log.Info("[RBAC]: Installing RABC...")
+	log.Info("[RBAC]: Installing RBAC...")
 	//Creating rbac
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
 	err := Kubectl(command...)
@@ -311,8 +310,9 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		chaosEngine.Spec.Experiments[0].Spec.Components.NodeSelector["kubernetes.io/hostname"] = testsDetails.NodeSelectorName
 	}
 
-	// NODE_LABEL for Node-memory-hog and node-cpu-hog
-	if testsDetails.NodeLabel != "" {
+	// update Target Node Details
+	if testsDetails.TargetNodes != "" {
+		log.Infof("[Info] Target Nodes: %v", testsDetails.TargetNodes)
 		envDetails.SetEnv("TARGET_NODES", testsDetails.TargetNodes)
 	}
 

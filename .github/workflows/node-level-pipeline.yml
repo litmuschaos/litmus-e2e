@@ -123,6 +123,10 @@ jobs:
         if: always()
         run: make node-io-stress
 
+      - name: TCID-EC2-GENERIC-INFRA-NODE-SELECTOR
+        if: always()
+        run: make node-selector
+        
   ### Runing Experiment Tunables
   Engine_Test:
     needs: Node_Level_Test

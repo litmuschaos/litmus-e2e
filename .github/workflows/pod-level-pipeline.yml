@@ -150,7 +150,7 @@ jobs:
 
   ### Runing Experiment Tunables
   Experiment_Tunables:
-    needs: Setup_Litmus_Infra
+    needs: Setup_App_Deployment
     if: always()
     container:
       image: "${{ github.event.inputs.e2eTestImage }}"
