@@ -99,15 +99,15 @@ var _ = Describe("BDD of experiment image test", func() {
 
 		})
 	})
-	// // BDD for cleaning all components
-	// Context("Check for litmus components", func() {
+	// BDD for cleaning all components
+	Context("Check for litmus components", func() {
 
-	// 	It("Should delete all the litmus CRs", func() {
-	// 		By("[Cleanup]: Removing Litmus Components")
-	// 		err := pkg.Cleanup()
-	// 		Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+		It("Should delete all the litmus CRs", func() {
+			By("[Cleanup]: Removing Litmus Components")
+			err := pkg.Cleanup()
+			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
 
-	// 	})
+		})
 
-	// })
+	})
 })
