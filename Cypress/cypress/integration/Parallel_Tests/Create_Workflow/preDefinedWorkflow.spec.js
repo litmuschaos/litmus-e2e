@@ -11,10 +11,11 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 
 	it("Running PreDefined Workflow", () => {
 		cy.chooseAgent(0);
-		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.GraphqlWait("GetPredefinedWorkflowList", "getPredefinedData");
-
-		cy.chooseWorkflow(0, 0, "@getPredefinedData");
+		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
+		
+		cy.wait("@getPredefinedData");
+		cy.chooseWorkflow(0, 0);
 
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
