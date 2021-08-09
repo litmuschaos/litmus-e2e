@@ -105,7 +105,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 	engine.Spec.EngineState = v1alpha1.EngineStateActive
 
 	// Set all environments
-	SetEngineVar(engine, testsDetails)
+	setEngineVar(engine, testsDetails)
 
 	_, err = clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Update(engine)
 	if err != nil {
@@ -118,15 +118,15 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 func UpdateExperiment(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, v1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("[Error] : %v", err)
+		return errors.Errorf("fail to update experiment, err: %v", err)
 	}
 
 	// Set all environments
-	SetExperimentVar(experiment, testsDetails)
+	setExperimentVar(experiment, testsDetails)
 
 	_, err = clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Update(experiment)
 	if err != nil {
-		return errors.Errorf("[Error] : %v", err)
+		return errors.Errorf("fail to get experiment,err: %v", err)
 	}
 	return nil
 }
@@ -158,8 +158,8 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	return nil
 }
 
-// SetExperimentVar setting up variables of experiment
-func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *types.TestDetails) {
+// setExperimentVar setting up variables of experiment
+func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *types.TestDetails) {
 
 	// contains all the envs
 	envDetails := ENVDetails{
@@ -183,6 +183,8 @@ func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 	// Modify LIB Image
 	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
 		testsDetails.LibImage = testsDetails.GoExperimentImage
+	} else {
+		testsDetails.LibImage = libImage
 	}
 
 	// Modify ENV's
@@ -192,7 +194,7 @@ func SetExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 		SetEnv("LIB", testsDetails.Lib).
 		SetEnv("LIB_IMAGE", testsDetails.LibImage)
 
-	log.Info("[LIB Image]: LIB image: " + testsDetails.LibImage + " !!!")
+	log.Info("[LIB Image]: Lib image is " + testsDetails.LibImage + " !!!")
 
 	// update all the values corresponding to keys from the ENV's in Experiment
 	for key, value := range chaosExperiment.Spec.Definition.ENVList {
@@ -225,7 +227,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	}
 
 	// Initialise experiment
-	SetExperimentVar(chaosExperiment, testsDetails)
+	setExperimentVar(chaosExperiment, testsDetails)
 
 	// Marshal serializes the value provided into a YAML document.
 	fileData, err := json.Marshal(chaosExperiment)
@@ -245,8 +247,8 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	return nil
 }
 
-// SetEngineVar setting up variables of engine
-func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails) {
+// setEngineVar setting up variables of engine
+func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails) {
 
 	// contains all the envs
 	envDetails := ENVDetails{
@@ -289,15 +291,29 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	case "ebs-loss-by-tag":
 		envDetails.SetEnv("EBS_VOLUME_TAG", testsDetails.EBSVolumeTag).
 			SetEnv("REGION", testsDetails.Region)
+	case "disk-fill":
+		if testsDetails.FillPercentage != 80 {
+			envDetails.SetEnv("FILL_PERCENTAGE", strconv.Itoa(testsDetails.FillPercentage))
+		}
+		// Here not using SetEnv function as SetEnv will not add new variables
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "EPHEMERAL_STORAGE_MEBIBYTES",
+			Value: "200",
+		})
+	case "pod-cpu-hog-exec":
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.CPUKillCommand,
+		})
+	case "pod-memory-hog-exec":
+		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
+			Name:  "CHAOS_KILL_COMMAND",
+			Value: testsDetails.MemoryKillCommand,
+		})
 	}
 
 	// for experiments like pod network latency
 	envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
-
-	// update Engine if FillPercentage if it does not match criteria
-	if testsDetails.FillPercentage != 80 {
-		envDetails.SetEnv("FILL_PERCENTAGE", strconv.Itoa(testsDetails.FillPercentage))
-	}
 
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
@@ -319,20 +335,6 @@ func SetEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
 			Name:  "NODE_LABEL",
 			Value: testsDetails.NodeLabel,
-		})
-	}
-
-	// CHAOS_KILL_COMMAND for pod-memory-hog and pod-cpu-hog
-	switch testsDetails.ExperimentName {
-	case "pod-cpu-hog-exec":
-		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
-			Name:  "CHAOS_KILL_COMMAND",
-			Value: testsDetails.CPUKillCommand,
-		})
-	case "pod-memory-hog-exec":
-		chaosEngine.Spec.Experiments[0].Spec.Components.ENV = append(chaosEngine.Spec.Experiments[0].Spec.Components.ENV, corev1.EnvVar{
-			Name:  "CHAOS_KILL_COMMAND",
-			Value: testsDetails.MemoryKillCommand,
 		})
 	}
 
@@ -367,7 +369,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	}
 
 	// Initialise engine
-	SetEngineVar(chaosEngine, testsDetails)
+	setEngineVar(chaosEngine, testsDetails)
 
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)

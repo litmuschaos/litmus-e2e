@@ -2,7 +2,7 @@
 name: Scheduled-AWS-Experiment-Pipeline
 on:
   schedule:
-    - cron: "30 20 * * *" # Daily 02:30 AM in midnight
+    - cron: "30 22 * * *" # Daily 02:30 AM in midnight
 
 jobs:
   AWS_Experiment_Test:
@@ -59,9 +59,9 @@ jobs:
           aws ec2 run-instances \
           --image-id ami-0d382e80be7ffdae5 \
           --count 2 --instance-type t2.nano \
-          --key-name udit-litmus-e2e \
-          --security-group-ids sg-06925d6218d07e795 \
-          --subnet-id subnet-9c2ba8fa \
+          --key-name ${{ secrets.KEY_NAME }} \
+          --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
+          --subnet-id ${{ secrets.SUBNET_ID }} \
           --region ${{ secrets.REGION }} \
           --tag-specifications 'ResourceType=instance,Tags=[{Key=runNumber,Value=${{ github.run_number }}}]'
           
@@ -156,9 +156,9 @@ jobs:
           --image-id ami-0d382e80be7ffdae5 \
           --count 1 \
           --instance-type t2.nano \
-          --key-name udit-litmus-e2e \
-          --security-group-ids sg-06925d6218d07e795 \
-          --subnet-id subnet-9c2ba8fa \
+          --key-name ${{ secrets.KEY_NAME }} \
+          --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
+          --subnet-id ${{ secrets.SUBNET_ID }} \
           --placement AvailabilityZone=${{ secrets.AVAILABILITY_ZONE }} \
           --region ${{ secrets.REGION }} \
           --tag-specifications 'ResourceType=instance,Tags=[{Key=runNumber,Value=${{ github.run_number }}}]'
