@@ -174,14 +174,14 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 		if err != nil {
 			return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
 		}
-		if len(chaosEngine.Status.Experiments) == 0 {
+		if chaosEngine.Status.Experiments) == "" {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			log.Info("[Status]: Experiment initializing")
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
 				return errors.Errorf("Experiment pod fail to initialise, due to %v", err)
 			}
 
-		} else if len(chaosEngine.Status.Experiments[0].ExpPod) == 0 {
+		} else if chaosEngine.Status.Experiments[0].ExpPod == "" {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
 				return errors.Errorf("Experiment pod fails to create, due to %v", err)
