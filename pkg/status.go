@@ -174,7 +174,7 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 		if err != nil {
 			return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
 		}
-		if chaosEngine.Status.Experiments) == "" {
+		if len(chaosEngine.Status.Experiments) == 0 {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			log.Info("[Status]: Experiment initializing")
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
