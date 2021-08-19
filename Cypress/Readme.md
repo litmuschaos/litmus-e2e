@@ -8,7 +8,7 @@
 
 ### Prerequisites And Framework
 
-We use the End to End Testing Framework - **Cypress** for testing Litmus-Portal.
+We use the End to End Testing Framework - [**Cypress**](https://docs.cypress.io/guides/overview/why-cypress) for testing Litmus-Portal.
 As Cypress is a npm package, for writing tests developers have to install LTS version of npm before writing tests.
 
 Litmus-Portal is a Cloud-native application that can be configured and managed easily. A developer needs to have a cluster for deploying litmus-Portal. We have used KIND/K3S Clusters to deploy portal in CI as their stable releases are generally recommended for CI usage in particular.
@@ -37,10 +37,10 @@ npm install
 
 - Once all packages are installed, setup the frontend server locally for writing new test as you will have to add more unique parameters while adding a new test.
 
-you can follow [here]("https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide#to-enable") for setting it up.
+you can follow [here](https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide#to-enable) for setting it up.
 
 ```
-cypress.prod.json
+cypress.json
 -----------------
 {
     "baseUrl": "http://localhost:3001", => PORTAL_FRONTEND_URL
@@ -50,7 +50,7 @@ cypress.prod.json
 - Now, we can start Cypress Test Runner using command -
 
 ```
-npx cypress open --config-file cypress.prod.json
+npx cypress open
 ```
 
 - Developers can manually trigger the tests from the Cypress Test Runner by clicking on test names and play around to get started.
@@ -70,7 +70,7 @@ If you're writing a _new test_ , you will have to add it inside the integrations
 
 If you want use some mock data in your tests, add the same in fixtures directory and import it into your test, so that it will be reusable and scalable.
 
-If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow]("https://github.com/litmuschaos/litmus-e2e/blob/master/.github/workflows/Portal-pipeline.yml")
+If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow](https://github.com/litmuschaos/litmus-e2e/blob/master/.github/workflows/Portal-pipeline.yml)
 
 While adding a test for an existing category, just add the test in category according to the test-case scenario. Pipeline will automatically execute the newly added test along with other tests.
 
