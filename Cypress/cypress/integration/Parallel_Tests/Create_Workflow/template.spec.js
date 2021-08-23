@@ -87,7 +87,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
-		cy.get("[data-cy=browseScheduleOptions]").eq(1).click();
+		cy.get("[data-cy=browseScheduleOptions]").eq(0).click();
 		cy.get("[data-cy=saveTemplate]")
 			.eq(0)
 			.should("have.text", "Save Template")
