@@ -15,10 +15,10 @@ filename: portal
 ### **Auth,Teaming and User-Management Tests**
 
 - [TCID-EKS-Portal-GUI-AccountSettings](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-AccountSettings.md)
-- [TCID-EKS-Portal-GUI-Auth](https://github.com/litmuschaos/litmus-e2e/blob/litmus-portal/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Auth.md)
-- [TCID-EKS-Portal-GUI-Routes](https://github.com/litmuschaos/litmus-e2e/blob/litmus-portal/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Routes.md)
-- [TCID-EKS-Portal-GUI-Teaming](https://github.com/litmuschaos/litmus-e2e/blob/litmus-portal/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Teaming.md)
-- [TCID-EKS-Portal-GUI-User-Management](https://github.com/litmuschaos/litmus-e2e/blob/litmus-portal/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-User-Management.md)
+- [TCID-EKS-Portal-GUI-Auth](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Auth.md)
+- [TCID-EKS-Portal-GUI-Routes](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Routes.md)
+- [TCID-EKS-Portal-GUI-Teaming](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-Teaming.md)
+- [TCID-EKS-Portal-GUI-User-Management](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EKS-Portal-GUI-User-Management.md)
 
 ## Daily Nightly Builds
 
