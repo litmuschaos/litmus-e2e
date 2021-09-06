@@ -21,8 +21,8 @@ on:
         default: "litmus"
       imagePullPolicy:
         default: "Always"
-      experimentImagePullPolicy:
-        default: "Always"
+      chaosServiceAccount:
+        default: ""
 
 jobs:
 
@@ -31,12 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -117,12 +115,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -212,12 +208,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -286,12 +280,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -363,7 +355,6 @@ jobs:
     env:
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -371,7 +362,6 @@ jobs:
       UPDATE_WEBSITE: "false"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"  
       POD_LEVEL: "true"      
@@ -449,7 +439,6 @@ jobs:
     env:
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -457,7 +446,6 @@ jobs:
       UPDATE_WEBSITE: "false"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"
       POD_LEVEL: "true"      
@@ -537,7 +525,6 @@ jobs:
     env:
       GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
       LIB_IMAGE: "${{ github.event.inputs.libImage }}"
-      EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -545,7 +532,6 @@ jobs:
       UPDATE_WEBSITE: "false"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-      OPERATOR_NAME: "${{ github.event.inputs.operatorName }}"
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}" 
       POD_LEVEL: "true"      
