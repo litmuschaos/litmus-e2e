@@ -70,7 +70,7 @@ If you're writing a _new test_ , you will have to add it inside the integrations
 
 If you want use some mock data in your tests, add the same in fixtures directory and import it into your test, so that it will be reusable and scalable.
 
-If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow](https://github.com/litmuschaos/litmus-e2e/blob/master/.github/workflows/Portal-pipeline.yml)
+If you are adding a new category, than create a directory according to test case and add the same as a job in github actions [workflow](https://github.com/litmuschaos/litmus-e2e/actions/workflows/portal-pipeline.yml)
 
 While adding a test for an existing category, just add the test in category according to the test-case scenario. Pipeline will automatically execute the newly added test along with other tests.
 
