@@ -125,7 +125,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 			//Create Namespace for the test
 			By("Creating namespace")
-			_, err = pkg.CreateNamespace(clients, "test")
+			err = pkg.CreateNamespace(clients, "test")
 			Expect(err).To(BeNil(), "Namespace creation failed, due to {%v}", err)
 
 			testsDetails.ChaosNamespace = "test"
