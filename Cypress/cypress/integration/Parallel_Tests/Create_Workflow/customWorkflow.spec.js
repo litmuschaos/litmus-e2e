@@ -41,9 +41,9 @@ describe("Testing the workflow creation wizard using Custom Experiments from Hub
 		cy.get("[data-cy=addExperimentButton]").should("be.visible");
 		cy.get("[data-cy=addExperimentButton]").click();
 		/**
-		 * Waiting for the add experiment modal to open
+		 * Waiting for the search experiment field to be visible
 		 */
-		cy.wait(1000);
+		cy.get("[data-cy=addExperimentSearch]").should("be.visible");
 		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("pod");
 		cy.get("[data-cy=ExperimentList] :radio").eq(0).check();
 		cy.get("[data-cy=AddExperimentDoneButton]").click();
@@ -63,7 +63,7 @@ describe("Testing the workflow creation wizard using Custom Experiments from Hub
 		 */
 		cy.get("[data-cy=addExperimentButton]").should("be.visible");
 		cy.get("[data-cy=addExperimentButton]").click();
-		cy.wait(1000);
+		cy.get("[data-cy=addExperimentSearch]").should("be.visible");
 		cy.get("[data-cy=addExperimentSearch]")
 			.find("input")
 			.clear()
