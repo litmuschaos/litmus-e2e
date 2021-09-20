@@ -107,7 +107,7 @@ var _ = Describe("BDD of node-taint experiment", func() {
 
 			// Getting application node name
 			By("[Prepare]: Getting application node name")
-		 err = pkg.GetApplicationNode(&testsDetails, clients)
+		        err = pkg.GetApplicationNode(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
 
 			//Uncordon the application node
