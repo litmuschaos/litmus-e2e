@@ -1,4 +1,4 @@
-name: Portal-E2E K3S Pipeline
+name: Portal-E2E-K3S-Pipeline
 on:
   workflow_dispatch:
     inputs:
