@@ -9,164 +9,350 @@ defaults:
     working-directory: /go/src
 
 jobs:
-  ### Setup Litmus
 
-  Setup_Litmus_Infra:
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, component]
-
+  Chaos_Operator_Component_Test:
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      CHAOS_NAMESPACE: "litmus"
+      APP_NS: "litmus"
+      UPDATE_WEBSITE: "true"
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
+      COMPONENT_LEVEL: "true"
+    
     steps:
-      - name: Litmus Infra Setup In Cluster-1
+    
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pygithub
+        run: python3 -m pip install pygithub
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'litmuschaos/litmus-e2e'
+          ref: 'master'      
+    
+      - name: Installing Prerequisites (K3S Cluster)
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          kubectl get nodes
+          
+      - name: Litmus Infra Setup 
+        if: ${{ always() }}      
         run: |
           make build-litmus
 
-  ### Setup App
-
-  Setup_App_Deployment:
-    needs: Setup_Litmus_Infra
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, component]
-    steps:
-      - name: Deploy App In Cluster-1
+      - name: Deploy App 
+        if: ${{ always() }}      
         run: make app-deploy
 
-    ## TODO: Make use of app liveness check and aux app
-    # - name: Liveness In Cluster-1
-    #   if: ${{ always() }}
-    #   run: make liveness
-
-    # - name: Auxiliary App In Cluster-1
-    #   if: ${{ always() }}
-    #   run: make auxiliary-app
-
-  ### Runing Component Tests
-
-  Component_Test:
-    needs: Setup_App_Deployment
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, component]
-    steps:
-      - name: TCID-EC2-GENERIC-OPERATOR-RECONCILE-RESILIENCY
+      - name: GENERIC-OPERATOR-RECONCILE-RESILIENCY
+        if: ${{ always() }} 
         run: make operator-reconcile-resiliency-check
-
-      - name: TCID-EC2-GENERIC-OPERATOR-ADMIN-MODE
-        if: ${{ always() }}
+        
+      - name: GENERIC-OPERATOR-ADMIN-MODE-CHECK
+        if: ${{ always() }} 
         run: make admin-mode-check
+        
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt        
+        
+      - name: Application Cleanup
+        if: ${{ always() }}      
+        run: make app-cleanup
 
-      - name: TCID-EC2-GENERIC-ENGINE-APP-INFO
+      - name: Litmus Cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh        
+        
+  Chaos_Engine_Component_Test:
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      CHAOS_NAMESPACE: "litmus"
+      APP_NS: "litmus"
+      UPDATE_WEBSITE: "true"
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
+      COMPONENT_LEVEL: "true"
+    
+    steps:
+    
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pygithub
+        run: python3 -m pip install pygithub          
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'litmuschaos/litmus-e2e'
+          ref: 'master'      
+    
+      - name: Installing Prerequisites (K3S Cluster)
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          kubectl get nodes
+          
+      - name: Litmus Infra Setup 
+        if: ${{ always() }}      
+        run: |
+          make build-litmus
+
+      - name: Deploy App 
+        if: ${{ always() }}      
+        run: make app-deploy
+
+      - name: TCID-K3S-GENERIC-ENGINE-APP-INFO
         if: ${{ always() }}
         run: make appinfo
 
-      - name: TCID-EC2-GENERIC-ENGINE-ANNOTATION-CHECK
+      - name: TCID-K3S-GENERIC-ENGINE-ANNOTATION-CHECK
         if: ${{ always() }}
         run: make annotation-check
 
-      - name: TCID-EC2-GENERIC-ENGINE-ENGINE-STATE
+      - name: TCID-K3S-GENERIC-ENGINE-ENGINE-STATE
         if: ${{ always() }}
         run: make engine-state
 
-      - name: TCID-EC2-GENERIC-ENGINE-JOB-CLEANUP-POLICY
+      - name: TCID-K3S-GENERIC-ENGINE-JOB-CLEANUP-POLICY
         if: ${{ always() }}
         run: make job-cleanup-policy
 
-      - name: TCID-EC2-GENERIC-ENGINE-SERVICE-ACCOUNT
+      - name: TCID-K3S-GENERIC-ENGINE-SERVICE-ACCOUNT
         if: ${{ always() }}
         run: make service-account
+        
+      - name: TCID-K3S-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
+        if: always()
+        run: make env-from-secret-and-configmap  
+        
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt        
+        
+      - name: Application Cleanup
+        if: ${{ always() }}      
+        run: make app-cleanup
 
-      - name: TCID-EC2-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
+      - name: Litmus Cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh      
+
+  Chaos_Experiment_Component_Test:
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      CHAOS_NAMESPACE: "litmus"
+      APP_NS: "litmus"
+      UPDATE_WEBSITE: "true"
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
+      COMPONENT_LEVEL: "true" 
+    
+    steps:
+    
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pygithub
+        run: python3 -m pip install pygithub          
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'litmuschaos/litmus-e2e'
+          ref: 'master'      
+    
+      - name: Installing Prerequisites (K3S Cluster)
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          kubectl get nodes
+          
+      - name: Litmus Infra Setup 
+        if: ${{ always() }}      
+        run: |
+          make build-litmus
+
+      - name: Deploy App 
+        if: ${{ always() }}      
+        run: make app-deploy
+
+      - name: GENERIC-OPERATOR-RECONCILE-RESILIENCY
+        if: ${{ always() }} 
+        run: make appinfo
+        
+      - name: TCID-K3S-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME
         if: ${{ always() }}
         run: make experiment-image
 
-      - name: TCID-EC2-GENERIC-EXPERIMENT-TARGET-POD
+      - name: TCID-K3S-GENERIC-EXPERIMENT-TARGET-POD
         if: ${{ always() }}
         run: make target-pod
-
-      - name: TCID-EC2-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP
-        if: always()
-        run: make env-from-secret-and-configmap
-      
-      - name: TCID-EC2-GENERIC-RUN-HISTORY
-        if: ${{ always() }}
-        run: make run-history
-
-  ### App Cleanup
-
-  App_Cleanup:
-    needs: Component_Test
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, component]
-    steps:
+        
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt        
+        
       - name: Application Cleanup
+        if: ${{ always() }}      
         run: make app-cleanup
 
-  ### Litmus Cleanup
-
-  Litmus_Cleanup:
-    needs: App_Cleanup
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-        COMPONENT_TEST: "true"
-
-    runs-on: [self-hosted, component]
-    steps:
       - name: Litmus Cleanup
-        run: make litmus-cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh
+        
+  Chaos_Result_Component_Test:
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      CHAOS_NAMESPACE: "litmus"
+      APP_NS: "litmus"
+      UPDATE_WEBSITE: "true"
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
+      COMPONENT_LEVEL: "true"
+    
+    steps:
+    
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pygithub
+        run: python3 -m pip install pygithub          
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'litmuschaos/litmus-e2e'
+          ref: 'master'      
+    
+      - name: Installing Prerequisites (K3S Cluster)
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          kubectl get nodes
+          
+      - name: Litmus Infra Setup 
+        if: ${{ always() }}      
+        run: |
+          make build-litmus
+
+      - name: Deploy App 
+        if: ${{ always() }}      
+        run: make app-deploy
+
+      - name: TCID-K3S-GENERIC-RUN-HISTORY
+        if: ${{ always() }}
+        run: make run-history
+        
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt        
+        
+      - name: Application Cleanup
+        if: ${{ always() }}      
+        run: make app-cleanup
+
+      - name: Litmus Cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh
+        
 
   ### Website Update
-
   Pipeline_Update:
+    needs: [ Chaos_Operator_Component_Test,Chaos_Engine_Component_Test,Chaos_Experiment_Component_Test,Chaos_Result_Component_Test]
     if: always()
-    needs: Litmus_Cleanup
     env:
       CI_PIPELINE_ID: ${{ github.run_id }}
-      COMPONENT_TEST: "true"
+      COMPONENT_LEVEL: "true"
       UPDATE_WEBSITE: "true"
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-
-    runs-on: [self-hosted, component]
+    runs-on: ubuntu-latest
     steps:
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pygithub
+        run: python3 -m pip install pygithub 
+            
       - name: Pipeline Update
         run: make pipeline-status-update

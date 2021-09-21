@@ -68,19 +68,19 @@ jobs:
         if: ${{ always() }}      
         run: make app-deploy
     
-      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-CORRUPTION
+      - name: TCID-K3S-GENERIC-APP-POD-NETWORK-CORRUPTION
         if: ${{ always() }}
         run: make pod-network-corruption
 
-      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LATENCY
+      - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LATENCY
         if: ${{ always() }}
         run: make pod-network-latency
 
-      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-LOSS
+      - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LOSS
         if: ${{ always() }}
         run: make pod-network-loss
 
-      - name: TCID-EC2-GENERIC-APP-POD-NETWORK-DUPLICATION
+      - name: TCID-K3S-GENERIC-APP-POD-NETWORK-DUPLICATION
         if: ${{ always() }}
         run: make pod-network-duplication
         
@@ -153,27 +153,27 @@ jobs:
         if: ${{ always() }}      
         run: make app-deploy
     
-      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG
+      - name: TCID-K3S-GENERIC-APP-POD-CPU-HOG
         if: ${{ always() }}
         run: make pod-cpu-hog
 
-      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG
+      - name: TCID-K3S-GENERIC-APP-POD-MEMORY-HOG
         if: ${{ always() }}
         run: make pod-memory-hog
 
-      - name: TCID-EC2-GENERIC-APP-POD-CPU-HOG-EXEC
+      - name: TCID-K3S-GENERIC-APP-POD-CPU-HOG-EXEC
         if: ${{ always() }}
         run: make pod-cpu-hog-exec
 
-      - name: TCID-EC2-GENERIC-APP-POD-MEMORY-HOG-EXEC
+      - name: TCID-K3S-GENERIC-APP-POD-MEMORY-HOG-EXEC
         if: ${{ always() }}
         run: make pod-memory-hog-exec        
 
-      - name: TCID-EC2-GENERIC-APP-POD-IO-STRESS
+      - name: TCID-K3S-GENERIC-APP-POD-IO-STRESS
         if: ${{ always() }}
         run: make pod-io-stress
 
-      - name: TCID-EC2-GENERIC-APP-DISK-FILL
+      - name: TCID-K3S-GENERIC-APP-DISK-FILL
         if: ${{ always() }}
         run: make disk-fill
         
@@ -245,7 +245,7 @@ jobs:
         if: ${{ always() }}      
         run: make app-deploy
     
-      - name: TCID-EC2-GENERIC-APP-CONTAINER-KILL
+      - name: TCID-K3S-GENERIC-APP-CONTAINER-KILL
         if: ${{ always() }}
         run: make container-kill
         
@@ -317,7 +317,7 @@ jobs:
         if: ${{ always() }}      
         run: make app-deploy
     
-      - name: TCID-EC2-GENERIC-APP-POD-DELETE
+      - name: TCID-K3S-GENERIC-APP-POD-DELETE
         if: ${{ always() }}      
         run: make pod-delete
         
@@ -397,7 +397,7 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
-      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
+      - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
         run: make pod-affected-perc-ton-parallel
 
       - name: Experiment Tunables Cleanup
@@ -481,7 +481,7 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
           
-      - name: TCID-EC2-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
+      - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
         if: ${{ always() }}
         run: make pod-affected-perc-ton-series
 
@@ -567,7 +567,7 @@ jobs:
           kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
-      - name: TCID-EC2-GENERIC-APP-MULTIPLE-APP-DEPLOY
+      - name: TCID-K3S-GENERIC-APP-MULTIPLE-APP-DEPLOY
         if: ${{ always() }}
         run: make multiple-app-deploy
         

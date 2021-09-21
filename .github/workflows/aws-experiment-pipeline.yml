@@ -121,6 +121,7 @@ jobs:
 
   AWS_EBS_Loss_By_ID_And_Tag:
     runs-on: ubuntu-latest
+    needs: AWS_EC2_Terminate_By_ID_And_Tag
     steps:
     
       #Install and configure a k3s cluster
