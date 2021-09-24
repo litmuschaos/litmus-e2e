@@ -250,7 +250,7 @@ spec:
       test/feature: "gcp"
       test/tags: "gcp, disk loss"
       git/location: ""
-      test/status: "Not Done"
+      test/status: "Done"
 
   # ----------------------------------------------------------
   # LitmusChaos Ansible Experiments BDDs
