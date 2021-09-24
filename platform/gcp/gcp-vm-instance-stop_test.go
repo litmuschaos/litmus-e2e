@@ -13,7 +13,7 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoEC2TerminateByID(t *testing.T) {
+func TestGoGCPVMInstanceStop(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }

@@ -13,7 +13,7 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoEBSLossByID(t *testing.T) {
+func TestGoGCPVMDiskLoss(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
