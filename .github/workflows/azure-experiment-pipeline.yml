@@ -1,0 +1,183 @@
+---
+name: Azure-Experiment-Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      goExperimentImage:
+        default: "litmuschaos/go-runner:ci"
+      operatorImage:
+        default: "litmuschaos/chaos-operator:ci"
+      runnerImage:
+        default: "litmuschaos/chaos-runner:ci"
+      chaosNamespace:
+        default: "default"
+      experimentImagePullPolicy:
+        default: "Always"
+
+jobs:
+  Azure_VM_Instance_Stop:
+    runs-on: ubuntu-latest
+    steps:
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.14'
+
+      - name: Create Kubernetes secret for azure experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloud-secret
+          type: Opaque
+          stringData:
+            azure.auth: |-
+              ${{ secrets.AZURE_CREDENTIALS }}
+          EOF
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create target Azure VM Instances
+        if: always()
+        run: |
+          az group create --name ${{ secrets.RESOURCE_GROUP }} --location eastus && \
+          az vm create \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --name ${{ secrets.INSTANCE_ONE }} \
+          --image UbuntuLTS \
+          --generate-ssh-keys && \
+          az vm create \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --name ${{ secrets.INSTANCE_TWO }} \
+          --image UbuntuLTS \
+          --generate-ssh-keys
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run Azure VM Instance Stop experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          AZURE_INSTANCE_NAME: "${{ secrets.INSTANCE_ONE }},${{ secrets.INSTANCE_TWO }}"
+          RESOURCE_GROUP: "${{ secrets.RESOURCE_GROUP }}"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make azure-vm-instance-stop
+
+      - name: Delete target Azure VM Instances
+        if: always()
+        run: |
+          az vm delete --ids $(az vm list -g ${{ secrets.RESOURCE_GROUP }} --query "[].id" -o tsv) --yes && \
+          az group delete -n ${{ secrets.RESOURCE_GROUP }} --yes
+  GCP_VM_Disk_Loss:
+    runs-on: ubuntu-latest
+    needs: GCP_VM_Instance_Stop
+    steps:
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.14'
+
+      - name: Create Kubernetes secret for gcp experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloud-secret
+          type: Opaque
+          stringData:
+            azure.auth: |-
+              {
+                "clientId": ${{ secrets.AZURE_CLIENT_ID }},
+                "clientSecret": ${{ secrets.AZURE_CLIENT_SECRET }},
+                "subscriptionId": ${{ secrets.AZURE_SUBSCRIPTION_ID }},
+                "tenantId": ${{ secrets.AZURE_TENANT_ID }} }},
+                "activeDirectoryEndpointUrl": ${{ secrets.AZURE_ACTIVE_DIRECTORY_ENDPOINT_URL }},
+                "resourceManagerEndpointUrl": ${{ secrets.AZURE_RESOURCE_MANAGER_ENDPOINT_URL }},
+                "activeDirectoryGraphResourceId": ${{ secrets.AZURE_ACTIVE_DIRECTORY_GRAPH_RESOURCE_ID }},
+                "sqlManagementEndpointUrl": ${{ secrets.AZURE_SQL_MANAGEMENT_ENDPOINT_URL }},
+                "galleryEndpointUrl": ${{ secrets.AZURE_GALLERY_ENDPOINT_URL }},
+                "managementEndpointUrl": ${{ secrets.AZURE_MANAGEMENT_ENDPOINT_URL }},
+              }
+          EOF
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create a Azure VM Instance with target Disk Volumes
+        if: always()
+        run: |
+          gcloud compute instances create ${{ secrets.INSTANCE_ONE }} \
+          --machine-type=${{ secrets.MACHINE_TYPE }} \
+          --zone=${{ secrets.ZONE }} \
+          --create-disk name=${{ secrets.DISK_ONE }},size=1GB,device-name=${{ secrets.DISK_ONE }} \
+          --create-disk name=${{ secrets.DISK_TWO }},size=1GB,device-name=${{ secrets.DISK_TWO }}
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run Azure VM Disk Loss experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          DISK_VOLUME_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
+          DISK_ZONES: "${{ secrets.ZONE }},${{ secrets.ZONE }}"
+          DEVICE_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make gcp-vm-disk-loss
+
+      - name: Delete the VM Instance and target Disk Volumes
+        if: always()
+        run: |
+          gcloud compute instances delete ${{ secrets.INSTANCE_ONE }} \
+          --zone=${{ secrets.ZONE }} \
+          --delete-disks=all \
+          --quiet

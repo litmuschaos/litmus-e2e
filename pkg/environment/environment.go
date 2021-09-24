@@ -37,6 +37,8 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	testDetails.AzureInstanceName = Getenv("AZURE_INSTANCE_NAME", "")
+	testDetails.AzureDiskName = Getenv("AZURE_DISK_NAME", "")
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")

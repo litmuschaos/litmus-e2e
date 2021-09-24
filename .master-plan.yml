@@ -230,6 +230,29 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
+
+  # -------------------------------------------------
+  # Kubernetes Azure chaos experiment BDD Tests
+  # -------------------------------------------------   
+
+  - tcid: TCID-EC2-AZURE-INFRA-INSTANCE-STOP
+    name: "TCID-EC2-AZURE-INFRA-INSTANCE-STO"
+    description: "Stops an Azure VM instance"
+    labels:
+      test/feature: "azure"
+      test/tags: "azure, instance stop"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-EC2-AZURE-INFRA-DISK-LOSS
+    name: "TCID-EC2-AZURE-INFRA-DISK-LOSS"
+    description: "Detach a VM Disk"
+    labels:
+      test/feature: "azure"
+      test/tags: "azure, disk loss"
+      git/location: ""
+      test/status: "Done"
+
   # ----------------------------------------------------------
   # LitmusChaos Ansible Experiments BDDs
   # ----------------------------------------------------------    
