@@ -42,9 +42,9 @@ type TestDetails struct {
 	InstanceTag               string
 	EBSVolumeID               string
 	EBSVolumeTag              string
-	VMInstanceName            string
+	VMInstanceNames           string
 	GCPProjectID              string
-	InstanceZone              string
+	InstanceZones             string
 	DiskVolumeNames           string
 	DiskZones                 string
 	DeviceNames               string
