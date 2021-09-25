@@ -70,9 +70,9 @@ jobs:
       - name: Create target GCP VM Instances
         if: always()
         run: |
-          gcloud compute instances create ${{ secrets.INSTANCE_ONE }} ${{ secrets.INSTANCE_TWO }} \
-          --machine-type=${{ secrets.MACHINE_TYPE }} \
-          --zone=${{ secrets.ZONE }}
+          gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
+          --machine-type=f1-micro \
+          --zone=us-central1-a
 
       - name: Litmus Infra Setup
         if: always()
@@ -87,8 +87,8 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VM_INSTANCE_NAMES: "${{ secrets.INSTANCE_ONE }},${{ secrets.INSTANCE_TWO }}"
-          INSTANCE_ZONES: "${{ secrets.ZONE }},${{ secrets.ZONE }}"
+          VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
+          INSTANCE_ZONES: "us-central1-a,us-central1-a"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -97,8 +97,8 @@ jobs:
       - name: Delete target GCP VM Instances
         if: always()
         run: |
-          gcloud compute instances delete ${{ secrets.INSTANCE_ONE }} ${{ secrets.INSTANCE_TWO }} \
-          --zone=${{ secrets.ZONE }} \
+          gcloud compute instances delete litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
+          --zone=us-central1-a \
           --quiet
 
   GCP_VM_Disk_Loss:
@@ -157,11 +157,11 @@ jobs:
       - name: Create a GCP VM Instance with target Disk Volumes
         if: always()
         run: |
-          gcloud compute instances create ${{ secrets.INSTANCE_ONE }} \
-          --machine-type=${{ secrets.MACHINE_TYPE }} \
-          --zone=${{ secrets.ZONE }} \
-          --create-disk name=${{ secrets.DISK_ONE }},size=1GB,device-name=${{ secrets.DISK_ONE }} \
-          --create-disk name=${{ secrets.DISK_TWO }},size=1GB,device-name=${{ secrets.DISK_TWO }}
+          gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
+          --machine-type=f1-micro \
+          --zone=us-central1-a \
+          --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
+          --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
 
       - name: Litmus Infra Setup
         if: always()
@@ -176,9 +176,9 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          DISK_VOLUME_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
-          DISK_ZONES: "${{ secrets.ZONE }},${{ secrets.ZONE }}"
-          DEVICE_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
+          DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
+          DISK_ZONES: "us-central1-a,us-central1-a"
+          DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -187,7 +187,7 @@ jobs:
       - name: Delete the VM Instance and target Disk Volumes
         if: always()
         run: |
-          gcloud compute instances delete ${{ secrets.INSTANCE_ONE }} \
-          --zone=${{ secrets.ZONE }} \
+          gcloud compute instances delete litmus-e2e-vm-${{ github.run_number }} \
+          --zone=us-central1-a \
           --delete-disks=all \
           --quiet
