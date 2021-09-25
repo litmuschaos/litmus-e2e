@@ -100,6 +100,20 @@ jobs:
         if: always()
         run: make node-selector
 
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
   ### Runing Experiment Tunables
   Engine_Test:
     needs: Node_Level_Test
@@ -117,6 +131,20 @@ jobs:
     steps:
       - name: TCID-EC2-GENERIC-INFRA-WITH-APP-INFO
         run: make with-app-info
+
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
 
   ### App Cleanup
   App_Cleanup:

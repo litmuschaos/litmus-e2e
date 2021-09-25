@@ -230,6 +230,28 @@ spec:
       git/location: ""
       test/status: "Not Done"
 
+  # -------------------------------------------------
+  # Kubernetes GCP chaos experiment BDD Tests
+  # -------------------------------------------------
+
+  - tcid: TCID-EC2-GCP-INFRA-VM-STOP
+    name: "TCID-EC2-GCP-INFRA-VM-STOP"
+    description: "Stop a GCP VM instance"
+    labels:
+      test/feature: "gcp"
+      test/tags: "gcp, vm stop"
+      git/location: ""
+      test/status: "Done"
+
+  - tcid: TCID-EC2-GCP-INFRA-DISK-LOSS
+    name: "TCID-EC2-GCP-INFRA-DISK-LOSS"
+    description: "Detach a Disk Volume"
+    labels:
+      test/feature: "gcp"
+      test/tags: "gcp, disk loss"
+      git/location: ""
+      test/status: "Done"
+
   # ----------------------------------------------------------
   # LitmusChaos Ansible Experiments BDDs
   # ----------------------------------------------------------    
