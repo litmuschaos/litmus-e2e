@@ -6,7 +6,7 @@
 ### Prerequisites
 
     • Litmus-Portal should be installed on Cluster.
-    • Cypress should be installed and running on Gitlab-Runner.
+    • Cypress should be installed and running on Runner-Machine.
 
 ### Test Case 1:
 

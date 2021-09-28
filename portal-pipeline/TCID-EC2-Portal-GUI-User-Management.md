@@ -6,7 +6,12 @@
 ### Prerequisites
 
     • Litmus-Portal should be installed on Cluster.
-    • Cypress should be installed and running on Gitlab-Runner.
+    • Cypress should be installed and running on Runner-Machine.
+
+#### Conditions:
+
+- Username & password are the required fields.
+
 
 ### Test Case 1:
 
@@ -16,12 +21,14 @@
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
-- Try creating a user by inputting username and password only.
+- Login as Admin.
+- Goto the user-management Tab from settings options in Sidebar.
+- Create a new user by inputting username and password only.
+- Verify the same in users table.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Create Button should be enabled.
+     Create Button should be enabled & New user should be created.
 
 ### Test Case 2:
 
@@ -31,7 +38,7 @@
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
+- (Already on Usermanagement tab).
 - Try creating a user by inputting full name and email only.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
@@ -46,12 +53,13 @@
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
-- Try creating a user by leaving your full name empty.
+- (Already on Usermanagement tab)
+- Try creating a user by leaving full name empty.
+- Verify the same in users table.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Create Button should be enabled.
+     Create Button should be enabled & user should be created.
 
 ### Test Case 4:
 
@@ -61,12 +69,13 @@
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
+- (Already on Usermanagement tab)
 - Try creating user by leaving email empty
+- Verify the same in users table.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Create Button should be enabled.
+     Create Button should be enabled & user should be created.
 
 ### Test Case 5:
 
@@ -76,8 +85,8 @@
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
-- Try to create a user by inputting full name, email and password.
+- (Already on Usermanagement tab)
+- Try to create a user by inputting full name, email and password. ( Username is empty )
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
@@ -87,11 +96,11 @@
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to create a user by inputting full name, email and username.
+     Test case to create a user by inputting full name, email and username. ( Password is empty )
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
+- (Already on Usermanagement tab)
 - Try to create a user by inputting full name, email and username.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
@@ -102,12 +111,29 @@
 
 #### &nbsp;&nbsp;&nbsp;Details
 
+     Test case to verify creation of user by inputting details of an existing user.
+
+#### &nbsp;&nbsp;&nbsp;Steps Performed in the test
+
+- (Already on Usermanagement tab)
+- Create a new user by inputting details of an existing user.
+- Verify the same in users table.
+
+#### &nbsp;&nbsp;&nbsp;Expected Output
+
+     Error modal should be shown with error "Error: This username is already assigned to another user"
+
+### Test Case 8:
+
+#### &nbsp;&nbsp;&nbsp;Details
+
      Test case to create a user by inputting all details.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
-- Login as Admin, Goto the user-managements page.
+- (Already on Usermanagement tab)
 - Try to create a user by inputting all details.
+- Verify the same in users table.
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
