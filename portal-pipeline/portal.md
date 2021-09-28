@@ -19,7 +19,8 @@ filename: portal
 - [TCID-EC2-Portal-GUI-Routes](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-Routes.md)
 - [TCID-EC2-Portal-GUI-Teaming](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-Teaming.md)
 - [TCID-EC2-Portal-GUI-User-Management](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-User-Management.md)
-- [TCID-EC2-Portal-GUI-Workflow-SchedulingOps](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-Workflow-SchedulingOps.md)
+- [TCID-EC2-Portal-GUI-Workflow-Scheduling-Ops](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-Workflow-SchedulingOps.md)
+- [TCID-EC2-Portal-GUI-Workflow-Statistics](https://github.com/litmuschaos/litmus-e2e/blob/gh-pages/portal-pipeline/TCID-EC2-Portal-GUI-WorkflowStatistics.md)
 
 ## Daily Nightly Builds
 
