@@ -5,14 +5,14 @@
 
 ### Prerequisites
 
-    • Litmus-Portal should be installed on Cluster.
-    • Cypress should be installed and running on Runner-Machine.
+     • Litmus-Portal should be installed on Cluster.
+     • Cypress should be installed and running on Runner-Machine.
 
 ### Test Case 1:
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to verify routes functionality without Login.
+    Test case to verify routes functionality without Login.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
@@ -21,36 +21,36 @@
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Users should be redirected to Login Page.
+    Users should be redirected to the Login Page.
 
 ### Test Case 2:
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to verify routes functionality after loggting In as Admin.
+    Test case to verify route functionality after logging In as Admin.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Open Litmus-Portal URL in Browser
-- Once UI is accessible, log in with correct Administrator Credentials.
+- Once the UI is accessible, log in with correct Administrator Credentials.
 - Try Visiting different routes (Known Routes).
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     Users should be redirected to the requested page.
+    Users should be redirected to the requested page.
 
 ### Test Case 3:
 
 #### &nbsp;&nbsp;&nbsp;Details
 
-     Test case to verify routes functionality after logging In as Admin.
+    Test case to verify route functionality after logging In as Admin.
 
 #### &nbsp;&nbsp;&nbsp;Steps Performed in the test
 
 - Open Litmus-Portal URL in Browser
-- Once UI is accessible, log in with correct Administrator Credentials.
+- Once the UI is accessible, log in with correct Administrator Credentials.
 - Try Visiting different routes (Unknown Route).
 
 #### &nbsp;&nbsp;&nbsp;Expected Output
 
-     The user should be redirected to 404 Page.
+    The user should be redirected to 404 Page.
