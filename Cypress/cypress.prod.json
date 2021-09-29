@@ -8,6 +8,8 @@
   "video": false,
   "env": {
     "authURL": "/auth",
-    "apiURL": "/api"
+    "apiURL": "/api",
+    "KUBE_API_SERVER": "",
+    "KUBE_API_TOKEN": ""
   }
 }

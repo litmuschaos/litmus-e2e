@@ -7,12 +7,6 @@ path=$(pwd)
 version=${PORTAL_VERSION}
 LITMUS_PORTAL_NAMESPACE=${PORTAL_NAMESPACE}
 
-# Setting up the kubeconfig
-# mkdir -p ~/.kube
-
-# cp $path/.kube/config ~/.kube/config
-# cp $path/.kube/admin.conf ~/.kube/config
-
 kubectl delete workflows --all -A
 kubectl delete cronworkflows --all -A
 kubectl delete chaosengines --all -A

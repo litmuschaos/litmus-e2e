@@ -42,6 +42,19 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
 
+      # Fetching Access Point & Token for accessing kube api server
+      - run: |
+          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+          export CLUSTER_NAME=k3d-${SELF_AGENT}
+          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      # RBAC for allowing Cypress Runner to access Cluster resources
+      - run: |
+          kubectl apply -f Cypress/cypress-rbac.yml
+
       - uses: AbsaOSS/k3d-action@v1.5.0
         name: Create 2nd Cluster
         with:
@@ -94,6 +107,8 @@ jobs:
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
+          CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
@@ -145,6 +160,19 @@ jobs:
           PORTAL_VERSION: "ci"
           LOAD_BALANCER: "false"
           LITMUS_PORTAL_NAMESPACE: "scope"
+
+      # Fetching Access Point & Token for accessing kube api server
+      - run: |
+          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+          export CLUSTER_NAME=k3d-${SELF_AGENT}
+          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      # RBAC for allowing Cypress Runner to access Cluster resources
+      - run: |
+          kubectl apply -f Cypress/cypress-rbac.yml
 
       - uses: AbsaOSS/k3d-action@v1.5.0
         name: Create 2nd Cluster
@@ -198,6 +226,8 @@ jobs:
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
+          CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
