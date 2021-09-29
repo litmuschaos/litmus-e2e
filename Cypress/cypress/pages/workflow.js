@@ -1,3 +1,4 @@
+import "cypress-wait-until";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
@@ -73,7 +74,7 @@ Cypress.Commands.add(
 
 //// ************************* Workflow Tunning Page **********************
 
-Cypress.Commands.add("tuneWorkflow", (option) => {});
+Cypress.Commands.add("tuneWorkflow", (option) => { });
 
 //// ************************* R-Score Manipulation ***********************
 Cypress.Commands.add("rScoreEditor", (value) => {
@@ -106,4 +107,41 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule) => {
   if (schedule == 0)
     cy.get("[data-cy=schedule]").should("have.text", "Scheduling now"); // Schedule Validation
   // cy.get("[data-cy=AgentName]").should("have.text", "Self-Agent");
+});
+
+/// ************************** Validate verdict of given workflow and agent **********************
+
+Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdict) => {
+  cy.visit("/workflows");
+  cy.GraphqlWait("workflowListDetails", "listSchedules");
+  cy.get("[data-cy=runs]").click();
+  cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+  cy.wait(1000);
+  // Search for given workflowName in the table and click on it
+  cy.get("table")
+    .find("[data-cy=workflowName]")
+    .each(($p) => {
+      if ($p.text() === workflowName) {
+        $p.click();
+        return false;
+      }
+    });
+  cy.wait(1000);
+  // Clicks on table view
+  cy.get('[tabindex=-1]').click();
+  cy.wait(1000);
+  // Wait for turning Running status into any Verdict
+  cy.waitUntil(() => 
+    cy.get("[data-cy=workflowStatus]")
+      .then(($div) => {
+        return $div.text() != "Running" ? true : false;
+      }),
+    {
+      verbose: true,
+      interval: 500,
+      timeout: 600000,
+    }
+  );
+  // Verify with expected Verdict
+  cy.get("[data-cy=workflowStatus]").should("contain.text", expectedVerdict); 
 });
