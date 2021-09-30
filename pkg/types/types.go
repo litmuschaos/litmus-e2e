@@ -42,6 +42,12 @@ type TestDetails struct {
 	InstanceTag               string
 	EBSVolumeID               string
 	EBSVolumeTag              string
+	VMInstanceNames           string
+	GCPProjectID              string
+	InstanceZones             string
+	DiskVolumeNames           string
+	DiskZones                 string
+	DeviceNames               string
 	Region                    string
 	Lib                       string
 	PodsAffectedPercentage    string

@@ -1,0 +1,237 @@
+---
+name: GCP-Experiment-Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      goExperimentImage:
+        default: "litmuschaos/go-runner:ci"
+      operatorImage:
+        default: "litmuschaos/chaos-operator:ci"
+      runnerImage:
+        default: "litmuschaos/chaos-runner:ci"
+      chaosNamespace:
+        default: "default"
+      experimentImagePullPolicy:
+        default: "Always"
+
+jobs:
+  GCP_VM_Instance_Stop:
+    runs-on: ubuntu-latest
+    steps:
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - name: Create Kubernetes secret for gcp experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloud-secret
+          type: Opaque
+          stringData:
+            type: "service_account"
+            project_id: "${{ secrets.GCP_PROJECT_ID }}"
+            private_key_id: "${{ secrets.PRIVATE_KEY_ID }}"
+            private_key: ${{ secrets.PRIVATE_KEY }}
+            client_email: "${{ secrets.CLIENT_EMAIL }}"
+            client_id: "${{ secrets.CLIENT_ID }}"
+            auth_uri: "${{ secrets.AUTH_URI }}"
+            token_uri: "${{ secrets.TOKEN_URI }}"
+            auth_provider_x509_cert_url: "${{ secrets.AUTH_PROVIDER_CERT_URL }}"
+            client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
+          EOF
+
+      - name: Set up Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Create target GCP VM Instances
+        if: always()
+        run: |
+          gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
+          --machine-type=f1-micro \
+          --zone=us-central1-a
+
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run GCP VM Instance Stop experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
+          INSTANCE_ZONES: "us-central1-a,us-central1-a"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make gcp-vm-instance-stop
+
+      - name: Delete target GCP VM Instances
+        if: always()
+        run: |
+          gcloud compute instances delete litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
+          --zone=us-central1-a \
+          --quiet
+
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
+      - name: Litmus Cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh
+
+  GCP_VM_Disk_Loss:
+    runs-on: ubuntu-latest
+    needs: GCP_VM_Instance_Stop
+    steps:
+      
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - name: Create Kubernetes secret for gcp experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloud-secret
+          type: Opaque
+          stringData:
+            type: "service_account"
+            project_id: "${{ secrets.GCP_PROJECT_ID }}"
+            private_key_id: "${{ secrets.PRIVATE_KEY_ID }}"
+            private_key: ${{ secrets.PRIVATE_KEY }}
+            client_email: "${{ secrets.CLIENT_EMAIL }}"
+            client_id: "${{ secrets.CLIENT_ID }}"
+            auth_uri: "${{ secrets.AUTH_URI }}"
+            token_uri: "${{ secrets.TOKEN_URI }}"
+            auth_provider_x509_cert_url: "${{ secrets.AUTH_PROVIDER_CERT_URL }}"
+            client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
+          EOF
+
+      - name: Set up Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Create a GCP VM Instance with target Disk Volumes
+        if: always()
+        run: |
+          gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
+          --machine-type=f1-micro \
+          --zone=us-central1-a \
+          --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
+          --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
+
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run GCP VM Disk Loss experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
+          DISK_ZONES: "us-central1-a,us-central1-a"
+          DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make gcp-vm-disk-loss
+
+      - name: Delete the VM Instance and target Disk Volumes
+        if: always()
+        run: |
+          gcloud compute instances delete litmus-e2e-vm-${{ github.run_number }} \
+          --zone=us-central1-a \
+          --delete-disks=all \
+          --quiet
+
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
+      - name: Litmus Cleanup
+        if: ${{ always() }}      
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh

@@ -58,11 +58,11 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 }
 
 // CreateNamespace is used to create a namespace
-func CreateNamespace(clients environment.ClientSets, namespaceName string) (error, error) {
+func CreateNamespace(clients environment.ClientSets, namespaceName string) error {
 	nsSpec := &apiv1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespaceName}}
 	if _, err := clients.KubeClient.CoreV1().Namespaces().Create(nsSpec); err != nil {
-		return nil, errors.Errorf("Fail to create "+namespaceName+" namespace, due to %v", err)
+		return  errors.Errorf("Fail to create "+namespaceName+" namespace, due to %v", err)
 	}
-	log.Infof("%v namespace created successfully!!!", namespaceName)
-	return nil, nil
+	log.Infof("[Info]: %v namespace created successfully!!!", namespaceName)
+	return  nil
 }

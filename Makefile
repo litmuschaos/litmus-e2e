@@ -225,6 +225,22 @@ ebs-loss-by-tag:
 	@echo "------------------------------------------"
 	@go test platform/aws/ebs-loss-by-tag_test.go -v -count=1 -timeout=20m					
 
+.PHONY: gcp-vm-instance-stop
+gcp-vm-instance-stop:
+  
+	@echo "------------------------------------------"
+	@echo "Running gcp-vm-instance-stop experiment"
+	@echo "------------------------------------------"
+	@go test platform/gcp/gcp-vm-instance-stop_test.go -v -count=1 -timeout=20m
+
+.PHONY: gcp-vm-disk-loss
+gcp-vm-disk-loss:
+  
+	@echo "------------------------------------------"
+	@echo "Running gcp-vm-disk-loss experiment"
+	@echo "------------------------------------------"
+	@go test platform/gcp/gcp-vm-disk-loss_test.go -v -count=1 -timeout=20m
+
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
 

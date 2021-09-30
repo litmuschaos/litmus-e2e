@@ -50,7 +50,7 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 			// Getting application node name
 			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			err = pkg.GetApplicationNode(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
 
 			// Getting other node for nodeSelector in engine
@@ -108,7 +108,7 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 			// Getting application node name
 			By("[Prepare]: Getting application node name")
-			_, err = pkg.GetApplicationNode(&testsDetails, clients)
+			err = pkg.GetApplicationNode(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Unable to get application node name due to {%v}", err)
 
 			//Uncordon the application node
