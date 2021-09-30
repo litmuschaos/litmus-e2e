@@ -8,8 +8,9 @@
 // Also, RBAC needs to be applied on the cluster for allowing Cypress to access the api-server
 // using default namespace.
 
-/* For quick setup of rbac & to get envs, run 
-    chmod +x kube-api-config.sh
+/* For quick setup of rbac & to get envs, 
+    chmod +x kube-api-config.sh (in cypress root directory)
+    ./kube-api-config.sh <YOUR_CLUSTER_NAME>
     Note the token & api-server end-point
     Set the values in cypress.json
     Start the Cypress Runner
