@@ -69,6 +69,7 @@ describe("Testing the validation of the final verdict", () => {
 		cy.get("[data-cy=TargetApplication] Button").eq(5).click();
 		cy.get("[data-cy=SteadyState] Button").eq(2).click();
 		cy.get("[data-cy=TuneExperiment] Button").eq(3).click();
+		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -84,7 +85,7 @@ describe("Testing the validation of the final verdict", () => {
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			let workflowName = $name.text();
-			cy.validateVerdict(workflowName, "Self-Agent", "Failed");
+			cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
 			return;
 		});
 	});

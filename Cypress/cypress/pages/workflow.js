@@ -111,30 +111,18 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule) => {
 
 /// ************************** Validate verdict of given workflow and agent **********************
 
-Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdict) => {
+Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdict, RScore, ExperimentsPassed, TotalExperiments) => {
   cy.visit("/workflows");
   cy.GraphqlWait("workflowListDetails", "listSchedules");
   cy.get("[data-cy=runs]").click();
   cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
   cy.wait(1000);
-  // Search for given workflowName in the table and click on it
-  cy.get("table")
-    .find("[data-cy=workflowName]")
-    .each(($p) => {
-      if ($p.text() === workflowName) {
-        $p.click();
-        return false;
-      }
-    });
-  cy.wait(1000);
-  // Clicks on table view
-  cy.get('[tabindex=-1]').click();
-  cy.wait(1000);
-  // Wait for turning Running status into any Verdict
-  cy.waitUntil(() => 
-    cy.get("[data-cy=workflowStatus]")
-      .then(($div) => {
-        return $div.text() != "Running" ? true : false;
+  cy.waitUntil(() =>
+    cy.get("table")
+      .find(`[data-cy=${workflowName}]`)
+      .find("[data-cy=WorkflowStatus]")
+      .then((status) => {
+        return status.text() != "Running" ? true : false;
       }),
     {
       verbose: true,
@@ -142,6 +130,29 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
       timeout: 600000,
     }
   );
-  // Verify with expected Verdict
-  cy.get("[data-cy=workflowStatus]").should("contain.text", expectedVerdict); 
+  cy.get('table')
+    .find(`[data-cy=${workflowName}]`)
+    .find("[data-cy=WorkflowStatus]")
+    .should("have.text", expectedVerdict);
+  cy.get('table')
+    .find(`[data-cy=${workflowName}]`)
+    .find("[data-cy=ResScore]")
+    .should("have.text",`Overall RR : ${RScore}%`);
+  cy.waitUntil(() =>
+    cy.get("table")
+      .find(`[data-cy=${workflowName}]`)
+      .find("[data-cy=ExperimentsPassed]")
+      .then((expPassed) => {
+        return expPassed.text() != "Experiments Passed : NA" ? true : false;
+      }),
+    {
+      verbose: true,
+      interval: 500,
+      timeout: 600000,
+    }
+  );
+  cy.get('table')
+    .find(`[data-cy=${workflowName}]`)
+    .find("[data-cy=ExperimentsPassed]")
+    .should("have.text",`Experiments Passed : ${ExperimentsPassed}/${TotalExperiments}`);
 });
