@@ -9,6 +9,8 @@ describe("Testing the workflow creation wizard using Custom Experiments from Hub
 		cy.visit("/create-workflow");
 	});
 
+	let workflowName = '';
+
 	it("Running Custom Workflow", () => {
 		cy.chooseAgent(0);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
@@ -90,6 +92,10 @@ describe("Testing the workflow creation wizard using Custom Experiments from Hub
 		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
+		cy.get("[data-cy=WorkflowName]").then(($name) => {
+			workflowName = $name.text();
+			return;
+		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
@@ -126,5 +132,9 @@ describe("Testing the workflow creation wizard using Custom Experiments from Hub
 					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
+	});
+
+	it("Validate Verdict, Resilience score and Experiments Passed", () => {
+		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 2);
 	});
 });

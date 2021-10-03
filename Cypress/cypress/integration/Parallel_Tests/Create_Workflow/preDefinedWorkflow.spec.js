@@ -9,6 +9,8 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.visit("/create-workflow");
 	});
 
+	let workflowName = '';
+
 	it("Running PreDefined Workflow", () => {
 		cy.chooseAgent(0);
 		cy.GraphqlWait("GetPredefinedWorkflowList", "getPredefinedData");
@@ -51,6 +53,10 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
+		cy.get("[data-cy=WorkflowName]").then(($name) => {
+			workflowName = $name.text();
+			return;
+		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
@@ -87,5 +93,9 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
+	});
+
+	it("Validate Verdict, Resilience score and Experiments Passed", () => {
+		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
 	});
 });

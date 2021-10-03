@@ -9,6 +9,8 @@ describe("Testing the create Workflow Utility", () => {
     cy.visit("/create-workflow");
   });
 
+  let workflowName = '';
+
   it("Running Workflows by uploading it", () => {
     cy.chooseAgent(0);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
@@ -36,6 +38,10 @@ describe("Testing the create Workflow Utility", () => {
     cy.wait(1000);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
+    cy.get("[data-cy=WorkflowName]").then(($name) => {
+			workflowName = $name.text();
+			return;
+		});
     cy.get("[data-cy=GoToWorkflowButton]").click();
   });
 
@@ -75,4 +81,8 @@ describe("Testing the create Workflow Utility", () => {
         cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
       });
   });
+  
+	it("Validate Verdict, Resilience score and Experiments Passed", () => {
+		cy.validateVerdict(workflowName, "Self-Agent", "Suceeded", 100, 1, 1);
+	});
 });
