@@ -15,15 +15,15 @@ import (
 )
 
 // GetApplicationNode will give the node name of the application pod
-func GetApplicationNode(testsDetails *types.TestDetails, clients environment.ClientSets) (error, error) {
+func GetApplicationNode(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	appPodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 	if err != nil {
-		return nil, errors.Errorf("Unable to get the list of application pods, due to %v", err)
+		return errors.Errorf("Unable to get the list of application pods, due to %v", err)
 	}
 
 	testsDetails.ApplicationNodeName = appPodList.Items[0].Spec.NodeName
 
-	return nil, nil
+	return  nil
 }
 
 //GetChaosEngineVerdict checks the chaosengine verdict

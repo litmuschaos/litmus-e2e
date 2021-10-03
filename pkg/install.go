@@ -318,6 +318,15 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		envDetails.SetEnv("AZURE_RESOURCE_GROUP", testsDetails.AzureResourceGroup).
 			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet).
 			SetEnv("AZURE_DISK_NAME", testsDetails.AzureDiskName)
+	case "gcp-vm-instance-stop":
+		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
+			SetEnv("VM_INSTANCE_NAMES", testsDetails.VMInstanceNames).
+			SetEnv("INSTANCE_ZONES", testsDetails.InstanceZones)
+	case "gcp-vm-disk-loss":
+		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
+			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
+			SetEnv("DISK_ZONES", testsDetails.DiskZones).
+			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
 	}
 
 	// for experiments like pod network latency
