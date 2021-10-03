@@ -60,15 +60,11 @@ jobs:
         run: |
           az group create --name ${{ secrets.RESOURCE_GROUP }} --location eastus && \
           az vm create \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} \
-          --name ${{ secrets.INSTANCE_ONE }} \
-          --image UbuntuLTS \
-          --generate-ssh-keys && \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_ONE }} \
+          --image UbuntuLTS --generate-ssh-keys && \
           az vm create \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} \
-          --name ${{ secrets.INSTANCE_TWO }} \
-          --image UbuntuLTS \
-          --generate-ssh-keys
+          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_TWO }} \
+          --image UbuntuLTS --generate-ssh-keys
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
@@ -93,9 +89,9 @@ jobs:
         run: |
           az vm delete --ids $(az vm list -g ${{ secrets.RESOURCE_GROUP }} --query "[].id" -o tsv) --yes && \
           az group delete -n ${{ secrets.RESOURCE_GROUP }} --yes
-  GCP_VM_Disk_Loss:
+  Azure_VM_Disk_Loss:
     runs-on: ubuntu-latest
-    needs: GCP_VM_Instance_Stop
+    needs: Azure_VM_Instance_Stop
     steps:
 
       #Install and configure a k3s cluster
@@ -114,7 +110,7 @@ jobs:
         with:
           go-version: '1.14'
 
-      - name: Create Kubernetes secret for gcp experiment
+      - name: Create Kubernetes secret for azure experiment
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
@@ -127,18 +123,7 @@ jobs:
           type: Opaque
           stringData:
             azure.auth: |-
-              {
-                "clientId": ${{ secrets.AZURE_CLIENT_ID }},
-                "clientSecret": ${{ secrets.AZURE_CLIENT_SECRET }},
-                "subscriptionId": ${{ secrets.AZURE_SUBSCRIPTION_ID }},
-                "tenantId": ${{ secrets.AZURE_TENANT_ID }} }},
-                "activeDirectoryEndpointUrl": ${{ secrets.AZURE_ACTIVE_DIRECTORY_ENDPOINT_URL }},
-                "resourceManagerEndpointUrl": ${{ secrets.AZURE_RESOURCE_MANAGER_ENDPOINT_URL }},
-                "activeDirectoryGraphResourceId": ${{ secrets.AZURE_ACTIVE_DIRECTORY_GRAPH_RESOURCE_ID }},
-                "sqlManagementEndpointUrl": ${{ secrets.AZURE_SQL_MANAGEMENT_ENDPOINT_URL }},
-                "galleryEndpointUrl": ${{ secrets.AZURE_GALLERY_ENDPOINT_URL }},
-                "managementEndpointUrl": ${{ secrets.AZURE_MANAGEMENT_ENDPOINT_URL }},
-              }
+              ${{ secrets.AZURE_CREDENTIALS }}
           EOF
       - name: Azure Login
         uses: azure/login@v1
@@ -148,11 +133,16 @@ jobs:
       - name: Create a Azure VM Instance with target Disk Volumes
         if: always()
         run: |
-          gcloud compute instances create ${{ secrets.INSTANCE_ONE }} \
-          --machine-type=${{ secrets.MACHINE_TYPE }} \
-          --zone=${{ secrets.ZONE }} \
-          --create-disk name=${{ secrets.DISK_ONE }},size=1GB,device-name=${{ secrets.DISK_ONE }} \
-          --create-disk name=${{ secrets.DISK_TWO }},size=1GB,device-name=${{ secrets.DISK_TWO }}
+          az group create --name ${{ secrets.RESOURCE_GROUP }} --location eastus && \
+          az vm create \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_ONE }} \
+          --image UbuntuLTS --generate-ssh-keys && \
+          az vm disk attach \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
+          --name ${{ secrets.DISK_ONE }} --new && 
+          az vm disk attach \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
+          --name ${{ secrets.DISK_TWO }} --new
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
@@ -165,19 +155,23 @@ jobs:
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          DISK_VOLUME_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
-          DISK_ZONES: "${{ secrets.ZONE }},${{ secrets.ZONE }}"
-          DEVICE_NAMES: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
+          AZURE_DISK_NAME: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
+          RESOURCE_GROUP: "${{ secrets.RESOURCE_GROUP }}"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        run: make gcp-vm-disk-loss
+        run: make azure-vm-disk-loss
 
       - name: Delete the VM Instance and target Disk Volumes
         if: always()
         run: |
-          gcloud compute instances delete ${{ secrets.INSTANCE_ONE }} \
-          --zone=${{ secrets.ZONE }} \
-          --delete-disks=all \
-          --quiet
+          az vm disk detach \ 
+          -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
+          --name ${{ secrets.DISK_ONE }} && \
+          az vm disk detach \ 
+          -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
+          --name ${{ secrets.DISK_TWO }} && \
+          az disk delete --name ${{ secrets.DISK_ONE }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
+          az disk delete --name ${{ secrets.DISK_TWO }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
+          az vm delete --ids $(az vm list -g ${{ secrets.RESOURCE_GROUP }} --query "[].id" -o tsv) --yes && \
+          az group delete -n ${{ secrets.RESOURCE_GROUP }} --yes

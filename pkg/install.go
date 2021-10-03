@@ -310,6 +310,14 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			Name:  "CHAOS_KILL_COMMAND",
 			Value: testsDetails.MemoryKillCommand,
 		})
+	case "azure-vm-instance-stop":
+		envDetails.SetEnv("AZURE_RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+			SetEnv("AZURE_INSTANCE_NAME", testsDetails.AzureInstanceName).
+			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet)
+	case "azure-vm-disk-loss":
+		envDetails.SetEnv("AZURE_RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet).
+			SetEnv("AZURE_DISK_NAME", testsDetails.AzureDiskName)
 	}
 
 	// for experiments like pod network latency
