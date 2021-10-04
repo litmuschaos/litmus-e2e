@@ -36,7 +36,7 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, " azure-vm-instance-stop", " azure-vm-engine-parallel")
+			environment.GetENV(&testsDetails, " azure-vm-instance-stop", " azure-vm-engine-par")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/2.1.0?file=charts/azure/azure-instance-stop/rbac.yaml"
@@ -100,7 +100,7 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "azure-vm-instance-stop", "azure-vm-engine-serial")
+			environment.GetENV(&testsDetails, "azure-vm-instance-stop", "azure-vm-engine-ser")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"

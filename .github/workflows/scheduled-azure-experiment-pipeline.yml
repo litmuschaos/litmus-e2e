@@ -48,13 +48,9 @@ jobs:
       - name: Create target Azure VM Instances
         if: always()
         run: |
-          az group create --name ${{ secrets.RESOURCE_GROUP }} --location eastus && \
-          az vm create \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_ONE }} \
-          --image UbuntuLTS --generate-ssh-keys && \
-          az vm create \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_TWO }} \
-          --image UbuntuLTS --generate-ssh-keys
+          az group create -n ${{ secrets.RESOURCE_GROUP }} -l eastus && \
+          az vm create -g ${{ secrets.RESOURCE_GROUP }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
+          az vm create -g ${{ secrets.RESOURCE_GROUP }} -n ${{ secrets.INSTANCE_TWO }} --image UbuntuLTS --generate-ssh-keys
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
@@ -143,16 +139,10 @@ jobs:
       - name: Create a Azure VM Instance with target Disk Volumes
         if: always()
         run: |
-          az group create --name ${{ secrets.RESOURCE_GROUP }} --location eastus && \
-          az vm create \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.INSTANCE_ONE }} \
-          --image UbuntuLTS --generate-ssh-keys && \
-          az vm disk attach \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
-          --name ${{ secrets.DISK_ONE }} --new && \
-          az vm disk attach \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
-          --name ${{ secrets.DISK_TWO }} --new
+          az group create -n ${{ secrets.RESOURCE_GROUP }} -l eastus && \
+          az vm create -g ${{ secrets.RESOURCE_GROUP }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
+          az vm disk attach -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_ONE }} --new && 
+          az vm disk attach -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_TWO }} --new
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
@@ -170,14 +160,10 @@ jobs:
       - name: Delete the VM Instance and target Disk Volumes
         if: always()
         run: |
-          az vm disk detach \ 
-          -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
-          --name ${{ secrets.DISK_ONE }} && \
-          az vm disk detach \ 
-          -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} \
-          --name ${{ secrets.DISK_TWO }} && \
-          az disk delete --name ${{ secrets.DISK_ONE }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
-          az disk delete --name ${{ secrets.DISK_TWO }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
+          az vm disk detach -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_ONE }} && \
+          az vm disk detach -g ${{ secrets.RESOURCE_GROUP }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_TWO }} && \
+          az disk delete -n ${{ secrets.DISK_ONE }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
+          az disk delete -n ${{ secrets.DISK_TWO }} -g ${{ secrets.RESOURCE_GROUP }} --yes && \
           az vm delete --ids $(az vm list -g ${{ secrets.RESOURCE_GROUP }} --query "[].id" -o tsv) --yes && \
           az group delete -n ${{ secrets.RESOURCE_GROUP }} --yes
       - name: "[Debug]: check chaos resources"

@@ -211,7 +211,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	//Fetch Experiment file
 	res, err := http.Get(testsDetails.ExperimentPath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
 
 	// ReadAll reads from response until an error or EOF and returns the data it read.
