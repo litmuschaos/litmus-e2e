@@ -233,7 +233,7 @@ azure-vm-instance-stop:
 	@echo "------------------------------------------"
 	@go test platform/azure/vm-instance-stop_test.go -v -count=1 -timeout=20m
 
-.PHONY: azure-disk-loss
+.PHONY: azure-vm-disk-loss
 azure-disk-loss:
 
 	@echo "------------------------------------------"
