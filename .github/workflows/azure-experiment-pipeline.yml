@@ -48,7 +48,18 @@ jobs:
           type: Opaque
           stringData:
             azure.auth: |-
-              ${{ secrets.AZURE_CREDENTIALS }}
+              {
+                "clientId": ${{ secrets.AZURE_CLIENT_ID }},
+                "clientSecret": ${{ secrets.AZURE_CLIENT_SECRET}},
+                "subscriptionId": ${{ secrets.AZURE_SUBSCRIPTION_ID }},
+                "tenantId": ${{ secrets.AZURE_TENANT_ID }},
+                "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+                "resourceManagerEndpointUrl": "https://management.azure.com/",
+                "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+                "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+                "galleryEndpointUrl": "https://gallery.azure.com/",
+                "managementEndpointUrl": "https://management.core.windows.net/"
+              }
           EOF
       - name: Azure Login
         uses: azure/login@v1
@@ -119,7 +130,18 @@ jobs:
           type: Opaque
           stringData:
             azure.auth: |-
-              ${{ secrets.AZURE_CREDENTIALS }}
+              {
+                "clientId": ${{ secrets.AZURE_CLIENT_ID }},
+                "clientSecret": ${{ secrets.AZURE_CLIENT_SECRET}},
+                "subscriptionId": ${{ secrets.AZURE_SUBSCRIPTION_ID }},
+                "tenantId": ${{ secrets.AZURE_TENANT_ID }},
+                "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+                "resourceManagerEndpointUrl": "https://management.azure.com/",
+                "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+                "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+                "galleryEndpointUrl": "https://gallery.azure.com/",
+                "managementEndpointUrl": "https://management.core.windows.net/"
+              }
           EOF
       - name: Azure Login
         uses: azure/login@v1
