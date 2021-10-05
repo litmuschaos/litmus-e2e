@@ -39,7 +39,7 @@ var _ = Describe("BDD of azure-disk-loss experiment", func() {
 			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-par")
 			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/2.1.0?file=charts/azure/azure-disk-loss/rbac.yaml"
+			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/rbac.yaml"
 			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml"
 			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/engine.yaml"
 			testsDetails.ChaosNamespace = "default"

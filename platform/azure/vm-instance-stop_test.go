@@ -39,7 +39,7 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 			environment.GetENV(&testsDetails, "azure-instance-stop", "az-en-par")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/2.1.0?file=charts/azure/azure-instance-stop/rbac.yaml"
+			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
 			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml"
 			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/engine.yaml"
 			testsDetails.ChaosNamespace = "default"
