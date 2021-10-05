@@ -36,7 +36,7 @@ var _ = Describe("BDD of azure-disk-loss experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, " azure-disk-loss", " az-disk-engine-p")
+			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-par")
 			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/2.1.0?file=charts/azure/azure-disk-loss/rbac.yaml"
@@ -100,7 +100,7 @@ var _ = Describe("BDD of azure-disk-loss experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "azure-disk-loss", "az-disk-engine-s")
+			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-ser")
 			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
