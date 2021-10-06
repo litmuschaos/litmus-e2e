@@ -104,19 +104,25 @@ jobs:
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |
           bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |      
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() }}     
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml         
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
@@ -217,19 +223,25 @@ jobs:
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |
           bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |      
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() }}     
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml         
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
