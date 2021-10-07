@@ -39,7 +39,23 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			0
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.wait(1000); // Needs to be removed with frontend enhancement
+		cy.wait(3000);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.then(($div) => {
+				cy.wrap($div).find("td").eq(0).should("contain.text", "pod"); // Matching Experiment
+			});
+		// Matching nodes of dagre graph
+		cy.get("[data-cy=DagreGraphSvg]")
+			.find("text")
+			.then(($text) => {
+				cy.wrap($text).find("tspan").eq(7).should("contain.text","install-application");
+				cy.wrap($text).find("tspan").eq(9).should("contain.text","install-chaos-experiments");
+				cy.wrap($text).find("tspan").eq(11).should("contain.text","pod-network-loss");
+				cy.wrap($text).find("tspan").eq(13).should("contain.text","revert-chaos");
+				cy.wrap($text).find("tspan").eq(14).should("contain.text","delete-application");
+			});
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -75,11 +91,40 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.eq(2)
 					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+				// Workflow Statistics (Graph View)
+				cy.wrap($div).find("td").eq(2)
+					.invoke('attr', 'style', 'position: absolute')
+					.should('have.attr', 'style', 'position: absolute');
+				cy.wrap($div).find("td").eq(2).click();
+			});
+		// Wait for complete nodes to load
+		cy.waitUntil(() =>
+			cy.get("[data-cy=DagreGraphSvg]")
+				.find("text")
+				.then(($text) => {
+					return $text.length >= 19 ? true : false;
+				}),
+			{
+			  verbose: true,
+			  interval: 500,
+			  timeout: 600000,
+			}
+		);
+		// Verify nodes in dagre graph
+		cy.get("[data-cy=DagreGraphSvg]")
+			.find("text")
+			.then(($text) => {
+				cy.wrap($text).should("contain.text","install-application");
+				cy.wrap($text).should("contain.text","install-chaos-experiments");
+				cy.wrap($text).should("contain.text","pod-network-loss");
+				cy.wrap($text).should("contain.text","revert-chaos");
+				cy.wrap($text).should("contain.text","delete-application");
 			});
 	});
 
 	it("Checking Schedules Table for scheduled Workflow", () => {
 		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
 		cy.get("[data-cy=browseSchedule]").click();
 		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.wait(1000);
