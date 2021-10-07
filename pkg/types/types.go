@@ -55,4 +55,6 @@ type TestDetails struct {
 	Version                   string
 	TargetNodes               string
 	NodeLabel                 string
+	Args                      string
+	Command                   string
 }
