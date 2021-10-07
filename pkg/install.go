@@ -187,6 +187,16 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 		testsDetails.LibImage = libImage
 	}
 
+	// Modify Args
+	if testsDetails.Args != "" {
+		chaosExperiment.Spec.Definition.Args = strings.Split(testsDetails.Args, ",")
+	}
+
+	// Modify Image Command
+	if testsDetails.Command != "" {
+		chaosExperiment.Spec.Definition.Command = strings.Split(testsDetails.Command, ",")
+	}
+
 	// Modify ENV's
 	envDetails.SetEnv("SEQUENCE", testsDetails.Sequence).
 		SetEnv("PODS_AFFECTED_PERC", testsDetails.PodsAffectedPercentage).
