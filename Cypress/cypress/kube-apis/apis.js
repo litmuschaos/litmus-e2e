@@ -35,4 +35,12 @@ export const apis = {
   getChaosEngines: (namespace) => {
     return `${KUBE_API_SERVER}/apis/litmuschaos.io/v1alpha1/namespaces/${namespace}/chaosresults`;
   },
+
+  createDeployment: (namespace) => {
+    return `${KUBE_API_SERVER}/apis/apps/v1/namespaces/${namespace}/deployments`;
+  },
+
+  deleteDeployment: (namespace, name) => {
+    return `${KUBE_API_SERVER}/apis/apps/v1/namespaces/${namespace}/deployments/${name}`;
+  }
 };
