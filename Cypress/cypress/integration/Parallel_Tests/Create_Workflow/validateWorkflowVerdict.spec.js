@@ -73,7 +73,7 @@ describe("Testing the validation of the final verdict without target application
 			});
 		cy.wait(1000);
 		cy.get("[data-cy=General] Button").eq(0).click();
-		cy.get("[data-cy=TargetApplication]").find("input").eq(2).clear().type(targetApp.targetApplication);
+		cy.get("[data-cy=TargetApplication]").find("input").eq(2).clear().type(targetApp.targetAppName);
 		cy.get("[data-cy=TargetApplication] Button").eq(5).click();
 		cy.get("[data-cy=SteadyState] Button").eq(2).click();
 		cy.get("[data-cy=TuneExperiment] Button").eq(3).click();
@@ -181,42 +181,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 	let workflowName = '';
 
 	it("Creating a target application", () => {
-		var data = {
-			"apiVersion": "apps/v1",
-			"kind": "Deployment",
-			"metadata": {
-			   "name": targetApp.targetApplication
-			},
-			"spec": {
-			   "replicas": 1,
-			   "revisionHistoryLimit": 10,
-			   "selector": {
-				  "matchLabels": {
-					 "app": "nginx"
-				  }
-			   },
-			   "template": {
-				  "metadata": {
-					 "labels": {
-						"app": "nginx"
-					 }
-				  },
-				  "spec": {
-					 "containers": [
-						{
-						   "name": "nginx",
-						   "image": "nginx:1.14",
-						   "ports": [
-							  {
-								 "containerPort": 80
-							  }
-						   ]
-						}
-					 ]
-				  }
-			   }
-			}
-		 };
 		cy.request({
 			url: apis.createDeployment("default"),
 			method: "POST",
@@ -224,7 +188,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			  Authorization: `Bearer ${KUBE_API_TOKEN}`,
 			  'Content-Type': 'application/json'
 			},
-			body: data
+			body: targetApp.configDataForCreation
 		  }).should((response) => {
 			console.log(response);
 		  });
@@ -387,18 +351,14 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Deleting the target application", () => {
-		var data = {
-			"gracePeriodSeconds": 0,
-			"orphanDependents": false
-		};
 		cy.request({
-			url: apis.deleteDeployment("default", targetApp.targetApplication),
+			url: apis.deleteDeployment("default", targetApp.targetAppName),
 			method: "DELETE",
 			headers: {
 			  Authorization: `Bearer ${KUBE_API_TOKEN}`,
 			  'Content-Type': 'application/json'
 			},
-			body: data
+			body: targetApp.configDataForDeletion
 		  }).should((response) => {
 			console.log(response);
 		  });
