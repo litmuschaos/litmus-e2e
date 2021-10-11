@@ -7,6 +7,8 @@ on:
 jobs:
   AWS_EC2_Test:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     steps:
     
       #Install and configure a k3s cluster
@@ -27,8 +29,6 @@ jobs:
 
       - name: Create Kubernetes secret for aws experiment
         if: always()
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml      
         run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
@@ -77,13 +77,10 @@ jobs:
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
       - name: Run EC2 Terminate By ID experiment in serial & parallel mode
         if: always()
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EC2_INSTANCE_ID: "${{ env.INSTANCE_ONE }},${{ env.INSTANCE_TWO }}"
           REGION: ${{ secrets.REGION }}
         run: make ec2-terminate-by-id
@@ -91,7 +88,6 @@ jobs:
       - name: Run EC2 Terminate By Tag experiment in serial & parallel mode
         if: always()
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EC2_INSTANCE_TAG: "runNumber:ec2_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
         run: make ec2-terminate-by-tag       
@@ -104,16 +100,12 @@ jobs:
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |
           bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |      
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
@@ -121,8 +113,6 @@ jobs:
 
       - name: Litmus Cleanup
         if: ${{ always() }}      
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
@@ -131,6 +121,8 @@ jobs:
 
   AWS_EBS_Loss:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     needs: AWS_EC2_Test
     steps:
     
@@ -152,8 +144,6 @@ jobs:
 
       - name: Create Kubernetes secret for aws experiment
         if: always()
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml      
         run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
@@ -218,7 +208,6 @@ jobs:
         if: always()
         run: make build-litmus
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
           RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
@@ -229,7 +218,6 @@ jobs:
       - name: Run EBS Loss By ID experiment in serial & parallel mode
         if: always()
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EBS_VOLUME_ID: "${{ env.VOLUME_ID }}"
           REGION: ${{ secrets.REGION }}
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
@@ -240,7 +228,6 @@ jobs:
       - name: Run EBS Loss By Tag experiment in serial & parallel mode
         if: always()
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           EBS_VOLUME_TAG: "runNumber:ebs_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
@@ -274,16 +261,12 @@ jobs:
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |
           bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml        
         run: |      
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
@@ -291,8 +274,6 @@ jobs:
 
       - name: Litmus Cleanup
         if: ${{ always() }}    
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml          
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
