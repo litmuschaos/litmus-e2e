@@ -166,9 +166,12 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 		ENV: map[string]string{},
 	}
 
-	// Modify the goExperimentImage
-	chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
-
+	// Modify the ExperimentImage
+	if testsDetails.PythonExperimentImage != "" {
+		chaosExperiment.Spec.Definition.Image = testsDetails.PythonExperimentImage
+	} else {
+		chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
+	}
 	// Modify experiment imagePullPolicy
 	chaosExperiment.Spec.Definition.ImagePullPolicy = corev1.PullPolicy(testsDetails.ExperimentImagePullPolicy)
 

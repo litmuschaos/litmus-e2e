@@ -57,4 +57,5 @@ type TestDetails struct {
 	NodeLabel                 string
 	Args                      string
 	Command                   string
+	PythonExperimentImage     string
 }
