@@ -118,39 +118,4 @@ var _ = Describe("BDD of kubelet-service-kill experiment", func() {
 
 		})
 	})
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		It("Should check for the result updation", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "kubelet-service-kill", "go-engine3")
-
-			if testsDetails.UpdateWebsite == "true" {
-				//Getting chaosengine verdict
-				By("Getting Verdict of Chaos Engine")
-				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
-
-				//Updating the pipeline result table
-				By("Updating the pipeline result table")
-				err = pkg.UpdateResultTable("Kills the kubelet service on the application node", ChaosEngineVerdict, &testsDetails)
-				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-			} else {
-				klog.Info("[SKIP]: Skip updating the result on website")
-			}
-
-		})
-	})
 })
