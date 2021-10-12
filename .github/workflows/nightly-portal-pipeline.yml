@@ -1,7 +1,7 @@
 name: Nightly-Portal-E2E-Pipeline
 on:
   schedule:
-    - cron: "30 22 * * *" # Daily 04:30 AM in midnight
+    - cron: "*/5 * * * *" # Daily 04:30 AM in midnight
 
 # All Environments variables declared and set here.
 env:

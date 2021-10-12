@@ -2,7 +2,7 @@
 name: Nightly-AWS-Experiment-Pipeline
 on:
   schedule:
-    - cron: "30 22 * * *" # Daily 02:30 AM in midnight
+    - cron: "*/5 * * * *" # Daily 02:30 AM in midnight
 
 jobs:
   AWS_EC2_Test:
