@@ -39,7 +39,7 @@ func ChaosAbort(testsDetails *types.TestDetails) error {
 	}
 	log.Info("[Abort]: Chaos Experiment Aborted !!!")
 	// waiting for engine verdict updation
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 
 	return nil
 }
