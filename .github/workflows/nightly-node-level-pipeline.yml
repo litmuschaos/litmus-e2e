@@ -1,5 +1,5 @@
 ---
-name: Scheduled-Node-Level-Pipeline
+name: Nightly-Node-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight

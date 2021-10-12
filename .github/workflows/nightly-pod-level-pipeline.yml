@@ -1,5 +1,5 @@
 ---
-name: Scheduled-Pod-Level-Pipeline
+name: Nightly-Pod-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight
@@ -315,7 +315,6 @@ jobs:
       POD_LEVEL: "true"        
     
     steps:
-
       - uses: actions/setup-go@v2
         with:
           go-version: '1.16'          
@@ -340,9 +339,6 @@ jobs:
         
       - name: Create Namespace and deploy Application
         run: |
-          kubectl create ns ${CHAOS_NAMESPACE}
-          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
-          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
@@ -414,12 +410,9 @@ jobs:
 
       - name: Deploy App In Cluster-1
         run: make app-deploy
-        
+
       - name: Create Namespace and deploy Application
         run: |
-          kubectl create ns ${CHAOS_NAMESPACE}
-          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
-          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
           
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
@@ -496,9 +489,6 @@ jobs:
         
       - name: Create Namespace and deploy Application
         run: |
-          kubectl create ns ${CHAOS_NAMESPACE}
-          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
-          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-MULTIPLE-APP-DEPLOY
@@ -554,7 +544,9 @@ jobs:
           python-version: '3.x'
 
       - name: Install pygithub
+        if: ${{ always() }}
         run: python3 -m pip install pygithub 
 
       - name: Pipeline Update
+        if: ${{ always() }}
         run: make pipeline-status-update
