@@ -74,7 +74,12 @@ Cypress.Commands.add(
 
 //// ************************* Workflow Tunning Page **********************
 
-Cypress.Commands.add("tuneWorkflow", (option) => { });
+Cypress.Commands.add("tuneWorkflow", (option) => {
+  cy.get("[data-cy=General] Button").eq(0).click();
+	cy.get("[data-cy=TargetApplication] Button").eq(5).click();
+	cy.get("[data-cy=SteadyState] Button").eq(2).click();
+	cy.get("[data-cy=TuneExperiment] Button").eq(3).click();
+});
 
 //// ************************* R-Score Manipulation ***********************
 Cypress.Commands.add("rScoreEditor", (value) => {

@@ -72,11 +72,7 @@ describe("Testing the validation of the final verdict without target application
 					.click();
 			});
 		cy.wait(1000);
-		cy.get("[data-cy=General] Button").eq(0).click();
-		cy.get("[data-cy=TargetApplication]").find("input").eq(2).clear().type(targetApp.targetAppName);
-		cy.get("[data-cy=TargetApplication] Button").eq(5).click();
-		cy.get("[data-cy=SteadyState] Button").eq(2).click();
-		cy.get("[data-cy=TuneExperiment] Button").eq(3).click();
+		cy.tuneWorkflow();
 		// Matching nodes of dagre graph
 		cy.get("[data-cy=DagreGraphSvg]")
 			.find("text")
@@ -253,10 +249,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.click();
 			});
 		cy.wait(1000);
-		cy.get("[data-cy=General] Button").eq(0).click();
-		cy.get("[data-cy=TargetApplication] Button").eq(5).click();
-		cy.get("[data-cy=SteadyState] Button").eq(2).click();
-		cy.get("[data-cy=TuneExperiment] Button").eq(3).click();
+		cy.tuneWorkflow();
 		// Matching nodes of dagre graph
 		cy.get("[data-cy=DagreGraphSvg]")
 			.find("text")
