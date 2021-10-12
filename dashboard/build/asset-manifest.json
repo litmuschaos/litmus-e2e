@@ -1,0 +1,32 @@
+{
+  "files": {
+    "static/js/0.bbfd0782.chunk.js": "/litmus-e2e/dashboard/build/static/js/0.bbfd0782.chunk.js",
+    "static/js/0.bbfd0782.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/0.bbfd0782.chunk.js.map",
+    "main.js": "/litmus-e2e/dashboard/build/static/js/main.fb7aea82.chunk.js",
+    "main.js.map": "/litmus-e2e/dashboard/build/static/js/main.fb7aea82.chunk.js.map",
+    "runtime-main.js": "/litmus-e2e/dashboard/build/static/js/runtime-main.a5329269.js",
+    "runtime-main.js.map": "/litmus-e2e/dashboard/build/static/js/runtime-main.a5329269.js.map",
+    "static/js/3.076f0ab5.chunk.js": "/litmus-e2e/dashboard/build/static/js/3.076f0ab5.chunk.js",
+    "static/js/3.076f0ab5.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/3.076f0ab5.chunk.js.map",
+    "static/js/4.a7fb41a7.chunk.js": "/litmus-e2e/dashboard/build/static/js/4.a7fb41a7.chunk.js",
+    "static/js/4.a7fb41a7.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/4.a7fb41a7.chunk.js.map",
+    "static/js/5.e8732f04.chunk.js": "/litmus-e2e/dashboard/build/static/js/5.e8732f04.chunk.js",
+    "static/js/5.e8732f04.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/5.e8732f04.chunk.js.map",
+    "static/js/6.4319f42e.chunk.js": "/litmus-e2e/dashboard/build/static/js/6.4319f42e.chunk.js",
+    "static/js/6.4319f42e.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/6.4319f42e.chunk.js.map",
+    "static/js/7.82c7a0b2.chunk.js": "/litmus-e2e/dashboard/build/static/js/7.82c7a0b2.chunk.js",
+    "static/js/7.82c7a0b2.chunk.js.map": "/litmus-e2e/dashboard/build/static/js/7.82c7a0b2.chunk.js.map",
+    "index.html": "/litmus-e2e/dashboard/build/index.html",
+    "precache-manifest.b19ae9dc757c2964d52b5aed8f97fa83.js": "/litmus-e2e/dashboard/build/precache-manifest.b19ae9dc757c2964d52b5aed8f97fa83.js",
+    "service-worker.js": "/litmus-e2e/dashboard/build/service-worker.js",
+    "static/js/0.bbfd0782.chunk.js.LICENSE.txt": "/litmus-e2e/dashboard/build/static/js/0.bbfd0782.chunk.js.LICENSE.txt",
+    "static/js/3.076f0ab5.chunk.js.LICENSE.txt": "/litmus-e2e/dashboard/build/static/js/3.076f0ab5.chunk.js.LICENSE.txt",
+    "static/media/getFetch.cjs": "/litmus-e2e/dashboard/build/static/media/getFetch.51c934af.cjs",
+    "static/media/slack.svg": "/litmus-e2e/dashboard/build/static/media/slack.79b9267c.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a5329269.js",
+    "static/js/3.076f0ab5.chunk.js",
+    "static/js/main.fb7aea82.chunk.js"
+  ]
+}

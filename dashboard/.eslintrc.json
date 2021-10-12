@@ -1,0 +1,70 @@
+{
+  "plugins": ["react"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "prettier/react"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    },
+    "import/parser": "babel-eslint"
+  },
+  "rules": {
+    "new-cap": 0,
+    "no-underscore-dangle": 0,
+    "import/prefer-default-export": 0,
+    "no-restricted-syntax": 0,
+    "no-nested-ternary": 0,
+    "no-plusplus": 0,
+    "dot-notation": 0,
+    "camelcase": 0,
+    "jsx-a11y/anchor-is-valid": 0,
+    "jsx-a11y/href-no-hash": ["off"],
+    "jest/no-conditional-expect": ["off"],
+    "react/jsx-props-no-spreading": ["off"],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "multiline-ternary": 0,
+    "no-unused-vars": "off",
+    "no-shadow": 0,
+    "react/prop-types": 0,
+    "max-len": [
+      "warn",
+      {
+        "code": 100,
+        "tabWidth": 2,
+        "comments": 100,
+        "ignoreComments": false,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ]
+  }
+}
