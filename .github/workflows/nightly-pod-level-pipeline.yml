@@ -1,8 +1,7 @@
 ---
 name: Nightly-Pod-Level-Pipeline
 on:
-  schedule:
-    - cron: "*/5 * * * *" # Daily 02:30 AM in midnight
+  workflow_dispatch:
 
 jobs:
 

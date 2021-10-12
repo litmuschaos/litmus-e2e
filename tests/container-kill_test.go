@@ -281,4 +281,5 @@ var _ = Describe("BDD of container-kill experiment", func() {
 
 			})
 		})
+	})
 })

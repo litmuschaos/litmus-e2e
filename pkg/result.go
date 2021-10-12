@@ -32,7 +32,7 @@ func ChaosResultVerdict(testsDetails *types.TestDetails, clients environment.Cli
 //ChaosEngineVerdict checks the chaosengine verdict
 func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 
-	if err = WaitForEngineVerdict(testsDetails, clients, "completed"); err != nil {
+	if err = WaitForEngineStatus(testsDetails, clients, "completed"); err != nil {
 		return errors.Errorf("engine state check failed, err %v", err)
 	}
 

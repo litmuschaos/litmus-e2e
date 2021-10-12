@@ -200,8 +200,8 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 	return nil
 }
 
-//WaitForEngineVerdict waits for engine state to get completed
-func WaitForEngineVerdict(testsDetails *types.TestDetails, clients environment.ClientSets, status string) error {
+//WaitForEngineStatus waits for engine state to get completed
+func WaitForEngineStatus(testsDetails *types.TestDetails, clients environment.ClientSets, status string) error {
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
