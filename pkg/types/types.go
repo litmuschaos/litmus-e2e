@@ -18,7 +18,7 @@ type TestDetails struct {
 	JobCleanUpPolicy          string
 	AnnotationCheck           string
 	ApplicationNodeName       string
-	GoExperimentImage         string
+	ExperimentImage           string
 	InstallLitmus             string
 	OperatorImage             string
 	ImagePullPolicy           string
@@ -57,5 +57,4 @@ type TestDetails struct {
 	NodeLabel                 string
 	Args                      string
 	Command                   string
-	PythonExperimentImage     string
 }

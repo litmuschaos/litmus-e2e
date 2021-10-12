@@ -48,8 +48,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")
-	testDetails.GoExperimentImage = Getenv("GO_EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
-	testDetails.PythonExperimentImage = Getenv("PYTHON_EXPERIMENT_IMAGE", "")
+	testDetails.ExperimentImage = Getenv("EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
 	testDetails.OperatorImage = Getenv("OPERATOR_IMAGE", "litmuschaos/chaos-operator:ci")
 	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "litmuschaos/chaos-runner:ci")
 	testDetails.LibImage = Getenv("LIB_IMAGE", "")

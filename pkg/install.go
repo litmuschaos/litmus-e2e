@@ -167,11 +167,7 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 	}
 
 	// Modify the ExperimentImage
-	if testsDetails.PythonExperimentImage != "" {
-		chaosExperiment.Spec.Definition.Image = testsDetails.PythonExperimentImage
-	} else {
-		chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
-	}
+	chaosExperiment.Spec.Definition.Image = testsDetails.ExperimentImage
 	// Modify experiment imagePullPolicy
 	chaosExperiment.Spec.Definition.ImagePullPolicy = corev1.PullPolicy(testsDetails.ExperimentImagePullPolicy)
 
@@ -185,7 +181,7 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 
 	// Modify LIB Image
 	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
-		testsDetails.LibImage = testsDetails.GoExperimentImage
+		testsDetails.LibImage = testsDetails.ExperimentImage
 	} else {
 		testsDetails.LibImage = libImage
 	}
@@ -255,7 +251,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 		return errors.Errorf("fail to apply experiment file, err: %v", err)
 	}
 	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
-	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.ExperimentImage + " !!!")
 
 	return nil
 }
