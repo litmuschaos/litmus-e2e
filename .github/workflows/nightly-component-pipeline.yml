@@ -1,7 +1,8 @@
 ---
 name: Nightly-Component-Pipeline
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "30 20 * * *" # Daily 02:30 AM in midnight
 
 defaults:
   run:

@@ -1,6 +1,7 @@
 name: Nightly-Portal-E2E-Pipeline
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "30 22 * * *" # Daily 04:30 AM in midnight
 
 # All Environments variables declared and set here.
 env:
