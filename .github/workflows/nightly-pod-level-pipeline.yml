@@ -593,6 +593,10 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'litmuschaos/litmus-e2e'
+          ref: 'master'    
 
       - uses: actions/setup-python@v2
         with:
