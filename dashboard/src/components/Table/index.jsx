@@ -7,8 +7,9 @@ import CustomRadialChart from "components/CustomRadialChart";
 import { readableNameConverter } from "shared/helper";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
-import useStyles from "./styles";
 import VerticalTabs from "./VerticalTabs";
+import { descriptionMapping } from "./helper";
+import useStyles from "./styles";
 
 const DataTable = ({
   data,
@@ -106,8 +107,7 @@ const DataTable = ({
         align="center"
         className={classes.topMargin}
       >
-        It contains the test cases (GO BDDs) for component-level generic
-        experiments
+        {descriptionMapping[tableName] || descriptionMapping[pipelineName]}
       </Typography>
       <br />
       {data && (
