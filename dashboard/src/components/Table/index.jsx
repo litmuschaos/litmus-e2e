@@ -23,8 +23,8 @@ const DataTable = ({
   const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
   if (
-    tableName.match(/.*Portal.*$/) != null ||
-    pipelineName.match(/.*Portal.*$/)
+    tableName?.match(/.*Portal.*$/) != null ||
+    pipelineName?.match(/.*Portal.*$/)
   ) {
     setGithubRepo("litmus");
   }

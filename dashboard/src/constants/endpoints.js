@@ -8,6 +8,8 @@ const endpoints = {
     `${baseUrl}/repos/litmuschaos/litmus-e2e/actions/workflows/${workflowName}/runs`,
   pipelineJobs: (pipelineId) =>
     `${baseUrl}/repos/litmuschaos/litmus-e2e/actions/runs/${pipelineId}/jobs`,
+  releaseTag: () => `${baseUrl}/repos/litmuschaos/litmus/releases/latest`,
+  repoDetails: () => `${baseUrl}/repos/litmuschaos/litmus`,
 };
 
 export default endpoints;

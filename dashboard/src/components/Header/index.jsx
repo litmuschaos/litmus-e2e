@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Typography } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
@@ -7,11 +7,30 @@ import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import StarBorder from "@material-ui/icons/StarBorder";
 import AccountTree from "@material-ui/icons/AccountTree";
 import { Icon } from "litmus-ui";
+import endpoints from "constants/endpoints";
+import sendGetRequest from "api/sendRequest";
 import SlackLogo from "./images/slack.svg";
 import useStyles from "./styles";
 
 const Header = () => {
   const classes = useStyles();
+  const [data, setData] = useState({
+    version: "",
+    stars: "",
+    forks: "",
+  });
+  useEffect(() => {
+    sendGetRequest(endpoints.releaseTag()).then((response) => {
+      setData((prevData) => ({ ...prevData, version: response?.tag_name }));
+    });
+    sendGetRequest(endpoints.repoDetails()).then((response) => {
+      setData((prevData) => ({
+        ...prevData,
+        stars: response?.stargazers_count,
+        forks: response?.forks_count,
+      }));
+    });
+  }, []);
   return (
     <div data-cy="headerComponent">
       <AppBar className={classes.appBar}>
@@ -28,7 +47,7 @@ const Header = () => {
                 size="xl"
                 color="white"
                 className={classes.homeIcon}
-              />
+              />{" "}
               E2E Dashboard
             </Typography>
           </Link>
@@ -80,11 +99,11 @@ const Header = () => {
                 litmuschaos/litmus
                 <br />
                 <LocalOfferIcon style={{ paddingTop: 4 }} />
-                2.1.1
+                {data.version}
                 <StarBorder style={{ paddingTop: 4 }} />
-                2.2k
+                {data.stars}
                 <AccountTree style={{ paddingTop: 4 }} />
-                416
+                {data.forks}
               </a>
             </div>
           </div>
