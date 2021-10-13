@@ -8,7 +8,7 @@ function wait_for_url(){
     until $(curl --output /dev/null --silent --head --fail $URL); do
     wait_period=$(($wait_period+10))
     if [ $wait_period -gt 300 ];then
-       echo "The frontend URL couldn't come in active state in 5 minutes, exiting now.."
+       echo "[Info]: The frontend URL couldn't come in active state in 5 minutes, exiting now.."
        exit 1
     else
        printf '.'
@@ -31,10 +31,10 @@ function wait_for_loadbalancer(){
     do
     wait_period=$(($wait_period+10))
         if [ $wait_period -gt 300 ];then
-        echo "Couldn't get LoadBalancer IP in 5 minutes, exiting now.."
+        echo "[Error]: Couldn't get LoadBalancer IP in 5 minutes, exiting now.."
         exit 1
         else
-        echo "Waiting for loadBalancer end point..."; 
+        echo "[Info]: Waiting for loadBalancer end point..."; 
         IP=$(kubectl get services ${SVC} -n ${Namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
@@ -56,10 +56,10 @@ function wait_for_ingress(){
     do
     wait_period=$(($wait_period+10))
         if [ $wait_period -gt 300 ];then
-        echo "Couldn't get Ingress address in 5 minutes, exiting now.."
+        echo "[Error]: Couldn't get the Ingress address in 5 minutes, exiting now..."
         exit 1
         else
-        echo "Waiting for ingress end point..."; 
+        echo "[Info]: Waiting for ingress's end point..."; 
         IP=$(eval "kubectl get ing ${Ingress} -n ${Namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'" | awk '{print $1}');
         echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
@@ -96,13 +96,13 @@ function verify_deployment(){
         echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
         sleep 15
         else
-        echo "Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST} ✓"
+        echo "[Info]: Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST} ✓"
         break
         fi
     done
 
     if [[ $RETRY == "$RETRY_MAX" ]]; then
-        print_error "Could not find deployment ${deployment} in namespace ${namespace}"
+        print_error "[Error]: Could not find deployment ${deployment} in namespace ${namespace}"
         exit 1
     fi
 
@@ -114,10 +114,10 @@ function verify_pod(){
     namespace=$2
     POD=$(eval "kubectl get pods -n ${namespace} | awk '/${pod}/'")
     if [[ -z "$POD" ]];then
-        echo "$pod pod not found in $namespace namespace"
+        echo "[Error]: $pod pod not found in $namespace namespace"
         exit 1
     else
-        echo "$pod pod found in $namespace namespace ✓"
+        echo "[Info]: $pod pod found in $namespace namespace ✓"
     fi
 }
 
@@ -126,10 +126,10 @@ function verify_namespace(){
     namespace=$1
     NS=$(eval "kubectl get ns | awk '/${namespace}/'")
     if [[ -z "$NS" ]];then
-        echo "$namespace Namespace not found"
+        echo "[Error]: $namespace Namespace not found"
         exit 1
     else
-        echo "$namespace namespace found ✓"
+        echo "[Info]: $namespace namespace found ✓"
     fi 
 }
 
