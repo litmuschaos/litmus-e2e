@@ -8,7 +8,7 @@ function wait_for_url(){
     until $(curl --output /dev/null --silent --head --fail $URL); do
     wait_period=$(($wait_period+10))
     if [ $wait_period -gt 300 ];then
-       echo "The frontend URL couldn't come in active state in 5 minutes, exiting now.."
+       echo "[Info]: The frontend URL couldn't come in active state in 5 minutes, exiting now.."
        exit 1
     else
        printf '.'
@@ -31,12 +31,37 @@ function wait_for_loadbalancer(){
     do
     wait_period=$(($wait_period+10))
         if [ $wait_period -gt 300 ];then
-        echo "Couldn't get LoadBalancer IP in 5 minutes, exiting now.."
+        echo "[Error]: Couldn't get LoadBalancer IP in 5 minutes, exiting now.."
         exit 1
         else
-        echo "Waiting for end point..."; 
-        IP=$(eval "kubectl get svc litmusportal-frontend-service -n ${namespace} --template='{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}'" | awk '{print $1}');
-        echo "IP"
+        echo "[Info]: Waiting for loadBalancer end point..."; 
+        IP=$(kubectl get services ${SVC} -n ${Namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        echo "IP = ${IP}"
+        [ -z "$IP" ] && sleep 10; 
+        fi
+    done; 
+}
+
+## Function to wait for ingress to get an address
+function wait_for_ingress(){
+    # Variable to store ingress address
+    IP="";
+    Namespace=$2
+    Ingress=$1
+    # Variable to store waiting time for getting IP
+    wait_period=0
+
+    # Waiting for address assignment for ingress 
+    while [ -z $IP ]; 
+    do
+    wait_period=$(($wait_period+10))
+        if [ $wait_period -gt 300 ];then
+        echo "[Error]: Couldn't get the Ingress address in 5 minutes, exiting now..."
+        exit 1
+        else
+        echo "[Info]: Waiting for ingress's end point..."; 
+        IP=$(eval "kubectl get ing ${Ingress} -n ${Namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'" | awk '{print $1}');
+        echo "IP = ${IP}"
         [ -z "$IP" ] && sleep 10; 
         fi
     done; 
@@ -71,13 +96,13 @@ function verify_deployment(){
         echo "Retry: ${RETRY}/${RETRY_MAX} - Deployment not found - waiting 15s"
         sleep 15
         else
-        echo "Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST} ✓"
+        echo "[Info]: Found deployment ${deployment} in namespace ${namespace}: ${DEPLOYMENT_LIST} ✓"
         break
         fi
     done
 
     if [[ $RETRY == "$RETRY_MAX" ]]; then
-        print_error "Could not find deployment ${deployment} in namespace ${namespace}"
+        print_error "[Error]: Could not find deployment ${deployment} in namespace ${namespace}"
         exit 1
     fi
 
@@ -89,10 +114,10 @@ function verify_pod(){
     namespace=$2
     POD=$(eval "kubectl get pods -n ${namespace} | awk '/${pod}/'")
     if [[ -z "$POD" ]];then
-        echo "$pod pod not found in $namespace namespace"
+        echo "[Error]: $pod pod not found in $namespace namespace"
         exit 1
     else
-        echo "$pod pod found in $namespace namespace ✓"
+        echo "[Info]: $pod pod found in $namespace namespace ✓"
     fi
 }
 
@@ -101,10 +126,10 @@ function verify_namespace(){
     namespace=$1
     NS=$(eval "kubectl get ns | awk '/${namespace}/'")
     if [[ -z "$NS" ]];then
-        echo "$namespace Namespace not found"
+        echo "[Error]: $namespace Namespace not found"
         exit 1
     else
-        echo "$namespace namespace found ✓"
+        echo "[Info]: $namespace namespace found ✓"
     fi 
 }
 
@@ -144,4 +169,62 @@ function verify_all_components(){
     do
         verify_deployment ${i} ${namespace}
     done
+}
+
+# Function to setup Ingress in given namespace for ChaosCenter
+function setup_ingress(){
+    namespace=$1
+    # Updating the svc to ClusterIP
+    kubectl patch svc litmusportal-frontend-service -n ${namespace} -p '{"spec": {"type": "ClusterIP"}}'
+    kubectl patch svc litmusportal-server-service -n ${namespace} -p '{"spec": {"type": "ClusterIP"}}'
+
+    # Enabling Ingress in Portal
+    kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS="true"
+
+    # Installing ingress-nginx
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo update
+    helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 3.33.0 --namespace ${namespace}
+
+    kubectl get pods -n ${namespace}
+
+    wait_for_pods ${namespace} 360
+
+    # Applying Ingress Manifest for Accessing Portal
+    kubectl apply -f litmus/ingress.yml -n ${namespace}
+    wait_for_ingress litmus-ingress ${namespace}
+}
+
+# Function to get Access point of ChaosCenter based on Service type(mode) deployed in given namespace
+function get_access_point(){
+    namespace=$1
+    accessType=$2
+
+    if [[ "$accessType" == "LoadBalancer" ]];then
+
+        kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+        export loadBalancer=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        wait_for_pods ${namespace} 360
+        wait_for_loadbalancer litmusportal-frontend-service ${namespace}
+        export loadBalancerIP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        export AccessURL="http://$loadBalancerIP:9091"
+        wait_for_url $AccessURL
+        echo "URL=$AccessURL" >> $GITHUB_ENV
+
+    elif [[ "$acessType" == "Ingress" ]];then
+
+        setup_ingress ${namespace}
+        # Ingress IP for accessing Portal
+        export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
+        echo "URL=http://$AccessURL" >> $GITHUB_ENV
+
+    else 
+        # By default NodePort will be used. 
+        export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+        export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+        export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
+        export AccessURL="http://$NODE_IP:$NODE_PORT"
+        echo "URL=$AccessURL" >> $GITHUB_ENV
+
+    fi
 }
