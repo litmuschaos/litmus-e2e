@@ -20,7 +20,14 @@ const DataTable = ({
   const [pageSize, setPageSize] = useState(10);
   const [pipelineDetails, setPipelineDetails] = useState(null);
   const [displayDrawer, setDisplayDrawer] = useState(false);
+  const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
+  if (
+    tableName.match(/.*Portal.*$/) != null ||
+    pipelineName.match(/.*Portal.*$/)
+  ) {
+    setGithubRepo("litmus");
+  }
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -65,11 +72,11 @@ const DataTable = ({
       renderCell: (params) => (
         <>
           <a
-            href={`https://github.com/litmuschaos/litmus-e2e/commit/${params.value.id}`}
+            href={`https://github.com/litmuschaos/${githubRepo}/commit/${params.value.id}`}
           >
             {`#${params.value.id.substring(0, 6)}`}
           </a>{" "}
-          &nbsp; Repository: litmus-go
+          &nbsp; Repository: {githubRepo}
         </>
       ),
     },
