@@ -52,7 +52,7 @@ var _ = Describe("BDD of experiment image test", func() {
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			// Provide wrong experiment image name
-			testsDetails.GoExperimentImage = "litmuschaos/dummy-image:v1"
+			testsDetails.ExperimentImage = "litmuschaos/dummy-image:v1"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
 
