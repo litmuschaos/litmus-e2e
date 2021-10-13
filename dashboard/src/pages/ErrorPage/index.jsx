@@ -1,15 +1,13 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button, Typography } from '@material-ui/core';
-import history from 'utils/history';
-import useStyles from './styles';
+import React from "react";
+import { Button, Typography } from "@material-ui/core";
+import history from "utils/history";
+import useStyles from "./styles";
 
 const ErrorPage = () => {
   const classes = useStyles();
   React.useEffect(() => {
     window.scrollTo(0, 0);
   });
-  const { t } = useTranslation();
   return (
     <>
       <div className={classes.mainHeader}>
@@ -18,19 +16,19 @@ const ErrorPage = () => {
             <div className={classes.headerDiv}>
               <Typography className={classes.mainText}>
                 <strong>
-                  {t('error.whoops')}
+                  Whoops!
                   <br />
-                  {t('error.pageUnavailable')}
+                  This page is unavailable
                 </strong>
               </Typography>
               <Typography className={classes.descText}>
-                {t('error.pageDoesNotExist')}
+                The page does not exist, or please try again later.
               </Typography>
               <Button
                 onClick={() => history.goBack()}
                 className={classes.backBtn}
               >
-                {t('error.goBack')}
+                Go back
               </Button>
             </div>
             <div className={classes.imgDiv}>

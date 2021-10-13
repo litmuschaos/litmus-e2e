@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
   userName: {
-    fontSize: '2.5rem',
+    fontSize: "2.5rem",
   },
 }));
 

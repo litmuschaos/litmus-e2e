@@ -1,13 +1,13 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import React from "react";
+import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   center: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

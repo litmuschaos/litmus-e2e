@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { LitmusThemeProvider } from 'litmus-ui';
-import { Router } from 'react-router-dom';
-import history from 'utils/history';
-import { sendGetRequest } from 'api/sendRequest';
-import endpoints from 'constants/endpoints';
-import { filterWorkflow } from 'api/filterWorkflow';
-import Routes from './Routes';
-import { getLocalStorage, setLocalStorage } from 'shared/storageHelper';
+import React, { useEffect, useState } from "react";
+import { LitmusThemeProvider } from "litmus-ui";
+import { Router } from "react-router-dom";
+import history from "utils/history";
+import sendGetRequest from "api/sendRequest";
+import endpoints from "constants/endpoints";
+import filterWorkflow from "api/filterWorkflow";
+import { getLocalStorage, setLocalStorage } from "shared/storageHelper";
+import Routes from "./Routes";
 
 const App = () => {
   const [pipelineData, setPipelineData] = useState(null);
   useEffect(() => {
-    if (!getLocalStorage("manualRuns") || !getLocalStorage("scheduledRuns") || !pipelineData) {
-      sendGetRequest(endpoints.allWorkflows())
-      .then((data) => {
-        const {scheduled, manual} = filterWorkflow(data);
-        setLocalStorage("scheduledRuns", scheduled);
+    if (
+      !getLocalStorage("manualRuns") ||
+      !getLocalStorage("nightlyRuns") ||
+      !pipelineData
+    ) {
+      sendGetRequest(endpoints.allWorkflows()).then((data) => {
+        const { nightly, manual } = filterWorkflow(data);
+        setLocalStorage("nightlyRuns", nightly);
         setLocalStorage("manualRuns", manual);
-        setPipelineData({ scheduled, manual });
+        setPipelineData({ nightly, manual });
       });
     }
   }, [pipelineData]);
@@ -29,6 +32,6 @@ const App = () => {
       </Router>
     </LitmusThemeProvider>
   );
-}
+};
 
 export default App;

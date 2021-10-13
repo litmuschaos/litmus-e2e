@@ -1,6 +1,6 @@
 {
-  "name": "Litmus Portal",
-  "short_name": "Litmus Portal",
+  "name": "Litmus E2E Dashboard",
+  "short_name": "Litmus E2E Dashboard",
   "icons": [
     {
       "src": "./favicon-16x16.png",

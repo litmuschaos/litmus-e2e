@@ -1,22 +1,16 @@
 {
-  "plugins": ["react"],
-  "extends": [
-    "airbnb",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended",
-    "prettier/react"
-  ],
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "jest": true
+  },
+  "extends": ["airbnb", "plugin:prettier/recommended"],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": 11,
     "sourceType": "module"
-  },
-  "env": {
-    "browser": true,
-    "es6": true,
-    "jest": true
   },
   "settings": {
     "react": {
@@ -30,41 +24,20 @@
     "import/parser": "babel-eslint"
   },
   "rules": {
-    "new-cap": 0,
-    "no-underscore-dangle": 0,
-    "import/prefer-default-export": 0,
-    "no-restricted-syntax": 0,
-    "no-nested-ternary": 0,
-    "no-plusplus": 0,
-    "dot-notation": 0,
-    "camelcase": 0,
-    "jsx-a11y/anchor-is-valid": 0,
-    "jsx-a11y/href-no-hash": ["off"],
-    "jest/no-conditional-expect": ["off"],
-    "react/jsx-props-no-spreading": ["off"],
-    "no-console": [
+    "react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
+    "prettier/prettier": [
       "error",
       {
-        "allow": ["warn", "error"]
+        "endOfLine": "auto"
       }
     ],
-    "multiline-ternary": 0,
-    "no-unused-vars": "off",
-    "no-shadow": 0,
+    "no-plusplus": 0,
+    "prefer-destructuring": ["error", { "object": true, "array": false }],
+    "react/require-default-props": 0,
+    "jsx-a11y/control-has-associated-label": 0,
+    "react/jsx-props-no-spreading": 0,
     "react/prop-types": 0,
-    "max-len": [
-      "warn",
-      {
-        "code": 100,
-        "tabWidth": 2,
-        "comments": 100,
-        "ignoreComments": false,
-        "ignoreTrailingComments": true,
-        "ignoreUrls": true,
-        "ignoreStrings": true,
-        "ignoreTemplateLiterals": true,
-        "ignoreRegExpLiterals": true
-      }
-    ]
+    "react/jsx-wrap-multilines": 0,
+    "react/jsx-one-expression-per-line": 0
   }
 }

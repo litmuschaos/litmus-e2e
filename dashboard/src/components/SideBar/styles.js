@@ -1,20 +1,20 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   drawerPaper: {
-    width: '100%',
+    width: "100%",
     background: theme.palette.sidebarMenu,
-    position: 'relative',
+    position: "relative",
   },
 
   drawerListItem: {
-    height: 'auto',
-    transition: '0.8s',
-    '&:hover': {
+    height: "auto",
+    transition: "0.8s",
+    "&:hover": {
       backgroundColor: theme.palette.disabledBackground,
     },
   },
@@ -26,26 +26,26 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(2),
   },
   listText: {
-    '& span': {
+    "& span": {
       fontWeight: 500,
-      fontSize: '0.8rem',
+      fontSize: "0.8rem",
     },
   },
   drawerList: {
     marginTop: theme.spacing(8.375),
   },
   quickActions: {
-    width: '80%',
+    width: "80%",
     border: `1px solid ${theme.palette.border.main}`,
   },
   versionlogo: {
-    width: '1.25rem',
-    height: '2.185rem',
+    width: "1.25rem",
+    height: "2.185rem",
   },
   versionText: {
-    margin: 'auto',
+    margin: "auto",
     marginLeft: theme.spacing(1.25),
-    fontSize: '0.75rem',
+    fontSize: "0.75rem",
   },
   nested: {
     paddingLeft: theme.spacing(4),

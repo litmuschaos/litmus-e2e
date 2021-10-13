@@ -1,37 +1,31 @@
 import { readableNameConverter } from "shared/helper";
 
-export const filterWorkflow = (responseData) => {
-  if(responseData) {
-    const total_count = responseData.total_count;
-    const scheduledData = [];
+const filterWorkflow = (responseData) => {
+  if (responseData) {
+    const nightlyData = [];
     const manualData = [];
     responseData.workflows.forEach((element) => {
-      if (element.name.match(/^Scheduled.*Pipeline$/) != null) {
-        scheduledData.push({
+      if (element.name.match(/^Nightly.*Pipeline$/) != null) {
+        nightlyData.push({
           ...element,
-          readableName: readableNameConverter(element.name)
-        })
-      }
-      else if (element.name.match(/.*Pipeline$/) != null){
+          readableName: readableNameConverter(element.name),
+        });
+      } else if (element.name.match(/.*Pipeline$/) != null) {
         manualData.push({
           ...element,
-          readableName: readableNameConverter(element.name)
-        })
-      }    
+          readableName: readableNameConverter(element.name),
+        });
+      }
     });
-    console.log("total_count is", total_count);
-    console.log("scheduledData is", scheduledData);
-    console.log("manualData is", manualData);
     return {
-      scheduled: scheduledData,
+      nightly: nightlyData,
       manual: manualData,
-    }
+    };
   }
-  else {
-    return {
-      scheduled: null,
-      manual: null, 
-    }
-  }
+  return {
+    nightly: null,
+    manual: null,
+  };
+};
 
-}
+export default filterWorkflow;

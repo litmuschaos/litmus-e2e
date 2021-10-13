@@ -1,37 +1,26 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import { Icon } from 'litmus-ui';
-import history from 'utils/history';
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import Drawer from "@material-ui/core/Drawer";
+import List from "@material-ui/core/List";
+import { Icon } from "litmus-ui";
+import history from "utils/history";
 import CustomisedListItem from "./CustomisedListItem";
 import CustomisedDropdownItem from "./CustomisedDropdownItem";
-import { ReactComponent as CodeIcon } from '../../svg/code.svg';
-import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
-import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
-import useStyles from './styles';
+import { ReactComponent as DocsIcon } from "../../svg/docs.svg";
+import useStyles from "./styles";
 
-const SideBar= ({ scheduledData, manualData }) => {
-  // const [openScheduled, setOpenScheduled] = useState(true);
-  // const [openManual, setOpenManual] = useState(true);
+const SideBar = ({ NightlyData, manualData }) => {
   const [openDropdown, setOpenDropdown] = useState("none");
   const handleDropdown = (value) => {
-    console.log("value is", value);
     setOpenDropdown((prevValue) => {
-      if(prevValue === value) {
+      if (prevValue === value) {
         return "none";
       }
       return value;
     });
-  }
-  // const handleScheduled = () => {
-  //   setOpenScheduled((prevState) => !prevState);
-  // }
-  // const handleManual = () => {
-  //   setOpenManual((prevState) => !prevState);
-  // }
+  };
   const classes = useStyles();
-  const pathName = useLocation().pathname.split('/')[1];
+  const pathName = useLocation().pathname.split("/")[1];
   return (
     <Drawer
       data-cy="sidebarComponent"
@@ -47,98 +36,78 @@ const SideBar= ({ scheduledData, manualData }) => {
           key="home"
           handleClick={() => {
             history.push({
-              pathname: '/home'
+              pathname: "/home",
             });
           }}
           label="Home"
-          selected={pathName === 'home'}
+          selected={pathName === "home"}
         >
           <Icon name="home" />
         </CustomisedListItem>
-        <div data-cy="scheduled-run">
+        <div data-cy="nightly-run">
           <CustomisedDropdownItem
-            key="scheduled-run"            
+            key="nightly-run"
             label="Sheduled Runs"
             litmusIconName="schedule"
-            name="scheduled-run"
-            open={openDropdown === "scheduled-run"}
-            handleClick={() => handleDropdown("scheduled-run")}
+            name="nightly-run"
+            open={openDropdown === "nightly-run"}
+            handleClick={() => handleDropdown("nightly-run")}
           >
-            {scheduledData && scheduledData.map((scheduledItem) => (
-              <CustomisedListItem
-                key={scheduledItem.id}
-                handleClick={() => {
-                  history.push({
-                    pathname: `/scheduled-runs/${scheduledItem.name}`
-                  });
-                }}
-                label={scheduledItem.readableName}
-                selected={pathName === scheduledItem.name}
-                className={classes.nested}
-              >
-                <Icon name="schedule"/>
-              </CustomisedListItem>
-            ))}
+            {NightlyData &&
+              NightlyData.map((nightlyItem) => (
+                <CustomisedListItem
+                  key={nightlyItem.id}
+                  handleClick={() => {
+                    history.push({
+                      pathname: `/nightly-runs/${nightlyItem.name}`,
+                    });
+                  }}
+                  label={nightlyItem.readableName}
+                  selected={pathName === nightlyItem.name}
+                  className={classes.nested}
+                >
+                  <Icon name="schedule" />
+                </CustomisedListItem>
+              ))}
           </CustomisedDropdownItem>
         </div>
         <div data-cy="manual-run">
           <CustomisedDropdownItem
-            key="manual-run"            
+            key="manual-run"
             label="Manual Runs"
             litmusIconName="userEnable"
             name="manual-run"
             open={openDropdown === "manual-run"}
             handleClick={() => handleDropdown("manual-run")}
           >
-            {manualData && manualData.map((manualItem) => (
-              <CustomisedListItem
-                key={manualItem.id}
-                handleClick={() => {
-                  history.push({
-                    pathname: `/manual-runs/${manualItem.name}`
-                  });
-                }}
-                label={manualItem.readableName}
-                selected={pathName === manualItem.name}
-                className={classes.nested}
-              >
-                <Icon name="workflow"/>
-              </CustomisedListItem>
-            ))}
+            {manualData &&
+              manualData.map((manualItem) => (
+                <CustomisedListItem
+                  key={manualItem.id}
+                  handleClick={() => {
+                    history.push({
+                      pathname: `/manual-runs/${manualItem.name}`,
+                    });
+                  }}
+                  label={manualItem.readableName}
+                  selected={pathName === manualItem.name}
+                  className={classes.nested}
+                >
+                  <Icon name="workflow" />
+                </CustomisedListItem>
+              ))}
           </CustomisedDropdownItem>
         </div>
         <hr className={classes.quickActions} />
         <CustomisedListItem
           key="litmusDocs"
           handleClick={() => {
-            window.open('https://docs.litmuschaos.io/');
+            window.open("https://docs.litmuschaos.io/");
           }}
           label="Litmus Docs"
         >
           <DocsIcon />
         </CustomisedListItem>
-        {/* <CustomisedListItem
-          key="litmusAPIDocs"
-          handleClick={() => {
-            window.open(
-              'https://litmuschaos.github.io/litmus/graphql/v2.0.0/api.html'
-            );
-          }}
-          label="Litmus API Docs"
-        >
-          <CodeIcon />
-        </CustomisedListItem> */}
-        {/* <CustomisedListItem
-          key="Slack"
-          handleClick={() => {
-            window.open(
-              'https://app.slack.com/client/T09NY5SBT/CNXNB0ZTN'
-            );
-          }}
-          label="Slack"
-        >
-          <CommunityIcon />
-        </CustomisedListItem> */}
       </List>
     </Drawer>
   );

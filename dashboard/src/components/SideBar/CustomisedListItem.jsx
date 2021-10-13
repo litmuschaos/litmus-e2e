@@ -1,8 +1,8 @@
-import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import useStyles from './styles';
+import React from "react";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import useStyles from "./styles";
 
 const CustomisedListItem = ({
   children,
@@ -17,7 +17,9 @@ const CustomisedListItem = ({
       button
       selected={selected}
       onClick={handleClick}
-      className={`${classes.drawerListItem} ${selected ? classes.active : ''} ${className}`}
+      className={`${classes.drawerListItem} ${
+        selected ? classes.active : ""
+      } ${className}`}
     >
       <ListItemIcon className={classes.listIcon}>{children}</ListItemIcon>
       <ListItemText primary={label} className={classes.listText} />

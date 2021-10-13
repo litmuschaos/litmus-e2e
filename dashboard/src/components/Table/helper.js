@@ -1,15 +1,3 @@
-/*
-  Possible conclusion values are:
-  action_required
-  cancelled
-  failure
-  neutral
-  skipped
-  stale
-  startup_failure
-  success
-  timed_out
-*/ 
 export const conclusionMap = {
   action_required: "pending",
   cancelled: "fail",
@@ -20,7 +8,7 @@ export const conclusionMap = {
   startup_failure: "fail",
   success: "pass",
   timed_out: "fail",
-}
+};
 
 export const jobStepResult = (jobSteps) => {
   const result = {
@@ -28,17 +16,15 @@ export const jobStepResult = (jobSteps) => {
     pass: 0,
     fail: 0,
   };
-  console.log("jobsteps are", jobSteps);
-  if(jobSteps && Array.isArray(jobSteps)) {
+  if (jobSteps && Array.isArray(jobSteps)) {
     jobSteps.forEach((step) => {
-      if(step?.status !== "completed") {
+      if (step?.status !== "completed") {
         ++result.pending;
-      }
-      else {
+      } else {
         ++result[conclusionMap[step?.conclusion]];
       }
     });
   }
 
   return result;
-}
+};
