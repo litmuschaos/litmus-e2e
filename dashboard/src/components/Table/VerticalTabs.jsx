@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
@@ -83,19 +84,18 @@ export default function VerticalTabs({ data, pipelineId }) {
       fail: 0,
     }
   );
-
   const handleChange = (_event, newValue) => {
     setValue(newValue);
     setResult(jobStepResult(data.jobs[newValue].steps));
   };
-
+  const { t } = useTranslation();
   return (
     <>
       <hr />
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         <Grid item xs={7}>
           <p>
-            Pipeline Id:{" "}
+            {t("table.pipelineId")}:{" "}
             <a
               href={`https://github.com/litmuschaos/litmus-e2e/actions/runs/${pipelineId}`}
               target="_blank"

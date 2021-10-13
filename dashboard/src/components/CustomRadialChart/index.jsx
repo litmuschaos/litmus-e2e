@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { RadialChart } from "litmus-ui";
 import useStyles, { CustomTooltip } from "./styles";
 
@@ -9,15 +10,16 @@ const CustomRadialChart = ({
   size = "small",
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   return (
     <CustomTooltip
       title={
         <p>
-          Pass: {pass}
+          {t("radialChart.pass")}: {pass}
           <br />
-          Fail: {fail}
+          {t("radialChart.fail")}: {fail}
           <br />
-          Pending: {pending}
+          {t("radialChart.pending")}: {pending}
         </p>
       }
       placement="right"

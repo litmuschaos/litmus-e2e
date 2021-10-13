@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Typography } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
@@ -31,6 +32,7 @@ const Header = () => {
       }));
     });
   }, []);
+  const { t } = useTranslation();
   return (
     <div data-cy="headerComponent">
       <AppBar className={classes.appBar}>
@@ -48,7 +50,7 @@ const Header = () => {
                 color="white"
                 className={classes.homeIcon}
               />{" "}
-              E2E Dashboard
+              {t("header.e2eDashboard")}
             </Typography>
           </Link>
 
@@ -59,7 +61,7 @@ const Header = () => {
               }}
               className={classes.nounderline}
             >
-              <Typography variant="body1">Nightly Run</Typography>
+              <Typography variant="body1">{t("header.nightlyRun")}</Typography>
             </Link>
             <Link
               to={{
@@ -67,7 +69,7 @@ const Header = () => {
               }}
               className={classes.nounderline}
             >
-              <Typography variant="body1">Manual Run</Typography>
+              <Typography variant="body1">{t("header.manualRun")}</Typography>
             </Link>
           </div>
 
@@ -96,7 +98,7 @@ const Header = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                litmuschaos/litmus
+                {t("header.githubRepo")}
                 <br />
                 <LocalOfferIcon style={{ paddingTop: 4 }} />
                 {data.version}

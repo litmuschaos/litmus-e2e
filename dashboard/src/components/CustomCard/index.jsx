@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -27,6 +28,7 @@ const useStyles = makeStyles({
 
 const CustomCard = ({ data, category }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
@@ -43,7 +45,7 @@ const CustomCard = ({ data, category }) => {
             state: { id: data?.id, readableName: data?.readableName },
           }}
         >
-          <Button size="small">Pipeline Details</Button>
+          <Button size="small">{t("card.pipelineDetails")}</Button>
         </Link>
         <a
           href={data.html_url}

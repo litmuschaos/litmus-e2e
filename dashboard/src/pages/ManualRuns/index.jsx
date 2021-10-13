@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
@@ -44,14 +45,14 @@ const ManualRuns = ({ location }) => {
       );
     }
   }, [selectedPipeline.id]);
-
+  const { t } = useTranslation();
   return (
     <>
       <Center>
-        <Typography>Select Manual Pipeline:</Typography>
+        <Typography>{t("pipelinePage.selectManual")}:</Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel htmlFor="outlined-pipelineName" className={classes.label}>
-            Pipeline Name
+            {t("pipelinePage.pipelineName")}
           </InputLabel>
           <Select
             native

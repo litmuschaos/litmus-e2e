@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography } from "@material-ui/core";
 import CustomCard from "components/CustomCard";
 import { getLocalStorage } from "shared/storageHelper";
@@ -9,11 +10,12 @@ const HomePage = () => {
   const classes = useStyles();
   const nightlyData = getLocalStorage("nightlyRuns");
   const manualData = getLocalStorage("manualRuns");
+  const { t } = useTranslation();
   return (
     <>
       <Center>
         <Typography variant="h3" className={classes.userName}>
-          Welcome to the Litmus Chaos E2E Dashboard
+          {t("homepage.description")}
         </Typography>
       </Center>
       <div

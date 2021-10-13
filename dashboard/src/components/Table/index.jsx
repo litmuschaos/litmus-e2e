@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { DataGrid } from "@material-ui/data-grid";
 import { Typography } from "@material-ui/core";
 import { Drawer, TextButton } from "litmus-ui";
@@ -22,6 +23,7 @@ const DataTable = ({
   const [displayDrawer, setDisplayDrawer] = useState(false);
   const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
+  const { t } = useTranslation();
   if (
     tableName?.match(/.*Portal.*$/) != null ||
     pipelineName?.match(/.*Portal.*$/)
@@ -76,7 +78,7 @@ const DataTable = ({
           >
             {`#${params.value.id.substring(0, 6)}`}
           </a>{" "}
-          &nbsp; Repository: {githubRepo}
+          &nbsp; {t("table.repository")}: {githubRepo}
         </>
       ),
     },
