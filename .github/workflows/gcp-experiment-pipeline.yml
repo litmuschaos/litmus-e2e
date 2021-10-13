@@ -3,7 +3,7 @@ name: GCP-Experiment-Pipeline
 on:
   workflow_dispatch:
     inputs:
-      goExperimentImage:
+      experimentImage:
         default: "litmuschaos/go-runner:ci"
       operatorImage:
         default: "litmuschaos/chaos-operator:ci"
@@ -85,7 +85,7 @@ jobs:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
           INSTANCE_ZONES: "us-central1-a,us-central1-a"
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make gcp-vm-instance-stop
@@ -193,7 +193,7 @@ jobs:
           DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
           DISK_ZONES: "us-central1-a,us-central1-a"
           DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make gcp-vm-disk-loss

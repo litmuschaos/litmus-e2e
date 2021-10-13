@@ -5,7 +5,7 @@ on:
     inputs:
       e2eTestImage:
         default: "litmuschaos/litmus-e2e:ci"
-      goExperimentImage:
+      experimentImage:
         default: "litmuschaos/go-runner:ci"
       libImage:
         default: "litmuschaos/go-runner:ci"
@@ -86,7 +86,7 @@ jobs:
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+        EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
         LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
         CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -152,7 +152,7 @@ jobs:
         - /home/ubuntu/.aws:/root/.aws
         - /etc/kubernetes:/etc/kubernetes
       env:
-        GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+        EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
         LIB_IMAGE: "${{ github.event.inputs.libImage }}"
         EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
         CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"

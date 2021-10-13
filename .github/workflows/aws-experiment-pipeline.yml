@@ -3,7 +3,7 @@ name: AWS-Experiment-Pipeline
 on:
   workflow_dispatch:
     inputs:
-      goExperimentImage:
+      experimentImage:
         default: "litmuschaos/go-runner:ci"
       operatorImage:
         default: "litmuschaos/chaos-operator:ci"
@@ -96,7 +96,7 @@ jobs:
         env:
           EC2_INSTANCE_ID: "${{ env.INSTANCE_ONE }},${{ env.INSTANCE_TWO }}"
           REGION: ${{ secrets.REGION }}
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make ec2-terminate-by-id
@@ -106,7 +106,7 @@ jobs:
         env:
           EC2_INSTANCE_TAG: "runNumber:ec2_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make ec2-terminate-by-tag   
@@ -237,7 +237,7 @@ jobs:
         env:
           EBS_VOLUME_ID: "${{ env.VOLUME_ID }}"
           REGION: ${{ secrets.REGION }}
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make ebs-loss-by-id
@@ -247,7 +247,7 @@ jobs:
         env:
           EBS_VOLUME_TAG: "runNumber:ebs_${{ github.run_number }}"
           REGION: ${{ secrets.REGION }}
-          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
         run: make ebs-loss-by-tag   

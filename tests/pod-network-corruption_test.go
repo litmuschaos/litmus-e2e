@@ -140,7 +140,7 @@ var _ = Describe("BDD of pod-network-corruption experiment", func() {
 
 			//Abort the chaos experiment
 			By("[Abort]: Abort the chaos by patching engine state")
-			err = pkg.ChaosAbort(&testsDetails)
+			err = pkg.ChaosAbort(&testsDetails, clients)
 			Expect(err).To(BeNil(), "[Abort]: Chaos abort failed, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
