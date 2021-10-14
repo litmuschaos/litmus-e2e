@@ -22,8 +22,8 @@ jobs:
           yarn install --frozen-lockfile
           yarn build
 
-      - name: Release to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: .
+      # - name: Release to GitHub Pages
+      #   uses: JamesIves/github-pages-deploy-action@4.1.4
+      #   with:
+      #     branch: gh-pages
+      #     folder: .
