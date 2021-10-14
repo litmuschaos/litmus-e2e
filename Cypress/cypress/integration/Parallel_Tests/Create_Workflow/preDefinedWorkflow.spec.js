@@ -44,18 +44,12 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			.find("tr")
 			.eq(1)
 			.then(($div) => {
-				cy.wrap($div).find("td").eq(0).should("contain.text", "pod"); // Matching Experiment
+				cy.wrap($div).find("td").eq(0).should("contain.text", "pod-network-loss"); // Matching Experiment
 			});
-		// Matching nodes of dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).find("tspan").eq(7).should("contain.text","install-application");
-				cy.wrap($text).find("tspan").eq(9).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).find("tspan").eq(11).should("contain.text","pod-network-loss");
-				cy.wrap($text).find("tspan").eq(13).should("contain.text","revert-chaos");
-				cy.wrap($text).find("tspan").eq(14).should("contain.text","delete-application");
-			});
+		// Expected nodes
+		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodesNameArray);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -97,29 +91,22 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.should('have.attr', 'style', 'position: absolute');
 				cy.wrap($div).find("td").eq(2).click();
 			});
-		// Wait for complete nodes to load
+		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
-			cy.get("[data-cy=DagreGraphSvg]")
-				.find("text")
-				.then(($text) => {
-					return $text.length >= 19 ? true : false;
-				}),
+			cy.get("[data-cy=workflowStatus]").then((status) => {
+				return status.text() !== "Running" ? true : false;
+			}),
 			{
-			  verbose: true,
-			  interval: 500,
-			  timeout: 600000,
+				verbose: true,
+				interval: 500,
+				timeout: 600000,
 			}
 		);
+		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
+		// Expected Nodes
+		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-application");
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).should("contain.text","pod-network-loss");
-				cy.wrap($text).should("contain.text","revert-chaos");
-				cy.wrap($text).should("contain.text","delete-application");
-			});
+		cy.validateGraphNodes(graphNodesNameArray);
 	});
 
 	it("Checking Schedules Table for scheduled Workflow", () => {

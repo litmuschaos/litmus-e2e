@@ -1,4 +1,5 @@
 import "cypress-wait-until";
+import "cypress-react-selector";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
@@ -160,4 +161,19 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
     .find(`[data-cy=${workflowName}]`)
     .find("[data-cy=ExperimentsPassed]")
     .should("have.text",`Experiments Passed : ${ExperimentsPassed}/${TotalExperiments}`);
+});
+
+/// ************************** Validate dagre graph nodes **********************
+
+Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
+  cy.waitForReact();
+  let nodes = [];
+  cy.getReact("DagreGraph").getProps().then((props) => {
+    props.nodes.map((node) => {
+      if (node.labelType==="svg"){
+        nodes.push(node.config.fullName);
+      }
+    });
+    expect(nodes).to.include.members(graphNodesNameArray);
+  });
 });

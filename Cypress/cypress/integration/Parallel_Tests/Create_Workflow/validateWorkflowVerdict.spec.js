@@ -4,7 +4,7 @@ import * as workflows from "../../../fixtures/Workflows.json";
 import * as targetApp from "../../../fixtures/TargetApplication.json";
 import { apis, KUBE_API_TOKEN } from "../../../kube-apis/apis";
 
-describe("Testing the validation of the final verdict without target application", () => {
+describe("Testing the validation of the final verdict without target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
 		cy.waitForCluster("Self-Agent");
@@ -38,12 +38,10 @@ describe("Testing the validation of the final verdict without target application
 			0
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		// Matching nodes of dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-			});
+		// Expected nodes
+		const graphNodeNameArray = ["install-chaos-experiments"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodeNameArray);
 		/***
 		 * Add an experiment containing pod text
 		 */
@@ -68,18 +66,15 @@ describe("Testing the validation of the final verdict without target application
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "pod") // Matching Status
+					.should("contain.text", "cassandra-pod-delete") // Matching Status
 					.click();
 			});
 		cy.wait(1000);
 		cy.tuneWorkflow();
-		// Matching nodes of dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).should("contain.text","cassandra-pod-delete");
-			});
+		// Expected nodes
+		const graphNodesNameArray = ["install-chaos-experiments", "cassandra-pod-delete"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodesNameArray);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -121,27 +116,22 @@ describe("Testing the validation of the final verdict without target application
 					.should('have.attr', 'style', 'position: absolute');
 				cy.wrap($div).find("td").eq(2).click();
 			});
-		// Wait for complete nodes to load
+		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
-			cy.get("[data-cy=DagreGraphSvg]")
-				.find("text")
-				.then(($text) => {
-					return $text.length >= 13 ? true : false;
-				}),
+			cy.get("[data-cy=workflowStatus]").then((status) => {
+				return status.text() !== "Running" ? true : false;
+			}),
 			{
-			  verbose: true,
-			  interval: 500,
-			  timeout: 600000,
+				verbose: true,
+				interval: 500,
+				timeout: 600000,
 			}
 		);
+		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
+		// Expected Nodes
+		const graphNodesNameArray = ["install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).should("contain.text","cassandra-pod-delete");
-				cy.wrap($text).should("contain.text","revert-chaos");
-			});
+		cy.validateGraphNodes(graphNodesNameArray);
 	});
 
 	it("Checking Schedules Table for scheduled Workflow", () => {
@@ -215,12 +205,10 @@ describe("Testing the validation of the final verdict with an existing target ap
 			0
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		// Matching nodes of dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-			});
+		// Expected nodes
+		const graphNodeNameArray = ["install-chaos-experiments"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodeNameArray);
 		/***
 		 * Add an experiment containing pod text
 		 */
@@ -245,18 +233,15 @@ describe("Testing the validation of the final verdict with an existing target ap
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "pod") // Matching Status
+					.should("contain.text", "pod-delete") // Matching Status
 					.click();
 			});
 		cy.wait(1000);
 		cy.tuneWorkflow();
-		// Matching nodes of dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).should("contain.text","pod-delete");
-			});
+		// Expected nodes
+		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodesNameArray);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -298,27 +283,22 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.should('have.attr', 'style', 'position: absolute');
 				cy.wrap($div).find("td").eq(2).click();
 			});
-		// Wait for complete nodes to load
+		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
-			cy.get("[data-cy=DagreGraphSvg]")
-				.find("text")
-				.then(($text) => {
-					return $text.length >= 13 ? true : false;
-				}),
+			cy.get("[data-cy=workflowStatus]").then((status) => {
+				return status.text() !== "Running" ? true : false;
+			}),
 			{
-			  verbose: true,
-			  interval: 500,
-			  timeout: 600000,
+				verbose: true,
+				interval: 500,
+				timeout: 600000,
 			}
 		);
+		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
+		// Expected Nodes
+		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph
-		cy.get("[data-cy=DagreGraphSvg]")
-			.find("text")
-			.then(($text) => {
-				cy.wrap($text).should("contain.text","install-chaos-experiments");
-				cy.wrap($text).should("contain.text","pod-delete");
-				cy.wrap($text).should("contain.text","revert-chaos");
-			});
+		cy.validateGraphNodes(graphNodesNameArray);
 	});
 
 	it("Checking Schedules Table for scheduled Workflow", () => {
