@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { DataGrid } from "@material-ui/data-grid";
 import { Typography } from "@material-ui/core";
@@ -24,12 +24,6 @@ const DataTable = ({
   const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
   const { t } = useTranslation();
-  if (
-    tableName?.match(/.*Portal.*$/) != null ||
-    pipelineName?.match(/.*Portal.*$/)
-  ) {
-    setGithubRepo("litmus");
-  }
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -99,6 +93,14 @@ const DataTable = ({
       renderCell: () => <CustomRadialChart pass={4} fail={2} pending={1} />,
     },
   ];
+  useEffect(() => {
+    if (
+      tableName?.match(/.*Portal.*$/) != null ||
+      pipelineName?.match(/.*Portal.*$/)
+    ) {
+      setGithubRepo("litmus");
+    }
+  }, []);
   return (
     <>
       <Typography
