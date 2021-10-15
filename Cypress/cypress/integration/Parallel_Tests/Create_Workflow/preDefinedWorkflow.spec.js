@@ -44,8 +44,31 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			.find("tr")
 			.eq(1)
 			.then(($div) => {
-				cy.wrap($div).find("td").eq(0).should("contain.text", "pod-network-loss"); // Matching Experiment
+				cy.wrap($div)
+					.find("td")
+					.eq(0)
+					.should("contain.text", "pod-network-loss") // Matching Experiment
+					.click();
 			});
+		const tunningParameters = {
+			general : {
+				context : "pod-network-loss-chaos_litmus"
+			},
+			targetApp : {
+				annotationCheckToggle : false,
+				appns : "bank",
+				appKind : "deployment",
+				appLabel : "name in (balancereader,transactionhistory)",
+				jobCleanUpPolicy : "retain" 
+			},
+			steadyState : {},
+			tuneExperiment : {
+				totalChaosDuration : 90,
+				networkInterface : "eth0",
+				networkPacketLossPercent : 100
+			} 
+		  };
+		cy.tunePredefinedWorkflow(tunningParameters);
 		// Expected nodes
 		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph

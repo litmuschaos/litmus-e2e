@@ -70,7 +70,27 @@ describe("Testing the validation of the final verdict without target application
 					.click();
 			});
 		cy.wait(1000);
-		cy.tuneWorkflow();
+		const tunningParameters = {
+			general : {
+			  hubName : "Litmus ChaosHub",
+			  experimentName : "pod-delete",
+			  context : "pod-delete_litmus"
+			},
+			targetApp : {
+			  annotationCheckToggle : false,
+			  appns : "default",
+			  appKind : "deployment",
+			  appLabel : "app=nginx",
+			  jobCleanUpPolicy : "retain" 
+			},
+			steadyState : {},
+			tuneExperiment : {
+			  totalChaosDuration : 30,
+			  chaosInterval : 10,
+			  force : "false"
+			} 
+		  };
+		cy.tuneCustomWorkflow(tunningParameters);
 		// Expected nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "cassandra-pod-delete"];
 		// Verify nodes in dagre graph
@@ -237,7 +257,27 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.click();
 			});
 		cy.wait(1000);
-		cy.tuneWorkflow();
+		const tunningParameters = {
+			general : {
+			  hubName : "Litmus ChaosHub",
+			  experimentName : "pod-delete",
+			  context : "pod-delete_litmus"
+			},
+			targetApp : {
+			  annotationCheckToggle : false,
+			  appns : "default",
+			  appKind : "deployment",
+			  appLabel : "app=nginx",
+			  jobCleanUpPolicy : "retain" 
+			},
+			steadyState : {},
+			tuneExperiment : {
+			  totalChaosDuration : 30,
+			  chaosInterval : 10,
+			  force : "false"
+			} 
+		  };
+		cy.tuneCustomWorkflow(tunningParameters);
 		// Expected nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete"];
 		// Verify nodes in dagre graph
