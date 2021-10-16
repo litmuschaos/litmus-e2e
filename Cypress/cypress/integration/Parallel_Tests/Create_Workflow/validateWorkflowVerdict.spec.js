@@ -1,8 +1,6 @@
 // <reference types="Cypress" />
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
-import * as targetApp from "../../../fixtures/TargetApplication.json";
-import { apis, KUBE_API_TOKEN } from "../../../kube-apis/apis";
 
 describe("Testing the validation of the final verdict without target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {
@@ -187,17 +185,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	let workflowName = '';
 
 	it("Creating a target application", () => {
-		cy.request({
-			url: apis.createDeployment("default"),
-			method: "POST",
-			headers: {
-			  Authorization: `Bearer ${KUBE_API_TOKEN}`,
-			  'Content-Type': 'application/json'
-			},
-			body: targetApp.configDataForCreation
-		  }).should((response) => {
-			console.log(response);
-		  });
+		cy.createTargetApplication("target-app-1","nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
@@ -364,16 +352,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Deleting the target application", () => {
-		cy.request({
-			url: apis.deleteDeployment("default", targetApp.targetAppName),
-			method: "DELETE",
-			headers: {
-			  Authorization: `Bearer ${KUBE_API_TOKEN}`,
-			  'Content-Type': 'application/json'
-			},
-			body: targetApp.configDataForDeletion
-		  }).should((response) => {
-			console.log(response);
-		  });
+		cy.deleteTargetApplication("target-app-1");
 	})
 });
