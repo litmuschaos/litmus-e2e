@@ -185,7 +185,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	let workflowName = '';
 
 	it("Creating a target application", () => {
-		cy.createTargetApplication("target-app-1","nginx");
+		cy.createTargetApplication("default", "target-app-1", "nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
@@ -352,6 +352,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Deleting the target application", () => {
-		cy.deleteTargetApplication("target-app-1");
+		cy.deleteTargetApplication("default", "target-app-1");
 	})
 });

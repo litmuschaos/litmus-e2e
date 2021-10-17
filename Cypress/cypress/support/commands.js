@@ -53,7 +53,7 @@ Cypress.Commands.add("modalClose", () => {
 });
 
 // Create target application
-Cypress.Commands.add("createTargetApplication", (targetAppName, label) => {
+Cypress.Commands.add("createTargetApplication", (namespace, targetAppName, label) => {
   const configData = {
     apiVersion: "apps/v1",
     kind: "Deployment",
@@ -65,13 +65,15 @@ Cypress.Commands.add("createTargetApplication", (targetAppName, label) => {
       revisionHistoryLimit: 10,
       selector: {
         matchLabels: {
-          app: label
+          app: label,
+          name: label
         }
       },
       template: {
         metadata: {
           labels: {
-            app: "nginx"
+            app: label,
+            name: label
           }
         },
         spec: {
@@ -91,7 +93,7 @@ Cypress.Commands.add("createTargetApplication", (targetAppName, label) => {
     }
   };
   cy.request({
-    url: apis.createDeployment("default"),
+    url: apis.createDeployment(namespace),
     method: "POST",
     headers: {
       Authorization: `Bearer ${KUBE_API_TOKEN}`,
@@ -104,13 +106,13 @@ Cypress.Commands.add("createTargetApplication", (targetAppName, label) => {
 });
 
 // Delete target application
-Cypress.Commands.add("deleteTargetApplication", (targetAppName) => {
+Cypress.Commands.add("deleteTargetApplication", (namespace, targetAppName) => {
   const configData = {
     gracePeriodSeconds: 0,
     orphanDependents: false
   };
   cy.request({
-    url: apis.deleteDeployment("default", targetAppName),
+    url: apis.deleteDeployment(namespace, targetAppName),
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${KUBE_API_TOKEN}`,

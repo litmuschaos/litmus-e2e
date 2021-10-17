@@ -2,7 +2,7 @@
 import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
-describe("Testing the create Workflow Utility", () => {
+describe("Testing the upload Workflow with correct workflow manifest and target application", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster("Self-Agent");
@@ -10,6 +10,10 @@ describe("Testing the create Workflow Utility", () => {
   });
 
   let workflowName = '';
+
+  it("Creating a target application", () => {
+		cy.createTargetApplication("litmus", "target-app-1", "podtato-main");
+	});
 
   it("Running Workflows by uploading it", () => {
     cy.chooseAgent(0);
@@ -25,6 +29,19 @@ describe("Testing the create Workflow Utility", () => {
     );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(1000); // Needs to be removed with frontend enhancement
+    cy.get("table")
+			.find("tr")
+			.eq(1)
+			.then(($div) => {
+				cy.wrap($div)
+					.find("td")
+					.eq(0)
+					.should("contain.text", "podtato-main-pod-delete-chaos"); // Matching Experiment
+			});
+		// Expected nodes
+		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+		// Verify nodes in dagre graph
+		cy.validateGraphNodes(graphNodesNameArray);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.rScoreEditor(5);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -62,11 +79,33 @@ describe("Testing the create Workflow Utility", () => {
         cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
         // cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
         // cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
+        // Workflow Statistics (Graph View)
+				cy.wrap($div).find("td").eq(2)
+          .invoke('attr', 'style', 'position: absolute')
+          .should('have.attr', 'style', 'position: absolute');
+        cy.wrap($div).find("td").eq(2).click();
       });
+      cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+      cy.waitUntil(() =>
+        cy.get("[data-cy=workflowStatus]").then((status) => {
+          return status.text() !== "Running" ? true : false;
+        }),
+        {
+          verbose: true,
+          interval: 500,
+          timeout: 600000,
+        }
+      );
+      cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
+      // Expected Nodes
+      const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+      // Verify nodes in dagre graph
+      cy.validateGraphNodes(graphNodesNameArray);
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.visit("/workflows");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
@@ -83,6 +122,27 @@ describe("Testing the create Workflow Utility", () => {
   });
   
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Suceeded", 100, 1, 1);
+		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
 	});
+
+  it("Deleting the target application", () => {
+		cy.deleteTargetApplication("litmus", "target-app-1");
+	});
+});
+
+describe("Testing the upload Workflow with incorrect workflow manifest", () => {
+  before("Clearing the Cookies and deleting the Cookies", () => {
+    cy.requestLogin(user.AdminName, user.AdminPassword);
+    cy.waitForCluster("Self-Agent");
+    cy.visit("/create-workflow");
+  });
+
+  it("Running Workflows by uploading it", () => {
+    cy.chooseAgent(0);
+    cy.get("[data-cy=ControlButtons] Button").eq(0).click();
+    cy.chooseWorkflow(3, "", "sample-workflow-incorrect.yaml");
+    cy.get("[data-cy=ErrorUploadYAML]").should("have.text", "Retry Upload");
+    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    cy.get("[data-cy=AlertBox]").should("have.text", "Please select a workflow type")
+  });
 });

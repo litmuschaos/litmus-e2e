@@ -10,7 +10,7 @@ Cypress.Commands.add("chooseAgent", (Agent) => {
 
 //// *******************Choose Workflow Page *****************************
 
-Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
+Cypress.Commands.add("chooseWorkflow", (option, subOption, sampleYAML="sample-workflow.yaml") => {
   cy.get("[data-cy=WorkflowsRadioGroup]").should("be.visible");
 
   if (option == 0) {
@@ -55,7 +55,7 @@ Cypress.Commands.add("chooseWorkflow", (option, subOption) => {
     cy.get("[data-cy=uploadYAMLRadioButton] :radio").should("be.checked");
     cy.get("[data-cy=uploadYAMLInput]").should("be.visible");
     cy.get("[data-cy=uploadYAMLInput] input").attachFile(
-      "sample-workflow.yaml"
+      sampleYAML
     );
   }
 });
