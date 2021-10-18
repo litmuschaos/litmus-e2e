@@ -178,21 +178,26 @@ Cypress.Commands.add("rScoreEditor", (value) => {
 
 /// ************************** Workflow Schedule Selection Page ***********
 
-Cypress.Commands.add("selectSchedule", (option, subOption) => {
+Cypress.Commands.add("selectSchedule", (option, subOption, min=0) => {
   cy.get("[data-cy=ScheduleOptions]").should("be.visible");
   cy.get("[type=radio]").eq(option).check();
 
-  if (option === 1)
+  if (option === 1) {
     cy.get("[data-cy=RecurringSchedule] :radio").eq(subOption).check();
+    cy.get("[data-cy=RecurringSelect]").click();
+    cy.get(`[data-cy=${min}]`).click();
+  }
 });
 
 /// ************************** Verify and Commit Page **********************
 
-Cypress.Commands.add("verifyDetails", (name, description, schedule) => {
+Cypress.Commands.add("verifyDetails", (name, description, schedule, min=0) => {
   cy.get("[data-cy=WorkflowName]").should("include.text", name); // Name validation
   cy.get("[data-cy=WorkflowDescription]").should("have.text", description); // Description Validation
   if (schedule == 0)
     cy.get("[data-cy=schedule]").should("have.text", "Scheduling now"); // Schedule Validation
+  else if (schedule == 1)
+    cy.get("[data-cy=schedule]").should("have.text", `At ${min} minutes past the hour, between 12:00 AM and 11:59 PM`);
   // cy.get("[data-cy=AgentName]").should("have.text", "Self-Agent");
 });
 
