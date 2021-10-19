@@ -9,6 +9,8 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.visit("/create-workflow");
 	});
 
+	let workflowName = '';
+
 	it("Running PreDefined Workflow", () => {
 		cy.chooseAgent(0);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
@@ -48,6 +50,10 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
+		cy.get("[data-cy=WorkflowName]").then(($name) => {
+			workflowName = $name.text();
+			return;
+		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
@@ -64,7 +70,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 				cy.wrap($div)
 					.find("td")
 					.eq(2)
-					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				// cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
 				// cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
@@ -84,7 +90,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
 		cy.get("[data-cy=browseScheduleOptions]").eq(0).click({ scrollBehavior: false });

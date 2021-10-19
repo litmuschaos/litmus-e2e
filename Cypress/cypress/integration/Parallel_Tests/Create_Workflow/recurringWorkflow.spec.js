@@ -40,7 +40,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		 * Waiting for the search experiment field to be visible
 		 */
 		cy.get("[data-cy=addExperimentSearch]").should("be.visible");
-		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("gen");
+		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("generic");
 		cy.get("[data-cy=ExperimentList] :radio").eq(0).check();
 		cy.get("[data-cy=AddExperimentDoneButton]").click();
 		/**
@@ -55,7 +55,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "pod-delete") // Matching Status
+					.should("contain.text", "pod-delete") // Matching Experiment
 			});
 		cy.wait(1000);
 		// Expected nodes
@@ -99,7 +99,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
                 cy.waitUntil(() => 
                     cy.wrap($div)
@@ -131,7 +131,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				cy.wrap($div)
 					.find("td")
 					.eq(2)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				// Workflow Statistics (Graph View)
 				cy.wrap($div).find("td").eq(2)

@@ -106,7 +106,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				cy.wrap($div)
 					.find("td")
 					.eq(2)
-					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
@@ -141,7 +141,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
 	});

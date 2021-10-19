@@ -49,7 +49,7 @@ describe("Testing the validation of the final verdict without target application
 		 * Waiting for the search experiment field to be visible
 		 */
 		cy.get("[data-cy=addExperimentSearch]").should("be.visible");
-		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("pod");
+		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("cassandra-pod-delete");
 		cy.get("[data-cy=ExperimentList] :radio").eq(0).check();
 		cy.get("[data-cy=AddExperimentDoneButton]").click();
 		/**
@@ -64,7 +64,7 @@ describe("Testing the validation of the final verdict without target application
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "cassandra-pod-delete") // Matching Status
+					.should("contain.text", "cassandra-pod-delete") // Matching Experiment
 					.click();
 			});
 		cy.wait(1000);
@@ -126,7 +126,7 @@ describe("Testing the validation of the final verdict without target application
 				cy.wrap($div)
 					.find("td")
 					.eq(2)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
@@ -161,7 +161,7 @@ describe("Testing the validation of the final verdict without target application
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
 	});
@@ -237,7 +237,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "pod-delete") // Matching Status
+					.should("contain.text", "pod-delete") // Matching Experiment
 					.click();
 			});
 		cy.wait(1000);
@@ -299,7 +299,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 				cy.wrap($div)
 					.find("td")
 					.eq(2)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
@@ -334,7 +334,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
+					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
 			});
 	});

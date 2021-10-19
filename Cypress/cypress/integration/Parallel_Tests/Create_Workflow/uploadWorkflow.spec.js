@@ -75,7 +75,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
         cy.wrap($div)
           .find("td")
           .eq(2)
-          .should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+          .should("have.text", workflowName); // Matching Workflow Name Regex
         cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
         // cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
         // cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
@@ -112,7 +112,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
         cy.wrap($div)
           .find("td")
           .eq(0)
-          .should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
+          .should("have.text", workflowName); // Matching Workflow Name Regex
         cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
       });
   });
