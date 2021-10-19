@@ -37,6 +37,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.wait(1000); // Needs to be removed with frontend enhancement
+		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();

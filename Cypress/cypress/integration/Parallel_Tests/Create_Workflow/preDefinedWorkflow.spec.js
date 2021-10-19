@@ -39,8 +39,8 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			0
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
 		cy.wait(3000);
+		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
 		cy.get("table")
 			.find("tr")
 			.eq(1)

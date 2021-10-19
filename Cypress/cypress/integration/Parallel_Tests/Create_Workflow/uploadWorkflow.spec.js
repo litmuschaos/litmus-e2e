@@ -11,10 +11,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 
   let workflowName = '';
 
-  it("Creating a target application", () => {
-		cy.createTargetApplication("litmus", "target-app-1", "podtato-main");
-	});
-
   it("Running Workflows by uploading it", () => {
     cy.chooseAgent(0);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
@@ -29,6 +25,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(1000); // Needs to be removed with frontend enhancement
+    cy.get("[data-cy=addExperimentSearch]").should("not.exist");
     cy.get("table")
 			.find("tr")
 			.eq(1)
@@ -119,10 +116,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
 		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
-	});
-
-  it("Deleting the target application", () => {
-		cy.deleteTargetApplication("litmus", "target-app-1");
 	});
 });
 
