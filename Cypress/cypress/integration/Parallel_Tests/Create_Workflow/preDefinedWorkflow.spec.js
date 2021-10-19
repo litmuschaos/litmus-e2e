@@ -108,11 +108,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.eq(2)
 					.should("include.text", workflows.nonRecurringworkflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
-				// Workflow Statistics (Graph View)
-				cy.wrap($div).find("td").eq(2)
-					.invoke('attr', 'style', 'position: absolute')
-					.should('have.attr', 'style', 'position: absolute');
-				cy.wrap($div).find("td").eq(2).click();
+				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
@@ -128,7 +124,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
-		// Verify nodes in dagre graph
+		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
 

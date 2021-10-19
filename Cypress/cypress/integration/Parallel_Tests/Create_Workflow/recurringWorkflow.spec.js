@@ -135,9 +135,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
 				// Workflow Statistics (Graph View)
 				cy.wrap($div).find("td").eq(2)
-					.invoke('attr', 'style', 'position: absolute')
-					.should('have.attr', 'style', 'position: absolute');
-				cy.wrap($div).find("td").eq(2).click();
+				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
@@ -153,7 +151,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
-		// Verify nodes in dagre graph
+		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
 

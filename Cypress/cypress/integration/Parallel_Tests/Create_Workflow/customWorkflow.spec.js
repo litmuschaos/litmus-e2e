@@ -128,11 +128,7 @@ describe("Testing the validation of the final verdict without target application
 					.eq(2)
 					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
-				// Workflow Statistics (Graph View)
-				cy.wrap($div).find("td").eq(2)
-					.invoke('attr', 'style', 'position: absolute')
-					.should('have.attr', 'style', 'position: absolute');
-				cy.wrap($div).find("td").eq(2).click();
+				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
@@ -148,7 +144,7 @@ describe("Testing the validation of the final verdict without target application
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
-		// Verify nodes in dagre graph
+		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
 
@@ -305,11 +301,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.eq(2)
 					.should("include.text", workflows.customWorkflow); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
-				// Workflow Statistics (Graph View)
-				cy.wrap($div).find("td").eq(2)
-					.invoke('attr', 'style', 'position: absolute')
-					.should('have.attr', 'style', 'position: absolute');
-				cy.wrap($div).find("td").eq(2).click();
+				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
 		cy.waitUntil(() =>
@@ -325,7 +317,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
-		// Verify nodes in dagre graph
+		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
 
