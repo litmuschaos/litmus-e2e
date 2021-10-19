@@ -10,12 +10,17 @@ describe("Testing the validation of the final verdict without target application
 	});
 
 	let workflowName = '';
+	let workflowNamespace = '';
 
 	it("Scheduling a workflow without target application", () => {
 		cy.chooseAgent(0);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
+		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			workflowNamespace = $namespace.val();
+			return;
+		});
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -103,7 +108,6 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -131,6 +135,7 @@ describe("Testing the validation of the final verdict without target application
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
 		cy.waitUntil(() =>
 			cy.get("[data-cy=workflowStatus]").then((status) => {
 				return status.text() !== "Running" ? true : false;
@@ -179,6 +184,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	let workflowName = '';
+	let workflowNamespace = '';
 
 	it("Creating a target application", () => {
 		cy.createTargetApplication("default", "target-app-1", "nginx");
@@ -189,6 +195,10 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
+		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			workflowNamespace = $namespace.val();
+			return;
+		});
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -276,7 +286,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -304,6 +313,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
 		cy.waitUntil(() =>
 			cy.get("[data-cy=workflowStatus]").then((status) => {
 				return status.text() !== "Running" ? true : false;

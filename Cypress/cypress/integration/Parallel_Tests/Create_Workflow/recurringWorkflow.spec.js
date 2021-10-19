@@ -10,6 +10,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	let workflowName = '';
+	let workflowNamespace = '';
+	let scheduleDate = '';
+	let scheduleTime = '';
 
 	it("Creating a target application", () => {
 		cy.createTargetApplication("default", "target-app-1", "nginx");
@@ -20,6 +23,10 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
+		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			workflowNamespace = $namespace.val();
+			return;
+		});
 		// Provide the correct details
 		cy.configureWorkflowSettings(
 			workflows.customWorkflow,
@@ -65,18 +72,17 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-        // Minutes in current time
-        const min = (new Date()).getMinutes();
-        // Schedule one min later from current time
-		cy.selectSchedule(1, 0, min+2);
+		scheduleDate = new Date();
+		// Schedule 2 min later from current time
+    	scheduleDate.setMinutes(scheduleDate.getMinutes()+2);
+		cy.selectSchedule(1, 0, scheduleDate.getMinutes());
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.verifyDetails(
 			workflows.customWorkflow,
 			workflows.customWorkflowDescription,
 			1,
-            min+2
+            scheduleDate.getMinutes()
 		);
-		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -101,6 +107,12 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 					.eq(0)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+				scheduleTime = scheduleDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+				scheduleTime = scheduleTime.split(' ')[0];
+				cy.wrap($div)
+					.find("td")
+					.eq(4)
+					.should("include.text", scheduleTime);
                 cy.waitUntil(() => 
                     cy.wrap($div)
 					    .find("td")
@@ -109,7 +121,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
                             const date = new Date();
                             const hours = date.getHours()%12;
                             const mins = date.getMinutes();
-                            return (nextRun.text().includes(`${hours}:${mins}`) ? true : false);
+                            return (nextRun.text().includes(scheduleTime) ? true : false);
                         }),
                     {
                         verbose: true,
@@ -138,6 +150,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
 		cy.waitUntil(() =>
 			cy.get("[data-cy=workflowStatus]").then((status) => {
 				return status.text() !== "Running" ? true : false;

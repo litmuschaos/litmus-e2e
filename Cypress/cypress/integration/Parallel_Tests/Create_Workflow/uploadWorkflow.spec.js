@@ -10,6 +10,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   });
 
   let workflowName = '';
+  let workflowNamespace = '';
 
   it("Running Workflows by uploading it", () => {
     cy.chooseAgent(0);
@@ -18,6 +19,10 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.wait(500);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(1000); // Waiting for Workflow Details to get filled
+    cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			workflowNamespace = $namespace.val();
+			return;
+		});
     cy.configureWorkflowSettings(
       workflows.nonRecurringworkflowName,
       workflows.nonRecurringworkflowDescription,
@@ -49,7 +54,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       workflows.nonRecurringworkflowDescription,
       0
     );
-    cy.wait(1000);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -79,6 +83,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
         cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
       });
       cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+      cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
       cy.waitUntil(() =>
         cy.get("[data-cy=workflowStatus]").then((status) => {
           return status.text() !== "Running" ? true : false;

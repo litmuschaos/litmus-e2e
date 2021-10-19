@@ -10,6 +10,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 	});
 
 	let workflowName = '';
+	let workflowNamespace = '';
 
 	it("Running PreDefined Workflow", () => {
 		cy.chooseAgent(0);
@@ -19,6 +20,10 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.wait("@getPredefinedData");
 		cy.chooseWorkflow(0, 0);
 
+		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			workflowNamespace = $namespace.val();
+			return;
+		});
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -84,7 +89,6 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			workflows.nonRecurringworkflowDescription,
 			0
 		);
-		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -112,6 +116,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
+		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
 		cy.waitUntil(() =>
 			cy.get("[data-cy=workflowStatus]").then((status) => {
 				return status.text() !== "Running" ? true : false;
