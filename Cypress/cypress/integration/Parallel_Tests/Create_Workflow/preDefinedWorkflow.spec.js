@@ -39,6 +39,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			0
 		);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
 		cy.wait(3000);
 		cy.get("table")
 			.find("tr")
@@ -123,7 +124,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
+		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});

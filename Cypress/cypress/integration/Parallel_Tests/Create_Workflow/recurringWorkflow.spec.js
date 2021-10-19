@@ -150,7 +150,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
+		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});

@@ -143,7 +143,7 @@ describe("Testing the validation of the final verdict without target application
 		);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = ["install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
+		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
@@ -316,7 +316,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
+		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});

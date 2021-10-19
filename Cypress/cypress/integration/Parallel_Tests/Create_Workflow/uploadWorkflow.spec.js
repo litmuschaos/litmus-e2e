@@ -94,7 +94,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       );
       cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
       // Expected Nodes
-      const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+      const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
       // Verify nodes in dagre graph (TODO: Check status of nodes)
       cy.validateGraphNodes(graphNodesNameArray);
   });
