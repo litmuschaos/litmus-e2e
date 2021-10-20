@@ -75,7 +75,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for engine completion and check again the job status
-			err = pkg.WaitForEngineCompletion(&testsDetails, clients)
+			err = pkg.WaitForEngineStatus(&testsDetails, clients, "completed")
 			Expect(err).To(BeNil(), "engine state check failed, err {%v}", err)
 
 			//Again check the job status
@@ -150,7 +150,7 @@ var _ = Describe("BDD of job cleanup policy test", func() {
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
 			//Wait for engine completion and check again the job status
-			err = pkg.WaitForEngineCompletion(&testsDetails, clients)
+			err = pkg.WaitForEngineStatus(&testsDetails, clients, "completed")
 			Expect(err).To(BeNil(), "engine state check failed, err {%v}", err)
 
 			//Again check the job status

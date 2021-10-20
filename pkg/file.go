@@ -22,7 +22,7 @@ func EditFile(filepath, old, new string) error {
 
 	for i, line := range lines {
 		if strings.Contains(line, old) {
-			lines[i] = strings.Replace(lines[i], old, new, -1)
+			lines[i] = strings.ReplaceAll(lines[i], old, new)
 			failFlag = false
 		}
 	}
@@ -49,7 +49,7 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 
 	for i, line := range lines {
 		if strings.Contains(line, key) {
-			lines[i+1] = strings.Replace(lines[i+1], oldvalue, newvalue, -1)
+			lines[i+1] = strings.ReplaceAll(lines[i+1], oldvalue, newvalue)
 			failFlag = false
 		}
 	}

@@ -43,10 +43,12 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	testDetails.Args = Getenv("ARGS", "")
+	testDetails.Command = Getenv("COMMAND", "")
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")
-	testDetails.GoExperimentImage = Getenv("GO_EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
+	testDetails.ExperimentImage = Getenv("EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
 	testDetails.OperatorImage = Getenv("OPERATOR_IMAGE", "litmuschaos/chaos-operator:ci")
 	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "litmuschaos/chaos-runner:ci")
 	testDetails.LibImage = Getenv("LIB_IMAGE", "")

@@ -1,4 +1,4 @@
-name: Scheduled-Portal-E2E-Pipeline
+name: Nightly-Portal-E2E-Pipeline
 on:
   schedule:
     - cron: "30 22 * * *" # Daily 04:30 AM in midnight
@@ -9,19 +9,25 @@ env:
   MODULE: "All"
   SELF_AGENT: "self-agent"
   EXTERNAL_AGENT: "external-agent"
+  CS_MODE_NAMESPACE: "litmus"
+  NS_MODE_NAMESPACE: "scope"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
 jobs:
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 1st Cluster"
+        name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 1
+          args: --agents 4
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -34,8 +40,10 @@ jobs:
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
         env:
-          PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "false"
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "CS-MODE"
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -51,7 +59,7 @@ jobs:
           kubectl apply -f Cypress/cypress-rbac.yml
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 2nd Cluster"
+        name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
           args: --agents 1
@@ -86,10 +94,11 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${COMPONENTS} litmus
-          wait_for_pods litmus 720
+          verify_all_components ${COMPONENTS} ${NAMESPACE}
+          wait_for_pods ${NAMESPACE} 720
         env:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -122,7 +131,7 @@ jobs:
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
-          PORTAL_VERSION: "ci"
+          PORTAL_VERSION: ${{ env.TAG }}
 
       - uses: actions/upload-artifact@v1
         if: failure()
@@ -132,11 +141,15 @@ jobs:
 
   Namespaced-Scope-Mode:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 1st Cluster"
+        name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
           args: --agents 3
@@ -149,12 +162,13 @@ jobs:
 
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
-          chmod 755 ./litmus/install-portal-namespaced.sh
-          ./litmus/install-portal-namespaced.sh
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
         env:
-          PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "false"
-          LITMUS_PORTAL_NAMESPACE: "scope"
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "NS-MODE"
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -170,10 +184,10 @@ jobs:
           kubectl apply -f Cypress/cypress-rbac.yml
 
       - uses: AbsaOSS/k3d-action@v1.5.0
-        name: "Create 2nd Cluster"
+        name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 3
+          args: --agents 1
 
       - name: Configuring and Testing the Agent Installation
         run: |
@@ -205,10 +219,11 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${COMPONENTS} scope
-          wait_for_pods scope 720
+          verify_all_components ${COMPONENTS} ${NAMESPACE}
+          wait_for_pods ${NAMESPACE} 720
         env:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -241,30 +256,11 @@ jobs:
           chmod 755 ./litmus/uninstall-portal-namespaced.sh
           ./litmus/uninstall-portal-namespaced.sh
         env:
-          PORTAL_VERSION: "ci"
-          PORTAL_NAMESPACE: "scope"
+          PORTAL_VERSION: ${{ env.TAG }}
+          PORTAL_NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
 
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: cypress-screenshots
           path: Cypress/cypress/screenshots
-
-  Pipeline_Update:
-    if: always()
-    needs: [Cluster-Scope-Mode, Namespaced-Scope-Mode]
-    defaults:
-      run:
-        working-directory: /go/src
-    env:
-      CI_PIPELINE_ID: ${{ github.run_id }}
-      PORTAL_TEST: "true"
-      UPDATE_WEBSITE: "true"
-      GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pipeline Update
-        run: make pipeline-status-update

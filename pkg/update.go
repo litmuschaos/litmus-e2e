@@ -30,7 +30,7 @@ func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *type
 		testVerdict = testVerdict + " :cold_sweat:"
 	}
 
-	imageTag := GetImageTag(testsDetails.GoExperimentImage)
+	imageTag := GetImageTag(testsDetails.ExperimentImage)
 	//Running python script to update result table
 	cmd := exec.Command("python3", "-u", "../utils/result_update.py", "--job_id", os.Getenv("CI_JOB_ID"), "--tag", imageTag, "--test_desc", experimentDetails, "--test_result", testVerdict, "--time_stamp", (time.Now().Format(time.ANSIC))+"(IST)", "--token", os.Getenv("GITHUB_TOKEN"), "--test_name", testsDetails.ExperimentName)
 	cmd.Stdout = &out
@@ -52,7 +52,7 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 	var out, stderr bytes.Buffer
 	var pipelineName string
 
-	imageTag := GetImageTag(testsDetails.GoExperimentImage)
+	imageTag := GetImageTag(testsDetails.ExperimentImage)
 
 	//Updating the result table
 	log.Infof("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
@@ -83,9 +83,9 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 }
 
 // GetImageTag returns the Go experiment image tag
-func GetImageTag(goExperimentImage string) string {
+func GetImageTag(experimentImage string) string {
 
-	tag := strings.Split((goExperimentImage), ":")
+	tag := strings.Split((experimentImage), ":")
 
 	return tag[1]
 }
