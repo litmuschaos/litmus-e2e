@@ -5,6 +5,7 @@
 import '@4tw/cypress-drag-drop';
 import "cypress-file-upload";
 import "cypress-wait-until";
+import { apis, KUBE_API_TOKEN } from "../kube-apis/apis";
 
 //Custom Command for waiting for required Agent to come in active state.
 Cypress.Commands.add("waitForCluster", (agentName) => {
@@ -49,4 +50,76 @@ Cypress.Commands.add("logout", () => {
 Cypress.Commands.add("modalClose", () => {
   cy.get("[data-cy=done]").should("be.visible");
   cy.get("[data-cy=done]").click();
+});
+
+// Create target application
+Cypress.Commands.add("createTargetApplication", (namespace, targetAppName, label) => {
+  const configData = {
+    apiVersion: "apps/v1",
+    kind: "Deployment",
+    metadata: {
+      name: targetAppName
+    },
+    spec: {
+      replicas: 1,
+      revisionHistoryLimit: 10,
+      selector: {
+        matchLabels: {
+          app: label,
+          name: label
+        }
+      },
+      template: {
+        metadata: {
+          labels: {
+            app: label,
+            name: label
+          }
+        },
+        spec: {
+          containers: [
+            {
+              name: "nginx",
+              image: "nginx:1.14",
+              ports: [
+                {
+                  containerPort: 80
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  };
+  cy.request({
+    url: apis.createDeployment(namespace),
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${KUBE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: configData
+  }).should((response) => {
+    console.log(response);
+  });
+});
+
+// Delete target application
+Cypress.Commands.add("deleteTargetApplication", (namespace, targetAppName) => {
+  const configData = {
+    gracePeriodSeconds: 0,
+    orphanDependents: false
+  };
+  cy.request({
+    url: apis.deleteDeployment(namespace, targetAppName),
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${KUBE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: configData
+  }).should((response) => {
+    console.log(response);
+  });
 });

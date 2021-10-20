@@ -23,5 +23,8 @@
     "cypress": "^7.3.0",
     "cypress-file-upload": "^5.0.7",
     "cypress-wait-until": "^1.7.1"
+  },
+  "dependencies": {
+    "cypress-react-selector": "^2.3.11"
   }
 }
