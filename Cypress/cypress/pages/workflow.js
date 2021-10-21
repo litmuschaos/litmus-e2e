@@ -1,4 +1,3 @@
-import "cypress-react-selector";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
