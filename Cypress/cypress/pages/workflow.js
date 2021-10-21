@@ -252,14 +252,12 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
 /// ************************** Validate dagre graph nodes **********************
 
 Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
-  cy.waitForReact();
   let nodes = [];
-  cy.getReact("DagreGraph").getProps().then((props) => {
-    props.nodes.map((node) => {
-      if (node.labelType==="svg"){
-        nodes.push(node.config.fullName);
-      }
+  cy.get("[data-cy=DagreGraphSvg]")
+		.find("text")
+		.each(($text) => {
+			nodes.push($text.text());
+		}).then(() => {
+      expect(nodes).to.include.members(graphNodesNameArray);
     });
-    expect(nodes).to.include.members(graphNodesNameArray);
-  });
 });

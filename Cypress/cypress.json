@@ -11,9 +11,6 @@
     "authURL": "http://localhost:3000",
     "apiURL": "http://localhost:8080",
     "KUBE_API_SERVER": "",
-    "KUBE_API_TOKEN": "",
-    "cypress-react-selector": {
-      "root": "#root"
-    }
+    "KUBE_API_TOKEN": ""
   }
 }

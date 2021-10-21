@@ -8,9 +8,6 @@
   "video": false,
   "env": {
     "authURL": "/auth",
-    "apiURL": "/api",
-    "cypress-react-selector": {
-      "root": "#root"
-    }
+    "apiURL": "/api"
   }
 }
