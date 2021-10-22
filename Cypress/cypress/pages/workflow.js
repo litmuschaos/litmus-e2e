@@ -1,4 +1,3 @@
-import "cypress-react-selector";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
@@ -106,7 +105,7 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
   cy.get("[data-cy=Appns] input").clear().type(tunningParameters.targetApp.appns).type('{enter}');
   cy.get("[data-cy=AppKind]").click();
   cy.get(`[data-value=${tunningParameters.targetApp.appKind}]`).click();
-  cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel);
+  cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{enter}');
   cy.get("[data-cy=JobCleanUpPolicy] input").clear().type(tunningParameters.targetApp.jobCleanUpPolicy);
   cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
 
@@ -149,7 +148,7 @@ Cypress.Commands.add("tunePredefinedWorkflow", (tunningParameters) => {
   cy.get("[data-cy=Appns] input").clear().type(tunningParameters.targetApp.appns).type('{enter}');
   cy.get("[data-cy=AppKind]").click();
   cy.get(`[data-value=${tunningParameters.targetApp.appKind}]`).click();
-  cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel);
+  cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{enter}');;
   cy.get("[data-cy=JobCleanUpPolicy] input").clear().type(tunningParameters.targetApp.jobCleanUpPolicy);
   cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
 
@@ -252,14 +251,12 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
 /// ************************** Validate dagre graph nodes **********************
 
 Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
-  cy.waitForReact();
   let nodes = [];
-  cy.getReact("DagreGraph").getProps().then((props) => {
-    props.nodes.map((node) => {
-      if (node.labelType==="svg"){
-        nodes.push(node.config.fullName);
-      }
+  cy.get("[data-cy=DagreGraphSvg]")
+		.find("text")
+		.each(($text) => {
+			nodes.push($text.text());
+		}).then(() => {
+      expect(nodes).to.include.members(graphNodesNameArray);
     });
-    expect(nodes).to.include.members(graphNodesNameArray);
-  });
 });
