@@ -10,7 +10,7 @@ on:
       experimentImage:
         default: "litmuschaos/go-runner:ci"
       libImage:
-        default: "litmuschaos/go-runner:ci"
+        default: ""
       operatorImage:
         default: "litmuschaos/chaos-operator:ci"
       runnerImage:
@@ -34,7 +34,6 @@ jobs:
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -71,11 +70,11 @@ jobs:
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-CORRUPTION
         if: ${{ always() }}
         run: make pod-network-corruption
-
+        
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LATENCY
         if: ${{ always() }}
         run: make pod-network-latency
-
+        
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LOSS
         if: ${{ always() }}
         run: make pod-network-loss
@@ -83,13 +82,13 @@ jobs:
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-DUPLICATION
         if: ${{ always() }}
         run: make pod-network-duplication
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
           bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
-          
+        
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
@@ -118,7 +117,6 @@ jobs:
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -211,7 +209,6 @@ jobs:
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -283,7 +280,6 @@ jobs:
       RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
       IMAGE_PULL_POLICY: "${{ github.event.inputs.imagePullPolicy }}"        
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
       APP_NS: "${{ github.event.inputs.chaosNamespace }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
@@ -354,7 +350,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -392,6 +387,9 @@ jobs:
         
       - name: Create Namespace and deploy Application
         run: |
+          kubectl create ns ${CHAOS_NAMESPACE}
+          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
+          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
@@ -435,7 +433,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -473,6 +470,9 @@ jobs:
         
       - name: Create Namespace and deploy Application
         run: |
+          kubectl create ns ${CHAOS_NAMESPACE}
+          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
+          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
           
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
@@ -518,7 +518,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-      LIB_IMAGE: "${{ github.event.inputs.libImage }}"
       CHAOS_NAMESPACE: "${{ github.event.inputs.expTunnableNS }}"
       CHAOS_SERVICE_ACCOUNT: "${{ github.event.inputs.chaosServiceAccount }}"
       APP_NS: "${{ github.event.inputs.expTunnableNS }}"
@@ -556,6 +555,9 @@ jobs:
         
       - name: Create Namespace and deploy Application
         run: |
+          kubectl create ns ${CHAOS_NAMESPACE}
+          kubectl create deploy nginx --image=nginx:alpine -n ${CHAOS_NAMESPACE}
+          kubectl wait --for=condition=Ready pods --all --namespace ${CHAOS_NAMESPACE} --timeout=90s
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-MULTIPLE-APP-DEPLOY
@@ -574,7 +576,7 @@ jobs:
         run: |      
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
-          cat logs.txt        
+          cat logs.txt     
 
       - name: Experiment Tunables Cleanup
         if: ${{ always() }}
@@ -589,4 +591,3 @@ jobs:
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh        
-

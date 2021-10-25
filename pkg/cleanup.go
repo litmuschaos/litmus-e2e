@@ -37,10 +37,6 @@ func ChaosAbort(testsDetails *types.TestDetails, clients environment.ClientSets)
 		return errors.Wrapf(err, "Fail to abort the Chaos, due to:%v", err)
 
 	}
-	// waiting for engine verdict updation
-	if err = WaitForEngineStatus(testsDetails, clients, "stopped"); err != nil {
-		return err
-	}
 	log.Info("[Abort]: Chaos Experiment Aborted !!!")
 	return nil
 }
