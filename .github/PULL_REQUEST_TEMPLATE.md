@@ -2,17 +2,15 @@
 
 ## Proposed changes
 
-Summarize your changes here to communicate with the maintainers and make sure to put the link of that issue
-
-## Screenshots or Terminal snippets validating the changes
-
-Add Screenshots or Terminal snippets validating successful run of your changes
+Summarize your changes here to communicate with the reviewers and make sure to put the link of the related issue
 
 ## How has this been tested:
- - [ ] Test environment
+- [ ] Test environment
     * [ ] GKE
     * [ ] AWS
-    * [ ] Kind/K3S cluster
+    * [ ] OpenShift
+    * [ ] KinD/k3s/k3d cluster
+    * [ ] Others
  - [ ] Tested with production environment ( For ChaosCenter Tests )
  - [ ] Have not tested
 
@@ -30,6 +28,7 @@ Put an `x` in the boxes that apply. You can also fill these out after creating t
 - [ ] I have read the [CONTRIBUTING](https://github.com/litmuschaos/litmus-e2e/blob/master/CONTRIBUTING.md) doc
 - [ ] I have signed the commit for DCO to be passed.
 - [ ] I have added necessary documentation (if appropriate)
+- [ ] I have added Screenshots or Terminal snippets in the PR comment to validate the successful execution of changes
 
 **Documentation**
 - [ ] My change requires a change to the documentation.
