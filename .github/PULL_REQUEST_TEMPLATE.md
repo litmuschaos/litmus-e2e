@@ -27,7 +27,7 @@ What types of changes does your code introduce to Litmus? Put an `x` in the boxe
 ## Checklist
 
 Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before merging your code.
-- [ ] I have read the [CONTRIBUTING](https://github.com/litmuschaos/litmus/blob/master/CONTRIBUTING.md) doc
+- [ ] I have read the [CONTRIBUTING](https://github.com/litmuschaos/litmus-e2e/blob/master/CONTRIBUTING.md) doc
 - [ ] I have signed the commit for DCO to be passed.
 - [ ] I have added necessary documentation (if appropriate)
 
