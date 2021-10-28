@@ -174,6 +174,46 @@ describe("Testing the validation of the final verdict without target application
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
 		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
 	});
+
+	it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=overview]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=workflowCard]")
+			.eq(0)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
+		cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
+		cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
+		cy.get("[data-cy=showStatsButton]").click();
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.then(($div) => {
+				//	Experiment Name
+				cy.wrap($div)
+					.find("td")
+					.eq(1)
+					.should("have.text", "cassandra-pod-delete");
+				// 	Experiment Verdict
+				cy.wrap($div)
+					.find("td")
+					.eq(2)
+					.should("have.text", "Fail");
+				// 	Weight of the test
+				cy.wrap($div)
+					.find("td")
+					.eq(3)
+					.should("have.text", "5 Points");
+				// 	Resulting Points
+				cy.wrap($div)
+					.find("td")
+					.eq(4)
+					.should("have.text", "0 Points");
+			});
+	});
 });
 
 describe("Testing the validation of the final verdict with an existing target application by selecting experiments from chaoshub", () => {
@@ -355,5 +395,45 @@ describe("Testing the validation of the final verdict with an existing target ap
 
 	it("Deleting the target application", () => {
 		cy.deleteTargetApplication("default", "target-app-1");
+	});
+
+	it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=overview]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=workflowCard]")
+			.eq(0)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
+		cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
+		cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
+		cy.get("[data-cy=showStatsButton]").click();
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.then(($div) => {
+				//	Experiment Name
+				cy.wrap($div)
+					.find("td")
+					.eq(1)
+					.should("have.text", "pod-delete");
+				// 	Experiment Verdict
+				cy.wrap($div)
+					.find("td")
+					.eq(2)
+					.should("have.text", "Pass");
+				// 	Weight of the test
+				cy.wrap($div)
+					.find("td")
+					.eq(3)
+					.should("have.text", "5 Points");
+				// 	Resulting Points
+				cy.wrap($div)
+					.find("td")
+					.eq(4)
+					.should("have.text", "5 Points");
+			});
 	});
 });
