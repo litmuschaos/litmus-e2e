@@ -6,7 +6,7 @@ error:
 
 # components
 card:
-  pipelineDetails: Pipeline Details
+  pipelineDetails: Go to details
 
 radialChart:
   pass: Pass
@@ -15,9 +15,10 @@ radialChart:
 
 header:
   e2eDashboard: E2E Dashboard
-  nightlyRun:  Nightly Run
-  manualRun: Manual Run
+  nightlyRuns:  Nightly Runs
+  manualRuns: Manual Runs
   githubRepo: litmuschaos/litmus
+  home: Home
 
 table:
   repository: Repository
@@ -25,8 +26,11 @@ table:
 
 homepage:
   description: Welcome to the Litmus Chaos E2E Dashboard
+  nightlyPipelines: Recently Opened Nightly Runs Pipelines
+  manualPipelines: Recently Opened Manual Runs Pipelines
 
 pipelinePage:
-  selectManual: Select Manual Pipeline
   pipelineName: Pipeline Name
-  selectNightly: Select Nightly Pipeline
+  selectPipeline: Select Pipeline
+  allWorkflows: All Workflows
+  allWorkflowsDesc: List of recent worklows runs
