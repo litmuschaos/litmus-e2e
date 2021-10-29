@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -12,28 +11,7 @@ import { jobStepResult, descriptionMapping } from "shared/job";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
 import CustomRadialChart from "components/CustomRadialChart";
-
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  label: {
-    color: "#0000008a",
-  },
-  flexSpace: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  flexStart: {
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  m0: {
-    margin: "auto 0",
-  },
-}));
+import useStyles from "./styles";
 
 const WorkflowPage = ({
   location,

@@ -1,12 +1,7 @@
 import React from "react";
-import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 import Center from "../../containers/layouts/Center";
-
-const useStyles = makeStyles((theme) => ({
-  spinner: {
-    color: theme.palette.primary.main,
-  },
-}));
+import useStyles from "./styles";
 
 const Loader = ({ size, message }) => {
   const classes = useStyles();

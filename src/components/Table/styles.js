@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   drawerContainer: {
     minWidth: "22rem",
     marginTop: "3rem",
@@ -19,6 +19,20 @@ const useStyles = makeStyles(() => ({
   },
   topMargin: {
     marginTop: "1rem",
+  },
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    display: "flex",
+    height: "max-content",
+  },
+  tabs: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  tab: {
+    "& span.MuiTab-wrapper": {
+      alignItems: "flex-start",
+    },
   },
 }));
 

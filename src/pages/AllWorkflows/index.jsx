@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "litmus-ui";
 import Table from "components/Table";
 import { jobStepResult } from "shared/job";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
 import CustomRadialChart from "components/CustomRadialChart";
-
-const useStyles = makeStyles(() => ({
-  flexSpace: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  flexStart: {
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  m0: {
-    margin: "auto 0",
-  },
-}));
+import useStyles from "./styles";
 
 const AllWorkflows = () => {
   const classes = useStyles();

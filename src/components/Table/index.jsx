@@ -41,7 +41,6 @@ const DataTable = ({
   const updateCommit = () => {
     const litmusGoCommits = getLocalStorage("litmusGoCommits");
     for (let i = 0; i < data.length; ++i) {
-      // eslint-disable-next-line no-param-reassign
       data[i].litmusGoCommits = {
         html_url: litmusGoCommits?.[i]?.html_url,
         sha: litmusGoCommits?.[i]?.sha,

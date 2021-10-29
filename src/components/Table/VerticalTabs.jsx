@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import GitHubIcon from "@material-ui/icons/GitHub";
-import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
@@ -12,6 +11,7 @@ import CustomRadialChart from "components/CustomRadialChart";
 import { getTotalPipelineTime } from "shared/helper";
 import { jobStepResult } from "shared/job";
 import TimelineComponent from "./TimelineComponent";
+import useStyles from "./styles";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -48,31 +48,6 @@ const a11yProps = (index) => ({
   id: `vertical-tab-${index}`,
   "aria-controls": `vertical-tabpanel-${index}`,
 });
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: "flex",
-    height: "max-content",
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
-  tab: {
-    "& span.MuiTab-wrapper": {
-      alignItems: "flex-start",
-    },
-  },
-  outlinedPills: {
-    display: "block",
-    margin: "0.5rem",
-    width: "min-content",
-    borderRadius: "1rem",
-    padding: "0.5rem 1rem 1.5rem 1rem",
-    fontWeight: "500",
-  },
-}));
 
 export default function VerticalTabs({ data, pipelineId }) {
   const classes = useStyles();

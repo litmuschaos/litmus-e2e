@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -17,38 +16,7 @@ import { ReactComponent as FailedIcon } from "svg/Failed.svg";
 import { ReactComponent as PassedIcon } from "svg/Passed.svg";
 import { ReactComponent as PendingIcon } from "svg/Pending.svg";
 import { ReactComponent as SkippedIcon } from "svg/Skipped.svg";
-
-const useStyles = makeStyles({
-  root: {
-    padding: "1rem 2rem",
-    margin: "1rem 0",
-    flex: "0 0 30%",
-  },
-  title: {
-    fontSize: 14,
-    color: "#0000008a",
-  },
-  flex: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  timeline: {
-    margin: "auto 0",
-  },
-  button: {
-    fontSize: "1rem",
-  },
-  p0: {
-    padding: "0",
-  },
-  img: {
-    height: "1.2rem",
-  },
-  icon: {
-    marginBottom: "-0.3rem",
-  },
-});
+import useStyles from "./styles";
 
 const statusBadge = (step) => {
   const classes = useStyles();
@@ -80,7 +48,11 @@ const CustomCard = ({ data, url }) => {
           new Date()
         )} ago`}
         <br /> <br />
-        <Chip label="litmuschaos/litmus-e2e" color="primary" />
+        <Chip
+          label={t("card.litmus-e2e")}
+          color="primary"
+          className={classes.chip}
+        />
       </CardContent>
       <CardActions>
         <PlayCircleFilled />
