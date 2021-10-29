@@ -184,35 +184,15 @@ describe("Testing the validation of the final verdict without target application
 			.eq(0)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
-		cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
-		cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
-		cy.get("[data-cy=showStatsButton]").click();
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				//	Experiment Name
-				cy.wrap($div)
-					.find("td")
-					.eq(1)
-					.should("have.text", "cassandra-pod-delete");
-				// 	Experiment Verdict
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("have.text", "Fail");
-				// 	Weight of the test
-				cy.wrap($div)
-					.find("td")
-					.eq(3)
-					.should("have.text", "5 Points");
-				// 	Resulting Points
-				cy.wrap($div)
-					.find("td")
-					.eq(4)
-					.should("have.text", "0 Points");
-			});
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, "Non cron workflow");
+		cy.validateStatsChart();
+		// experimentArray = [
+		// 	["Experiment Name", "Verdict", "Weight of the test", "Resulting Points"],
+		// 	.
+		// 	.
+		// ]
+		const experimentArray = [["cassandra-pod-delete", "Fail", 5, 0]];
+		cy.validateExperimentsTable(experimentArray);
 	});
 });
 
@@ -406,34 +386,14 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.eq(0)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
-		cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
-		cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
-		cy.get("[data-cy=showStatsButton]").click();
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				//	Experiment Name
-				cy.wrap($div)
-					.find("td")
-					.eq(1)
-					.should("have.text", "pod-delete");
-				// 	Experiment Verdict
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("have.text", "Pass");
-				// 	Weight of the test
-				cy.wrap($div)
-					.find("td")
-					.eq(3)
-					.should("have.text", "5 Points");
-				// 	Resulting Points
-				cy.wrap($div)
-					.find("td")
-					.eq(4)
-					.should("have.text", "5 Points");
-			});
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, "Non cron workflow");
+		cy.validateStatsChart();
+		// experimentArray = [
+		// 	["Experiment Name", "Verdict", "Weight of the test", "Resulting Points"],
+		// 	.
+		// 	.
+		// ]
+		const experimentArray = [["pod-delete", "Pass", 5, 5]];
+		cy.validateExperimentsTable(experimentArray);
 	});
 });

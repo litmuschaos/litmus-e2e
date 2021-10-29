@@ -260,3 +260,50 @@ Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
       expect(nodes).to.include.members(graphNodesNameArray);
     });
 });
+
+/// ************************** Validate workflow info and stats **********************
+
+Cypress.Commands.add("validateWorkflowInfo", (workflowName, workflowNamespace, regularity) => {
+  cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
+	cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
+	cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
+  cy.get("[data-cy=infoWorkflowRegularity]").should("have.text", `Regularity :${regularity}`);
+});
+
+///  Validate workflow/experiment stats radial chart, Passed ve Failed bar graph, RR Score chart 
+
+Cypress.Commands.add("validateStatsChart", () => {
+  cy.get("[data-cy=showStatsButton]").click();
+});
+
+/// ************************** Validate experiments table **********************
+
+Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
+  experimentArray.forEach((experiment, index) => {
+    cy.get("table")
+      .find("tr")
+      .eq(index+1)
+      .then(($div) => {
+        //	Experiment Name
+        cy.wrap($div)
+          .find("td")
+          .eq(1)
+          .should("have.text", experiment[0]);
+        // 	Experiment Verdict
+        cy.wrap($div)
+          .find("td")
+          .eq(2)
+          .should("have.text", experiment[1]);
+        // 	Weight of the test
+        cy.wrap($div)
+          .find("td")
+          .eq(3)
+          .should("have.text", `${experiment[2]} Points`);
+        // 	Resulting Points
+        cy.wrap($div)
+          .find("td")
+          .eq(4)
+          .should("have.text", `${experiment[3]} Points`);
+    });
+  });
+});
