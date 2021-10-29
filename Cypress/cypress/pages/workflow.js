@@ -252,11 +252,18 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
 
 Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
   let nodes = [];
-  cy.get("[data-cy=DagreGraphSvg]")
-		.find("text")
-		.each(($text) => {
-			nodes.push($text.text());
-		}).then(() => {
-      expect(nodes).to.include.members(graphNodesNameArray);
-    });
+  cy.waitUntil(() =>
+    cy.get("[data-cy=DagreGraphSvg]")
+      .find("text")
+      .each(($text) => {
+        nodes.push($text.text());
+      }).then(() => {
+        return graphNodesNameArray.every(val => nodes.includes(val));
+      }),
+      {
+        verbose: true,
+        interval: 500,
+        timeout: 60000,
+      }
+  );
 });
