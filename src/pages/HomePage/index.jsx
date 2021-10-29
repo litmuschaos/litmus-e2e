@@ -1,48 +1,39 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Typography } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
 import CustomCard from "components/CustomCard";
-import { getLocalStorage } from "shared/storageHelper";
-import Center from "containers/layouts/Center";
 import useStyles from "./styles";
 
-const HomePage = () => {
+const HomePage = ({ location, pipelineData }) => {
+  const [pipelines, setPipelines] = useState(pipelineData);
+  const [pipelinesToDisplay, setPipelinesToDisplay] = useState({
+    manual: location?.state?.pipelinesToDisplay?.manual ?? true,
+    nightly: location?.state?.pipelinesToDisplay?.nightly ?? true,
+  });
   const classes = useStyles();
-  const nightlyData = getLocalStorage("nightlyRuns");
-  const manualData = getLocalStorage("manualRuns");
-  const { t } = useTranslation();
+  useEffect(() => {
+    setPipelines(pipelineData);
+  }, [pipelineData]);
+  useEffect(() => {
+    setPipelinesToDisplay({
+      manual: location?.state?.pipelinesToDisplay?.manual ?? true,
+      nightly: location?.state?.pipelinesToDisplay?.nightly ?? true,
+    });
+  }, [JSON.stringify(location?.state?.pipelinesToDisplay)]);
   return (
-    <>
-      <Center>
-        <Typography variant="h3" className={classes.userName}>
-          {t("homepage.description")}
-        </Typography>
-      </Center>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-        }}
-      >
-        {nightlyData &&
-          nightlyData.map((nightlyItem) => (
-            <CustomCard
-              data={nightlyItem}
-              key={nightlyItem.id}
-              category="nightly-runs"
-            />
-          ))}
-        {manualData &&
-          manualData.map((manualItem) => (
-            <CustomCard
-              data={manualItem}
-              key={manualItem.id}
-              category="manual-runs"
-            />
-          ))}
-      </div>
-    </>
+    <div className={classes.flex}>
+      {pipelinesToDisplay?.nightly && pipelinesToDisplay?.manual && (
+        <CustomCard data={pipelines?.all} key="all" url="/all" />
+      )}
+      {pipelinesToDisplay.nightly &&
+        pipelines?.nightly &&
+        pipelines?.nightly?.map((pipeline) => (
+          <CustomCard data={pipeline} key={pipeline?.id} />
+        ))}
+      {pipelinesToDisplay.manual &&
+        pipelines?.manual &&
+        pipelines?.manual?.map((pipeline) => (
+          <CustomCard data={pipeline} key={pipeline?.id} />
+        ))}
+    </div>
   );
 };
 

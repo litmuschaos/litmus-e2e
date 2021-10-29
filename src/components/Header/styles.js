@@ -1,7 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
-  // Styles for Header
   appBar: {
     position: "sticky",
     boxShadow:
@@ -60,9 +59,8 @@ const useStyles = makeStyles((theme) => ({
   },
   middleSection: {
     display: "flex",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     flexGrow: 1,
-    marginLeft: "3rem",
     "& a": {
       margin: "0 1.5rem",
     },

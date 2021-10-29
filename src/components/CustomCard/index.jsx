@@ -8,7 +8,15 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import PlayCircleFilled from "@material-ui/icons/PlayCircleFilled";
 import GitHub from "@material-ui/icons/GitHub";
+import Chip from "@material-ui/core/Chip";
+import { Icon } from "litmus-ui";
 import { Link } from "react-router-dom";
+import { timeDifferenceStrict } from "shared/helper";
+import { conclusionMap } from "shared/job";
+import { ReactComponent as FailedIcon } from "svg/Failed.svg";
+import { ReactComponent as PassedIcon } from "svg/Passed.svg";
+import { ReactComponent as PendingIcon } from "svg/Pending.svg";
+import { ReactComponent as SkippedIcon } from "svg/Skipped.svg";
 
 const useStyles = makeStyles({
   root: {
@@ -20,35 +28,75 @@ const useStyles = makeStyles({
     fontSize: 14,
     color: "#0000008a",
   },
-  pos: {
-    marginBottom: 12,
-    color: "#0000008a",
+  flex: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  timeline: {
+    margin: "auto 0",
+  },
+  button: {
+    fontSize: "1rem",
+  },
+  p0: {
+    padding: "0",
+  },
+  img: {
+    height: "1.2rem",
+  },
+  icon: {
+    marginBottom: "-0.3rem",
   },
 });
 
-const CustomCard = ({ data, category }) => {
+const statusBadge = (step) => {
+  const classes = useStyles();
+  if (step?.status !== "completed") {
+    return <PendingIcon className={classes.icon} />;
+  }
+  if (conclusionMap[step?.conclusion] === "pass") {
+    return <PassedIcon className={classes.icon} />;
+  }
+  if (conclusionMap[step?.conclusion] === "fail") {
+    return <FailedIcon className={classes.icon} />;
+  }
+
+  return <SkippedIcon className={classes.icon} />;
+};
+
+const CustomCard = ({ data, url }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   return (
     <Card className={classes.root} variant="outlined">
-      <CardContent>
+      <CardContent className={classes.p0}>
         <Typography className={classes.title} gutterBottom>
-          <PlayCircleFilled style={{ marginBottom: "-0.3rem" }} />
-          {data?.readableName}
+          {statusBadge(data?.workflow_runs)} {data?.readableName}
         </Typography>
-        <img src={data?.badge_url} alt="status of pipeline" />
+        <Icon name="scheduleWorkflow" size="lg" color="black" />{" "}
+        {`${timeDifferenceStrict(
+          data?.workflow_runs?.updated_at,
+          new Date()
+        )} ago`}
+        <br /> <br />
+        <Chip label="litmuschaos/litmus-e2e" color="primary" />
       </CardContent>
       <CardActions>
+        <PlayCircleFilled />
         <Link
           to={{
-            pathname: `/${category}`,
+            pathname: url || "/workflows",
             state: { id: data?.id, readableName: data?.readableName },
           }}
+          style={{ marginLeft: 0 }}
         >
-          <Button size="small">{t("card.pipelineDetails")}</Button>
+          <Button size="small" className={classes.button}>
+            {t("card.pipelineDetails")}
+          </Button>
         </Link>
         <a
-          href={data.html_url}
+          href={data?.html_url}
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: "black", marginLeft: "auto" }}

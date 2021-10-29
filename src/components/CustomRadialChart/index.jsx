@@ -8,6 +8,7 @@ const CustomRadialChart = ({
   fail = 0,
   pending = 0,
   size = "small",
+  heading,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -31,6 +32,8 @@ const CustomRadialChart = ({
         }
       >
         <RadialChart
+          showCenterHeading={!!heading}
+          heading={heading}
           arcWidth={4}
           showLegend={false}
           circleExpandOnHover={3}
@@ -51,7 +54,6 @@ const CustomRadialChart = ({
               value: fail,
             },
           ]}
-          showCenterHeading={false}
         />
       </div>
     </CustomTooltip>

@@ -10,8 +10,8 @@ import Box from "@material-ui/core/Box";
 import { OutlinedPills, Icon } from "litmus-ui";
 import CustomRadialChart from "components/CustomRadialChart";
 import { getTotalPipelineTime } from "shared/helper";
+import { jobStepResult } from "shared/job";
 import TimelineComponent from "./TimelineComponent";
-import { jobStepResult } from "./helper";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -37,7 +37,7 @@ const conclusionMap = {
   cancelled: "failed",
   failure: "failed",
   neutral: "succeeded",
-  skipped: "succeeded",
+  skipped: "pending",
   stale: "succeeded",
   startup_failure: "failed",
   success: "succeeded",
@@ -119,7 +119,7 @@ export default function VerticalTabs({ data, pipelineId }) {
                   pending={result.pending}
                 />
                 <a
-                  href={data.jobs[value].html_url}
+                  href={data.jobs[value]?.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -161,6 +161,7 @@ export default function VerticalTabs({ data, pipelineId }) {
                 }
                 {...a11yProps(index)}
                 className={classes.tab}
+                disabled={job.conclusion === "skipped"}
               />
             ))}
         </Tabs>

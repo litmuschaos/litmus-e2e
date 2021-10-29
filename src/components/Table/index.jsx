@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { DataGrid } from "@material-ui/data-grid";
-import { Typography } from "@material-ui/core";
 import { Drawer, TextButton } from "litmus-ui";
 import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
 import CustomRadialChart from "components/CustomRadialChart";
-import { readableNameConverter } from "shared/helper";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
+import { getLocalStorage } from "shared/storageHelper";
 import VerticalTabs from "./VerticalTabs";
-import { descriptionMapping } from "./helper";
 import useStyles from "./styles";
 
 const DataTable = ({
@@ -17,6 +15,7 @@ const DataTable = ({
   tableName,
   match: { params: { pipelineName } = {} } = {},
   displayVersion = true,
+  displayPipelineName = false,
 }) => {
   const [pageSize, setPageSize] = useState(10);
   const [pipelineDetails, setPipelineDetails] = useState(null);
@@ -38,6 +37,16 @@ const DataTable = ({
       setPipelineDetails({ pipelineId, jobs: response });
       setDisplayDrawer(true);
     });
+  };
+  const updateCommit = () => {
+    const litmusGoCommits = getLocalStorage("litmusGoCommits");
+    for (let i = 0; i < data.length; ++i) {
+      // eslint-disable-next-line no-param-reassign
+      data[i].litmusGoCommits = {
+        html_url: litmusGoCommits?.[i]?.html_url,
+        sha: litmusGoCommits?.[i]?.sha,
+      };
+    }
   };
   const columns = [
     {
@@ -62,15 +71,17 @@ const DataTable = ({
         `${formatDistanceToNowStrict(new Date(params.value))} ago`,
     },
     {
-      field: "head_commit",
+      field: "litmusGoCommits",
       headerName: "Description",
       flex: 1,
       renderCell: (params) => (
         <>
           <a
-            href={`https://github.com/litmuschaos/${githubRepo}/commit/${params.value.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={params.value?.html_url}
           >
-            {`#${params.value.id.substring(0, 6)}`}
+            {`#${params.value.sha.substring(0, 6)}`}
           </a>{" "}
           &nbsp; {t("table.repository")}: {githubRepo}
         </>
@@ -86,11 +97,26 @@ const DataTable = ({
           },
         ]
       : []),
+    ...(displayPipelineName
+      ? [
+          {
+            field: "name",
+            headerName: "Pipeline Name",
+            flex: 1,
+          },
+        ]
+      : []),
     {
       field: "status",
-      headerName: "Status",
+      headerName: "Pipeline Job Status",
       flex: 1,
-      renderCell: () => <CustomRadialChart pass={4} fail={2} pending={1} />,
+      renderCell: (params) => (
+        <CustomRadialChart
+          pass={params.value?.pass || 0}
+          fail={params.value?.fail || 0}
+          pending={params.value?.pending || 0}
+        />
+      ),
     },
   ];
   useEffect(() => {
@@ -100,27 +126,10 @@ const DataTable = ({
     ) {
       setGithubRepo("litmus");
     }
+    updateCommit();
   }, []);
   return (
     <>
-      <Typography
-        variant="h3"
-        component="h2"
-        align="center"
-        className={classes.topMargin}
-      >
-        {readableNameConverter(tableName) ||
-          readableNameConverter(pipelineName)}
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        component="h3"
-        align="center"
-        className={classes.topMargin}
-      >
-        {descriptionMapping[tableName] || descriptionMapping[pipelineName]}
-      </Typography>
-      <br />
       {data && (
         <DataGrid
           rows={data}
