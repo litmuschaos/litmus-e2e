@@ -24,8 +24,16 @@ const useStyles = makeStyles(() => ({
     height: "7rem",
     margin: "0.5rem 0",
     width: "7rem",
-    "& p": {
+    "& p:first-of-type": {
       fontSize: "2rem",
+      maxWidth: "8rem",
+      minWidth: "1rem",
+      lineHeight: "1rem",
+      height: "0.5rem",
+      marginBottom: "1rem",
+    },
+    "& p": {
+      fontSize: "0.7rem",
       maxWidth: "8rem",
       minWidth: "1rem",
       lineHeight: "1rem",

@@ -5,6 +5,7 @@ import history from "utils/history";
 import sendGetRequest from "api/sendRequest";
 import endpoints from "constants/endpoints";
 import filterWorkflow from "api/filterWorkflow";
+import filterPipelines from "api/filterPipelines";
 import { getLocalStorage, setLocalStorage } from "shared/storageHelper";
 import Routes from "./Routes";
 
@@ -14,21 +15,34 @@ const App = () => {
     if (
       !getLocalStorage("manualRuns") ||
       !getLocalStorage("nightlyRuns") ||
+      !getLocalStorage("allRuns") ||
       !pipelineData
     ) {
-      sendGetRequest(endpoints.allWorkflows()).then((data) => {
-        const { nightly, manual } = filterWorkflow(data);
-        setLocalStorage("nightlyRuns", nightly);
-        setLocalStorage("manualRuns", manual);
-        setPipelineData({ nightly, manual });
-      });
+      sendGetRequest(endpoints.allWorkflows())
+        .then((data) => {
+          const pipelines = filterWorkflow(data);
+          filterPipelines(pipelines).then(({ nightly, manual, all }) => {
+            setLocalStorage("nightlyRuns", nightly);
+            setLocalStorage("manualRuns", manual);
+            setLocalStorage("allRuns", all);
+            setPipelineData({ nightly, manual, all });
+          });
+        })
+        .catch(() => {});
+      if (!getLocalStorage("litmusGoCommits")) {
+        sendGetRequest(endpoints.commits())
+          .then((data) => {
+            setLocalStorage("litmusGoCommits", data);
+          })
+          .catch(() => {});
+      }
     }
   }, [pipelineData]);
 
   return (
     <LitmusThemeProvider>
       <Router history={history}>
-        <Routes />
+        <Routes pipelineData={pipelineData} />
       </Router>
     </LitmusThemeProvider>
   );

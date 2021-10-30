@@ -1,9 +1,24 @@
-import formatDistanceStrict from "date-fns/formatDistanceStrict";
+import { formatDuration, intervalToDuration, formatDistance } from "date-fns";
 
 export const readableNameConverter = (name) => name?.replace(/-/g, " ");
 
-export const timeDifference = (startTime, endTime) =>
-  formatDistanceStrict(new Date(startTime), new Date(endTime));
+export const timeDifference = (startTime, endTime) => {
+  if (!startTime || !endTime) {
+    return "";
+  }
+  const durations = intervalToDuration({
+    start: new Date(startTime),
+    end: new Date(endTime),
+  });
+  return formatDuration(durations) || "0 second";
+};
+
+export const timeDifferenceStrict = (startTime, endTime) => {
+  if (!startTime || !endTime) {
+    return "";
+  }
+  return formatDistance(new Date(startTime), new Date(endTime)) || "0 second";
+};
 
 export const getTotalPipelineTime = (pipelines) => {
   let totalTime = 0;
