@@ -118,10 +118,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 					    .find("td")
 					    .eq(4)
 					    .then((nextRun) => {
-                            const date = new Date();
-                            const hours = date.getHours()%12;
-                            const mins = date.getMinutes();
-                            return (nextRun.text().includes(scheduleTime) ? true : false);
+                            const currDate = new Date();
+                            const currTime = currDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).split(' ')[0];
+                            return (nextRun.text().includes(currTime) ? true : false);
                         }),
                     {
                         verbose: true,
