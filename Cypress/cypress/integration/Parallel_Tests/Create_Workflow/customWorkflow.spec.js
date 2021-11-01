@@ -14,7 +14,7 @@ describe("Testing the validation of the final verdict without target application
 	let workflowSubject = '';
 
 	it("Scheduling a workflow without target application", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
@@ -218,7 +218,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 

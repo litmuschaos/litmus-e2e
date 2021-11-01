@@ -3,8 +3,8 @@
 //// ******************* Choose Agent Page ********************************
 
 Cypress.Commands.add("chooseAgent", (Agent) => {
-  cy.get('[type="radio"]').eq(Agent).check();
-  cy.get('[type="radio"]').eq(Agent).should("be.checked");
+  cy.get(`[data-cy=${Agent}] input`).check();
+  cy.get(`[data-cy=${Agent}] input`).should("be.checked");
 });
 
 //// *******************Choose Workflow Page *****************************
