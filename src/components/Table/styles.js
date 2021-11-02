@@ -22,16 +22,26 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme?.palette?.background?.paper,
     display: "flex",
     height: "max-content",
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme?.palette?.divider}`,
   },
   tab: {
     "& span.MuiTab-wrapper": {
       alignItems: "flex-start",
+    },
+  },
+  litmusIconFill: {
+    "& svg path": {
+      fill: theme.palette.text.primary,
+    },
+  },
+  litmusIconStroke: {
+    "& svg path": {
+      stroke: theme.palette.text.primary,
     },
   },
 }));

@@ -42,7 +42,11 @@ const CustomCard = ({ data, url }) => {
         <Typography className={classes.title} gutterBottom>
           {statusBadge(data?.workflow_runs)} {data?.readableName}
         </Typography>
-        <Icon name="scheduleWorkflow" size="lg" color="black" />{" "}
+        <Icon
+          name="scheduleWorkflow"
+          size="lg"
+          className={classes.litmusIcon}
+        />{" "}
         {`${timeDifferenceStrict(
           data?.workflow_runs?.updated_at,
           new Date()

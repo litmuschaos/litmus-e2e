@@ -77,11 +77,15 @@ export default function VerticalTabs({ data, pipelineId }) {
               rel="noopener noreferrer"
             >
               {pipelineId}
-              <Icon name="externalLink" />
+              <Icon name="externalLink" className={classes.litmusIconStroke} />
             </a>
             <br />
-            <Icon name="clock" size="sm" /> {getTotalPipelineTime(data?.jobs)}{" "}
-            <br />
+            <Icon
+              name="clock"
+              size="sm"
+              className={classes.litmusIconFill}
+            />{" "}
+            {getTotalPipelineTime(data?.jobs)} <br />
           </p>
         </Grid>
         <Grid item xs={5}>

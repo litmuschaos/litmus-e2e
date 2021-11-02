@@ -10,38 +10,22 @@ const useStyles = makeStyles((theme) => ({
     height: "4.9rem",
     display: "flex",
     justifyContent: "space-between",
-    background: theme.palette.header,
+    background: theme?.palette?.header,
     padding: theme.spacing(0, 7.5),
     "& *": {
-      color: theme.palette.text.secondary,
+      color: "white",
     },
     "& nav": {
       flexGrow: 1,
       marginLeft: theme.spacing(15),
     },
   },
-  details: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
   nounderline: {
     textDecoration: "none",
   },
   chaosText: {
     fontSize: "1.625rem",
-    color: theme.palette.text.secondary,
     fontWeight: 600,
-  },
-  active: {
-    background: `${theme.palette.cards.highlight} !important`,
-  },
-  profileButtons: {
-    marginTop: theme.spacing(3.75),
-  },
-  homeIcon: {
-    "& svg": {
-      marginBottom: "0.3rem",
-    },
   },
   rightSection: {
     display: "flex",

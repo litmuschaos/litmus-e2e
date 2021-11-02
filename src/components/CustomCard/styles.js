@@ -1,22 +1,16 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     padding: "1rem 2rem",
     margin: "1rem 0",
     flex: "0 0 30%",
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
   title: {
     fontSize: "1rem",
     fontWeight: "500",
-  },
-  flex: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  timeline: {
-    margin: "auto 0",
   },
   button: {
     fontSize: "1rem",
@@ -34,6 +28,11 @@ const useStyles = makeStyles({
   chip: {
     fontSize: "0.8rem",
   },
-});
+  litmusIcon: {
+    "& svg path": {
+      stroke: theme.palette.text.primary,
+    },
+  },
+}));
 
 export default useStyles;

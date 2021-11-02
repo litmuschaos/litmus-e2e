@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: "100%",
-    background: theme.palette.sidebarMenu,
+    background: theme?.palette?.sidebarMenu,
     position: "relative",
   },
 
@@ -15,12 +15,12 @@ const useStyles = makeStyles((theme) => ({
     height: "auto",
     transition: "0.8s",
     "&:hover": {
-      backgroundColor: theme.palette.disabledBackground,
+      backgroundColor: theme?.palette?.disabledBackground,
     },
   },
   active: {
-    backgroundColor: `${theme.palette.cards.highlight} !important`,
-    color: theme.palette.highlight,
+    backgroundColor: `${theme?.palette?.cards?.highlight} !important`,
+    color: theme?.palette?.highlight,
   },
   listIcon: {
     paddingLeft: theme.spacing(2),
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   quickActions: {
     width: "80%",
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme?.palette?.border?.main}`,
   },
   versionlogo: {
     width: "1.25rem",

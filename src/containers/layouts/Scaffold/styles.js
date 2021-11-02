@@ -14,11 +14,11 @@ const useStyles = makeStyles((theme) => ({
     },
     "& ::-webkit-scrollbar-track": {
       marginTop: theme.spacing(1),
-      webkitBoxShadow: `inset 0 0 8px ${theme.palette.common.black}`,
-      backgroundColor: theme.palette.border.main,
+      webkitBoxShadow: `inset 0 0 8px ${theme?.palette?.common?.black}`,
+      backgroundColor: theme?.palette?.border?.main,
     },
     "& ::-webkit-scrollbar-thumb": {
-      backgroundColor: theme.palette.highlight,
+      backgroundColor: theme?.palette?.highlight,
       borderRadius: 8,
     },
     "& img": {
