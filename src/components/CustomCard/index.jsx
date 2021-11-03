@@ -12,25 +12,24 @@ import { Icon } from "litmus-ui";
 import { Link } from "react-router-dom";
 import { timeDifferenceStrict } from "shared/helper";
 import { conclusionMap } from "shared/job";
-import { ReactComponent as FailedIcon } from "svg/Failed.svg";
-import { ReactComponent as PassedIcon } from "svg/Passed.svg";
-import { ReactComponent as PendingIcon } from "svg/Pending.svg";
-import { ReactComponent as SkippedIcon } from "svg/Skipped.svg";
+import { ReactComponent as FailedIcon } from "svg/failed.svg";
+import { ReactComponent as PassedIcon } from "svg/success.svg";
+import { ReactComponent as PendingIcon } from "svg/inProgress.svg";
+import { ReactComponent as SkippedIcon } from "svg/skipped.svg";
 import useStyles from "./styles";
 
 const statusBadge = (step) => {
-  const classes = useStyles();
   if (step?.status !== "completed") {
-    return <PendingIcon className={classes.icon} />;
+    return <PendingIcon />;
   }
   if (conclusionMap[step?.conclusion] === "pass") {
-    return <PassedIcon className={classes.icon} />;
+    return <PassedIcon />;
   }
   if (conclusionMap[step?.conclusion] === "fail") {
-    return <FailedIcon className={classes.icon} />;
+    return <FailedIcon />;
   }
 
-  return <SkippedIcon className={classes.icon} />;
+  return <SkippedIcon />;
 };
 
 const CustomCard = ({ data, url, displayBadge }) => {
@@ -40,7 +39,6 @@ const CustomCard = ({ data, url, displayBadge }) => {
     <Card className={classes.root} variant="outlined">
       <CardContent className={classes.p0}>
         <Typography className={classes.title} gutterBottom>
-          {displayBadge ? statusBadge(data?.workflow_runs) : null}{" "}
           {data?.readableName}
         </Typography>
         <Icon
@@ -53,11 +51,14 @@ const CustomCard = ({ data, url, displayBadge }) => {
           new Date()
         )} ago`}
         <br /> <br />
-        <Chip
-          label={t("card.litmus-e2e")}
-          color="primary"
-          className={classes.chip}
-        />
+        <div className={classes.flex}>
+          <Chip
+            label={t("card.litmus-e2e")}
+            color="primary"
+            className={classes.chip}
+          />
+          {displayBadge ? statusBadge(data?.workflow_runs) : null}
+        </div>
       </CardContent>
       <CardActions>
         <PlayCircleFilled />

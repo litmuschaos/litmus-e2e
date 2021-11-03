@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
   img: {
     height: "1.2rem",
   },
-  icon: {
-    marginBottom: "-0.3rem",
+  flex: {
+    display: "flex",
+    justifyContent: "space-between",
   },
   chip: {
     fontSize: "0.8rem",
