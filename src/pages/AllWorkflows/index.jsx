@@ -6,6 +6,7 @@ import { jobStepResult } from "shared/job";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
 import CustomRadialChart from "components/CustomRadialChart";
+import { nightlyRegex, manualRegex } from "constants/regex";
 import useStyles from "./styles";
 
 const AllWorkflows = () => {
@@ -16,14 +17,21 @@ const AllWorkflows = () => {
     sendGetRequest(endpoints.allPipelines()).then((data) => {
       pipelines = data?.workflow_runs;
       const promiseList = [];
-      pipelines?.forEach((pipeline, index) => {
-        promiseList.push(
-          sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
-            (response) => {
-              pipelines[index].status = jobStepResult(response?.jobs);
-            }
-          )
-        );
+      pipelines?.every((pipeline, index) => {
+        if (
+          pipeline.name.match(nightlyRegex) != null ||
+          pipeline.name.match(manualRegex) != null
+        ) {
+          promiseList.push(
+            sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
+              (response) => {
+                pipelines[index].status = jobStepResult(response?.jobs);
+              }
+            )
+          );
+          if (promiseList.length === 10) return false;
+        }
+        return true;
       });
       Promise.all(promiseList).then(() => {
         setPipelineData(pipelines);

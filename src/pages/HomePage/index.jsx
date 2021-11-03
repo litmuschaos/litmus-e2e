@@ -21,17 +21,22 @@ const HomePage = ({ location, pipelineData }) => {
   return (
     <div className={classes.flex}>
       {pipelinesToDisplay?.nightly && pipelinesToDisplay?.manual && (
-        <CustomCard data={pipelines?.all} key="all" url="/all" />
+        <CustomCard
+          data={pipelines?.all}
+          key="all"
+          url="/all"
+          displayBadge={false}
+        />
       )}
       {pipelinesToDisplay.nightly &&
         pipelines?.nightly &&
         pipelines?.nightly?.map((pipeline) => (
-          <CustomCard data={pipeline} key={pipeline?.id} />
+          <CustomCard data={pipeline} key={pipeline?.id} displayBadge />
         ))}
       {pipelinesToDisplay.manual &&
         pipelines?.manual &&
         pipelines?.manual?.map((pipeline) => (
-          <CustomCard data={pipeline} key={pipeline?.id} />
+          <CustomCard data={pipeline} key={pipeline?.id} displayBadge />
         ))}
     </div>
   );

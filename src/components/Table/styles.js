@@ -41,8 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
   litmusIconStroke: {
     "& svg path": {
-      stroke: theme.palette.text.primary,
+      stroke: theme?.palette?.text?.primary,
     },
+  },
+  rotate: {
+    animation: "spin 4s linear infinite",
+    color: theme?.palette?.text?.primary,
   },
 }));
 

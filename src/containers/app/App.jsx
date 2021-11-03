@@ -191,6 +191,7 @@ const App = () => {
                     omitted: "#A93DDB",
                   },
                 },
+                header: "#333",
               }),
         },
       }),

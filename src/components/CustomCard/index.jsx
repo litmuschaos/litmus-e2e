@@ -33,14 +33,15 @@ const statusBadge = (step) => {
   return <SkippedIcon className={classes.icon} />;
 };
 
-const CustomCard = ({ data, url }) => {
+const CustomCard = ({ data, url, displayBadge }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent className={classes.p0}>
         <Typography className={classes.title} gutterBottom>
-          {statusBadge(data?.workflow_runs)} {data?.readableName}
+          {displayBadge ? statusBadge(data?.workflow_runs) : null}{" "}
+          {data?.readableName}
         </Typography>
         <Icon
           name="scheduleWorkflow"

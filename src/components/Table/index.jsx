@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { DataGrid } from "@material-ui/data-grid";
+import { CircularProgress } from "@material-ui/core";
 import { Drawer, TextButton } from "litmus-ui";
 import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
 import CustomRadialChart from "components/CustomRadialChart";
@@ -110,11 +111,14 @@ const DataTable = ({
       headerName: "Pipeline Job Status",
       flex: 1,
       renderCell: (params) => (
-        <CustomRadialChart
-          pass={params.value?.pass || 0}
-          fail={params.value?.fail || 0}
-          pending={params.value?.pending || 0}
-        />
+        <>
+          <CustomRadialChart
+            pass={params.value?.pass || 0}
+            fail={params.value?.fail || 0}
+            pending={params.value?.pending || 0}
+          />
+          {params.value?.pending ? <CircularProgress /> : null}
+        </>
       ),
     },
   ];
