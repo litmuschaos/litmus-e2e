@@ -267,3 +267,94 @@ Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
       }
   );
 });
+
+/// ************************** Validate workflow info and stats **********************
+
+Cypress.Commands.add("validateWorkflowInfo", (workflowName, workflowNamespace, workflowSubject, agentName, regularity, nextRun) => {
+  cy.GraphqlWait("workflowListDetails", "SelectedWorkflowStats");
+  let workflowId = '';
+  let clusterId = '';
+  cy.wait("@recentRuns")
+    .then((res) => {
+      workflowId = res.response.body.data.ListWorkflow.workflows[0].workflow_id;
+      clusterId = res.response.body.data.ListWorkflow.workflows[0].cluster_id;
+      cy.get("[data-cy=infoWorkflowId]").should("have.text", workflowId);
+      cy.get("[data-cy=infoClusterId]").should("have.text", clusterId);
+    });
+  cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
+  cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
+  cy.get("[data-cy=infoWorkflowSubject]").should("have.text", workflowSubject);
+  cy.get("[data-cy=infoWorkflowNamespace]").should("have.text", workflowNamespace);
+  cy.get("[data-cy=infoAgentName]").should("have.text", agentName);
+
+  if (regularity === "Non cron workflow") {
+    cy.get("[data-cy=infoWorkflowRegularity]").should("have.text", `Regularity :${regularity}`);
+    cy.get("[data-cy=infoWorkflowNextRun]").should("have.text", `Next Run : ${nextRun}`);
+  }
+});
+
+///  Validate workflow/experiment stats radial chart, Passed ve Failed bar graph, RR Score chart 
+
+Cypress.Commands.add("validateStatsChart", () => {
+  cy.get("[data-cy=showStatsButton]").click();
+});
+
+/// ************************** Validate experiments table **********************
+
+Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
+  cy.waitUntil(() =>
+    cy.get("[data-cy=statsTable]")
+      .find("tr")
+      .eq(1)
+      .then(($tr) => {
+        return $tr.text() !== "No records available" ? true : false;
+      }),
+    {
+      verbose: true,
+      interval: 500,
+      timeout: 600000,
+    }
+  );
+  experimentArray.forEach((experiment, index) => {
+    cy.get("[data-cy=statsTable]")
+      .find("tr")
+      .eq(index + 1)
+      .then(($div) => {
+        //	Experiment Name
+        cy.wrap($div)
+          .find("td")
+          .eq(1)
+          .should("have.text", experiment.experimentName);
+        // 	Experiment Verdict
+        cy.wrap($div)
+          .find("td")
+          .eq(2)
+          .should("have.text", experiment.verdict);
+        // 	Weight of the test
+        cy.wrap($div)
+          .find("td")
+          .eq(3)
+          .should("have.text", `${experiment.weightOfTest} Points`);
+        // 	Resulting Points
+        cy.wrap($div)
+          .find("td")
+          .eq(4)
+          .should("have.text", `${experiment.resultingPoints} Points`);
+      });
+  });
+});
+
+///  Validate stats for recurring 
+
+Cypress.Commands.add("validateRecurringStats", () => {
+  cy.get("[data-cy=statsHeatMap]")
+    .find('[fill="#109B67"]')
+    .click();
+
+  cy.wait(1000);
+  cy.get("[data-cy=statsBarGraph")
+    .find('g')
+    .find('rect')
+    .eq(2)
+    .click();
+});
