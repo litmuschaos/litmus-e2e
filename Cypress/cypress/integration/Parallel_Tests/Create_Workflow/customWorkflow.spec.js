@@ -109,6 +109,8 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
+		cy.get("[data-cy=WorkflowSubject]").should("contains.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -313,6 +315,8 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
+		cy.get("[data-cy=WorkflowSubject]").should("contains.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
