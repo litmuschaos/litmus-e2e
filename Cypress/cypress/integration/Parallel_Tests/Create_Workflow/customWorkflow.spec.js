@@ -19,6 +19,7 @@ describe("Testing the validation of the final verdict without target application
 		cy.chooseWorkflow(2, 0);
 
 		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			cy.wrap($namespace.val()).as('workflowNamespace');
 			workflowNamespace = $namespace.val();
 			return;
 		});
@@ -109,7 +110,9 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get("[data-cy=WorkflowSubject]").should("contains.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		cy.get('@workflowNamespace').then((workflowNamespace) => {
+			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		});
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
@@ -225,6 +228,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.chooseWorkflow(2, 0);
 
 		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			cy.wrap($namespace.val()).as('workflowNamespace');
 			workflowNamespace = $namespace.val();
 			return;
 		});
@@ -315,7 +319,9 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get("[data-cy=WorkflowSubject]").should("contains.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		cy.get('@workflowNamespace').then((workflowNamespace) => {
+			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		});
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
