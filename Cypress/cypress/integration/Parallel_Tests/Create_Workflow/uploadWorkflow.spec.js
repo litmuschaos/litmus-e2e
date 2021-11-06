@@ -14,7 +14,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   let workflowSubject = '';
 
   it("Running Workflows by uploading it", () => {
-    cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(3, "");
     cy.wait(500);
@@ -181,7 +181,7 @@ describe("Testing the upload Workflow with incorrect workflow manifest", () => {
   });
 
   it("Running Workflows by uploading it", () => {
-    cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(3, "", "sample-workflow-incorrect.yaml");
     cy.get("[data-cy=ErrorUploadYAML]").should("have.text", "Retry Upload");

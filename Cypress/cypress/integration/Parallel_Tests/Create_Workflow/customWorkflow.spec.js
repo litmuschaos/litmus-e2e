@@ -11,13 +11,15 @@ describe("Testing the validation of the final verdict without target application
 
 	let workflowName = '';
 	let workflowNamespace = '';
+	let workflowSubject = '';
 
 	it("Scheduling a workflow without target application", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
 		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			cy.wrap($namespace.val()).as('workflowNamespace');
 			workflowNamespace = $namespace.val();
 			return;
 		});
@@ -108,10 +110,18 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
+		cy.get('@workflowNamespace').then((workflowNamespace) => {
+			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		});
+		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			return;
+		});
+		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
+			workflowSubject = $subject.text();
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -174,6 +184,27 @@ describe("Testing the validation of the final verdict without target application
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
 		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
 	});
+
+	it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowListDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=litmusDashboard]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get(`[data-cy=${workflowName}]`)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Non cron workflow", "Non cron workflow");
+		cy.validateStatsChart();
+		const experimentArray = [
+			{
+				experimentName: "cassandra-pod-delete",
+				verdict: "Fail",
+				weightOfTest: 5,
+				resultingPoints: 0
+			}
+		];
+		cy.validateExperimentsTable(experimentArray);
+	});
 });
 
 describe("Testing the validation of the final verdict with an existing target application by selecting experiments from chaoshub", () => {
@@ -185,17 +216,19 @@ describe("Testing the validation of the final verdict with an existing target ap
 
 	let workflowName = '';
 	let workflowNamespace = '';
+	let workflowSubject = '';
 
 	it("Creating a target application", () => {
 		cy.createTargetApplication("default", "target-app-1", "nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
 		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+			cy.wrap($namespace.val()).as('workflowNamespace');
 			workflowNamespace = $namespace.val();
 			return;
 		});
@@ -286,10 +319,18 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
+		cy.get('@workflowNamespace').then((workflowNamespace) => {
+			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
+		});
+		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			return;
+		});
+		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
+			workflowSubject = $subject.text();
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -355,5 +396,26 @@ describe("Testing the validation of the final verdict with an existing target ap
 
 	it("Deleting the target application", () => {
 		cy.deleteTargetApplication("default", "target-app-1");
+	});
+
+	it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowListDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=litmusDashboard]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get(`[data-cy=${workflowName}]`)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Non cron workflow", "Non cron workflow");
+		cy.validateStatsChart();
+		const experimentArray = [
+			{
+				experimentName: "pod-delete",
+				verdict: "Pass",
+				weightOfTest: 5,
+				resultingPoints: 5
+			}
+		];
+		cy.validateExperimentsTable(experimentArray);
 	});
 });
