@@ -13,7 +13,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 	let workflowNamespace = '';
 
 	it("Running PreDefined Workflow", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.GraphqlWait("GetPredefinedWorkflowList", "getPredefinedData");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		

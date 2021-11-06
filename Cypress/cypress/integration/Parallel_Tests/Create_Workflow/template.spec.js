@@ -12,7 +12,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 	let workflowName = '';
 
 	it("Running PreDefined Workflow", () => {
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(0, 0);
 
