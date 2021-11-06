@@ -93,6 +93,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			cy.validateWorkflowExistence(workflowName, "litmus");
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();

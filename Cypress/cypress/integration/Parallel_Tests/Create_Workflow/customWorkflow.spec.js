@@ -118,6 +118,7 @@ describe("Testing the validation of the final verdict without target application
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			cy.validateWorkflowExistence(workflowName, "litmus");
 			return;
 		});
 		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
@@ -327,6 +328,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			cy.validateWorkflowExistence(workflowName, "litmus");
 			return;
 		});
 		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {

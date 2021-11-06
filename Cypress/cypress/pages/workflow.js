@@ -1,3 +1,4 @@
+import { apis, KUBE_API_TOKEN } from "../kube-apis/apis";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
@@ -341,5 +342,28 @@ Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
           .eq(4)
           .should("have.text", `${experiment.resultingPoints} Points`);
       });
+  });
+});
+/// ************************** Validate workflow existence on cluster **********************
+
+Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
+  let workflowFound = false;
+  cy.request({
+    url: apis.listWorkflows(namespace),
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${KUBE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+  }).should((response) => {
+    response.body.items.some((item) => {
+      if (item.metadata.name === workflowName){
+        workflowFound = true;
+        return true;
+      }
+    });
+    if (workflowFound === false){
+      throw new Error("Workflow Not Found in cluster");
+    }
   });
 });
