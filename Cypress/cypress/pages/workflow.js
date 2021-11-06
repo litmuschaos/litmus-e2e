@@ -349,13 +349,19 @@ Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
 Cypress.Commands.add("validateRecurringStats", () => {
   cy.wait(1000);
   cy.get("[data-cy=statsHeatMap]")
-    .find('[fill="#109B67"]')
-    .click();
+    .within((el) => {
+      cy.wrap(el)
+        .find('[fill="#109B67"]')
+        .click();
+    });
 
   cy.wait(1000);
   cy.get("[data-cy=statsBarGraph")
-    .find('g')
-    .find('rect')
-    .eq(2)
-    .click();
+    .within((el) => {
+      cy.wrap(el)
+        .find('g')
+        .find('rect')
+        .eq(2)
+        .click();
+    });
 });
