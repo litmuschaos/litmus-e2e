@@ -112,12 +112,15 @@ const DataTable = ({
       flex: 1,
       renderCell: (params) => (
         <>
-          <CustomRadialChart
-            pass={params.value?.pass || 0}
-            fail={params.value?.fail || 0}
-            pending={params.value?.pending || 0}
-          />
-          {params.value?.pending ? <CircularProgress /> : null}
+          {params.value?.pending ? (
+            <CircularProgress />
+          ) : (
+            <CustomRadialChart
+              pass={params.value?.pass || 0}
+              fail={params.value?.fail || 0}
+              pending={params.value?.pending || 0}
+            />
+          )}
         </>
       ),
     },
