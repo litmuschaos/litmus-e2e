@@ -11,6 +11,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
 	let workflowName = '';
 	let workflowNamespace = '';
+	let workflowSubject = '';
 	let scheduleDate = '';
 	let scheduleTime = '';
 
@@ -87,6 +88,10 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
+			return;
+		});
+		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
+			workflowSubject = $subject.text();
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -173,5 +178,27 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
 	it("Deleting the target application", () => {
 		cy.deleteTargetApplication("default", "target-app-1");
-	})
+	});
+
+	it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowListDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=litmusDashboard]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get(`[data-cy=${workflowName}]`)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Cron workflow", "Cron workflow");
+		cy.validateStatsChart();
+		cy.validateRecurringStats();
+		const experimentArray = [
+			{
+				experimentName: "pod-delete",
+				verdict: "Pass",
+				weightOfTest: 5,
+				resultingPoints: 5
+			}
+		];
+		cy.validateExperimentsTable(experimentArray);
+	});
 });
