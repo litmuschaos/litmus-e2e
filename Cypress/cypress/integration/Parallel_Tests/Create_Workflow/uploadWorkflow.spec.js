@@ -11,6 +11,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 
   let workflowName = '';
   let workflowNamespace = '';
+  let workflowSubject = '';
 
   it("Running Workflows by uploading it", () => {
 		cy.chooseAgent("Self-Agent");
@@ -59,6 +60,10 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
       cy.validateWorkflowExistence(workflowName, "litmus");
+			return;
+		});
+    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
+			workflowSubject = $subject.text();
 			return;
 		});
     cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -122,6 +127,50 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
 		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
+	});
+
+  it("Rerun a non-recurring workflow", () => {
+    cy.visit("/workflows");
+    cy.get("[data-cy=browseSchedule]").click();
+    cy.wait(1000);
+    cy.get("table")
+			.find("tr")
+			.eq(1)
+			.then(($div) => {
+        cy.wrap($div)
+					.find("td")
+					.eq(4)
+					.should("have.text", "Non cron workflow");
+        cy.wrap($div)
+          .find("[data-cy=browseScheduleOptions]")
+          .click({ scrollBehavior: false });
+      });
+    cy.get("[data-cy=reRunSchedule]")
+      .eq(0)
+      .should("have.text", "Rerun Schedule")
+      .click({ force: true });
+  });
+
+  it("Testing the workflow statistics", () => {
+		cy.GraphqlWait("workflowListDetails", "recentRuns");
+		cy.visit("/observability");
+		cy.get("[data-cy=litmusDashboard]").click();
+		cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
+		cy.get(`[data-cy=${workflowName}]`)
+			.find("[data-cy=statsButton]")
+			.click();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Cron workflow", "Cron workflow");
+		cy.validateStatsChart();
+		cy.validateRecurringStats();
+		const experimentArray = [
+			{
+				experimentName: "pod-delete",
+				verdict: "Pass",
+				weightOfTest: 5,
+				resultingPoints: 5
+			}
+		];
+		cy.validateExperimentsTable(experimentArray);
 	});
 });
 
