@@ -61,7 +61,9 @@ const WorkflowPage = ({
     <>
       <div className={classes.flexSpace}>
         <div className={classes.flexStart}>
-          <Typography>{t("pipelinePage.selectPipeline")}:</Typography>
+          <Typography className={classes.small}>
+            {t("pipelinePage.selectPipeline")}:
+          </Typography>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel
               htmlFor="outlined-pipelineName"

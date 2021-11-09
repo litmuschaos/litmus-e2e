@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    maxWidth: "8rem",
   },
   label: {
     color: "#0000008a",
@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
   m0: {
     margin: "auto 0",
+  },
+  small: {
+    fontSize: "0.8rem",
   },
 }));
 

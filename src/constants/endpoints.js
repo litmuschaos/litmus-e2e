@@ -9,8 +9,6 @@ const endpoints = {
     `${baseUrl}/repos/${orgName}/litmus-e2e/actions/workflows/${workflowName}/runs`,
   pipelineJobs: (pipelineId) =>
     `${baseUrl}/repos/${orgName}/litmus-e2e/actions/runs/${pipelineId}/jobs`,
-  releaseTag: () => `${baseUrl}/repos/${orgName}/litmus/releases/latest`,
-  repoDetails: () => `${baseUrl}/repos/${orgName}/litmus`,
   commits: () => `${baseUrl}/repos/${orgName}/litmus-go/commits`,
 };
 
