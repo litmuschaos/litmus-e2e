@@ -4,7 +4,7 @@ import "./pages";
 
 // For preserving cookies between tests.
 Cypress.Cookies.defaults({
-  preserve: "token",
+  preserve: "litmus-cc-token",
 });
 
 Cypress.on('uncaught:exception', (err, runnable) => {

@@ -52,7 +52,9 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
-			cy.validateWorkflowExistence(workflowName, "litmus");
+			cy.get('@workflowNamespace').then((workflowNamespace) => {
+				cy.validateWorkflowExistence(workflowName, workflowNamespace);
+			});
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -112,7 +114,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 
 	it("Scheduling a new workflow from the saved template", () => {
 		cy.visit("/create-workflow");
-		cy.chooseAgent(0);
+		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(1, 0);
 		cy.configureWorkflowSettings(

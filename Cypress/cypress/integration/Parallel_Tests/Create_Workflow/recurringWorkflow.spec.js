@@ -88,7 +88,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
-			cy.validateWorkflowExistence(workflowName, "litmus");
+			cy.get('@workflowNamespace').then((workflowNamespace) => {
+				cy.validateWorkflowExistence(workflowName, workflowNamespace);
+			});
 			return;
 		});
 		cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
@@ -166,6 +168,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				timeout: 600000,
 			}
 		);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];

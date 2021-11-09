@@ -26,7 +26,7 @@ export const loginSmokeTest = () => {
     expect("[data-cy=inputPassword]").to.exist;
 
     // Clear existing cookies if any
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     // --------------------------------------------------------
     cy.log("Attempting Login With Incorrect Credentials");
     cy.login("Wrong Username", "Wrong Password");
