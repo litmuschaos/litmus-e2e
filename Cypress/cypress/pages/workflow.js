@@ -1,3 +1,4 @@
+import { apis, KUBE_API_TOKEN } from "../kube-apis/apis";
 /// Script Containing Custom functions for Workflow Scheduling Flow
 
 //// ******************* Choose Agent Page ********************************
@@ -106,7 +107,6 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
   cy.get("[data-cy=AppKind]").click();
   cy.get(`[data-value=${tunningParameters.targetApp.appKind}]`).click();
   cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{enter}');
-  cy.get("[data-cy=JobCleanUpPolicy] input").clear().type(tunningParameters.targetApp.jobCleanUpPolicy);
   cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
 
   // Steady State
@@ -119,46 +119,42 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
   cy.get("[data-cy=TuneExperimentControlButtons] button").eq(1).click();
 });
 
-Cypress.Commands.add("tunePredefinedWorkflow", (tunningParameters) => {
-  // tunningParameters = {
+Cypress.Commands.add("validatePredefinedWorkflowParameters", (workflowParameters) => {
+  // const workflowParameters = {
   //   general : {
-  //     context : "pod-network-loss-chaos_litmus"
+  //     context : "podtato-main-pod-delete-chaos_litmus"
   //   },
   //   targetApp : {
   //     annotationCheckToggle : false,
-  //     appns : "bank",
+  //     appns : "litmus",
   //     appKind : "deployment",
-  //     appLabel : "name in (balancereader,transactionhistory)",
-  //     jobCleanUpPolicy : "retain" 
+  //     appLabel : "name=podtato-main"
   //   },
   //   steadyState : {},
   //   tuneExperiment : {
-  //     totalChaosDuration : 90,
-  //     networkInterface : "eth0",
-  //     networkPacketLossPercent : 100
+  //     totalChaosDuration : 30,
+  //     chaosInterval : 10,
+  //     force : false
   //   } 
-  // }
+  // };
 
   // General
-  cy.get("[data-cy=Context] input").clear().type(tunningParameters.general.context);
+  cy.get("[data-cy=Context] input").should("have.value", workflowParameters.general.context);
   cy.get("[data-cy=GeneralNext]").click();
 
   // Target Application
-  cy.get("[data-cy=AnnotationCheckToggle] button").eq((tunningParameters.targetApp.annotationCheckToggle)?0:1).click();
-  cy.get("[data-cy=Appns] input").clear().type(tunningParameters.targetApp.appns).type('{enter}');
-  cy.get("[data-cy=AppKind]").click();
-  cy.get(`[data-value=${tunningParameters.targetApp.appKind}]`).click();
-  cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{enter}');;
-  cy.get("[data-cy=JobCleanUpPolicy] input").clear().type(tunningParameters.targetApp.jobCleanUpPolicy);
+  // cy.get("[data-cy=Appns] input").should("have.value", workflowParameters.targetApp.appns);
+  cy.get("[data-cy=AppKind] input").should("have.value", workflowParameters.targetApp.appKind);
+  cy.get("[data-cy=AppLabel] input").should("have.value", workflowParameters.targetApp.appLabel);
   cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
 
   // Steady State
   cy.get("[data-cy=SteadyStateControlButtons] button").eq(1).click();
 
   // Tune Experiment
-  cy.get("[data-cy=TOTAL_CHAOS_DURATION] input").clear().type(tunningParameters.tuneExperiment.totalChaosDuration);
-  cy.get("[data-cy=NETWORK_INTERFACE] input").clear().type(tunningParameters.tuneExperiment.networkInterface);
-  cy.get("[data-cy=NETWORK_PACKET_LOSS_PERCENTAGE] input").clear().type(tunningParameters.tuneExperiment.networkPacketLossPercent);
+  cy.get("[data-cy=TOTAL_CHAOS_DURATION] input").should("have.value", workflowParameters.tuneExperiment.totalChaosDuration);
+  cy.get("[data-cy=CHAOS_INTERVAL] input").should("have.value", workflowParameters.tuneExperiment.chaosInterval);
+  cy.get("[data-cy=FORCE] input").should("have.value", workflowParameters.tuneExperiment.force);
   cy.get("[data-cy=TuneExperimentControlButtons] button").eq(1).click();
 });
 
@@ -364,4 +360,43 @@ Cypress.Commands.add("validateRecurringStats", () => {
         .eq(2)
         .click();
     });
+});
+
+/// ************************** Validate workflow existence on cluster **********************
+
+Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
+  let workflowFound = false;
+  cy.request({
+    url: apis.getWorkflows(namespace),
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${KUBE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+  }).should((response) => {
+    response.body.items.some((item) => {
+      if (item.metadata.name === workflowName){
+        workflowFound = true;
+        return true;
+      }
+    });
+    if (workflowFound === false){
+      throw new Error("Workflow Not Found in cluster");
+    }
+  });
+});
+
+/// ************************** Validate workflow existence on cluster **********************
+
+Cypress.Commands.add("validateWorkflowStatus", (workflowName, namespace, expectedStatuses) => {
+  cy.request({
+    url: apis.getWorkflowByName(workflowName, namespace),
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${KUBE_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+  }).should((response) => {
+    expect(expectedStatuses.includes(response.body.status.phase)).to.be.true;
+  });
 });

@@ -3,7 +3,7 @@ import * as user from "../../../fixtures/Users.json";
 
 describe("Testing the accessibility of Getting Started Page", () => {
   before("Clearing local storage", () => {
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     indexedDB.deleteDatabase("localforage");
     cy.visit("/");
     cy.login(user.AdminName, user.AdminPassword);

@@ -30,24 +30,24 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       0
     );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.wait(1000); // Needs to be removed with frontend enhancement
-    cy.get("[data-cy=addExperimentSearch]").should("not.exist");
-    cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "podtato-main-pod-delete-chaos"); // Matching Experiment
-			});
-		// Expected nodes
-		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
-		// Verify nodes in dagre graph
-		cy.validateGraphNodes(graphNodesNameArray);
-    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.rScoreEditor(5);
-    cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    // cy.wait(1000); // Needs to be removed with frontend enhancement
+    // cy.get("[data-cy=addExperimentSearch]").should("not.exist");
+    // cy.get("table")
+		// 	.find("tr")
+		// 	.eq(1)
+		// 	.then(($div) => {
+		// 		cy.wrap($div)
+		// 			.find("td")
+		// 			.eq(0)
+		// 			.should("contain.text", "podtato-main-pod-delete-chaos"); // Matching Experiment
+		// 	});
+		// // Expected nodes
+		// const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+		// // Verify nodes in dagre graph
+		// cy.validateGraphNodes(graphNodesNameArray);
+    // cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    // cy.rScoreEditor(5);
+    // cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.selectSchedule(0);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.verifyDetails(
@@ -67,6 +67,11 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		});
     cy.get("[data-cy=GoToWorkflowButton]").click();
   });
+
+  it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	});
 
   it("Checking Workflow Browsing Table for scheduled workflow", () => {
     cy.GraphqlWait("workflowDetails", "listWorkflows");
@@ -99,6 +104,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
           timeout: 600000,
         }
       );
+      cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
       cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
       // Expected Nodes
       const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];

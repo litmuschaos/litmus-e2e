@@ -18,7 +18,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		
 		cy.wait("@getPredefinedData");
-		cy.chooseWorkflow(0, 0);
+		cy.chooseWorkflow(0, 1);
 
 		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
 			workflowNamespace = $namespace.val();
@@ -53,30 +53,29 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
-					.should("contain.text", "pod-network-loss") // Matching Experiment
+					.should("contain.text", "podtato-main-pod-delete-chaos") // Matching Experiment
 					.click();
 			});
-		const tunningParameters = {
+		const workflowParameters = {
 			general : {
-				context : "pod-network-loss-chaos_litmus"
+				context : "podtato-main-pod-delete-chaos_litmus"
 			},
 			targetApp : {
 				annotationCheckToggle : false,
-				appns : "bank",
+				appns : "litmus",
 				appKind : "deployment",
-				appLabel : "name in (balancereader,transactionhistory)",
-				jobCleanUpPolicy : "retain" 
+				appLabel : "name=podtato-main"
 			},
 			steadyState : {},
 			tuneExperiment : {
-				totalChaosDuration : 90,
-				networkInterface : "eth0",
-				networkPacketLossPercent : 100
+				totalChaosDuration : 30,
+				chaosInterval : 10,
+				force : "false"
 			} 
 		  };
-		cy.tunePredefinedWorkflow(tunningParameters);
+		cy.validatePredefinedWorkflowParameters(workflowParameters);
 		// Expected nodes
-		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
+		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph
 		cy.validateGraphNodes(graphNodesNameArray);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
@@ -96,6 +95,11 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
+	});
+
+	it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
@@ -127,6 +131,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				timeout: 600000,
 			}
 		);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];

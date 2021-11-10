@@ -9,7 +9,7 @@ Cypress.Commands.add("login", (Username, Password) => {
 
 // Custom function for logging In & setting token without using UI
 Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
-  cy.clearCookie("token");
+  cy.clearCookie("litmus-cc-token");
   indexedDB.deleteDatabase("localforage");
   cy.request({
     method: "POST",
@@ -21,7 +21,7 @@ Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
   })
     .its("body")
     .then((res) => {
-      cy.setCookie("token", res.access_token);
+      cy.setCookie("litmus-cc-token", res.access_token);
     });
   cy.location().then((loc) => {
     loc.pathname === '/getStarted' ? cy.getStarted('litmus') : null;

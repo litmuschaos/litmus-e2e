@@ -97,6 +97,11 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
+	it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	});
+
     it("Checking Schedules Table for scheduled Workflow", () => {
 		cy.GraphqlWait("workflowListDetails", "listSchedules");
 		cy.visit("/workflows");
@@ -165,6 +170,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				timeout: 600000,
 			}
 		);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];

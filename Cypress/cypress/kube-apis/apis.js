@@ -24,6 +24,10 @@ export const apis = {
     return `${KUBE_API_SERVER}/apis/argoproj.io/v1alpha1/namespaces/${namespace}/workflows`;
   },
 
+  getWorkflowByName: (workflowName, namespace) => {
+    return `${KUBE_API_SERVER}/apis/argoproj.io/v1alpha1/namespaces/${namespace}/workflows/${workflowName}`;
+  },
+
   getPods: (namespace) => {
     return `${KUBE_API_SERVER}/api/v1/namespaces/${namespace}/pods`;
   },

@@ -3,7 +3,7 @@ import * as user from "../../../fixtures/Users.json";
 
 describe("Testing the Teaming section", () => {
   before("Clearing local storage", () => {
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     indexedDB.deleteDatabase("localforage");
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.visit("/");

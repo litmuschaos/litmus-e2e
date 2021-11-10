@@ -85,8 +85,7 @@ describe("Testing the validation of the final verdict without target application
 			  annotationCheckToggle : false,
 			  appns : "default",
 			  appKind : "deployment",
-			  appLabel : "app=nginx",
-			  jobCleanUpPolicy : "retain" 
+			  appLabel : "app=nginx"
 			},
 			steadyState : {},
 			tuneExperiment : {
@@ -127,6 +126,11 @@ describe("Testing the validation of the final verdict without target application
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
+	it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	});
+
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
 		cy.GraphqlWait("workflowDetails", "listWorkflows");
 		cy.visit("/workflows");
@@ -156,6 +160,7 @@ describe("Testing the validation of the final verdict without target application
 				timeout: 600000,
 			}
 		);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
@@ -294,8 +299,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			  annotationCheckToggle : false,
 			  appns : "default",
 			  appKind : "deployment",
-			  appLabel : "app=nginx",
-			  jobCleanUpPolicy : "retain" 
+			  appLabel : "app=nginx"
 			},
 			steadyState : {},
 			tuneExperiment : {
@@ -336,6 +340,11 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
+	it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	});
+
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
 		cy.GraphqlWait("workflowDetails", "listWorkflows");
 		cy.visit("/workflows");
@@ -365,6 +374,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 				timeout: 600000,
 			}
 		);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
