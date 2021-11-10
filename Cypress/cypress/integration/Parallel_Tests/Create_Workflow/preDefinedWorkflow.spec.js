@@ -92,12 +92,14 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
-			cy.get('@workflowNamespace').then((workflowNamespace) => {
-				cy.validateWorkflowExistence(workflowName, workflowNamespace);
-			});
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
+	});
+
+	it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
@@ -129,7 +131,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				timeout: 600000,
 			}
 		);
-		cy.validateWorkflowStatus(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];

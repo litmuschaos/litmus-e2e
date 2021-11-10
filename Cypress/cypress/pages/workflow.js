@@ -388,7 +388,7 @@ Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
 
 /// ************************** Validate workflow existence on cluster **********************
 
-Cypress.Commands.add("validateWorkflowStatus", (workflowName, namespace) => {
+Cypress.Commands.add("validateWorkflowStatus", (workflowName, namespace, expectedStatuses) => {
   cy.request({
     url: apis.getWorkflowByName(workflowName, namespace),
     method: "GET",
@@ -397,9 +397,6 @@ Cypress.Commands.add("validateWorkflowStatus", (workflowName, namespace) => {
       'Content-Type': 'application/json'
     },
   }).should((response) => {
-    console.log(response.body.status.phase);
-    if (response.body.status.phase !== "Completed" && response.body.status.phase !== "Running"){
-      throw new Error("Workflow haven't completed yet or any error occured in cluster");
-    }
+    expect(expectedStatuses.includes(response.body.status.phase)).to.be.true;
   });
 });

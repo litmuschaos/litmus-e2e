@@ -30,8 +30,8 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       0
     );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.wait(1000); // Needs to be removed with frontend enhancement
-    cy.get("[data-cy=addExperimentSearch]").should("not.exist");
+    // cy.wait(1000); // Needs to be removed with frontend enhancement
+    // cy.get("[data-cy=addExperimentSearch]").should("not.exist");
     // cy.get("table")
 		// 	.find("tr")
 		// 	.eq(1)
@@ -48,7 +48,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     // cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     // cy.rScoreEditor(5);
     // cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    // cy.selectSchedule(0);
+    cy.selectSchedule(0);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.verifyDetails(
       workflows.nonRecurringworkflowName,
@@ -59,9 +59,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
-      cy.get('@workflowNamespace').then((workflowNamespace) => {
-				cy.validateWorkflowExistence(workflowName, workflowNamespace);
-			});
 			return;
 		});
     cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
@@ -70,6 +67,11 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		});
     cy.get("[data-cy=GoToWorkflowButton]").click();
   });
+
+  it("Validating workflow existence and status on cluster", () => {
+		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	});
 
   it("Checking Workflow Browsing Table for scheduled workflow", () => {
     cy.GraphqlWait("workflowDetails", "listWorkflows");
@@ -102,7 +104,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
           timeout: 600000,
         }
       );
-      cy.validateWorkflowStatus(workflowName, workflowNamespace);
+      cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
       cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
       // Expected Nodes
       const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
