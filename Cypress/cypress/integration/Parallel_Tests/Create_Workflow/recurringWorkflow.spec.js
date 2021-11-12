@@ -21,69 +21,21 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
 	it("Scheduling a workflow with an existing target application", () => {
 		cy.chooseAgent("Self-Agent");
-		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-		cy.chooseWorkflow(2, 0);
-
-		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
+    	cy.get("[data-cy=ControlButtons] Button").eq(0).click();
+    	cy.chooseWorkflow(3, "");
+    	cy.wait(500);
+    	cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+    	cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
 			workflowNamespace = $namespace.val();
 			return;
 		});
-		// Provide the correct details
-		cy.configureWorkflowSettings(
-			workflows.customWorkflow,
-			workflows.customWorkflowDescription,
-			0
-		);
-		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		// Expected nodes
-		const graphNodeNameArray = ["install-chaos-experiments"];
-		// Verify nodes in dagre graph
-		cy.validateGraphNodes(graphNodeNameArray);
-		/***
-		 * Add an experiment containing pod text
-		 */
-		cy.get("[data-cy=addExperimentButton]").should("be.visible");
-		cy.get("[data-cy=addExperimentButton]").click();
-		/**
-		 * Waiting for the search experiment field to be visible
-		 */
-		cy.get("[data-cy=addExperimentSearch]").should("be.visible");
-		cy.get("[data-cy=addExperimentSearch]").find("input").clear().type("generic");
-		cy.get("[data-cy=ExperimentList] :radio").eq(0).check();
-		cy.get("[data-cy=AddExperimentDoneButton]").click();
-		/**
-		 * Waiting for the dagre animation to complete after closing the
-		 * add experiment modal
-		 */
-		cy.wait(1000);
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "pod-delete") // Matching Experiment
-			});
-		cy.wait(1000);
-		// Expected nodes
-		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete"];
-		// Verify nodes in dagre graph
-		cy.validateGraphNodes(graphNodesNameArray);
-		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.rScoreEditor(5);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		scheduleDate = new Date();
 		// Schedule 2 min later from current time
     	scheduleDate.setMinutes(scheduleDate.getMinutes()+2);
 		cy.selectSchedule(1, 0, scheduleDate.getMinutes());
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.verifyDetails(
-			workflows.customWorkflow,
-			workflows.customWorkflowDescription,
-			1,
-            scheduleDate.getMinutes()
-		);
+		cy.get("[data-cy=schedule]").should("have.text", `At ${scheduleDate.getMinutes()} minutes past the hour, between 12:00 AM and 11:59 PM`);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -95,11 +47,6 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
-	});
-
-	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
-		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
     it("Checking Schedules Table for scheduled Workflow", () => {
@@ -141,6 +88,11 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
             })
 	});
 
+	// it("Validating workflow existence and status on cluster", () => {
+	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace);
+	// 	cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+	// });
+
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
 		cy.get("[data-cy=runs]").click();
 		cy.wait(1000);
@@ -170,10 +122,10 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 				timeout: 600000,
 			}
 		);
-		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+		// cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
+		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
@@ -201,8 +153,8 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			{
 				experimentName: "pod-delete",
 				verdict: "Pass",
-				weightOfTest: 5,
-				resultingPoints: 5
+				weightOfTest: 10,
+				resultingPoints: 10
 			}
 		];
 		cy.validateExperimentsTable(experimentArray);

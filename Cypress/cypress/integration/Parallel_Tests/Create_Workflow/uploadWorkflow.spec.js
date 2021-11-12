@@ -13,6 +13,10 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   let workflowNamespace = '';
   let workflowSubject = '';
 
+  it("Creating a target application", () => {
+		cy.createTargetApplication("default", "target-app-1", "nginx");
+	});
+
   it("Running Workflows by uploading it", () => {
 		cy.chooseAgent("Self-Agent");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
@@ -24,11 +28,11 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 			workflowNamespace = $namespace.val();
 			return;
 		});
-    cy.configureWorkflowSettings(
-      workflows.nonRecurringworkflowName,
-      workflows.nonRecurringworkflowDescription,
-      0
-    );
+    // cy.configureWorkflowSettings(
+    //   workflows.nonRecurringworkflowName,
+    //   workflows.nonRecurringworkflowDescription,
+    //   0
+    // );
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     // cy.wait(1000); // Needs to be removed with frontend enhancement
     // cy.get("[data-cy=addExperimentSearch]").should("not.exist");
@@ -50,11 +54,12 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     // cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.selectSchedule(0);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.verifyDetails(
-      workflows.nonRecurringworkflowName,
-      workflows.nonRecurringworkflowDescription,
-      0
-    );
+    // cy.verifyDetails(
+    //   workflows.nonRecurringworkflowName,
+    //   workflows.nonRecurringworkflowDescription,
+    //   0
+    // );
+    cy.wait(1000);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -107,7 +112,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
       cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
       // Expected Nodes
-      const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+      const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
       // Verify nodes in dagre graph (TODO: Check status of nodes)
       cy.validateGraphNodes(graphNodesNameArray);
   });
@@ -156,6 +161,10 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       .click({ force: true });
   });
 
+  it("Deleting the target application", () => {
+		cy.deleteTargetApplication("default", "target-app-1");
+	});
+
   it("Testing the workflow statistics", () => {
 		cy.GraphqlWait("workflowListDetails", "recentRuns");
 		cy.visit("/observability");
@@ -171,8 +180,8 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 			{
 				experimentName: "pod-delete",
 				verdict: "Pass",
-				weightOfTest: 5,
-				resultingPoints: 5
+				weightOfTest: 10,
+				resultingPoints: 10
 			}
 		];
 		cy.validateExperimentsTable(experimentArray);

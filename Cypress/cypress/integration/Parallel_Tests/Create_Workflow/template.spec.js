@@ -11,50 +11,21 @@ describe("Testing the workflow creation wizard using Templates", () => {
 
 	let workflowName = '';
 
-	it("Running PreDefined Workflow", () => {
+	it("Running uploaded Workflow", () => {
 		cy.chooseAgent("Self-Agent");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-		cy.chooseWorkflow(0, 0);
-
-		// Providing a name of 55 characters which should fail
-		// Maximum allowed length is 54 characters
-		cy.configureWorkflowSettings(
-			workflows.extraLargeName,
-			workflows.nonRecurringworkflowDescription,
-			0
-		);
-
+		cy.chooseWorkflow(3, "");
+		cy.wait(500);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-
-		// Check if Alert exists
-		cy.get("[role=alert]").should("be.visible");
-
-		// Provide the correct details
-		cy.configureWorkflowSettings(
-			workflows.nonRecurringworkflowName,
-			workflows.nonRecurringworkflowDescription,
-			0
-		);
-		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.wait(1000); // Needs to be removed with frontend enhancement
-		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
-		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.rScoreEditor(5);
+		cy.wait(1000); // Waiting for Workflow Details to get filled
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.selectSchedule(0);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-		cy.verifyDetails(
-			workflows.nonRecurringworkflowName,
-			workflows.nonRecurringworkflowDescription,
-			0
-		);
+		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
 			workflowName = $name.text();
-			cy.get('@workflowNamespace').then((workflowNamespace) => {
-				cy.validateWorkflowExistence(workflowName, workflowNamespace);
-			});
 			return;
 		});
 		cy.get("[data-cy=GoToWorkflowButton]").click();
