@@ -134,7 +134,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
+		const graphNodesNameArray = ["install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
