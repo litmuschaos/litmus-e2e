@@ -64,12 +64,19 @@ Cypress.Commands.add("validateGraphNodes", (graphNodesNameArray) => {
     let nodes = [];
     cy.waitUntil(() =>
         cy.get("[data-cy=DagreGraphSvg]")
-            .find("text")
-            .each(($text) => {
-                nodes.push($text.text());
-            }).then(() => {
-                return graphNodesNameArray.every(val => nodes.includes(val));
-            }),
+            .within(() => {
+                cy.get("g")
+                    .find(".output g")
+                    .find("circle")
+                    .find("title")
+                    .each(($text) => {
+                        nodes.push($text.text());
+                    })
+                    .then(() => {
+                        return graphNodesNameArray.every(val => nodes.includes(val));
+                    })
+            })
+            ,
         {
             verbose: true,
             interval: 500,
