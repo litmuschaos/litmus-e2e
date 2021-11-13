@@ -29,12 +29,14 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			workflowNamespace = $namespace.val();
 			return;
 		});
+		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		scheduleDate = new Date();
 		// Schedule 2 min later from current time
     	scheduleDate.setMinutes(scheduleDate.getMinutes()+2);
 		cy.selectSchedule(1, 0, scheduleDate.getMinutes());
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
+		cy.wait(1000);
 		cy.get("[data-cy=schedule]").should("have.text", `At ${scheduleDate.getMinutes()} minutes past the hour, between 12:00 AM and 11:59 PM`);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
