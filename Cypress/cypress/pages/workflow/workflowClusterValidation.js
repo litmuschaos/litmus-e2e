@@ -24,7 +24,7 @@ Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
     });
 });
 
-/// ************************** Validate workflow existence on cluster **********************
+/// ************************** Validate workflow status on cluster **********************
 
 Cypress.Commands.add("validateWorkflowStatus", (workflowName, namespace, expectedStatuses) => {
     cy.request({
