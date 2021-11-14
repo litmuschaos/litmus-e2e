@@ -212,8 +212,8 @@ describe("Testing the workflow creation wizard using Templates", () => {
 			{
 				experimentName: "pod-delete",
 				verdict: "Pass",
-				weightOfTest: 10,
-				resultingPoints: 10
+				weightOfTest: 5,
+				resultingPoints: 5
 			}
 		];
 		cy.validateExperimentsTable(experimentArray);
