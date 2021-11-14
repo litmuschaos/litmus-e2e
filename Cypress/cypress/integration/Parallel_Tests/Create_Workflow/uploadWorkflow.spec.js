@@ -139,28 +139,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
 	});
 
-  it("Rerun a non-recurring workflow", () => {
-    cy.visit("/workflows");
-    cy.get("[data-cy=browseSchedule]").click();
-    cy.wait(1000);
-    cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-        cy.wrap($div)
-					.find("td")
-					.eq(4)
-					.should("have.text", "Non cron workflow");
-        cy.wrap($div)
-          .find("[data-cy=browseScheduleOptions]")
-          .click({ scrollBehavior: false });
-      });
-    cy.get("[data-cy=reRunSchedule]")
-      .eq(0)
-      .should("have.text", "Rerun Schedule")
-      .click({ force: true });
-  });
-
   it("Deleting the target application", () => {
 		cy.deleteTargetApplication("default", "target-app-1");
 	});
