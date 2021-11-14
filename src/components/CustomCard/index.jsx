@@ -22,14 +22,14 @@ const statusBadge = (step) => {
   if (step?.status !== "completed") {
     return <PendingIcon />;
   }
-  if (conclusionMap[step?.conclusion] === "pass") {
-    return <PassedIcon />;
+  switch (conclusionMap[step?.conclusion]) {
+    case "pass":
+      return <PassedIcon />;
+    case "fail":
+      return <FailedIcon />;
+    default:
+      return <SkippedIcon />;
   }
-  if (conclusionMap[step?.conclusion] === "fail") {
-    return <FailedIcon />;
-  }
-
-  return <SkippedIcon />;
 };
 
 const CustomCard = ({ data, url, displayBadge }) => {

@@ -4,9 +4,15 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     maxWidth: "8rem",
+    "& svg": {
+      color: theme.palette.label,
+    },
+    "& fieldset": {
+      borderColor: theme.palette.select,
+    },
   },
   label: {
-    color: "#0000008a",
+    color: theme.palette.label,
   },
   flexSpace: {
     display: "flex",

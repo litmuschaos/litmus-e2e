@@ -89,7 +89,7 @@ const Header = () => {
 
           <div className={classes.rightSection}>
             <div className={classes.slackIcon}>
-              {theme?.palette?.mode === "dark" ? (
+              {theme.palette.mode === "dark" ? (
                 <Brightness4Icon onClick={colorMode.toggleColorMode} />
               ) : (
                 <Brightness7Icon onClick={colorMode.toggleColorMode} />

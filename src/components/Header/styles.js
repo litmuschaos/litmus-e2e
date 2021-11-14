@@ -10,10 +10,10 @@ const useStyles = makeStyles((theme) => ({
     height: "4.9rem",
     display: "flex",
     justifyContent: "space-between",
-    background: theme?.palette?.header,
+    background: theme.palette.header,
     padding: theme.spacing(0, 7.5),
     "& *": {
-      color: "white",
+      color: theme.palette.text.secondary,
     },
     "& nav": {
       flexGrow: 1,

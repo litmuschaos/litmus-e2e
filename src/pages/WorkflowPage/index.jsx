@@ -81,7 +81,6 @@ const WorkflowPage = ({
                 id: "outlined-pipelineName",
               }}
             >
-              <option aria-label="None" value="" />
               {allData &&
                 allData.map((item) => (
                   <option value={item.id} key={item.id}>

@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     flexGrow: 1,
-    backgroundColor: theme?.palette?.background?.paper,
+    backgroundColor: theme.palette.background.paper,
     display: "flex",
     height: "max-content",
   },
   tabs: {
-    borderRight: `1px solid ${theme?.palette?.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   tab: {
     "& span.MuiTab-wrapper": {
@@ -41,12 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
   litmusIconStroke: {
     "& svg path": {
-      stroke: theme?.palette?.text?.primary,
+      stroke: theme.palette.text.primary,
     },
   },
   rotate: {
     animation: "spin 4s linear infinite",
-    color: theme?.palette?.text?.primary,
+    color: theme.palette.text.primary,
   },
 }));
 
