@@ -131,10 +131,10 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 				timeout: 600000,
 			}
 		);
-		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-network-loss", "revert-chaos", "delete-application"];
+		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
@@ -158,6 +158,6 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 	});
 
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
+		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
 	});
 });
