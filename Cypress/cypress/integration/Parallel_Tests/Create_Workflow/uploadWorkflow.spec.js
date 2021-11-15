@@ -153,7 +153,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Cron workflow", "Cron workflow");
 		cy.validateStatsChart();
-		cy.validateRecurringStats();
 		const experimentArray = [
 			{
 				experimentName: "pod-delete",
