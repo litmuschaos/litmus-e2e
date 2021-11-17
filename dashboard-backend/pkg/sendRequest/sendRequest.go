@@ -5,12 +5,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/customErrors"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/env"
 	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/customErrors"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/env"
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 
+// SendGetRequest makes a get request to the url
 func SendGetRequest(Url string) (interface{}, error) {
 	log.Infof("making get request to %s", Url)
 	req, err := http.NewRequest("GET", Url, nil)
@@ -53,6 +54,7 @@ func SendGetRequest(Url string) (interface{}, error) {
 	return objmap, nil
 }
 
+// SendGetRequestWrapper does error handling for SendGetRequest function
 func SendGetRequestWrapper(c *gin.Context, Url string) {
 	resp, err := SendGetRequest(Url)
 	if err != nil {

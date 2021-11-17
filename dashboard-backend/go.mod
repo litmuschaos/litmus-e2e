@@ -1,4 +1,4 @@
-module github.com/Aman-Codes/e2e-dashboard-backend
+module github.com/litmuschaos/e2e-dashboard-backend
 
 go 1.17
 

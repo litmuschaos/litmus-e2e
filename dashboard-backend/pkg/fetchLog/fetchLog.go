@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/constants"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/customErrors"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/env"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/unzip"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/constants"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/customErrors"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/env"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/unzip"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/utils"
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 
@@ -23,6 +23,7 @@ type LogsInput struct {
 	StepNumber string `json:"stepNumber" binding:"required"`
 }
 
+// parseUrl extracts fileName from the url
 func parseUrl(fullURLFile string) (string, error) {
 	log.Info("Start to fetch log")
 	fileURL, err := url.Parse(fullURLFile)
@@ -38,6 +39,7 @@ func parseUrl(fullURLFile string) (string, error) {
 	return fileName, nil
 }
 
+// fetchLog fetches job log
 func fetchLog(fullURLFile string, randomString string) error {
 	fileName, err := parseUrl(fullURLFile)
 	if err != nil {
@@ -92,6 +94,7 @@ func fetchLog(fullURLFile string, randomString string) error {
 	return nil
 }
 
+// FetchLogApi handles the fetch log request
 func FetchLogApi(c *gin.Context) {
 	var logsInput LogsInput
 	c.BindJSON(&logsInput)

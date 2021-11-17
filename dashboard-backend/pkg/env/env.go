@@ -7,11 +7,11 @@ import (
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 
+// GoDotEnvVariable loads the environment variable value for a key
 func GoDotEnvVariable(key string) string {
-	// load .env file
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Errorf("Error loading .env file")
 	}
 
 	return os.Getenv(key)

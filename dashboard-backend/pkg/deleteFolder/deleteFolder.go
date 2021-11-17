@@ -6,6 +6,7 @@ import (
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 
+// DeleteFolder deletes a folder
 func DeleteFolder(folderName string) {
 	log.Info("Start deleting folder")
 

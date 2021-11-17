@@ -7,11 +7,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/constants"
-	"github.com/Aman-Codes/e2e-dashboard-backend/pkg/customErrors"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/constants"
+	"github.com/litmuschaos/e2e-dashboard-backend/pkg/customErrors"
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 
+// Unzip unzipes a zipped folder
 func Unzip(fileName string, randomString string) error {
 	dst := constants.FolderPath + randomString
 	archive, err := zip.OpenReader(constants.FolderPath + randomString + fileName)
