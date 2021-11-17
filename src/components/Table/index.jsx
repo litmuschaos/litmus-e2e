@@ -80,6 +80,7 @@ const DataTable = ({
             target="_blank"
             rel="noopener noreferrer"
             href={params.value?.html_url}
+            className={classes.noUnderline}
           >
             {`#${params.value.sha.substring(0, 6)}`}
           </a>{" "}

@@ -76,6 +76,7 @@ export default function VerticalTabs({ data, pipelineId }) {
               href={`https://github.com/litmuschaos/litmus-e2e/actions/runs/${pipelineId}`}
               target="_blank"
               rel="noopener noreferrer"
+              className={classes.noUnderline}
             >
               {pipelineId}
               <Icon name="externalLink" className={classes.litmusIconStroke} />
@@ -97,6 +98,7 @@ export default function VerticalTabs({ data, pipelineId }) {
                   pass={result.pass}
                   fail={result.fail}
                   pending={result.pending}
+                  drawer
                 />
                 <a
                   href={data.jobs[value]?.html_url}

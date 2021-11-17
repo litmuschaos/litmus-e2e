@@ -47,7 +47,11 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="home" size="lg" color="white" />
+                <Icon
+                  name="home"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.home")}
               </Typography>
             </Link>
@@ -64,7 +68,11 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="scheduleWorkflow" size="lg" color="white" />
+                <Icon
+                  name="scheduleWorkflow"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.nightlyRuns")}
               </Typography>
             </Link>
@@ -81,7 +89,11 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="workflow" size="lg" color="white" />
+                <Icon
+                  name="workflow"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.manualRuns")}
               </Typography>
             </Link>

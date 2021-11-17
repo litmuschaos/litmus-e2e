@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
     animation: "spin 4s linear infinite",
     color: theme.palette.text.primary,
   },
+  noUnderline: {
+    textDecoration: "none",
+  },
 }));
 
 export default useStyles;

@@ -83,6 +83,7 @@ export const lightTheme = {
     secondary: "#FFFFFF",
     disabled: "#BCB9C6",
     hint: "#696F8C",
+    tertiary: "#FFFFFF",
   },
   highlight: "#5B44BA",
   horizontalStepper: {
@@ -124,6 +125,7 @@ export const lightTheme = {
   },
   label: "#0000008a",
   select: "#0000003b",
+  highlightText: "#FFFFFF",
 };
 
 export const darkTheme = {
@@ -211,6 +213,7 @@ export const darkTheme = {
     secondary: "#FFFFFF",
     disabled: "#BCB9C6",
     hint: "#696F8C",
+    tertiary: "#697386",
   },
   highlight: "#5B44BA",
   horizontalStepper: {
@@ -250,6 +253,7 @@ export const darkTheme = {
   icon: {
     primary: "black",
   },
-  label: "white",
-  select: "#FFFFFF",
+  label: "#696F8C",
+  select: "#696F8C",
+  highlightText: "#D1BCA0",
 };

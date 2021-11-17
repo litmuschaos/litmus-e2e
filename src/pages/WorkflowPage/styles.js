@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
   small: {
     fontSize: "0.8rem",
   },
+  subheading: {
+    color: theme.palette.text.hint,
+  },
 }));
 
 export default useStyles;

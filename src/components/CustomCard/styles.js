@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
       stroke: theme.palette.text.primary,
     },
   },
+  detailsLink: {
+    marginLeft: 0,
+    textDecoration: "none",
+  },
 }));
 
 export default useStyles;

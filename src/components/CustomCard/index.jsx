@@ -67,7 +67,7 @@ const CustomCard = ({ data, url, displayBadge }) => {
             pathname: url || "/workflows",
             state: { id: data?.id, readableName: data?.readableName },
           }}
-          style={{ marginLeft: 0 }}
+          className={classes.detailsLink}
         >
           <Button size="small" className={classes.button}>
             {t("card.pipelineDetails")}

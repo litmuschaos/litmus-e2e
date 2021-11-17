@@ -19,6 +19,30 @@ const useStyles = makeStyles((theme) => ({
       lineHeight: "1rem",
       height: "0.5rem",
     },
+    "& rect": {
+      fill: theme.palette.background.default,
+    },
+    "& div:nth-of-type(1)": {
+      background: theme.palette.background.default,
+    },
+  },
+  smallRadialChartDrawer: {
+    height: "3rem",
+    margin: "0.5rem 0",
+    width: "3rem",
+    "& p": {
+      fontSize: "1rem",
+      maxWidth: "8rem",
+      minWidth: "1rem",
+      lineHeight: "1rem",
+      height: "0.5rem",
+    },
+    "& rect": {
+      fill: theme.palette.background.paper,
+    },
+    "& div:nth-of-type(1)": {
+      background: theme.palette.background.paper,
+    },
   },
   largeRadialChart: {
     height: "7rem",
