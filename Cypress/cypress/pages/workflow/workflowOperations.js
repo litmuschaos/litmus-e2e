@@ -164,3 +164,15 @@ Cypress.Commands.add("deleteSchedule", () => {
         .eq(1)
         .click();
 });
+
+/// ************************** Terminate workflow ***********
+
+Cypress.Commands.add("terminateWorkflow", () => {
+    cy.get("[data-cy=browseWorkflowOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=terminateWorkflow]")
+        .eq(0)
+        .should("have.text", "Terminate Workflow")
+        .click({ force: true });
+});
