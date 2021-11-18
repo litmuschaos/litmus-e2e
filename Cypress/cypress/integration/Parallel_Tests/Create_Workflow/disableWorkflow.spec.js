@@ -125,7 +125,8 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	// it("Validating workflow existence and status on cluster", () => {
-	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true 
+	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 	// 	cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	// });
 
@@ -182,8 +183,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Cron workflow", "Cron workflow");
-		cy.validateStatsChart();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", "Self-Agent", "Cron workflow", "Cron workflow");
 		cy.validateRecurringStats();
 		const experimentArray = [
 			{
@@ -194,5 +194,15 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			}
 		];
 		cy.validateExperimentsTable(experimentArray);
+	});
+
+	it("Delete scheduled workflow", () => {
+		cy.visit("/workflows");
+        cy.GraphqlWait("workflowListDetails", "listSchedules");
+        cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+        cy.get("[data-cy=browseSchedule]").click();
+		cy.deleteSchedule();
+		// shouldExist = false
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, false);
 	});
 });

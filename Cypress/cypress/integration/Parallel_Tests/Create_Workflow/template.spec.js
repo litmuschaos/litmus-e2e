@@ -129,7 +129,8 @@ describe("Testing the workflow creation wizard using Templates", () => {
 	});
 
 	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 

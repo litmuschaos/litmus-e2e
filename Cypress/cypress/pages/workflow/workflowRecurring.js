@@ -9,6 +9,7 @@ Cypress.Commands.add("validateRecurringStats", () => {
                 .click();
         });
 
+    cy.get("[data-cy=statsBarGraph]").scrollIntoView();
     cy.get("[data-cy=statsBarGraph]").should("be.visible");
     cy.get("[data-cy=statsBarGraph")
         .within((el) => {

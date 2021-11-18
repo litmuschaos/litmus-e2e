@@ -149,3 +149,18 @@ Cypress.Commands.add("enableSchedule", () => {
         .should("have.text", "Enable Schedule")
         .click({ force: true });
 });
+
+/// ************************** Delete schedule ***********
+
+Cypress.Commands.add("deleteSchedule", () => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=deleteSchedule]")
+        .eq(0)
+        .should("have.text", "Delete Schedule")
+        .click({ force: true });
+    cy.get("[data-cy=deleteScheduleButtons] button")
+        .eq(1)
+        .click();
+});

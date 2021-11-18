@@ -74,7 +74,8 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   });
 
   it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+    // shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 

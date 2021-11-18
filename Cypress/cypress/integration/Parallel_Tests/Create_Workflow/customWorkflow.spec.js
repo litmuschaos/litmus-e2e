@@ -127,7 +127,8 @@ describe("Testing the validation of the final verdict without target application
 	});
 
 	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
@@ -341,7 +342,8 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
