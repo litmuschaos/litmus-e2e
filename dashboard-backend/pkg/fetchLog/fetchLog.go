@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +19,9 @@ import (
 )
 
 type LogsInput struct {
-	PipelineId string `json:"pipelineId" binding:"required"`
+	PipelineId int    `json:"pipelineId" binding:"required"`
 	JobName    string `json:"jobName" binding:"required"`
-	StepNumber string `json:"stepNumber" binding:"required"`
+	StepNumber int    `json:"stepNumber" binding:"required"`
 }
 
 // parseUrl extracts fileName from the url
@@ -99,9 +100,8 @@ func FetchLogApi(c *gin.Context) {
 	var logsInput LogsInput
 	c.BindJSON(&logsInput)
 	logsInput.JobName = filepath.Clean(logsInput.JobName)
-	logsInput.StepNumber = filepath.Clean(logsInput.StepNumber)
 	log.Infof("received parameters for post request are, pipelineId: %s, jobName: %s, stepNumber: %s", logsInput.PipelineId, logsInput.JobName, logsInput.StepNumber)
-	fullURLFile := constants.BaseGitHubUrl + "/repos/litmuschaos/litmus-e2e/actions/runs/" + logsInput.PipelineId + "/logs"
+	fullURLFile := constants.BaseGitHubUrl + "/repos/litmuschaos/litmus-e2e/actions/runs/" + strconv.Itoa(logsInput.PipelineId) + "/logs"
 	randomString := utils.RandString(8)
 	log.Infof("randomString is %s", randomString)
 	err := fetchLog(fullURLFile, randomString)
@@ -119,7 +119,7 @@ func FetchLogApi(c *gin.Context) {
 	}
 	for _, f := range files {
 		log.Infof("file name is %s", f.Name())
-		if strings.HasPrefix(f.Name(), logsInput.StepNumber+"_") {
+		if strings.HasPrefix(f.Name(), strconv.Itoa(logsInput.StepNumber)+"_") {
 			log.Infof("the required file name is %s", f.Name())
 			fileName := dir + "/" + f.Name()
 			log.Infof("start reading file %s", fileName)
