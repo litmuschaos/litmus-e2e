@@ -1,11 +1,10 @@
 // <reference types="Cypress" />
 import * as user from "../../../fixtures/Users.json";
 
+export const workflowNamespace = Cypress.env("namespace");
+export const agent = Cypress.env("agent");
+
 describe("Testing the workflow schedule on a recurring basis with a target application", () => {
-	
-	let workflowNamespace = Cypress.env("namespace");
-	let agent = Cypress.env("agent");
-	
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
 		cy.waitForCluster(agent);
@@ -51,11 +50,15 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
-    it("Disable schedule and validate if it's running or not", () => {
-        cy.visit("/workflows");
+	it("Download schedule manifest", () => {
+		cy.visit("/workflows");
         cy.GraphqlWait("workflowListDetails", "listSchedules");
         cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
-        cy.get("[data-cy=browseSchedule]").click();
+		cy.get("[data-cy=browseSchedule]").click();
+		cy.downloadWorkflowManifest(workflowName);
+	});
+
+    it("Disable schedule and validate if it's running or not", () => {
         cy.disableSchedule();
 		let FirstRowWorkflowName = '';
         cy.get("[data-cy=runs]").click();

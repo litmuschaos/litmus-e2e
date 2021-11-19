@@ -2,11 +2,10 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
+export const workflowNamespace = Cypress.env("namespace");
+export const agent = Cypress.env("agent");
+
 describe("Testing the workflow schedule on a recurring basis with a target application", () => {
-	
-	let workflowNamespace = Cypress.env("namespace");
-	let agent = Cypress.env("agent");
-	
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
 		cy.waitForCluster(agent);

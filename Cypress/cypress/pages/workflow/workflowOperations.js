@@ -98,7 +98,7 @@ Cypress.Commands.add("selectSchedule", (option, subOption, min = 0) => {
 
 /// ************************** Download workflow manifest ***********
 
-Cypress.Commands.add("downloadWorkflowManifest", () => {
+Cypress.Commands.add("downloadWorkflowManifest", (workflowName) => {
     cy.get("[data-cy=browseScheduleOptions]")
         .eq(0)
         .click({ scrollBehavior: false });
@@ -106,6 +106,7 @@ Cypress.Commands.add("downloadWorkflowManifest", () => {
         .eq(0)
         .should("have.text", "Download Manifest")
         .click({ force: true });
+    cy.readFile(`./cypress/downloads/${workflowName}.yaml`);
 });
 
 /// ************************** Edit workflow schedule ***********

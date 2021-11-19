@@ -2,11 +2,10 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
+export const workflowNamespace = Cypress.env("namespace");
+export const agent = Cypress.env("agent");
+
 describe("Testing the workflow creation wizard using Templates", () => {
-	
-	let workflowNamespace = Cypress.env("namespace");
-	let agent = Cypress.env("agent");
-	
 	before("Clearing the Cookies and deleting the Cookies", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
 		cy.waitForCluster(agent);
