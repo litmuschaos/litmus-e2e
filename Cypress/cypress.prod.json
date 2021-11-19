@@ -10,6 +10,8 @@
     "authURL": "/auth",
     "apiURL": "/api",
     "KUBE_API_SERVER": "",
-    "KUBE_API_TOKEN": ""
+    "KUBE_API_TOKEN": "",
+    "namespace" : "",
+    "agent" : ""
   }
 }

@@ -3,6 +3,10 @@ import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
 describe("Testing the upload Workflow with correct workflow manifest and target application", () => {
+  
+  let workflowNamespace = Cypress.env("namespace");
+	let agent = Cypress.env("agent");
+  
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster("Self-Agent");
@@ -10,7 +14,6 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   });
 
   let workflowName = '';
-  let workflowNamespace = '';
   let workflowSubject = '';
 
   it("Creating a target application", () => {
@@ -24,10 +27,8 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.wait(500);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     cy.wait(1000); // Waiting for Workflow Details to get filled
-    cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
-			workflowNamespace = $namespace.val();
-			return;
-		});
+    cy.get("[data-cy=WorkflowNamespace] input")
+      .should("have.value", workflowNamespace);
     // cy.configureWorkflowSettings(
     //   workflows.nonRecurringworkflowName,
     //   workflows.nonRecurringworkflowDescription,

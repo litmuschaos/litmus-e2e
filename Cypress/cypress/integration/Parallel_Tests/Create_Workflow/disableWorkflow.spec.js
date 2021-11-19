@@ -2,14 +2,17 @@
 import * as user from "../../../fixtures/Users.json";
 
 describe("Testing the workflow schedule on a recurring basis with a target application", () => {
+	
+	let workflowNamespace = Cypress.env("namespace");
+	let agent = Cypress.env("agent");
+	
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
-		cy.waitForCluster("Self-Agent");
+		cy.waitForCluster(agent);
 		cy.visit("/create-workflow");
 	});
 
 	let workflowName = '';
-	let workflowNamespace = '';
 	let workflowSubject = '';
 	let scheduleDate = '';
 	let scheduleTime = '';
@@ -19,15 +22,13 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
     	cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     	cy.chooseWorkflow(3, "");
     	cy.wait(500);
     	cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    	cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
-			workflowNamespace = $namespace.val();
-			return;
-		});
+    	cy.get("[data-cy=WorkflowNamespace] input")
+			.should("have.value", workflowNamespace);
 		cy.wait(1000);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		scheduleDate = new Date();
@@ -99,7 +100,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 					.find("td")
 					.eq(0)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(1).should("have.text", agent); // Matching Target Agent
 				scheduleTime = scheduleDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 				scheduleTime = scheduleTime.split(' ')[0];
 				cy.wrap($div)
@@ -142,7 +143,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 					.find("td")
 					.eq(2)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
 				// Workflow Statistics (Graph View)
 				cy.wrap($div).find("td").eq(2)
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
@@ -168,7 +169,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
 	});
 
 	it("Deleting the target application", () => {
@@ -183,7 +184,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", "Self-Agent", "Cron workflow", "Cron workflow");
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", agent, "Cron workflow", "Cron workflow");
 		cy.validateRecurringStats();
 		const experimentArray = [
 			{

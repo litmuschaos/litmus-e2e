@@ -3,27 +3,28 @@ import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
 describe("Testing the workflow creation wizard using PreDefined Experiments", () => {
+	
+	let workflowNamespace = Cypress.env("namespace");
+	let agent = Cypress.env("agent");
+
 	before("Clearing the Cookies and deleting the Cookies", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
-		cy.waitForCluster("Self-Agent");
+		cy.waitForCluster(agent);
 		cy.visit("/create-workflow");
 	});
 
 	let workflowName = '';
-	let workflowNamespace = '';
 
 	it("Running PreDefined Workflow", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
 		cy.GraphqlWait("GetPredefinedWorkflowList", "getPredefinedData");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		
 		cy.wait("@getPredefinedData");
 		cy.chooseWorkflow(0, 1);
 
-		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
-			workflowNamespace = $namespace.val();
-			return;
-		});
+		cy.get("[data-cy=WorkflowNamespace] input")
+			.should("have.value", workflowNamespace);
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -117,7 +118,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.find("td")
 					.eq(2)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
@@ -154,11 +155,11 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 					.find("td")
 					.eq(0)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(1).should("have.text", agent); // Matching Target Agent
 			});
 	});
 
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
 	});
 });
