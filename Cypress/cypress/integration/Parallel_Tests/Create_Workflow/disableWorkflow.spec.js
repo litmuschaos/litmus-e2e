@@ -50,15 +50,11 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
-	it("Download schedule manifest", () => {
+    it("Disable schedule and validate if it's running or not", () => {
 		cy.visit("/workflows");
         cy.GraphqlWait("workflowListDetails", "listSchedules");
         cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.get("[data-cy=browseSchedule]").click();
-		cy.downloadWorkflowManifest(workflowName);
-	});
-
-    it("Disable schedule and validate if it's running or not", () => {
         cy.disableSchedule();
 		let FirstRowWorkflowName = '';
         cy.get("[data-cy=runs]").click();
