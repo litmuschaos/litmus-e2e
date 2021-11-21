@@ -107,6 +107,7 @@ Cypress.Commands.add("downloadWorkflowManifest", (workflowName) => {
         .should("have.text", "Download Manifest")
         .click({ force: true });
     cy.readFile(`./cypress/downloads/${workflowName}.yaml`);
+    cy.task('deleteFolder', './cypress/downloads');
 });
 
 /// ************************** Edit workflow schedule ***********
