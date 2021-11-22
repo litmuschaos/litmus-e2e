@@ -8,6 +8,8 @@
   "video": false,
   "env": {
     "authURL": "/auth",
-    "apiURL": "/api"
+    "apiURL": "/api",
+    "namespace" : "litmus",
+    "agent" : "Self-Agent"
   }
 }
