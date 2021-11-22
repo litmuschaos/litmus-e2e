@@ -118,7 +118,8 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
-
+          CYPRESS_AGENT_NAMESPACE: ${{ env.CS_MODE_NAMESPACE}}
+          CYPRESS_AGENT: "self-agent"
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
       #   run: |
@@ -243,6 +244,8 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
+          CYPRESS_AGENT_NAMESPACE: ${{ env.NS_MODE_NAMESPACE}}
+          CYPRESS_AGENT: "self-agent"
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()

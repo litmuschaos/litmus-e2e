@@ -2,7 +2,7 @@
 import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
-export const agent = Cypress.env("agent");
+export const agent = Cypress.env("agent_namespace");
 
 describe("Testing the create Workflow Utility", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {

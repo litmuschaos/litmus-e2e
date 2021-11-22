@@ -12,7 +12,7 @@
     "apiURL": "http://localhost:8080",
     "KUBE_API_SERVER": "",
     "KUBE_API_TOKEN": "",
-    "namespace" : "litmus",
+    "agent_namespace" : "litmus",
     "agent" : "Self-Agent"
   }
 }

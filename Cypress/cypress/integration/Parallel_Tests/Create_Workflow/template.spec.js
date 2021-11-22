@@ -2,7 +2,7 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
-export const workflowNamespace = Cypress.env("namespace");
+export const workflowNamespace = Cypress.env("agent_namespace");
 export const agent = Cypress.env("agent");
 
 describe("Testing the workflow creation wizard using Templates", () => {
