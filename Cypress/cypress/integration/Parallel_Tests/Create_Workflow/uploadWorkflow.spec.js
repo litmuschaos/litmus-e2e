@@ -8,7 +8,7 @@ export const agent = Cypress.env("agent");
 describe("Testing the upload Workflow with correct workflow manifest and target application", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
-    cy.waitForCluster("Self-Agent");
+    cy.waitForCluster(agent);
     cy.visit("/create-workflow");
   });
 
@@ -20,7 +20,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 	});
 
   it("Running Workflows by uploading it", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(3, "");
     cy.wait(500);
@@ -93,7 +93,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
           .find("td")
           .eq(2)
           .should("have.text", workflowName); // Matching Workflow Name Regex
-        cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+        cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
         // cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
         // cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
         cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
@@ -132,12 +132,12 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
           .find("td")
           .eq(0)
           .should("have.text", workflowName); // Matching Workflow Name Regex
-        cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+        cy.wrap($div).find("td").eq(1).should("have.text", agent); // Matching Target Agent
       });
   });
   
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
 	});
 
   it("Deleting the target application", () => {
@@ -152,7 +152,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Cron workflow", "Cron workflow");
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Cron workflow", "Cron workflow");
 		cy.validateStatsChart();
 		const experimentArray = [
 			{
@@ -169,12 +169,12 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 describe("Testing the upload Workflow with incorrect workflow manifest", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
-    cy.waitForCluster("Self-Agent");
+    cy.waitForCluster(agent);
     cy.visit("/create-workflow");
   });
 
   it("Running Workflows by uploading it", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
     cy.get("[data-cy=ControlButtons] Button").eq(0).click();
     cy.chooseWorkflow(3, "", "sample-workflow-incorrect.yaml");
     cy.get("[data-cy=ErrorUploadYAML]").should("have.text", "Retry Upload");
