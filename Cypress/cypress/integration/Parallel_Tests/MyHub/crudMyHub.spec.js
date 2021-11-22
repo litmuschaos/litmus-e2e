@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import * as user from "../../../fixtures/Users.json";
 
-export const agent = Cypress.env("AGENT_NAMESPACE");
+export const agent = Cypress.env("AGENT");
 
 describe("Testing CRUD operation with MyHub", () => {
 	before(
