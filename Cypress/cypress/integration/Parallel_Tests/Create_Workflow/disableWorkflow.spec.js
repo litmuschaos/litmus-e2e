@@ -1,8 +1,8 @@
 // <reference types="Cypress" />
 import * as user from "../../../fixtures/Users.json";
 
-export const workflowNamespace = Cypress.env("agent_namespace");
-export const agent = Cypress.env("agent");
+export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
+export const agent = Cypress.env("AGENT");
 
 describe("Testing the workflow schedule on a recurring basis with a target application", () => {
 	before("Loggin in and checking if agent exists", () => {

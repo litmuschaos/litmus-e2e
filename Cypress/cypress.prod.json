@@ -11,7 +11,7 @@
     "apiURL": "/api",
     "KUBE_API_SERVER": "",
     "KUBE_API_TOKEN": "",
-    "namespace" : "litmus",
-    "agent" : "Self-Agent"
+    "AGENT_NAMESPACE" : "litmus",
+    "AGENT" : "Self-Agent"
   }
 }

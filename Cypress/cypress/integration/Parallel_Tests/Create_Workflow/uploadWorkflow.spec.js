@@ -2,8 +2,8 @@
 import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
-export const workflowNamespace = Cypress.env("agent_namespace");
-export const agent = Cypress.env("agent");
+export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
+export const agent = Cypress.env("AGENT");
 
 describe("Testing the upload Workflow with correct workflow manifest and target application", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {

@@ -7,7 +7,7 @@
 import * as user from "../../fixtures/Users.json";
 import * as workflows from "../../fixtures/Workflows.json";
 
-export const agent = Cypress.env("agent");
+export const agent = Cypress.env("AGENT_NAMESPACE");
 
 export const setup = (doWaitForCluster) => {          
     if(doWaitForCluster){

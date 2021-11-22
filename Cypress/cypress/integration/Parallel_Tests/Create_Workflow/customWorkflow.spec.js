@@ -2,8 +2,8 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
-export const workflowNamespace = Cypress.env("agent_namespace");
-export const agent = Cypress.env("agent");
+export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
+export const agent = Cypress.env("AGENT");
 
 describe("Testing the validation of the final verdict without target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {

@@ -9,7 +9,7 @@
   "env": {
     "authURL": "/auth",
     "apiURL": "/api",
-    "namespace" : "litmus",
-    "agent" : "Self-Agent"
+    "AGENT_NAMESPACE" : "litmus",
+    "AGENT" : "Self-Agent"
   }
 }
