@@ -58,7 +58,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
         cy.disableSchedule();
 		let FirstRowWorkflowName = '';
         cy.get("[data-cy=runs]").click();
-		cy.wait(120000);
+		const currDate = new Date();
+		const timeDiff = scheduleDate.getTime() - currDate.getTime();
+		cy.wait(timeDiff);
         cy.get("table")
 			.find("tr")
 		    .eq(1)
