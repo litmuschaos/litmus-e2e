@@ -10,6 +10,7 @@
     "authURL": "/auth",
     "apiURL": "/api",
     "AGENT_NAMESPACE" : "litmus",
-    "AGENT" : "Self-Agent"
+    "AGENT" : "Self-Agent",
+    "TARGET_APP_NS" : "default"
   }
 }
