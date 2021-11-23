@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Loader from "components/Loader";
 import { sendPostRequest } from "api/sendRequest";
 import endpoints from "constants/endpoints";
 import useStyles from "./styles";
 
 const CustomAccordion = ({ pipelineId, jobName, stepNumber, children }) => {
+  const { t } = useTranslation();
   const [show, setShow] = useState(false);
   const [logs, setLogs] = useState(null);
   const classes = useStyles();
@@ -19,7 +21,9 @@ const CustomAccordion = ({ pipelineId, jobName, stepNumber, children }) => {
         .then((data) => {
           setLogs(data);
         })
-        .catch(() => {});
+        .catch(() => {
+          setLogs(t("error.logs"));
+        });
     }
   }, [show]);
   return (

@@ -8,6 +8,7 @@ import sendGetRequest from "api/sendRequest";
 import CustomRadialProgressChart from "components/CustomRadialProgressChart";
 import Loader from "components/Loader";
 import { nightlyRegex, manualRegex } from "constants/regex";
+import { getLocalStorage } from "shared/storageHelper";
 import useStyles from "./styles";
 
 const AllWorkflows = () => {
@@ -17,8 +18,9 @@ const AllWorkflows = () => {
     let pipelines;
     sendGetRequest(endpoints.allPipelines()).then((data) => {
       pipelines = data?.workflow_runs;
+      const filteredPipelines = [];
       const promiseList = [];
-      pipelines?.every((pipeline, index) => {
+      pipelines?.every((pipeline) => {
         if (
           pipeline.name.match(nightlyRegex) != null ||
           pipeline.name.match(manualRegex) != null
@@ -26,16 +28,26 @@ const AllWorkflows = () => {
           promiseList.push(
             sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
               (response) => {
-                pipelines[index].status = jobStepResult(response?.jobs);
+                filteredPipelines.push({
+                  ...pipeline,
+                  status: jobStepResult(response?.jobs),
+                });
               }
             )
           );
-          if (promiseList.length === 10) return false;
+          if (filteredPipelines.length === 10) return false;
         }
         return true;
       });
       Promise.all(promiseList).then(() => {
-        setPipelineData(pipelines);
+        const litmusGoCommits = getLocalStorage("litmusGoCommits");
+        for (let i = 0; i < filteredPipelines.length; ++i) {
+          filteredPipelines[i].litmusGoCommits = {
+            html_url: litmusGoCommits?.[i]?.html_url,
+            sha: litmusGoCommits?.[i]?.sha,
+          };
+        }
+        setPipelineData(filteredPipelines);
       });
     });
   }, []);

@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
   pre: {
     width: "40rem",
-    overflowX: "scroll",
+    overflowX: "auto",
   },
 }));
 

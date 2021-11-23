@@ -51,6 +51,13 @@ const WorkflowPage = ({
             );
           });
           Promise.all(promiseList).then(() => {
+            const litmusGoCommits = getLocalStorage("litmusGoCommits");
+            for (let i = 0; i < pipelines.length; ++i) {
+              pipelines[i].litmusGoCommits = {
+                html_url: litmusGoCommits?.[i]?.html_url,
+                sha: litmusGoCommits?.[i]?.sha,
+              };
+            }
             setWorkflowData(pipelines);
           });
         }
