@@ -37,9 +37,10 @@ func Router() {
 		workflowName := c.Param("workflowName")
 		sendRequest.SendGetRequestWrapper(c, constants.BaseGitHubUrl+"/repos/"+orgName+"/litmus-e2e/actions/workflows/"+workflowName+"/runs")
 	})
-	router.GET("/repos/:orgName/litmus-go/commits", func(c *gin.Context) {
+	router.GET("/repos/:orgName/:repoName/commits", func(c *gin.Context) {
 		orgName := c.Param("orgName")
-		sendRequest.SendGetRequestWrapper(c, constants.BaseGitHubUrl+"/repos/"+orgName+"/litmus-go/commits")
+		repoName := c.Param("repoName")
+		sendRequest.SendGetRequestWrapper(c, constants.BaseGitHubUrl+"/repos/"+orgName+"/"+repoName+"/commits")
 	})
 	router.Run(":8080")
 }
