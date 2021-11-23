@@ -5,6 +5,7 @@ import { targetAppNamespace } from "./template.spec";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
 
 describe("Testing the workflow creation wizard using PreDefined Experiments", () => {
 	before("Clearing the Cookies and deleting the Cookies", () => {
@@ -59,7 +60,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			});
 		const workflowParameters = {
 			general : {
-				context : "podtato-main-pod-delete-chaos_litmus"
+				context : `podtato-main-pod-delete-chaos_${targetAppNamespace}`
 			},
 			targetApp : {
 				annotationCheckToggle : false,

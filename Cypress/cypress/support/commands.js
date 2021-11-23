@@ -58,7 +58,11 @@ Cypress.Commands.add("createTargetApplication", (namespace, targetAppName, label
     apiVersion: "apps/v1",
     kind: "Deployment",
     metadata: {
-      name: targetAppName
+      name: targetAppName,
+      labels: {
+        app: label,
+        name: label,
+      },
     },
     spec: {
       replicas: 1,
