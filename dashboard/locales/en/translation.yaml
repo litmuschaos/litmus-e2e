@@ -14,6 +14,9 @@ radialChart:
   fail: Fail
   pending: Pending
 
+radialProgressChart:
+  testCoverage: Test Coverage
+
 header:
   e2eDashboard: E2E Dashboard
   nightlyRuns:  Nightly Runs
