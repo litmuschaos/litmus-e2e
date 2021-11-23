@@ -10,7 +10,8 @@ import { readableNameConverter } from "shared/helper";
 import { jobStepResult, descriptionMapping } from "shared/job";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
-import CustomRadialChart from "components/CustomRadialChart";
+import CustomRadialProgressChart from "components/CustomRadialProgressChart";
+import Loader from "components/Loader";
 import useStyles from "./styles";
 
 const WorkflowPage = ({
@@ -61,7 +62,9 @@ const WorkflowPage = ({
     <>
       <div className={classes.flexSpace}>
         <div className={classes.flexStart}>
-          <Typography>{t("pipelinePage.selectPipeline")}:</Typography>
+          <Typography className={classes.small}>
+            {t("pipelinePage.selectPipeline")}:
+          </Typography>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel
               htmlFor="outlined-pipelineName"
@@ -79,7 +82,6 @@ const WorkflowPage = ({
                 id: "outlined-pipelineName",
               }}
             >
-              <option aria-label="None" value="" />
               {allData &&
                 allData.map((item) => (
                   <option value={item.id} key={item.id}>
@@ -90,19 +92,14 @@ const WorkflowPage = ({
           </FormControl>
         </div>
         <div className={classes.m0}>
-          <Typography
-            variant="heading3"
-            component="h2"
-            align="center"
-            className={classes.topMargin}
-          >
+          <Typography variant="heading3" component="h2" align="center">
             {readableNameConverter(selectedPipeline?.readableName) ||
               readableNameConverter(pipelineName)}
           </Typography>
           <Typography
             component="h3"
             align="center"
-            className={classes.topMargin}
+            className={classes.subheading}
           >
             {descriptionMapping[selectedPipeline?.readableName] ||
               descriptionMapping[pipelineName]}
@@ -110,22 +107,21 @@ const WorkflowPage = ({
         </div>
         {selectedPipeline.id && (
           <div>
-            <CustomRadialChart
-              pass={20}
-              fail={5}
-              pending={2}
-              size="large"
-              heading="Test Coverage"
+            <CustomRadialProgressChart
+              passPercentage={60}
+              heading={t("radialProgressChart.testCoverage")}
             />
           </div>
         )}
       </div>
-      {selectedPipeline.id && workflowData && (
+      {selectedPipeline.id && workflowData ? (
         <Table
           tableName={selectedPipeline.readableName}
           data={workflowData}
           displayVersion={false}
         />
+      ) : (
+        <Loader />
       )}
     </>
   );

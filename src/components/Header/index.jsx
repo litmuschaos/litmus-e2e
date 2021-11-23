@@ -1,15 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { useTheme } from "@material-ui/styles";
 import { Typography } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
 import { Icon } from "litmus-ui";
+import ColorModeContext from "shared/ColorModeContext";
 import SlackLogo from "./images/slack.svg";
 import GitHubLogo from "./images/github.svg";
 import useStyles from "./styles";
 
 const Header = () => {
+  const theme = useTheme();
+  const colorMode = React.useContext(ColorModeContext);
   const classes = useStyles();
   const { t } = useTranslation();
   return (
@@ -41,7 +47,11 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="home" size="lg" color="white" />
+                <Icon
+                  name="home"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.home")}
               </Typography>
             </Link>
@@ -58,7 +68,11 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="scheduleWorkflow" size="lg" color="white" />
+                <Icon
+                  name="scheduleWorkflow"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.nightlyRuns")}
               </Typography>
             </Link>
@@ -75,13 +89,24 @@ const Header = () => {
               className={classes.nounderline}
             >
               <Typography variant="body1">
-                <Icon name="workflow" size="lg" color="white" />
+                <Icon
+                  name="workflow"
+                  size="lg"
+                  color={theme.palette.text.tertiary}
+                />
                 &nbsp;{t("header.manualRuns")}
               </Typography>
             </Link>
           </div>
 
           <div className={classes.rightSection}>
+            <div className={classes.slackIcon}>
+              {theme.palette.mode === "dark" ? (
+                <Brightness4Icon onClick={colorMode.toggleColorMode} />
+              ) : (
+                <Brightness7Icon onClick={colorMode.toggleColorMode} />
+              )}
+            </div>
             <div className={classes.slackIcon}>
               <a
                 href="https://slack.litmuschaos.io/"

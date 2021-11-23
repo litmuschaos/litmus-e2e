@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CustomCard from "components/CustomCard";
+import Loader from "components/Loader";
 import useStyles from "./styles";
 
 const HomePage = ({ location, pipelineData }) => {
@@ -19,21 +20,33 @@ const HomePage = ({ location, pipelineData }) => {
     });
   }, [JSON.stringify(location?.state?.pipelinesToDisplay)]);
   return (
-    <div className={classes.flex}>
-      {pipelinesToDisplay?.nightly && pipelinesToDisplay?.manual && (
-        <CustomCard data={pipelines?.all} key="all" url="/all" />
+    <>
+      {(!pipelines?.all || !pipelines?.nightly || !pipelines?.manual) && (
+        <Loader />
       )}
-      {pipelinesToDisplay.nightly &&
-        pipelines?.nightly &&
-        pipelines?.nightly?.map((pipeline) => (
-          <CustomCard data={pipeline} key={pipeline?.id} />
-        ))}
-      {pipelinesToDisplay.manual &&
-        pipelines?.manual &&
-        pipelines?.manual?.map((pipeline) => (
-          <CustomCard data={pipeline} key={pipeline?.id} />
-        ))}
-    </div>
+      <div className={classes.flex}>
+        {pipelinesToDisplay?.nightly &&
+          pipelinesToDisplay?.manual &&
+          pipelines?.all && (
+            <CustomCard
+              data={pipelines?.all}
+              key="all"
+              url="/all"
+              displayBadge={false}
+            />
+          )}
+        {pipelinesToDisplay.nightly &&
+          pipelines?.nightly &&
+          pipelines?.nightly?.map((pipeline) => (
+            <CustomCard data={pipeline} key={pipeline?.id} displayBadge />
+          ))}
+        {pipelinesToDisplay.manual &&
+          pipelines?.manual &&
+          pipelines?.manual?.map((pipeline) => (
+            <CustomCard data={pipeline} key={pipeline?.id} displayBadge />
+          ))}
+      </div>
+    </>
   );
 };
 

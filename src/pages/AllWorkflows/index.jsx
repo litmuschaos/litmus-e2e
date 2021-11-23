@@ -5,7 +5,9 @@ import Table from "components/Table";
 import { jobStepResult } from "shared/job";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
-import CustomRadialChart from "components/CustomRadialChart";
+import CustomRadialProgressChart from "components/CustomRadialProgressChart";
+import Loader from "components/Loader";
+import { nightlyRegex, manualRegex } from "constants/regex";
 import useStyles from "./styles";
 
 const AllWorkflows = () => {
@@ -16,14 +18,21 @@ const AllWorkflows = () => {
     sendGetRequest(endpoints.allPipelines()).then((data) => {
       pipelines = data?.workflow_runs;
       const promiseList = [];
-      pipelines?.forEach((pipeline, index) => {
-        promiseList.push(
-          sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
-            (response) => {
-              pipelines[index].status = jobStepResult(response?.jobs);
-            }
-          )
-        );
+      pipelines?.every((pipeline, index) => {
+        if (
+          pipeline.name.match(nightlyRegex) != null ||
+          pipeline.name.match(manualRegex) != null
+        ) {
+          promiseList.push(
+            sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
+              (response) => {
+                pipelines[index].status = jobStepResult(response?.jobs);
+              }
+            )
+          );
+          if (promiseList.length === 10) return false;
+        }
+        return true;
       });
       Promise.all(promiseList).then(() => {
         setPipelineData(pipelines);
@@ -35,39 +44,33 @@ const AllWorkflows = () => {
     <>
       <div className={classes.flexSpace}>
         <div className={classes.m0}>
-          <Typography
-            variant="heading3"
-            component="h2"
-            align="center"
-            className={classes.topMargin}
-          >
+          <Typography variant="heading3" component="h2" align="center">
             {t("pipelinePage.allWorkflows")}
           </Typography>
           <Typography
             component="h3"
             align="center"
-            className={classes.topMargin}
+            className={classes.subheading}
           >
             {t("pipelinePage.allWorkflowsDesc")}
           </Typography>
         </div>
         <div>
-          <CustomRadialChart
-            pass={20}
-            fail={5}
-            pending={2}
-            size="large"
-            heading="Test Coverage"
+          <CustomRadialProgressChart
+            passPercentage={60}
+            heading={t("radialProgressChart.testCoverage")}
           />
         </div>
       </div>
-      {pipelineData && (
+      {pipelineData ? (
         <Table
           tableName={t("pipelinePage.allWorkflows")}
           data={pipelineData}
           displayVersion={false}
           displayPipelineName
         />
+      ) : (
+        <Loader />
       )}
     </>
   );

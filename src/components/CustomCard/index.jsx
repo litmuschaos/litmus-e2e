@@ -12,47 +12,53 @@ import { Icon } from "litmus-ui";
 import { Link } from "react-router-dom";
 import { timeDifferenceStrict } from "shared/helper";
 import { conclusionMap } from "shared/job";
-import { ReactComponent as FailedIcon } from "svg/Failed.svg";
-import { ReactComponent as PassedIcon } from "svg/Passed.svg";
-import { ReactComponent as PendingIcon } from "svg/Pending.svg";
-import { ReactComponent as SkippedIcon } from "svg/Skipped.svg";
+import { ReactComponent as FailedIcon } from "svg/failed.svg";
+import { ReactComponent as PassedIcon } from "svg/success.svg";
+import { ReactComponent as PendingIcon } from "svg/inProgress.svg";
+import { ReactComponent as SkippedIcon } from "svg/skipped.svg";
 import useStyles from "./styles";
 
 const statusBadge = (step) => {
-  const classes = useStyles();
   if (step?.status !== "completed") {
-    return <PendingIcon className={classes.icon} />;
+    return <PendingIcon />;
   }
-  if (conclusionMap[step?.conclusion] === "pass") {
-    return <PassedIcon className={classes.icon} />;
+  switch (conclusionMap[step?.conclusion]) {
+    case "pass":
+      return <PassedIcon />;
+    case "fail":
+      return <FailedIcon />;
+    default:
+      return <SkippedIcon />;
   }
-  if (conclusionMap[step?.conclusion] === "fail") {
-    return <FailedIcon className={classes.icon} />;
-  }
-
-  return <SkippedIcon className={classes.icon} />;
 };
 
-const CustomCard = ({ data, url }) => {
+const CustomCard = ({ data, url, displayBadge }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent className={classes.p0}>
         <Typography className={classes.title} gutterBottom>
-          {statusBadge(data?.workflow_runs)} {data?.readableName}
+          {data?.readableName}
         </Typography>
-        <Icon name="scheduleWorkflow" size="lg" color="black" />{" "}
+        <Icon
+          name="scheduleWorkflow"
+          size="lg"
+          className={classes.litmusIcon}
+        />{" "}
         {`${timeDifferenceStrict(
           data?.workflow_runs?.updated_at,
           new Date()
         )} ago`}
         <br /> <br />
-        <Chip
-          label={t("card.litmus-e2e")}
-          color="primary"
-          className={classes.chip}
-        />
+        <div className={classes.flex}>
+          <Chip
+            label={t("card.litmus-e2e")}
+            color="primary"
+            className={classes.chip}
+          />
+          {displayBadge ? statusBadge(data?.workflow_runs) : null}
+        </div>
       </CardContent>
       <CardActions>
         <PlayCircleFilled />
@@ -61,7 +67,7 @@ const CustomCard = ({ data, url }) => {
             pathname: url || "/workflows",
             state: { id: data?.id, readableName: data?.readableName },
           }}
-          style={{ marginLeft: 0 }}
+          className={classes.detailsLink}
         >
           <Button size="small" className={classes.button}>
             {t("card.pipelineDetails")}

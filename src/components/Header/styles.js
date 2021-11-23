@@ -13,35 +13,20 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.header,
     padding: theme.spacing(0, 7.5),
     "& *": {
-      color: theme.palette.text.secondary,
+      color: theme.palette.text.tertiary,
     },
     "& nav": {
       flexGrow: 1,
       marginLeft: theme.spacing(15),
     },
   },
-  details: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
   nounderline: {
     textDecoration: "none",
   },
   chaosText: {
     fontSize: "1.625rem",
-    color: theme.palette.text.secondary,
     fontWeight: 600,
-  },
-  active: {
-    background: `${theme.palette.cards.highlight} !important`,
-  },
-  profileButtons: {
-    marginTop: theme.spacing(3.75),
-  },
-  homeIcon: {
-    "& svg": {
-      marginBottom: "0.3rem",
-    },
+    color: theme.palette.highlightText,
   },
   rightSection: {
     display: "flex",
@@ -63,6 +48,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     "& a": {
       margin: "0 1.5rem",
+    },
+    "& a:hover p": {
+      color: theme.palette.highlightText,
+    },
+    "& a:hover svg path": {
+      stroke: theme.palette.highlightText,
+      fill: theme.palette.highlightText,
     },
   },
 }));

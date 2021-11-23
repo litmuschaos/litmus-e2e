@@ -5,6 +5,7 @@ import TimelineSeparator from "@material-ui/lab/TimelineSeparator";
 import TimelineConnector from "@material-ui/lab/TimelineConnector";
 import TimelineContent from "@material-ui/lab/TimelineContent";
 import TimelineDot from "@material-ui/lab/TimelineDot";
+import LoopIcon from "@material-ui/icons/Loop";
 import { Icon } from "litmus-ui";
 import { timeDifference } from "shared/helper";
 import useStyles from "./styles";
@@ -94,7 +95,7 @@ const TimelineItemComponent = ({ step, connectorLine = true }) => {
     <TimelineItem>
       <TimelineSeparator>
         <TimelineDot>
-          <Icon name="experimentPending" color={colours.running} />
+          <LoopIcon className={classes.rotate} />
         </TimelineDot>
         {connectorLine && <TimelineConnector />}
       </TimelineSeparator>

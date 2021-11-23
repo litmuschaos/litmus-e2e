@@ -34,6 +34,23 @@ const useStyles = makeStyles((theme) => ({
       alignItems: "flex-start",
     },
   },
+  litmusIconFill: {
+    "& svg path": {
+      fill: theme.palette.text.primary,
+    },
+  },
+  litmusIconStroke: {
+    "& svg path": {
+      stroke: theme.palette.text.primary,
+    },
+  },
+  rotate: {
+    animation: "spin 4s linear infinite",
+    color: theme.palette.text.primary,
+  },
+  noUnderline: {
+    textDecoration: "none",
+  },
 }));
 
 export default useStyles;

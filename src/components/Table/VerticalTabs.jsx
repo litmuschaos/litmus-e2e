@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import { CircularProgress } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -75,13 +76,18 @@ export default function VerticalTabs({ data, pipelineId }) {
               href={`https://github.com/litmuschaos/litmus-e2e/actions/runs/${pipelineId}`}
               target="_blank"
               rel="noopener noreferrer"
+              className={classes.noUnderline}
             >
               {pipelineId}
-              <Icon name="externalLink" />
+              <Icon name="externalLink" className={classes.litmusIconStroke} />
             </a>
             <br />
-            <Icon name="clock" size="sm" /> {getTotalPipelineTime(data?.jobs)}{" "}
-            <br />
+            <Icon
+              name="clock"
+              size="sm"
+              className={classes.litmusIconFill}
+            />{" "}
+            {getTotalPipelineTime(data?.jobs)} <br />
           </p>
         </Grid>
         <Grid item xs={5}>
@@ -92,6 +98,7 @@ export default function VerticalTabs({ data, pipelineId }) {
                   pass={result.pass}
                   fail={result.fail}
                   pending={result.pending}
+                  drawer
                 />
                 <a
                   href={data.jobs[value]?.html_url}
@@ -106,6 +113,11 @@ export default function VerticalTabs({ data, pipelineId }) {
                 >
                   <GitHubIcon style={{ height: "auto", fontSize: "2.1rem" }} />
                 </a>
+                {result.pending ? (
+                  <CircularProgress
+                    style={{ maxWidth: "30", maxHeight: "30", margin: "1rem" }}
+                  />
+                ) : null}
               </>
             )}
           </div>

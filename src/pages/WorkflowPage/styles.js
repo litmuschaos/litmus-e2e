@@ -3,10 +3,16 @@ import { makeStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    maxWidth: "8rem",
+    "& svg": {
+      color: theme.palette.label,
+    },
+    "& fieldset": {
+      borderColor: theme.palette.select,
+    },
   },
   label: {
-    color: "#0000008a",
+    color: theme.palette.label,
   },
   flexSpace: {
     display: "flex",
@@ -19,6 +25,12 @@ const useStyles = makeStyles((theme) => ({
   },
   m0: {
     margin: "auto 0",
+  },
+  small: {
+    fontSize: "0.8rem",
+  },
+  subheading: {
+    color: theme.palette.text.hint,
   },
 }));
 

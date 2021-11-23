@@ -9,9 +9,22 @@ const CustomRadialChart = ({
   pending = 0,
   size = "small",
   heading,
+  drawer = false,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const setClassName = () => {
+    if (drawer) {
+      if (size === "small") {
+        return classes.smallRadialChartDrawer;
+      }
+      return classes.largeRadialChartDrawer;
+    }
+    if (size === "small") {
+      return classes.smallRadialChart;
+    }
+    return classes.largeRadialChart;
+  };
   return (
     <CustomTooltip
       title={
@@ -26,11 +39,7 @@ const CustomRadialChart = ({
       placement="right"
       arrow
     >
-      <div
-        className={
-          size === "small" ? classes.smallRadialChart : classes.largeRadialChart
-        }
-      >
+      <div className={setClassName()}>
         <RadialChart
           showCenterHeading={!!heading}
           heading={heading}

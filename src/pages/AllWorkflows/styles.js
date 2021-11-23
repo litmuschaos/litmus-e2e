@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   flexSpace: {
     display: "flex",
     justifyContent: "center",
@@ -12,6 +12,9 @@ const useStyles = makeStyles(() => ({
   },
   m0: {
     margin: "auto 0",
+  },
+  subheading: {
+    color: theme.palette.text.hint,
   },
 }));
 
