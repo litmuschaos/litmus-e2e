@@ -83,7 +83,7 @@ describe("Testing the validation of the final verdict without target application
 			},
 			targetApp : {
 			  annotationCheckToggle : false,
-			  appns : "default",
+			  appns : targetAppNamespace,
 			  appKind : "deployment",
 			  appLabel : "app=nginx"
 			},

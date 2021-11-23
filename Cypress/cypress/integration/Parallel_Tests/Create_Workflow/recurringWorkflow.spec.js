@@ -110,7 +110,6 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 					.should("have.text", workflowName); // Matching Workflow Name Regex
 				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
 				// Workflow Statistics (Graph View)
-				cy.wrap($div).find("td").eq(2)
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();

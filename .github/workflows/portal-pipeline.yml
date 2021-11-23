@@ -14,7 +14,7 @@ env:
   MODULE: "${{github.event.inputs.Module}}"
   SELF_AGENT: "self-agent"
   CS_MODE_NAMESPACE: "litmus"
-  NS_MODE_NAMESPACE: "scope"
+  NS_MODE_NAMESPACE: "default"
   EXTERNAL_AGENT: "external-agent"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
