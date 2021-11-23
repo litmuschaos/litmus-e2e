@@ -60,7 +60,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			});
 		const workflowParameters = {
 			general : {
-				context : `podtato-main-pod-delete-chaos_${targetAppNamespace}`
+				context : `podtato-main-pod-delete-chaos_${workflowNamespace}`
 			},
 			targetApp : {
 				annotationCheckToggle : false,

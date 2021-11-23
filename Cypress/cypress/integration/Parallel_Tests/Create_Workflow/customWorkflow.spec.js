@@ -79,7 +79,7 @@ describe("Testing the validation of the final verdict without target application
 			general : {
 			  hubName : "Litmus ChaosHub",
 			  experimentName : "pod-delete",
-			  context : `pod-delete_${targetAppNamespace}`
+			  context : `pod-delete_${workflowNamespace}`
 			},
 			targetApp : {
 			  annotationCheckToggle : false,
@@ -109,7 +109,7 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${targetAppNamespace}`);
+		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
@@ -288,7 +288,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			general : {
 			  hubName : "Litmus ChaosHub",
 			  experimentName : "pod-delete",
-			  context : `pod-delete_${targetAppNamespace}`
+			  context : `pod-delete_${workflowNamespace}`
 			},
 			targetApp : {
 			  annotationCheckToggle : false,
@@ -318,7 +318,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${targetAppNamespace}`);
+		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
