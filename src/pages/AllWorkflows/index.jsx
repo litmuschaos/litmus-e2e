@@ -8,7 +8,6 @@ import sendGetRequest from "api/sendRequest";
 import CustomRadialProgressChart from "components/CustomRadialProgressChart";
 import Loader from "components/Loader";
 import { nightlyRegex, manualRegex } from "constants/regex";
-import { getLocalStorage } from "shared/storageHelper";
 import useStyles from "./styles";
 
 const AllWorkflows = () => {
@@ -40,13 +39,9 @@ const AllWorkflows = () => {
         return true;
       });
       Promise.all(promiseList).then(() => {
-        const litmusGoCommits = getLocalStorage("litmusGoCommits");
-        for (let i = 0; i < filteredPipelines.length; ++i) {
-          filteredPipelines[i].litmusGoCommits = {
-            html_url: litmusGoCommits?.[i]?.html_url,
-            sha: litmusGoCommits?.[i]?.sha,
-          };
-        }
+        filteredPipelines.forEach((_value, index) => {
+          filteredPipelines[index].index = index;
+        });
         setPipelineData(filteredPipelines);
       });
     });

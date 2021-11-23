@@ -7,6 +7,7 @@ import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
 import CustomRadialChart from "components/CustomRadialChart";
 import endpoints from "constants/endpoints";
 import sendGetRequest from "api/sendRequest";
+import { getLocalStorage } from "shared/storageHelper";
 import VerticalTabs from "./VerticalTabs";
 import useStyles from "./styles";
 
@@ -23,6 +24,26 @@ const DataTable = ({
   const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
   const { t } = useTranslation();
+  const getUrl = (repoName, index) => {
+    switch (repoName) {
+      case "litmus-go":
+        return getLocalStorage("litmusGoCommits")?.[index]?.html_url;
+      case "litmus":
+        return getLocalStorage("litmusCommits")?.[index]?.html_url;
+      default:
+        return null;
+    }
+  };
+  const getSha = (repoName, index) => {
+    switch (repoName) {
+      case "litmus-go":
+        return getLocalStorage("litmusGoCommits")?.[index]?.sha;
+      case "litmus":
+        return getLocalStorage("litmusCommits")?.[index]?.sha;
+      default:
+        return null;
+    }
+  };
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -69,10 +90,10 @@ const DataTable = ({
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={params.value?.html_url}
+            href={getUrl(githubRepo, params.row?.index)}
             className={classes.noUnderline}
           >
-            {`#${params.value?.sha?.substring(0, 6)}`}
+            {`#${getSha(githubRepo, params.row?.index)?.substring(0, 6)}`}
           </a>{" "}
           &nbsp; {t("table.repository")}: {githubRepo}
         </>

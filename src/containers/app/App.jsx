@@ -52,9 +52,16 @@ const App = () => {
         })
         .catch(() => {});
       if (!getLocalStorage("litmusGoCommits")) {
-        sendGetRequest(endpoints.commits())
+        sendGetRequest(endpoints.commits("litmus-go"))
           .then((data) => {
             setLocalStorage("litmusGoCommits", data);
+          })
+          .catch(() => {});
+      }
+      if (!getLocalStorage("litmusCommits")) {
+        sendGetRequest(endpoints.commits("litmus"))
+          .then((data) => {
+            setLocalStorage("litmusCommits", data);
           })
           .catch(() => {});
       }
