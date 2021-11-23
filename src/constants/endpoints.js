@@ -1,4 +1,4 @@
-const baseUrl = "https://api.github.com";
+const baseUrl = "https://e2edashboardbackend.herokuapp.com";
 const orgName = "litmuschaos";
 
 const endpoints = {
@@ -10,6 +10,7 @@ const endpoints = {
   pipelineJobs: (pipelineId) =>
     `${baseUrl}/repos/${orgName}/litmus-e2e/actions/runs/${pipelineId}/jobs`,
   commits: () => `${baseUrl}/repos/${orgName}/litmus-go/commits`,
+  logs: () => `${baseUrl}/logs`,
 };
 
 export default endpoints;

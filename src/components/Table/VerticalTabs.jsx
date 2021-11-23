@@ -155,7 +155,11 @@ export default function VerticalTabs({ data, pipelineId }) {
         {data &&
           data.jobs.map((job, index) => (
             <TabPanel value={value} index={index}>
-              <TimelineComponent job={job} />
+              <TimelineComponent
+                job={job}
+                pipelineId={pipelineId}
+                jobName={data?.jobs[value]?.name}
+              />
             </TabPanel>
           ))}
       </div>

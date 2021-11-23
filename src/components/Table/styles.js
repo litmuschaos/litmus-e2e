@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "500",
   },
   muted: {
-    color: "#6c757d",
+    color: theme.palette.text.disabled,
   },
   topMargin: {
     marginTop: "1rem",
