@@ -13,6 +13,7 @@
     "KUBE_API_SERVER": "",
     "KUBE_API_TOKEN": "",
     "AGENT_NAMESPACE" : "litmus",
-    "AGENT" : "Self-Agent"
+    "AGENT" : "Self-Agent",
+    "TARGET_APP_NS" : "default"
   }
 }

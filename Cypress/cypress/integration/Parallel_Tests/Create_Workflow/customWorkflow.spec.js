@@ -4,6 +4,7 @@ import * as workflows from "../../../fixtures/Workflows.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
 
 describe("Testing the validation of the final verdict without target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {
@@ -221,7 +222,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	let workflowSubject = '';
 
 	it("Creating a target application", () => {
-		cy.createTargetApplication("default", "target-app-1", "nginx");
+		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
@@ -398,7 +399,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Deleting the target application", () => {
-		cy.deleteTargetApplication("default", "target-app-1");
+		cy.deleteTargetApplication(targetAppNamespace, "target-app-1");
 	});
 
 	it("Testing the workflow statistics", () => {

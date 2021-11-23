@@ -4,6 +4,7 @@ import * as user from "../../../fixtures/Users.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
 
 describe("Testing the upload Workflow with correct workflow manifest and target application", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
@@ -16,7 +17,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
   let workflowSubject = '';
 
   it("Creating a target application", () => {
-		cy.createTargetApplication("default", "target-app-1", "nginx");
+		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
 
   it("Running Workflows by uploading it", () => {
@@ -141,7 +142,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 	});
 
   it("Deleting the target application", () => {
-		cy.deleteTargetApplication("default", "target-app-1");
+		cy.deleteTargetApplication(targetAppNamespace, "target-app-1");
 	});
 
   it("Testing the workflow statistics", () => {

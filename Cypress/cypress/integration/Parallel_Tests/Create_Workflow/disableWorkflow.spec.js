@@ -3,6 +3,7 @@ import * as user from "../../../fixtures/Users.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
 
 describe("Testing the workflow schedule on a recurring basis with a target application", () => {
 	before("Loggin in and checking if agent exists", () => {
@@ -17,7 +18,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	let scheduleTime = '';
 
 	it("Creating a target application", () => {
-		cy.createTargetApplication("default", "target-app-1", "nginx");
+		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
@@ -173,7 +174,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	it("Deleting the target application", () => {
-		cy.deleteTargetApplication("default", "target-app-1");
+		cy.deleteTargetApplication(targetAppNamespace, "target-app-1");
 	});
 
 	it("Testing the workflow statistics", () => {

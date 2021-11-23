@@ -4,6 +4,7 @@ import * as workflows from "../../../fixtures/Workflows.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
 
 describe("Testing the workflow creation wizard using Templates", () => {
 	before("Clearing the Cookies and deleting the Cookies", () => {
@@ -97,7 +98,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 	});
 
 	it("Creating a target application", () => {
-		cy.createTargetApplication("default", "target-app-1", "nginx");
+		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
 
 	it("Scheduling a new workflow from the saved template", () => {
@@ -205,7 +206,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 	});
 
 	it("Deleting the target application", () => {
-		cy.deleteTargetApplication("default", "target-app-1");
+		cy.deleteTargetApplication(targetAppNamespace, "target-app-1");
 	});
 
 	it("Testing the workflow statistics", () => {
