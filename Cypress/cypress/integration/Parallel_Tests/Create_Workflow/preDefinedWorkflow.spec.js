@@ -108,8 +108,8 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.GraphqlWait("workflowDetails", "listWorkflows");
 		cy.visit("/workflows");
 		cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
-		cy.wait(1000);
 		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
+		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
 			.eq(1)

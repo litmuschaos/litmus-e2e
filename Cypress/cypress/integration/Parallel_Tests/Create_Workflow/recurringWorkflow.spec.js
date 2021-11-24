@@ -98,8 +98,8 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
 	it("Checking Workflow Browsing Table for scheduled workflow", () => {
 		cy.get("[data-cy=runs]").click();
-		cy.wait(1000);
 		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
+		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
 			.eq(1)
