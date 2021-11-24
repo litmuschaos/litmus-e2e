@@ -53,25 +53,18 @@ Cypress.Commands.add("modalClose", () => {
 });
 
 // Create target application
-Cypress.Commands.add("createTargetApplication", (namespace, targetAppName, label) => {
-  const configData = {
-    apiVersion: "apps/v1",
-    kind: "Deployment",
-    metadata: {
-      name: targetAppName,
-      labels: {
-        app: label,
-        name: label,
-      },
-    },
-    spec: {
-      replicas: 1,
-      revisionHistoryLimit: 10,
-      selector: {
-        matchLabels: {
+Cypress.Commands.add(
+  "createTargetApplication",
+  (namespace, targetAppName, label) => {
+    const configData = {
+      apiVersion: "apps/v1",
+      kind: "Deployment",
+      metadata: {
+        name: targetAppName,
+        labels: {
           app: label,
-          name: label
-        }
+          name: label,
+        },
       },
       spec: {
         replicas: 1,
