@@ -6,7 +6,7 @@
 // For Settings the ENVs, refer https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#without-kubectl-proxy
 
 // Also, RBAC needs to be applied on the cluster for allowing Cypress to access the api-server
-// using default namespace.
+// using provided namespace.
 
 /* For quick setup of rbac & to get envs, 
     chmod +x kube-api-config.sh (in cypress root directory)
