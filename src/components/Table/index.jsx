@@ -24,6 +24,26 @@ const DataTable = ({
   const [githubRepo, setGithubRepo] = useState("litmus-go");
   const classes = useStyles();
   const { t } = useTranslation();
+  const getUrl = (repoName, index) => {
+    switch (repoName) {
+      case "litmus-go":
+        return getLocalStorage("litmusGoCommits")?.[index]?.html_url;
+      case "litmus":
+        return getLocalStorage("litmusCommits")?.[index]?.html_url;
+      default:
+        return null;
+    }
+  };
+  const getSha = (repoName, index) => {
+    switch (repoName) {
+      case "litmus-go":
+        return getLocalStorage("litmusGoCommits")?.[index]?.sha;
+      case "litmus":
+        return getLocalStorage("litmusCommits")?.[index]?.sha;
+      default:
+        return null;
+    }
+  };
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -38,15 +58,6 @@ const DataTable = ({
       setPipelineDetails({ pipelineId, jobs: response });
       setDisplayDrawer(true);
     });
-  };
-  const updateCommit = () => {
-    const litmusGoCommits = getLocalStorage("litmusGoCommits");
-    for (let i = 0; i < data.length; ++i) {
-      data[i].litmusGoCommits = {
-        html_url: litmusGoCommits?.[i]?.html_url,
-        sha: litmusGoCommits?.[i]?.sha,
-      };
-    }
   };
   const columns = [
     {
@@ -79,10 +90,10 @@ const DataTable = ({
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={params.value?.html_url}
+            href={getUrl(githubRepo, params.row?.index)}
             className={classes.noUnderline}
           >
-            {`#${params.value.sha.substring(0, 6)}`}
+            {`#${getSha(githubRepo, params.row?.index)?.substring(0, 6)}`}
           </a>{" "}
           &nbsp; {t("table.repository")}: {githubRepo}
         </>
@@ -129,12 +140,13 @@ const DataTable = ({
   useEffect(() => {
     if (
       tableName?.match(/.*Portal.*$/) != null ||
-      pipelineName?.match(/.*Portal.*$/)
+      pipelineName?.match(/.*Portal.*$/) != null
     ) {
       setGithubRepo("litmus");
+    } else {
+      setGithubRepo("litmus-go");
     }
-    updateCommit();
-  }, []);
+  }, [tableName, pipelineName]);
   return (
     <>
       {data && (

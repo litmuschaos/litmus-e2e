@@ -9,9 +9,9 @@ export const CustomTooltip = withStyles(() => ({
 
 const useStyles = makeStyles((theme) => ({
   largeRadialChart: {
-    height: "7rem",
+    height: "9rem",
     margin: "0.5rem 0",
-    width: "7rem",
+    width: "9rem",
     "& img": {
       display: "none",
     },

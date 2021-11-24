@@ -14,4 +14,17 @@ const sendGetRequest = (url) =>
       console.error(error);
     });
 
+export const sendPostRequest = (url, data) =>
+  axios({
+    method: "POST",
+    url,
+    data,
+  })
+    .then((response) => response.data)
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      throw error;
+    });
+
 export default sendGetRequest;

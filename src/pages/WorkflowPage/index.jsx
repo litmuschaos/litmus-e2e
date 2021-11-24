@@ -51,6 +51,9 @@ const WorkflowPage = ({
             );
           });
           Promise.all(promiseList).then(() => {
+            pipelines.forEach((_value, index) => {
+              pipelines[index].index = index;
+            });
             setWorkflowData(pipelines);
           });
         }

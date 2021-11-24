@@ -17,8 +17,9 @@ const AllWorkflows = () => {
     let pipelines;
     sendGetRequest(endpoints.allPipelines()).then((data) => {
       pipelines = data?.workflow_runs;
+      const filteredPipelines = [];
       const promiseList = [];
-      pipelines?.every((pipeline, index) => {
+      pipelines?.every((pipeline) => {
         if (
           pipeline.name.match(nightlyRegex) != null ||
           pipeline.name.match(manualRegex) != null
@@ -26,16 +27,22 @@ const AllWorkflows = () => {
           promiseList.push(
             sendGetRequest(endpoints.pipelineJobs(pipeline?.id)).then(
               (response) => {
-                pipelines[index].status = jobStepResult(response?.jobs);
+                filteredPipelines.push({
+                  ...pipeline,
+                  status: jobStepResult(response?.jobs),
+                });
               }
             )
           );
-          if (promiseList.length === 10) return false;
+          if (filteredPipelines.length === 10) return false;
         }
         return true;
       });
       Promise.all(promiseList).then(() => {
-        setPipelineData(pipelines);
+        filteredPipelines.forEach((_value, index) => {
+          filteredPipelines[index].index = index;
+        });
+        setPipelineData(filteredPipelines);
       });
     });
   }, []);
