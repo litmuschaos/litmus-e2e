@@ -98,6 +98,20 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.wait(6000);
 	});
 
+	it("Terminating the workflow", () => {
+        cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
+        cy.visit("/workflows");
+		cy.get("[data-cy=runs]").click();
+        cy.GraphqlWait("workflowListDetails", "listSchedules");
+        cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+        cy.terminateWorkflow();
+        cy.get("[data-cy=WorkflowStatus]")
+            .eq(0)
+            .should("have.text", "Terminated");
+        cy.wait(500);
+        cy.validateWorkflowExistence(workflowName, workflowNamespace, false);
+    });
+
 	it("Creating a target application", () => {
 		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
