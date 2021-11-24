@@ -94,6 +94,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=browseSchedule]").click();
 		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.wait(1000);
+		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
 		cy.get("table")
 			.find("tr")
 			.eq(1)
