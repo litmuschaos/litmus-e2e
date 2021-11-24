@@ -2,27 +2,27 @@
 import * as user from "../../../fixtures/Users.json";
 import * as workflows from "../../../fixtures/Workflows.json";
 
+export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
+export const agent = Cypress.env("AGENT");
+export const targetAppNamespace = Cypress.env("TARGET_APP_NS");
+
 describe("Testing the validation of the final verdict without target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
-		cy.waitForCluster("Self-Agent");
+		cy.waitForCluster(agent);
 		cy.visit("/create-workflow");
 	});
 
 	let workflowName = '';
-	let workflowNamespace = '';
 	let workflowSubject = '';
 
 	it("Scheduling a workflow without target application", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
-		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
-			cy.wrap($namespace.val()).as('workflowNamespace');
-			workflowNamespace = $namespace.val();
-			return;
-		});
+		cy.get("[data-cy=WorkflowNamespace] input")
+			.should("have.value", workflowNamespace);
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -79,11 +79,11 @@ describe("Testing the validation of the final verdict without target application
 			general : {
 			  hubName : "Litmus ChaosHub",
 			  experimentName : "pod-delete",
-			  context : "pod-delete_litmus"
+			  context : `pod-delete_${workflowNamespace}`
 			},
 			targetApp : {
 			  annotationCheckToggle : false,
-			  appns : "default",
+			  appns : targetAppNamespace,
 			  appKind : "deployment",
 			  appLabel : "app=nginx"
 			},
@@ -109,9 +109,7 @@ describe("Testing the validation of the final verdict without target application
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get('@workflowNamespace').then((workflowNamespace) => {
-			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
-		});
+		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
@@ -127,7 +125,8 @@ describe("Testing the validation of the final verdict without target application
 	});
 
 	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
@@ -135,6 +134,7 @@ describe("Testing the validation of the final verdict without target application
 		cy.GraphqlWait("workflowDetails", "listWorkflows");
 		cy.visit("/workflows");
 		cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
 		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
@@ -145,7 +145,7 @@ describe("Testing the validation of the final verdict without target application
 					.find("td")
 					.eq(2)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
@@ -182,12 +182,12 @@ describe("Testing the validation of the final verdict without target application
 					.find("td")
 					.eq(0)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(1).should("have.text", agent); // Matching Target Agent
 			});
 	});
 
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Failed", 0, 0, 1);
+		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1);
 	});
 
 	it("Testing the workflow statistics", () => {
@@ -198,7 +198,7 @@ describe("Testing the validation of the final verdict without target application
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Non cron workflow", "Non cron workflow");
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
 		cy.validateStatsChart();
 		const experimentArray = [
 			{
@@ -215,28 +215,24 @@ describe("Testing the validation of the final verdict without target application
 describe("Testing the validation of the final verdict with an existing target application by selecting experiments from chaoshub", () => {
 	before("Loggin in and checking if agent exists", () => {
 		cy.requestLogin(user.AdminName, user.AdminPassword);
-		cy.waitForCluster("Self-Agent");
+		cy.waitForCluster(agent);
 		cy.visit("/create-workflow");
 	});
 
 	let workflowName = '';
-	let workflowNamespace = '';
 	let workflowSubject = '';
 
 	it("Creating a target application", () => {
-		cy.createTargetApplication("default", "target-app-1", "nginx");
+		cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
 	});
 
 	it("Scheduling a workflow with an existing target application", () => {
-		cy.chooseAgent("Self-Agent");
+		cy.chooseAgent(agent);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
 		cy.chooseWorkflow(2, 0);
 
-		cy.get("[data-cy=WorkflowNamespace] input").then(($namespace) => {
-			cy.wrap($namespace.val()).as('workflowNamespace');
-			workflowNamespace = $namespace.val();
-			return;
-		});
+		cy.get("[data-cy=WorkflowNamespace] input")
+			.should("have.value", workflowNamespace);
 		// Providing a name of 55 characters which should fail
 		// Maximum allowed length is 54 characters
 		cy.configureWorkflowSettings(
@@ -293,7 +289,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			general : {
 			  hubName : "Litmus ChaosHub",
 			  experimentName : "pod-delete",
-			  context : "pod-delete_litmus"
+			  context : `pod-delete_${workflowNamespace}`
 			},
 			targetApp : {
 			  annotationCheckToggle : false,
@@ -323,9 +319,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			workflows.customWorkflowDescription,
 			0
 		);
-		cy.get('@workflowNamespace').then((workflowNamespace) => {
-			cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
-		});
+		cy.get("[data-cy=WorkflowSubject]").should("have.text", `${workflows.customWorkflow}_${workflowNamespace}`);
 		cy.get("[data-cy=WorkflowSubject] textarea").eq(0).clear().type("custom-workflow-subject");
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
@@ -341,7 +335,8 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Validating workflow existence and status on cluster", () => {
-		cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
@@ -359,7 +354,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.find("td")
 					.eq(2)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
 				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
 			});
 		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
@@ -396,16 +391,16 @@ describe("Testing the validation of the final verdict with an existing target ap
 					.find("td")
 					.eq(0)
 					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(1).should("have.text", "Self-Agent"); // Matching Target Agent
+				cy.wrap($div).find("td").eq(1).should("have.text", agent); // Matching Target Agent
 			});
 	});
 
 	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, "Self-Agent", "Succeeded", 100, 1, 1);
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
 	});
 
 	it("Deleting the target application", () => {
-		cy.deleteTargetApplication("default", "target-app-1");
+		cy.deleteTargetApplication(targetAppNamespace, "target-app-1");
 	});
 
 	it("Testing the workflow statistics", () => {
@@ -416,7 +411,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, "Self-Agent", "Non cron workflow", "Non cron workflow");
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
 		cy.validateStatsChart();
 		const experimentArray = [
 			{

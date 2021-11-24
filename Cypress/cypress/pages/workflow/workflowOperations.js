@@ -95,3 +95,86 @@ Cypress.Commands.add("selectSchedule", (option, subOption, min = 0) => {
         cy.get(`[data-cy=${min}]`).click();
     }
 });
+
+/// ************************** Download workflow manifest ***********
+
+Cypress.Commands.add("downloadWorkflowManifest", (workflowName) => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=downloadManifest]")
+        .eq(0)
+        .should("have.text", "Download Manifest")
+        .click({ force: true });
+    cy.readFile(`./cypress/downloads/${workflowName}.yaml`);
+    cy.task('deleteFolder', './cypress/downloads');
+});
+
+/// ************************** Edit workflow schedule ***********
+
+Cypress.Commands.add("editScheduleByMins", (minsToSet) => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=editSchedule]")
+        .eq(0)
+        .should("have.text", "Edit Schedule")
+        .click({ force: true });
+    cy.get("[data-cy=edit]")
+        .click();
+    cy.get("[data-cy=RecurringSchedule] :radio").eq(0).check();
+    cy.get("[data-cy=RecurringSelect]").click();
+    cy.get(`[data-cy=${minsToSet}]`).click();
+    cy.get("[data-cy=VerifyButton]").click();
+});
+
+/// ************************** Disable schedule ***********
+
+Cypress.Commands.add("disableSchedule", () => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=disableSchedule]")
+        .eq(0)
+        .should("have.text", "Disable Schedule")
+        .click({ force: true });
+});
+
+/// ************************** Enable schedule ***********
+
+Cypress.Commands.add("enableSchedule", () => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=enableSchedule]")
+        .eq(0)
+        .should("have.text", "Enable Schedule")
+        .click({ force: true });
+});
+
+/// ************************** Delete schedule ***********
+
+Cypress.Commands.add("deleteSchedule", () => {
+    cy.get("[data-cy=browseScheduleOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=deleteSchedule]")
+        .eq(0)
+        .should("have.text", "Delete Schedule")
+        .click({ force: true });
+    cy.get("[data-cy=deleteScheduleButtons] button")
+        .eq(1)
+        .click();
+});
+
+/// ************************** Terminate workflow ***********
+
+Cypress.Commands.add("terminateWorkflow", () => {
+    cy.get("[data-cy=browseWorkflowOptions]")
+        .eq(0)
+        .click({ scrollBehavior: false });
+    cy.get("[data-cy=terminateWorkflow]")
+        .eq(0)
+        .should("have.text", "Terminate Workflow")
+        .click({ force: true });
+});

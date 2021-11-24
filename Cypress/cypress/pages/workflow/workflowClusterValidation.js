@@ -2,7 +2,7 @@ import { apis, KUBE_API_TOKEN } from "../../kube-apis/apis";
 
 /// ************************** Validate workflow existence on cluster **********************
 
-Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
+Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace, shouldExist) => {
     let workflowFound = false;
     cy.request({
         url: apis.getWorkflows(namespace),
@@ -18,8 +18,11 @@ Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace) => {
                 return true;
             }
         });
-        if (workflowFound === false) {
+        if (workflowFound === false && shouldExist === true) {
             throw new Error("Workflow Not Found in cluster");
+        }
+        if (workflowFound === true && shouldExist === false) {
+            throw new Error("Workflow Found in cluster");
         }
     });
 });

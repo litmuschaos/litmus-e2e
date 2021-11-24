@@ -29,10 +29,10 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
 
     // Target Application
     cy.get("[data-cy=AnnotationCheckToggle] button").eq((tunningParameters.targetApp.annotationCheckToggle) ? 0 : 1).click();
-    cy.get("[data-cy=Appns] input").clear().type(tunningParameters.targetApp.appns).type('{enter}');
+    cy.get("[data-cy=Appns] input").clear().type(tunningParameters.targetApp.appns).type('{esc}');
     cy.get("[data-cy=AppKind]").click();
     cy.get(`[data-value=${tunningParameters.targetApp.appKind}]`).click();
-    cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{enter}');
+    cy.get("[data-cy=AppLabel] input").clear().type(tunningParameters.targetApp.appLabel).type('{esc}');
     cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
 
     // Steady State

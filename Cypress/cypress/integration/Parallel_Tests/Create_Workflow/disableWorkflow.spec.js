@@ -1,6 +1,5 @@
 // <reference types="Cypress" />
 import * as user from "../../../fixtures/Users.json";
-import * as workflows from "../../../fixtures/Workflows.json";
 
 export const workflowNamespace = Cypress.env("AGENT_NAMESPACE");
 export const agent = Cypress.env("AGENT");
@@ -52,7 +51,44 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get("[data-cy=GoToWorkflowButton]").click();
 	});
 
-    it("Checking Schedules Table for scheduled Workflow", () => {
+    it("Disable schedule and validate if it's running or not", () => {
+		cy.visit("/workflows");
+        cy.GraphqlWait("workflowListDetails", "listSchedules");
+        cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=browseSchedule]").click();
+        cy.disableSchedule();
+		let FirstRowWorkflowName = '';
+        cy.get("[data-cy=runs]").click();
+		const currDate = new Date();
+		const timeDiff = scheduleDate.getTime() - currDate.getTime();
+		cy.wait(timeDiff);
+        cy.get("table")
+			.find("tr")
+		    .eq(1)
+		    .then(($div) => {
+			    FirstRowWorkflowName = $div.text();
+            });    
+        expect(FirstRowWorkflowName).not.to.be.equal(workflowName);
+    });
+
+	it("Enable schedule and reschedule it for +2 mins", () => {
+		cy.get("[data-cy=browseSchedule]").click();
+		cy.enableSchedule();
+		scheduleDate = new Date();
+		// Schedule 2 min later from current time
+    	scheduleDate.setMinutes(scheduleDate.getMinutes()+2);
+		cy.wait(1000);
+		cy.editScheduleByMins(scheduleDate.getMinutes());
+		cy.get("[data-cy=WorkflowName]").then(($name) => {
+			workflowName = $name.text();
+			return;
+		});
+		cy.wait(1000);
+    	cy.get("[data-cy=SaveEditScheduleButton]").click();
+		cy.get("[data-cy=FinishModal]").should("be.visible");
+	});
+
+	it("Checking Schedules Table for scheduled Workflow", () => {
 		cy.GraphqlWait("workflowListDetails", "listSchedules");
 		cy.visit("/workflows");
 		cy.get("[data-cy=browseSchedule]").click();
@@ -92,7 +128,8 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	// it("Validating workflow existence and status on cluster", () => {
-	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace);
+		// shouldExist = true 
+	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace, true);
 	// 	cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	// });
 
@@ -149,8 +186,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Cron workflow", "Cron workflow");
-		cy.validateStatsChart();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", agent, "Cron workflow", "Cron workflow");
 		cy.validateRecurringStats();
 		const experimentArray = [
 			{
@@ -161,5 +197,15 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			}
 		];
 		cy.validateExperimentsTable(experimentArray);
+	});
+
+	it("Delete scheduled workflow", () => {
+		cy.visit("/workflows");
+        cy.GraphqlWait("workflowListDetails", "listSchedules");
+        cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+        cy.get("[data-cy=browseSchedule]").click();
+		cy.deleteSchedule();
+		// shouldExist = false
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, false);
 	});
 });

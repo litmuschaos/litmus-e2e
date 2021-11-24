@@ -7,7 +7,7 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule, min = 0) => 
         cy.get("[data-cy=schedule]").should("have.text", "Scheduling now"); // Schedule Validation
     else if (schedule == 1)
         cy.get("[data-cy=schedule]").should("have.text", `At ${min} minutes past the hour, between 12:00 AM and 11:59 PM`);
-    // cy.get("[data-cy=AgentName]").should("have.text", "Self-Agent");
+    // cy.get("[data-cy=AgentName]").should("have.text", agent);
 });
 
 /// ************************** Validate verdict of given workflow and agent **********************
