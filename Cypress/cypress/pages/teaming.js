@@ -43,45 +43,61 @@ Cypress.Commands.add("inviteUser", (name, role) => {
 });
 
 //Custom command for validating the sent invitation in the table.
-Cypress.Commands.add("validateMember", ({ username, role, email }) => {
-  const currentRole = role.charAt(0).toUpperCase() + role.slice(1);
-  cy.get("[data-cy=teamingTableRow]")
-    .children()
-    .eq(0)
-    .should("have.text", `${userInitials(username)}${username}`);
-  cy.get("[data-cy=teamingTableRow]")
-    .children()
-    .eq(1)
-    .should("have.text", currentRole);
-  cy.get("[data-cy=teamingTableRow]")
-    .children()
-    .eq(2)
-    .should("have.text", email);
-});
+Cypress.Commands.add(
+  "validateMember",
+  ({ username, role, email, shouldExist }) => {
+    const currentRole = role.charAt(0).toUpperCase() + role.slice(1);
+    if (shouldExist == true) {
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(0)
+        .should("have.text", `${userInitials(username)}${username}`);
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(1)
+        .should("have.text", currentRole);
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(2)
+        .should("have.text", email);
+    } else {
+      cy.get("[data-cy=teamingTableRow]").should("not.exist");
+    }
+  }
+);
 
 //Custom command for validating the sent invitation in the table.
 Cypress.Commands.add(
   "validateSentInvite",
-  ({ username, role, email, status }) => {
+  ({ username, role, email, status, shouldExist }) => {
     const currentRole = role.charAt(0).toUpperCase() + role.slice(1);
-    cy.get("[data-cy=teamingTableRow]")
-      .children()
-      .eq(0)
-      .should("have.text", `${userInitials(username)}${username}`);
-    cy.get("[data-cy=teamingTableRow]")
-      .children()
-      .eq(1)
-      .should("have.text", currentRole);
-    cy.get("[data-cy=teamingTableRow]")
-      .children()
-      .eq(2)
-      .should("have.text", email);
-    cy.get("[data-cy=teamingTableRow]")
-      .children()
-      .eq(3)
-      .should("have.text", status);
+    if (shouldExist === true) {
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(0)
+        .should("have.text", `${userInitials(username)}${username}`);
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(1)
+        .should("have.text", currentRole);
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(2)
+        .should("have.text", email);
+      cy.get("[data-cy=teamingTableRow]")
+        .children()
+        .eq(3)
+        .should("have.text", status);
+    } else {
+      cy.get("[data-cy=teamingTableRow]").should("not.exist");
+    }
   }
 );
+
+Cypress.Commands.add("switchProject", () => {
+  cy.get("[data-cy=headerProjectDropdown] button").click();
+  cy.get("[data-cy=projectDropDownItem]").eq(1).click();
+});
 
 function userInitials(name) {
   /**
