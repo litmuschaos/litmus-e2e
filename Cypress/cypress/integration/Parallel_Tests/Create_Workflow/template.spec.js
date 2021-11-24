@@ -149,6 +149,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.GraphqlWait("workflowDetails", "listWorkflows");
 		cy.visit("/workflows");
 		cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
 		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
@@ -189,6 +190,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.visit("/workflows");
 		cy.get("[data-cy=browseSchedule]").click();
 		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
 		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
