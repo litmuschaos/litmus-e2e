@@ -19,7 +19,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
 	it("Running uploaded Workflow", () => {
 		cy.chooseAgent(agent);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-		cy.chooseWorkflow(3, "");
+		cy.chooseWorkflow(3, "", `sample-workflow-${workflowNamespace}.yaml`);
 		cy.wait(500);
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.wait(1000); // Waiting for Workflow Details to get filled

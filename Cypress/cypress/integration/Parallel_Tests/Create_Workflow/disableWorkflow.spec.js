@@ -24,7 +24,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	it("Scheduling a workflow with an existing target application", () => {
 		cy.chooseAgent(agent);
     	cy.get("[data-cy=ControlButtons] Button").eq(0).click();
-    	cy.chooseWorkflow(3, "");
+    	cy.chooseWorkflow(3, "", `sample-workflow-${workflowNamespace}.yaml`);
     	cy.wait(500);
     	cy.get("[data-cy=ControlButtons] Button").eq(1).click();
     	cy.get("[data-cy=WorkflowNamespace] input")
