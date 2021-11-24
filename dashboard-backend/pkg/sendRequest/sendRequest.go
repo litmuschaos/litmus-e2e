@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/customErrors"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/env"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/customErrors"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/env"
 	"github.com/litmuschaos/litmus-go/pkg/log"
 )
 

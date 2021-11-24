@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/router"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/router"
 )
 
 func main() {

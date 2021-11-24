@@ -3,10 +3,10 @@ package router
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/constants"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/customErrors"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/fetchLog"
-	"github.com/litmuschaos/e2e-dashboard-backend/pkg/sendRequest"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/constants"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/customErrors"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/fetchLog"
+	"github.com/litmuschaos/litmus-e2e/e2e-dashboard-backend/pkg/sendRequest"
 )
 
 // Router initializes the gin router
