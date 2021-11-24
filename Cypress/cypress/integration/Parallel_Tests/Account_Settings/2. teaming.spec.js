@@ -391,7 +391,7 @@ describe("Testing the functionality of leaving from project", () => {
   it("Going to Settings page & leave admin's project", () => {
     cy.visit("/settings");
     cy.get("[data-cy=teaming]").click();
-    cy.get("[data-cy=LeaveAcceptedProject] Button").click();
+    cy.get("[data-cy=leaveAcceptedProject] Button").click();
     cy.reload(); // Not handled by frontend (Data is updated after refresh)
     cy.get("[data-cy=activeTab]")
       .find("span")
