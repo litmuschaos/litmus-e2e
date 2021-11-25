@@ -1,0 +1,12 @@
+{
+  "user1": {
+    "username": "a1",
+    "password": "a1",
+    "role": "viewer"
+  },
+  "user2": {
+    "username": "a2",
+    "password": "a2",
+    "role": "editor"
+  }
+}

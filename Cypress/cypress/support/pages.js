@@ -7,3 +7,4 @@ import "../pages/workflow/workflowPredefined";
 import "../pages/workflow/workflowRecurring";
 import "../pages/workflow/workflowValidation";
 import "../pages/settings";
+import "../pages/teaming";
