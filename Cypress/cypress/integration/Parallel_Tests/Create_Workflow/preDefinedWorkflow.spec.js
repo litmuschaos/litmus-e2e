@@ -53,6 +53,14 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			.then(($div) => {
 				cy.wrap($div)
 					.find("td")
+					.eq(1)
+					.should("contain.text", targetAppNamespace);
+				cy.wrap($div)
+					.find("td")
+					.eq(2)
+					.should("contain.text", "name=podtato-main");
+				cy.wrap($div)
+					.find("td")
 					.eq(0)
 					.should("contain.text", "podtato-main-pod-delete-chaos") // Matching Experiment
 					.click();

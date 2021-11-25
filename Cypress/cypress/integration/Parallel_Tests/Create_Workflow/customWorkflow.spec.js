@@ -70,6 +70,14 @@ describe("Testing the validation of the final verdict without target application
 			.then(($div) => {
 				cy.wrap($div)
 					.find("td")
+					.eq(1)
+					.should("contain.text", targetAppNamespace);
+				cy.wrap($div)
+					.find("td")
+					.eq(2)
+					.should("contain.text", "app=cassandra");
+				cy.wrap($div)
+					.find("td")
 					.eq(0)
 					.should("contain.text", "cassandra-pod-delete") // Matching Experiment
 					.click();
@@ -250,6 +258,14 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.find("tr")
 			.eq(1)
 			.then(($div) => {
+				cy.wrap($div)
+					.find("td")
+					.eq(1)
+					.should("contain.text", targetAppNamespace);
+				cy.wrap($div)
+					.find("td")
+					.eq(2)
+					.should("contain.text", "app=nginx");
 				cy.wrap($div)
 					.find("td")
 					.eq(0)
