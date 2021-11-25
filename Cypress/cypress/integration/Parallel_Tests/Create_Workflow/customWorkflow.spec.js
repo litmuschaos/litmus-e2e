@@ -64,25 +64,7 @@ describe("Testing the validation of the final verdict without target application
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(1)
-					.should("contain.text", targetAppNamespace);
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("contain.text", "app=cassandra");
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "cassandra-pod-delete") // Matching Experiment
-					.click();
-			});
-		cy.wait(1000);
+		cy.validateExperiment(targetAppNamespace, "app=cassandra", "cassandra-pod-delete");
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",
@@ -254,25 +236,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(1)
-					.should("contain.text", targetAppNamespace);
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("contain.text", "app=nginx");
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "pod-delete") // Matching Experiment
-					.click();
-			});
-		cy.wait(1000);
+		cy.validateExperiment(targetAppNamespace, "app=nginx", "pod-delete");
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",

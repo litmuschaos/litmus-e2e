@@ -47,24 +47,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.wait(3000);
 		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(1)
-					.should("contain.text", targetAppNamespace);
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("contain.text", "name=podtato-main");
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "podtato-main-pod-delete-chaos") // Matching Experiment
-					.click();
-			});
+		cy.validateExperiment(targetAppNamespace, "name=podtato-main", "podtato-main-pod-delete-chaos");
 		const workflowParameters = {
 			general : {
 				context : `podtato-main-pod-delete-chaos_${workflowNamespace}`
