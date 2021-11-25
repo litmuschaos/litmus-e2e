@@ -64,7 +64,7 @@ describe("Testing the validation of the final verdict without target application
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.validateExperiment(workflowNamespace, "app=cassandra", "cassandra-pod-delete");
+		cy.validateExperiment(targetAppNamespace, "app=cassandra", "cassandra-pod-delete");
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",
@@ -236,7 +236,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.validateExperiment(workflowNamespace, "app=nginx", "pod-delete");
+		cy.validateExperiment(targetAppNamespace, "app=nginx", "pod-delete");
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",
