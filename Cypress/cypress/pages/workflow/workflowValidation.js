@@ -12,7 +12,7 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule, min = 0) => 
 
 /// ************************** Validate verdict of given workflow and agent **********************
 
-Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdict, RScore, ExperimentsPassed, TotalExperiments) => {
+Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, RScore, ExperimentsPassed, TotalExperiments) => {
     cy.visit("/workflows");
     cy.GraphqlWait("workflowListDetails", "listSchedules");
     cy.get("[data-cy=runs]").click();
@@ -31,14 +31,6 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
             timeout: 600000,
         }
     );
-    cy.get('table')
-        .find(`[data-cy=${workflowName}]`)
-        .find("[data-cy=WorkflowStatus]")
-        .should("have.text", expectedVerdict);
-    cy.get('table')
-        .find(`[data-cy=${workflowName}]`)
-        .find("[data-cy=ResScore]")
-        .should("have.text", `Overall RR : ${RScore}%`);
     cy.waitUntil(() =>
         cy.get("table")
             .find(`[data-cy=${workflowName}]`)
@@ -54,8 +46,26 @@ Cypress.Commands.add("validateVerdict", (workflowName, agentName, expectedVerdic
     );
     cy.get('table')
         .find(`[data-cy=${workflowName}]`)
-        .find("[data-cy=ExperimentsPassed]")
-        .should("have.text", `Experiments Passed : ${ExperimentsPassed}/${TotalExperiments}`);
+        .then(($div) => {
+            cy.wrap($div)
+                .find("td")
+                .eq(3)
+                .should("have.text", agent); // Matching Target Agent
+            cy.wrap($div)
+                .find("[data-cy=ResScore]")
+                .should("have.text", `Overall RR : ${RScore}%`);
+            cy.wrap($div)
+                .find("[data-cy=ExperimentsPassed]")
+                .should("have.text", `Experiments Passed : ${ExperimentsPassed}/${TotalExperiments}`);
+            cy.wrap($div)
+                .find("[data-cy=WorkflowStatus]")
+                .should("have.text", expectedVerdict);
+            cy.wrap($div)
+                .find("td")
+                .eq(2)
+                .should("have.text", workflowName) // Matching Workflow Name
+                .click({ scrollBehavior: false });
+        });
 });
 
 /// ************************** Validate dagre graph nodes **********************
