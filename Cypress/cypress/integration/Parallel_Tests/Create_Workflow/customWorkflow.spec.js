@@ -64,7 +64,20 @@ describe("Testing the validation of the final verdict without target application
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.validateExperiment(targetAppNamespace, "app=cassandra", "cassandra-pod-delete");
+		const experimentArray = [
+			{
+				targetAppNS : targetAppNamespace,
+				label : "app=cassandra",
+				experimentName : "cassandra-pod-delete"
+			}
+		];
+		cy.validateExperiment(experimentArray);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.find('td')
+			.eq(0)
+			.click();
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",
@@ -145,6 +158,12 @@ describe("Testing the validation of the final verdict without target application
 
 	it("Validating graph nodes", () => {
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.find('td')
+			.eq(0)
+			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "cassandra-pod-delete", "revert-chaos"];
@@ -236,7 +255,20 @@ describe("Testing the validation of the final verdict with an existing target ap
 		 * add experiment modal
 		 */
 		cy.wait(1000);
-		cy.validateExperiment(targetAppNamespace, "app=nginx", "pod-delete");
+		const experimentArray = [
+			{
+				targetAppNS : targetAppNamespace,
+				label : "app=nginx",
+				experimentName : "pod-delete"
+			}
+		];
+		cy.validateExperiment(experimentArray);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.find('td')
+			.eq(0)
+			.click();
 		const tunningParameters = {
 			general : {
 			  hubName : "Litmus ChaosHub",
@@ -317,6 +349,12 @@ describe("Testing the validation of the final verdict with an existing target ap
 
 	it("Validating graph nodes", () => {
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.find('td')
+			.eq(0)
+			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];

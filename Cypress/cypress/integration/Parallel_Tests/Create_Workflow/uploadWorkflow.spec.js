@@ -105,6 +105,12 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 
 	it("Validating graph nodes", () => {
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+		cy.get("table")
+			.find("tr")
+			.eq(1)
+			.find('td')
+			.eq(0)
+			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];

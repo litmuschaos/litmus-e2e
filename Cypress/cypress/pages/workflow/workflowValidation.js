@@ -63,8 +63,7 @@ Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, R
             cy.wrap($div)
                 .find("td")
                 .eq(2)
-                .should("have.text", workflowName) // Matching Workflow Name
-                .click({ scrollBehavior: false });
+                .should("have.text", workflowName); // Matching Workflow Name
         });
 });
 
