@@ -160,9 +160,9 @@ describe("Testing the validation of the final verdict without target application
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Failed"]);
 		cy.get("table")
 			.find("tr")
-			.eq(1)
+			.eq(2)
 			.find('td')
-			.eq(0)
+			.eq(2)
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
@@ -351,9 +351,9 @@ describe("Testing the validation of the final verdict with an existing target ap
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("table")
 			.find("tr")
-			.eq(1)
+			.eq(2)
 			.find('td')
-			.eq(0)
+			.eq(2)
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes

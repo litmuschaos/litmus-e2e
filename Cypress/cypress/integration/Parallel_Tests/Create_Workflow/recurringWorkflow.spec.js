@@ -104,9 +104,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	it("Validating graph nodes", () => {
 		cy.get("table")
 			.find("tr")
-			.eq(1)
+			.eq(2)
 			.find('td')
-			.eq(0)
+			.eq(2)
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes

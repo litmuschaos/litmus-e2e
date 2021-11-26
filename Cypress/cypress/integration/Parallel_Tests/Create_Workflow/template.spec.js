@@ -186,9 +186,9 @@ describe("Testing the workflow creation wizard using Templates", () => {
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("table")
 			.find("tr")
-			.eq(1)
+			.eq(2)
 			.find('td')
-			.eq(0)
+			.eq(2)
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
