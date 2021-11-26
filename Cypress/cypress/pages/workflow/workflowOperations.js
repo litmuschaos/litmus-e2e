@@ -69,6 +69,30 @@ Cypress.Commands.add(
     }
 );
 
+//// ************************** Validate Experiment ********************
+
+Cypress.Commands.add("validateExperiment", (experimentArray) => {
+    experimentArray.forEach((experiment, index) => {
+        cy.get("table")
+            .find("tr")
+            .eq(index + 1)
+		    .then(($div) => {
+			    cy.wrap($div)
+				    .find("td")
+				    .eq(1)
+				    .should("have.text", experiment.targetAppNS);
+			    cy.wrap($div)
+				    .find("td")
+				    .eq(2)
+				    .should("have.text", experiment.label);
+			    cy.wrap($div)
+				    .find("td")
+				    .eq(0)
+				    .should("have.text", experiment.experimentName); // Matching Experiment
+		});
+    });
+});
+
 //// ************************* R-Score Manipulation ***********************
 
 Cypress.Commands.add("rScoreEditor", (value) => {

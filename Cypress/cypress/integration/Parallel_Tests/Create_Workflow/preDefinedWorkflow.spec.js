@@ -47,16 +47,20 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.wait(3000);
 		cy.get("[data-cy=addExperimentSearch]").should("not.exist");
+		const experimentArray = [
+			{
+				targetAppNS : workflowNamespace,
+				label : "name=podtato-main",
+				experimentName : "podtato-main-pod-delete-chaos"
+			}
+		];
+		cy.validateExperiment(experimentArray);
 		cy.get("table")
 			.find("tr")
 			.eq(1)
-			.then(($div) => {
-				cy.wrap($div)
-					.find("td")
-					.eq(0)
-					.should("contain.text", "podtato-main-pod-delete-chaos") // Matching Experiment
-					.click();
-			});
+			.find('td')
+			.eq(0)
+			.click();
 		const workflowParameters = {
 			general : {
 				context : `podtato-main-pod-delete-chaos_${workflowNamespace}`
@@ -104,49 +108,12 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
 	});
 
-	it("Checking Workflow Browsing Table for scheduled workflow", () => {
-		cy.GraphqlWait("workflowDetails", "listWorkflows");
-		cy.visit("/workflows");
-		cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
-		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
-		cy.wait(1000);
-		cy.get("table")
-			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div).find("td").eq(1).should("have.text", "Running"); // Matching Status
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
-				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
-			});
-		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
-		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
-		cy.waitUntil(() =>
-			cy.get("[data-cy=workflowStatus]").then((status) => {
-				return status.text() !== "Running" ? true : false;
-			}),
-			{
-				verbose: true,
-				interval: 500,
-				timeout: 600000,
-			}
-		);
-		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
-		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
-		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
-		// Verify nodes in dagre graph (TODO: Check status of nodes)
-		cy.validateGraphNodes(graphNodesNameArray);
-	});
-
 	it("Checking Schedules Table for scheduled Workflow", () => {
 		cy.GraphqlWait("workflowListDetails", "listSchedules");
 		cy.visit("/workflows");
 		cy.get("[data-cy=browseSchedule]").click();
 		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=workflowSchedulesTable] input").eq(0).clear().type(workflowName);
 		cy.wait(1000);
 		cy.get("table")
 			.find("tr")
@@ -160,7 +127,22 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 			});
 	});
 
-	it("Validate Verdict, Resilience score and Experiments Passed", () => {
+	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
 		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+	});
+
+	it("Validating graph nodes", () => {
+		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+		cy.get("table")
+			.find("tr")
+			.eq(2)
+			.find('td')
+			.eq(2)
+			.click({ scrollBehavior: false });
+		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
+		// Expected Nodes
+		const graphNodesNameArray = [workflowName, "install-application", "install-chaos-experiments", "pod-delete", "revert-chaos", "delete-application"];
+		// Verify nodes in dagre graph (TODO: Check status of nodes)
+		cy.validateGraphNodes(graphNodesNameArray);
 	});
 });

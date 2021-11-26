@@ -38,7 +38,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		cy.selectSchedule(1, 0, scheduleDate.getMinutes());
 		cy.get("[data-cy=ControlButtons] Button").eq(1).click();
 		cy.wait(1000);
-		cy.get("[data-cy=schedule]").should("have.text", `At ${scheduleDate.getMinutes()} minutes past the hour, between 12:00 AM and 11:59 PM`);
+		cy.get("[data-cy=schedule]").should("have.text", `${scheduleDate.getMinutes()==0 ? `Every hour` : `At ${scheduleDate.getMinutes()} minutes past the hour` }, between 12:00 AM and 11:59 PM`);
 		cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
 		cy.get("[data-cy=FinishModal]").should("be.visible");
 		cy.get("[data-cy=WorkflowName]").then(($name) => {
@@ -91,50 +91,28 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
             })
 	});
 
-	// it("Validating workflow existence and status on cluster", () => {
-	// 	cy.validateWorkflowExistence(workflowName, workflowNamespace);
-	// 	cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
-	// });
+	it("Validating cron workflow existence and status on cluster", () => {
+		let shouldExist = true
+		let cronWorkflow = true;
+		cy.validateWorkflowExistence(workflowName, workflowNamespace, shouldExist, cronWorkflow);
+	});
 
-	it("Checking Workflow Browsing Table for scheduled workflow", () => {
-		cy.get("[data-cy=runs]").click();
-		cy.get("[data-cy=WorkflowRunsTable] input").eq(0).clear().type(workflowName);
-		cy.wait(1000);
+	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+	});
+
+	it("Validating graph nodes", () => {
 		cy.get("table")
 			.find("tr")
-			.eq(1)
-			.then(($div) => {
-				cy.wrap($div).find("td").eq(1).should("have.text", "Running"); // Matching Status
-				cy.wrap($div)
-					.find("td")
-					.eq(2)
-					.should("have.text", workflowName); // Matching Workflow Name Regex
-				cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
-				// Workflow Statistics (Graph View)
-				cy.wrap($div).find("td").eq(2).click({ scrollBehavior: false });
-			});
-		cy.get("[data-cy=statsTabs]").find('button').eq(1).click();
-		cy.get("[data-cy=workflowNamespace]").should("have.text", workflowNamespace);
-		cy.waitUntil(() =>
-			cy.get("[data-cy=workflowStatus]").then((status) => {
-				return status.text() !== "Running" ? true : false;
-			}),
-			{
-				verbose: true,
-				interval: 500,
-				timeout: 600000,
-			}
-		);
-		// cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+			.eq(2)
+			.find('td')
+			.eq(2)
+			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete", "revert-chaos"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
-	});
-
-	it("Validate Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
 	});
 
 	it("Deleting the target application", () => {
@@ -162,4 +140,12 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 		];
 		cy.validateExperimentsTable(experimentArray);
 	});
+
+	it("Disable schedule", () => {
+		cy.visit("/workflows");
+        cy.GraphqlWait("workflowListDetails", "listSchedules");
+        cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+		cy.get("[data-cy=browseSchedule]").click();
+        cy.disableSchedule();
+    });
 });

@@ -2,10 +2,16 @@ import { apis, KUBE_API_TOKEN } from "../../kube-apis/apis";
 
 /// ************************** Validate workflow existence on cluster **********************
 
-Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace, shouldExist) => {
+Cypress.Commands.add("validateWorkflowExistence", (workflowName, namespace, shouldExist, cronWorkflow=false) => {
     let workflowFound = false;
+    let reqUrl = '';
+    if (cronWorkflow){
+        reqUrl = apis.getCronWorkflows(namespace);
+    } else {
+        reqUrl = apis.getWorkflows(namespace);
+    }
     cy.request({
-        url: apis.getWorkflows(namespace),
+        url: reqUrl,
         method: "GET",
         headers: {
             Authorization: `Bearer ${KUBE_API_TOKEN}`,
