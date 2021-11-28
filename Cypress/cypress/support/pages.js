@@ -2,6 +2,7 @@ import "../pages/getStarted";
 import "../pages/login";
 import "../pages/workflow/workflowClusterValidation";
 import "../pages/workflow/workflowCustom";
+import "../pages/workflow/workflowGraphStats";
 import "../pages/workflow/workflowOperations";
 import "../pages/workflow/workflowPredefined";
 import "../pages/workflow/workflowRecurring";

@@ -119,12 +119,6 @@ Cypress.Commands.add("validateWorkflowInfo", (workflowName, workflowNamespace, w
     }
 });
 
-///  Validate workflow/experiment stats radial chart, Passed ve Failed bar graph, RR Score chart 
-
-Cypress.Commands.add("validateStatsChart", () => {
-    cy.get("[data-cy=showStatsButton]").click();
-});
-
 /// ************************** Validate experiments table **********************
 
 Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {

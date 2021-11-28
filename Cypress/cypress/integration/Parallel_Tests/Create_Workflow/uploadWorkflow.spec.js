@@ -130,8 +130,8 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		cy.get(`[data-cy=${workflowName}]`)
 			.find("[data-cy=statsButton]")
 			.click();
-		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Cron workflow", "Cron workflow");
-		cy.validateStatsChart();
+		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
+		cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
 		const experimentArray = [
 			{
 				experimentName: "pod-delete",
