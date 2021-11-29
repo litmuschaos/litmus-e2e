@@ -206,11 +206,11 @@ Cypress.Commands.add("terminateWorkflow", () => {
 /// ************************** Rerun workflow ***********
 
 Cypress.Commands.add("rerunWorkflow", () => {
-    cy.get("[data-cy=browseWorkflowOptions]")
+    cy.get("[data-cy=browseScheduleOptions]")
         .eq(0)
         .click({ scrollBehavior: false });
     cy.get("[data-cy=reRunSchedule]")
         .eq(0)
         .should("have.text", "Rerun Schedule")
-        .click({ force: true });
+        .click();
 });
