@@ -2,6 +2,7 @@
 
 Cypress.Commands.add("validateWorkflowStatsGraph", (ExperimentsPassed, ExperimentsFailed, RScorePercent, PassedPercent, FailedPercent) => {
     cy.get("[data-cy=showStatsButton]").click();
+    cy.wait(1000);
     cy.get("[data-cy=statsRadialChart] table")
         .then(($table) => {
             cy.wrap($table)
