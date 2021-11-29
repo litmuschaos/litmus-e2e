@@ -386,4 +386,24 @@ describe("Testing the validation of the final verdict with an existing target ap
 		];
 		cy.validateExperimentsTable(experimentArray);
 	});
+
+	it("Rerun a non-recurring workflow", () => {
+		cy.visit("/workflows");
+		cy.get("[data-cy=browseSchedule]").click();
+		cy.wait(1000);
+		cy.get("table")
+		  .find("tr")
+		  .eq(1)
+		  .then(($div) => {
+			cy.wrap($div)
+			  .find("td")
+			  .eq(4)
+			  .should("have.text", "Non cron workflow");
+		  });
+		cy.reRunSchedule();
+	});
+
+	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
+		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1);
+	});
 });
