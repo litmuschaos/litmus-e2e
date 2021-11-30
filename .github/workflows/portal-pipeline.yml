@@ -28,11 +28,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 4
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -50,6 +52,21 @@ jobs:
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
 
+      - name: Deploying Prometheus as a DataSource
+        run: |
+          mkdir monitoring && cd monitoring
+          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
+          kubectl create ns monitoring
+          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+          source ../../../litmus/utils.sh
+          wait_for_pods monitoring 720
+          wait_for_loadbalancer prometheus-k8s monitoring
+          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          DATA_SOURCE="http://$loadBalancerIP:9091"
+          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
+
       # Fetching Access Point & Token for accessing kube api server
       - run: |
           kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
@@ -63,7 +80,7 @@ jobs:
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
@@ -121,6 +138,8 @@ jobs:
           CYPRESS_AGENT_NAMESPACE: ${{ env.CS_MODE_NAMESPACE}}
           CYPRESS_AGENT: "Self-Agent"
           CYPRESS_TARGET_APP_NS: "default"
+          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
+
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
       #   run: |
@@ -143,7 +162,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: cypress-screenshots
+          name: Cluster-Scope-Mode-${{ matrix.AcessType }}-screenshots
           path: Cypress/cypress/screenshots
 
   Namespaced-Scope-Mode:
@@ -155,11 +174,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 3
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -177,6 +198,21 @@ jobs:
           NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "NS-MODE"
 
+      - name: Deploying Prometheus as a DataSource
+        run: |
+          mkdir monitoring && cd monitoring
+          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
+          kubectl create ns monitoring
+          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+          source ../../../litmus/utils.sh
+          wait_for_pods monitoring 720
+          wait_for_loadbalancer prometheus-k8s monitoring
+          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          DATA_SOURCE="http://$loadBalancerIP:9091"
+          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
+
       # Fetching Access Point & Token for accessing kube api server
       - run: |
           kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
@@ -190,7 +226,7 @@ jobs:
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
@@ -248,6 +284,7 @@ jobs:
           CYPRESS_AGENT_NAMESPACE: ${{ env.NS_MODE_NAMESPACE}}
           CYPRESS_AGENT: "Self-Agent"
           CYPRESS_TARGET_APP_NS: ${{ env.NS_MODE_NAMESPACE}}
+          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
@@ -272,5 +309,5 @@ jobs:
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: cypress-screenshots
+          name: Namespaced-Scope-Mode-${{ matrix.AcessType }}-screenshots
           path: Cypress/cypress/screenshots
