@@ -26,7 +26,7 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
     cy.chooseWorkflow(3, "", `sample-workflow-${workflowNamespace}.yaml`);
     cy.wait(500);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
-    cy.wait(1000);
+    cy.wait(1000); // Waiting for Workflow Details to get filled
     cy.get("[data-cy=WorkflowNamespace] input")
       .should("have.value", workflowNamespace);
     cy.get("[data-cy=ControlButtons] Button").eq(1).click();
