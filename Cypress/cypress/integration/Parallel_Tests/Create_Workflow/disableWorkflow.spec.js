@@ -164,7 +164,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			.find("[data-cy=statsButton]")
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", agent, "Cron workflow", "Cron workflow");
-		cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
+		cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0, "Cron workflow");
 		cy.validateRecurringStats();
 		const experimentArray = [
 			{

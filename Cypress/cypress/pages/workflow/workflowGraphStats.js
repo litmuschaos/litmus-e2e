@@ -1,6 +1,6 @@
 ///  Validate workflow/experiment stats radial chart, Passed ve Failed bar graph, RR Score chart 
 
-Cypress.Commands.add("validateWorkflowStatsGraph", (ExperimentsPassed, ExperimentsFailed, RScorePercent, PassedPercent, FailedPercent) => {
+Cypress.Commands.add("validateWorkflowStatsGraph", (ExperimentsPassed, ExperimentsFailed, RScorePercent, PassedPercent, FailedPercent, workflowType="Non cron workflow") => {
     cy.get("[data-cy=showStatsButton]").click();
     cy.wait(1000);
     cy.get("[data-cy=statsRadialChart] table")
@@ -29,5 +29,20 @@ Cypress.Commands.add("validateWorkflowStatsGraph", (ExperimentsPassed, Experimen
     cy.get("[data-cy=statsPassFailBar]")
         .find("h6")
         .eq(1)
-        .should("have.text", `${FailedPercent}%`)
+        .should("have.text", `${FailedPercent}%`);
+    
+    if (workflowType === "Cron workflow") {    
+        cy.get("[data-cy=statsDropdown]")
+            .click();
+        cy.get("[data-value=1]")
+            .click();
+        cy.get("[data-cy=statsPassFailBar]")
+            .find("h6")
+            .eq(0)
+            .should("have.text", `${PassedPercent}%`);
+        cy.get("[data-cy=statsPassFailBar]")
+            .find("h6")
+            .eq(1)
+            .should("have.text", `${FailedPercent}%`);
+    }
 });
