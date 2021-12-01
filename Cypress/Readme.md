@@ -47,6 +47,23 @@ cypress.json
 }
 ```
 
+- Run the script to get `KUBE_API_SERVER` (K8s API server URL) and `KUBE_API_TOKEN` (K8s API auth token) inside the same folder -
+
+```
+sh kube-api-config.sh <CLUSTER_NAME>
+```
+
+- Configure the generated URL and token inside `cypress.json`
+
+```
+{
+  "env" : {
+    "KUBE_API_SERVER": "<Generated_URL>",
+    "KUBE_API_TOKEN": "<Generated_Token>",
+  }
+}
+```
+
 - Now, we can start Cypress Test Runner using command -
 
 ```
