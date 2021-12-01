@@ -36,8 +36,8 @@ function wait_for_loadbalancer(){
         else
         echo "[Info]: Waiting for loadBalancer end point..."; 
         IP=$(kubectl get services ${SVC} -n ${Namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-        echo "IP = ${IP}"
-        [ -z "$IP" ] && sleep 10; 
+        echo "IP=${IP}"
+        sleep 10 
         fi
     done; 
 }
@@ -62,7 +62,7 @@ function wait_for_ingress(){
         echo "[Info]: Waiting for ingress's end point..."; 
         IP=$(eval "kubectl get ing ${Ingress} -n ${Namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'" | awk '{print $1}');
         echo "IP = ${IP}"
-        [ -z "$IP" ] && sleep 10; 
+        sleep 10 
         fi
     done; 
 }
