@@ -12,7 +12,7 @@ Cypress.Commands.add("verifyDetails", (name, description, schedule, min = 0) => 
 
 /// ************************** Validate verdict of given workflow and agent **********************
 
-Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, RScore, ExperimentsPassed, TotalExperiments) => {
+Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, RScore, ExperimentsPassed, TotalExperiments, Experiments) => {
     cy.visit("/workflows");
     cy.GraphqlWait("workflowListDetails", "listSchedules");
     cy.get("[data-cy=runs]").click();
@@ -64,7 +64,18 @@ Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, R
                 .find("td")
                 .eq(2)
                 .should("have.text", workflowName); // Matching Workflow Name
+            cy.wrap($div)
+                .find("td")
+                .eq(5)
+                .find("button")
+                .click({ scrollBehavior: false });
         });
+    Experiments.map((experiment) => {
+        cy.get("[data-cy=expName]")
+            .should("have.text", experiment.name);
+        cy.get("[data-cy=expWeight]")
+            .should("have.text", experiment.weight === 1 || 0 ? `${experiment.weight} point` : `${experiment.weight} points`);
+    });    
 });
 
 /// ************************** Validate dagre graph nodes **********************

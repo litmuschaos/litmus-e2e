@@ -153,7 +153,13 @@ describe("Testing the validation of the final verdict without target application
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
@@ -344,7 +350,13 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {

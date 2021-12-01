@@ -100,7 +100,13 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 5
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
