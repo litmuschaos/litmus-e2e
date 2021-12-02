@@ -153,7 +153,13 @@ describe("Testing the validation of the final verdict without target application
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Failed", 0, 0, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
@@ -180,7 +186,7 @@ describe("Testing the validation of the final verdict without target application
 			.find("[data-cy=statsButton]")
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
-		cy.validateStatsChart();
+		cy.validateWorkflowStatsGraph(0, 1, 0, 0, 100);
 		const experimentArray = [
 			{
 				experimentName: "cassandra-pod-delete",
@@ -344,7 +350,13 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
@@ -375,7 +387,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.find("[data-cy=statsButton]")
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
-		cy.validateStatsChart();
+		cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
 		const experimentArray = [
 			{
 				experimentName: "pod-delete",
