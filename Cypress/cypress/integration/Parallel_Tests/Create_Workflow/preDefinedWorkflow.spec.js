@@ -128,7 +128,13 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {

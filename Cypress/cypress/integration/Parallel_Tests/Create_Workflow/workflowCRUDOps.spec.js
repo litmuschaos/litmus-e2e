@@ -134,7 +134,13 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	it("Checking workflow browsing table and validating Verdict, Resilience score and Experiments Passed", () => {
-		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1);
+		let Experiments = [
+			{
+				name : "pod-delete",
+				weight : 10
+			}
+		];
+		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
@@ -164,6 +170,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 			.find("[data-cy=statsButton]")
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, "", agent, "Cron workflow", "Cron workflow");
+		cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0, "Cron workflow");
 		cy.validateRecurringStats();
 		const experimentArray = [
 			{
