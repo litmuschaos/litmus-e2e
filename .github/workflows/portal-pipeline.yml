@@ -64,7 +64,7 @@ jobs:
           wait_for_pods monitoring 720
           wait_for_loadbalancer prometheus-k8s monitoring
           loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          DATA_SOURCE="http://$loadBalancerIP:9091"
+          DATA_SOURCE="http://$loadBalancerIP:9090"
           echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
@@ -210,7 +210,7 @@ jobs:
           wait_for_pods monitoring 720
           wait_for_loadbalancer prometheus-k8s monitoring
           loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          DATA_SOURCE="http://$loadBalancerIP:9091"
+          DATA_SOURCE="http://$loadBalancerIP:9090"
           echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
