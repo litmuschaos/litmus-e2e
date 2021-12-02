@@ -160,7 +160,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 		let Experiments = [
 			{
 				name : "pod-delete",
-				weight : 10
+				weight : 5
 			}
 		];
 		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
