@@ -21,6 +21,7 @@ Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, R
     cy.waitUntil(() =>
         cy.get("table")
             .find(`[data-cy=${workflowName}]`)
+            .eq(0)
             .find("[data-cy=WorkflowStatus]")
             .then((status) => {
                 return status.text() != "Running" ? true : false;
@@ -34,6 +35,7 @@ Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, R
     cy.waitUntil(() =>
         cy.get("table")
             .find(`[data-cy=${workflowName}]`)
+            .eq(0)
             .find("[data-cy=ExperimentsPassed]")
             .then((expPassed) => {
                 return expPassed.text() != "Experiments Passed : NA" ? true : false;
@@ -46,6 +48,7 @@ Cypress.Commands.add("validateVerdict", (workflowName, agent, expectedVerdict, R
     );
     cy.get('table')
         .find(`[data-cy=${workflowName}]`)
+        .eq(0)
         .then(($div) => {
             cy.wrap($div)
                 .find("td")

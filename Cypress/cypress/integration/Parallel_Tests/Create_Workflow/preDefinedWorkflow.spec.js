@@ -131,7 +131,7 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 		let Experiments = [
 			{
 				name : "pod-delete",
-				weight : 10
+				weight : 5
 			}
 		];
 		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
