@@ -19,7 +19,8 @@ GITHUB_PAT=your_github_personal_access_token
 - Replace `your_github_personal_access_token` with the actual token value created in the first step and replace `your_github_username` with the GitHub account from which the token was created.
 
 - Run the below command to install the required dependencies.
-```
+
+```go
 go mod download
 ```
 
@@ -27,7 +28,7 @@ go mod download
 
 Run the below command to start the server:
 
-```
+```go
 go run main.go
 ```
 
