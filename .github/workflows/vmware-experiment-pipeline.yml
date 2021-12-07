@@ -43,7 +43,6 @@ jobs:
           kind: Secret
           metadata:
             name: vcenter-secret
-            namespace: litmus
           type: Opaque
           stringData:
             VCENTERSERVER: ${{ secrets.VCENTERSERVER }}
