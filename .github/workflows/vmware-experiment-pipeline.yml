@@ -46,9 +46,9 @@ jobs:
             namespace: litmus
           type: Opaque
           stringData:
-            VCENTERSERVER: "${{ secrets.VCENTERSERVER }}"
-            VCENTERUSER: "${{ secrets.VCENTERUSER }}"
-            VCENTERPASS: "${{ secrets.VCENTERPASS }}"
+            VCENTERSERVER: ${{ secrets.VCENTERSERVER }}
+            VCENTERUSER: ${{ secrets.VCENTERUSER }}
+            VCENTERPASS: ${{ secrets.VCENTERPASS }}
 
       - name: Litmus Infra Setup
         if: always()
