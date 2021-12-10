@@ -4,7 +4,7 @@ describe("Testing the routes functionality without Login [ Must redirect to Logi
   context("Testing Routes without login", () => {
     ["workflow", "homepage", "community", "unknown"].map((page) => {
       it("Visiting the " + page + " page without login", () => {
-        cy.clearCookie("token");
+        cy.clearCookie("litmus-cc-token");
         indexedDB.deleteDatabase("localforage");
         cy.visit("/" + page);
         cy.url().should("include", "/login");

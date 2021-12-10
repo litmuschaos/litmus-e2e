@@ -7,9 +7,11 @@
 import * as user from "../../fixtures/Users.json";
 import * as workflows from "../../fixtures/Workflows.json";
 
+export const agent = Cypress.env("AGENT");
+
 export const setup = (doWaitForCluster) => {          
     if(doWaitForCluster){
-        cy.waitForCluster("Self-Agent")
+        cy.waitForCluster(agent);
     }
 }
 
@@ -26,7 +28,7 @@ export const loginSmokeTest = () => {
     expect("[data-cy=inputPassword]").to.exist;
 
     // Clear existing cookies if any
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     // --------------------------------------------------------
     cy.log("Attempting Login With Incorrect Credentials");
     cy.login("Wrong Username", "Wrong Password");

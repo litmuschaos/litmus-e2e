@@ -3,7 +3,7 @@
 let user;
 describe("Testing the accessibility of Login page", () => {
   it("Visiting the Login Page", () => {
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     indexedDB.deleteDatabase("localforage");
     cy.visit("/login");
     cy.url().should("include", "/login");
@@ -13,7 +13,7 @@ describe("Testing the accessibility of Login page", () => {
 
 describe("Checking functionality of Login Page", () => {
   beforeEach("Visit Login Page", () => {
-    cy.clearCookie("token");
+    cy.clearCookie("litmus-cc-token");
     indexedDB.deleteDatabase("localforage");
     cy.fixture("Users").then((User) => {
       user = User;

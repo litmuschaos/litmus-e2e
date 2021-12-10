@@ -11,6 +11,10 @@
     "authURL": "http://localhost:3000",
     "apiURL": "http://localhost:8080",
     "KUBE_API_SERVER": "",
-    "KUBE_API_TOKEN": ""
+    "KUBE_API_TOKEN": "",
+    "AGENT_NAMESPACE" : "litmus",
+    "AGENT" : "Self-Agent",
+    "TARGET_APP_NS" : "default",
+    "DATA_SOURCE_URL" : ""
   }
 }

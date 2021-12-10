@@ -143,7 +143,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 
 			//Abort the chaos experiment
 			By("[Abort]: Abort the chaos by patching engine state")
-			err = pkg.ChaosAbort(&testsDetails)
+			err = pkg.ChaosAbort(&testsDetails, clients)
 			Expect(err).To(BeNil(), "[Abort]: Chaos abort failed, due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
@@ -241,62 +241,6 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-		})
-	})
-
-	// BDD for pipeline result update
-	Context("Check for the result update", func() {
-
-		// BDD for pipeline result update
-		It("Should check for the result updation", func() {
-
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
-
-			//Fetching all the default ENV
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "go-engine9")
-
-			if testsDetails.UpdateWebsite == "true" {
-				//Getting chaosengine verdict
-				By("Getting Verdict of Chaos Engine")
-				ChaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				Expect(ChaosEngineVerdict).NotTo(BeEmpty(), "Fail to get chaos engine verdict, due to {%v}", err)
-
-				//Getting chaosengine verdict for abort test
-				By("Getting Verdict of Chaos Engine for abort test")
-				testsDetails.EngineName = "pod-delete-abort"
-				ChaosEngineVerdictForAbort, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				if ChaosEngineVerdictForAbort != "Stopped" {
-					ChaosEngineVerdict = "Fail"
-					klog.Error("Abort chaos test verdict is not Pass")
-				}
-
-				//Getting chaosengine verdict for annotation test
-				By("Getting Verdict of Chaos Engine for abort test")
-				testsDetails.EngineName = "pod-delete-annotated"
-				ChaosEngineVerdictForAnnotation, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
-				if ChaosEngineVerdictForAnnotation != "Pass" {
-					ChaosEngineVerdict = "Fail"
-					klog.Error("Annotation check test verdict is not Pass")
-				}
-
-				//Updating the pipeline result table
-				By("Updating the pipeline result table")
-				err = pkg.UpdateResultTable("unable to update pipeline result", ChaosEngineVerdict, &testsDetails)
-				Expect(err).To(BeNil(), "Job Result Updation failed, due to {%v}", err)
-			} else {
-				klog.Info("[SKIP]: Skip updating the result on website")
-			}
 		})
 	})
 })

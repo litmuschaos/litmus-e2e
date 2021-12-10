@@ -34,7 +34,8 @@ spec:
         image: litmuschaos/litmus-app-deployer:latest
         args:
           [
-            "-namespace={{workflow.parameters.adminModeNamespace}}",
+            # This line has error
+            "-namespace="{{workflow.parameters.adminModeNamespace}}"",
             "-typeName=resilient",
             "-operation=apply",
             "-timeout=400",

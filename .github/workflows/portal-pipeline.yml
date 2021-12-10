@@ -13,20 +13,28 @@ env:
   TAG: "${{github.event.inputs.Tag}}"
   MODULE: "${{github.event.inputs.Module}}"
   SELF_AGENT: "self-agent"
+  CS_MODE_NAMESPACE: "litmus"
+  NS_MODE_NAMESPACE: "default"
   EXTERNAL_AGENT: "external-agent"
 
 # Jobs for deploying and testing litmus-portal on a KinD Cluster
 jobs:
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 1
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -39,8 +47,25 @@ jobs:
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
         env:
-          PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "false"
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "CS-MODE"
+
+      - name: Deploying Prometheus as a DataSource
+        run: |
+          mkdir monitoring && cd monitoring
+          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
+          kubectl create ns monitoring
+          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+          source ../../../litmus/utils.sh
+          wait_for_pods monitoring 720
+          wait_for_loadbalancer prometheus-k8s monitoring
+          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          DATA_SOURCE="http://$loadBalancerIP:9090"
+          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -55,7 +80,7 @@ jobs:
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
@@ -91,10 +116,11 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${COMPONENTS} litmus
-          wait_for_pods litmus 720
+          verify_all_components ${COMPONENTS} ${NAMESPACE}
+          wait_for_pods ${NAMESPACE} 720
         env:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -109,6 +135,10 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
+          CYPRESS_AGENT_NAMESPACE: ${{ env.CS_MODE_NAMESPACE}}
+          CYPRESS_AGENT: "Self-Agent"
+          CYPRESS_TARGET_APP_NS: "default"
+          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
@@ -127,24 +157,30 @@ jobs:
           chmod 755 ./litmus/uninstall-portal.sh
           ./litmus/uninstall-portal.sh
         env:
-          PORTAL_VERSION: "ci"
+          PORTAL_VERSION: ${{ env.TAG }}
 
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: cypress-screenshots
+          name: Cluster-Scope-Mode-${{ matrix.AcessType }}-screenshots
           path: Cypress/cypress/screenshots
 
   Namespaced-Scope-Mode:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
-          args: --agents 3
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
@@ -154,12 +190,28 @@ jobs:
 
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
-          chmod 755 ./litmus/install-portal-namespaced.sh
-          ./litmus/install-portal-namespaced.sh
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
         env:
-          PORTAL_VERSION: "ci"
-          LOAD_BALANCER: "false"
-          LITMUS_PORTAL_NAMESPACE: "scope"
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "NS-MODE"
+
+      - name: Deploying Prometheus as a DataSource
+        run: |
+          mkdir monitoring && cd monitoring
+          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
+          kubectl create ns monitoring
+          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+          source ../../../litmus/utils.sh
+          wait_for_pods monitoring 720
+          wait_for_loadbalancer prometheus-k8s monitoring
+          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          DATA_SOURCE="http://$loadBalancerIP:9090"
+          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -174,11 +226,11 @@ jobs:
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
 
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: Create 2nd Cluster
         with:
           cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 3
+          args: --agents 1
 
       - name: Configuring and Testing the Agent Installation
         run: |
@@ -210,10 +262,11 @@ jobs:
         run: |
           kubectl config use-context k3d-${{ env.SELF_AGENT }}
           source ./litmus/utils.sh
-          verify_all_components ${COMPONENTS} scope
-          wait_for_pods scope 720
+          verify_all_components ${COMPONENTS} ${NAMESPACE}
+          wait_for_pods ${NAMESPACE} 720
         env:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
 
       - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
@@ -228,6 +281,10 @@ jobs:
           CYPRESS_BASE_URL: ${{ env.URL }}
           CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
           CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
+          CYPRESS_AGENT_NAMESPACE: ${{ env.NS_MODE_NAMESPACE}}
+          CYPRESS_AGENT: "Self-Agent"
+          CYPRESS_TARGET_APP_NS: ${{ env.NS_MODE_NAMESPACE}}
+          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # - name: Registering External Agent in Cluster Mode
       #   if: always()
@@ -246,11 +303,11 @@ jobs:
           chmod 755 ./litmus/uninstall-portal-namespaced.sh
           ./litmus/uninstall-portal-namespaced.sh
         env:
-          PORTAL_VERSION: "ci"
-          PORTAL_NAMESPACE: "scope"
+          PORTAL_VERSION: ${{ env.TAG }}
+          PORTAL_NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
 
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: cypress-screenshots
+          name: Namespaced-Scope-Mode-${{ matrix.AcessType }}-screenshots
           path: Cypress/cypress/screenshots

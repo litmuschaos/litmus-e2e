@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
-	"time"
 
+	"github.com/litmuschaos/litmus-e2e/pkg/environment"
 	"github.com/litmuschaos/litmus-e2e/pkg/log"
 	"github.com/litmuschaos/litmus-e2e/pkg/types"
 	"github.com/pkg/errors"
@@ -24,7 +24,7 @@ func Cleanup() error {
 }
 
 // ChaosAbort will abort the execution of chaosexperiment
-func ChaosAbort(testsDetails *types.TestDetails) error {
+func ChaosAbort(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command("bash", "-c", `kubectl patch chaosengine `+testsDetails.EngineName+` -n `+testsDetails.ChaosNamespace+` --type merge --patch '{"spec":{"engineState":"stop"}}'`)
@@ -38,8 +38,5 @@ func ChaosAbort(testsDetails *types.TestDetails) error {
 
 	}
 	log.Info("[Abort]: Chaos Experiment Aborted !!!")
-	// waiting for engine verdict updation
-	time.Sleep(3 * time.Second)
-
 	return nil
 }

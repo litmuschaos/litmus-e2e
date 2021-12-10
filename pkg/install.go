@@ -166,9 +166,8 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 		ENV: map[string]string{},
 	}
 
-	// Modify the goExperimentImage
-	chaosExperiment.Spec.Definition.Image = testsDetails.GoExperimentImage
-
+	// Modify the ExperimentImage
+	chaosExperiment.Spec.Definition.Image = testsDetails.ExperimentImage
 	// Modify experiment imagePullPolicy
 	chaosExperiment.Spec.Definition.ImagePullPolicy = corev1.PullPolicy(testsDetails.ExperimentImagePullPolicy)
 
@@ -182,9 +181,19 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 
 	// Modify LIB Image
 	if testsDetails.LibImage == "" && strings.Contains(libImage, "go-runner") {
-		testsDetails.LibImage = testsDetails.GoExperimentImage
+		testsDetails.LibImage = testsDetails.ExperimentImage
 	} else {
 		testsDetails.LibImage = libImage
+	}
+
+	// Modify Args
+	if testsDetails.Args != "" {
+		chaosExperiment.Spec.Definition.Args = strings.Split(testsDetails.Args, ",")
+	}
+
+	// Modify Image Command
+	if testsDetails.Command != "" {
+		chaosExperiment.Spec.Definition.Command = strings.Split(testsDetails.Command, ",")
 	}
 
 	// Modify ENV's
@@ -242,7 +251,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 		return errors.Errorf("fail to apply experiment file, err: %v", err)
 	}
 	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
-	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.GoExperimentImage + " !!!")
+	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.ExperimentImage + " !!!")
 
 	return nil
 }
@@ -327,6 +336,8 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
 			SetEnv("DISK_ZONES", testsDetails.DiskZones).
 			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
+	case "vm-poweroff":
+		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
 	}
 
 	// for experiments like pod network latency

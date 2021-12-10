@@ -2,15 +2,16 @@
 import * as workflows from "../../../fixtures/Workflows.json";
 import * as user from "../../../fixtures/Users.json";
 
+export const agent = Cypress.env("AGENT");
+
 describe("Testing the create Workflow Utility", () => {
-  before("Clearing the Cookies and deleting the ", () => {
+  before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
-    cy.wait(8000); // Needs to be removed after frontend is fixed.
+    cy.waitForCluster(agent);
+    cy.visit("/settings");
   });
 
   it("Checking accessiblity of GitOps Panel", () => {
-    cy.waitForCluster("Self-Agent");
-    cy.visit("/settings");
     cy.get("[data-cy=gitOps]").click();
     cy.get("[data-cy=localRadioButton] input[type=radio]").should("be.checked");
     cy.get("[data-cy=gitopsRadioButton] input[type=radio]").should(

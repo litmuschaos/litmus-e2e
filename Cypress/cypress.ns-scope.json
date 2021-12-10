@@ -8,6 +8,9 @@
   "video": false,
   "env": {
     "authURL": "/auth",
-    "apiURL": "/api"
+    "apiURL": "/api",
+    "AGENT_NAMESPACE" : "litmus",
+    "AGENT" : "Self-Agent",
+    "TARGET_APP_NS" : "default"
   }
 }

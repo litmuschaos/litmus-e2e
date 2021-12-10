@@ -39,6 +39,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.DiskVolumeNames = Getenv("DISK_VOLUME_NAMES", "")
 	testDetails.DiskZones = Getenv("DISK_ZONES", "")
 	testDetails.DeviceNames = Getenv("DEVICE_NAMES", "")
+	testDetails.VMIds = Getenv("APP_VM_MOIDS", "")
 	testDetails.Region = Getenv("REGION", "us-west-1")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
@@ -47,10 +48,12 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.AzureInstanceName = Getenv("AZURE_INSTANCE_NAME", "")
 	testDetails.AzureDiskName = Getenv("AZURE_DISK_NAME", "")
 	testDetails.AzureScaleSet = Getenv("AZURE_SCALE_SET", "")
+	testDetails.Args = Getenv("ARGS", "")
+	testDetails.Command = Getenv("COMMAND", "")
 
 	//All Images for running chaos test
 	testDetails.AnsibleExperimentImage = Getenv("ANSIBLE_EXPERIMENT_IMAGE", "litmuschaos/ansible-runner:ci")
-	testDetails.GoExperimentImage = Getenv("GO_EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
+	testDetails.ExperimentImage = Getenv("EXPERIMENT_IMAGE", "litmuschaos/go-runner:ci")
 	testDetails.OperatorImage = Getenv("OPERATOR_IMAGE", "litmuschaos/chaos-operator:ci")
 	testDetails.RunnerImage = Getenv("RUNNER_IMAGE", "litmuschaos/chaos-runner:ci")
 	testDetails.LibImage = Getenv("LIB_IMAGE", "")

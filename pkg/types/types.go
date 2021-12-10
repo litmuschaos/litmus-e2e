@@ -18,7 +18,7 @@ type TestDetails struct {
 	JobCleanUpPolicy          string
 	AnnotationCheck           string
 	ApplicationNodeName       string
-	GoExperimentImage         string
+	ExperimentImage           string
 	InstallLitmus             string
 	OperatorImage             string
 	ImagePullPolicy           string
@@ -48,6 +48,7 @@ type TestDetails struct {
 	DiskVolumeNames           string
 	DiskZones                 string
 	DeviceNames               string
+	VMIds                     string
 	Region                    string
 	Lib                       string
 	PodsAffectedPercentage    string
@@ -59,4 +60,6 @@ type TestDetails struct {
 	AzureInstanceName         string
 	AzureDiskName             string
 	AzureScaleSet             string
+	Args                      string
+	Command                   string
 }

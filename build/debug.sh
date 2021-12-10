@@ -49,3 +49,10 @@ echo
 echo "kubectl describe chaosresult -n ${CHAOS_NAMESPACE}"
 kubectl describe chaosresult -n ${CHAOS_NAMESPACE} || true
 echo
+echo "###################################################"
+echo "############ Describe ChaosExperiment  ################"
+echo "###################################################"
+echo
+echo "kubectl describe chaosexperiment -n ${CHAOS_NAMESPACE}"
+kubectl describe chaosexperiment -n ${CHAOS_NAMESPACE} || true
+echo
