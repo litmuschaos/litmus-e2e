@@ -86,10 +86,6 @@ jobs:
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt
 
-      - name: Litmus Cleanup
-        if: ${{ always() }}      
-        run: make litmus-cleanup 
-        
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh
