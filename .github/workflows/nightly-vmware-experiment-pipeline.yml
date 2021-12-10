@@ -48,7 +48,7 @@ jobs:
       - name: Run VM Poweroff experiment in serial & parallel mode
         if: always()
         env:
-          APP_VM_MOIDS: ${{ secrets.VM_NAMES }}
+          APP_VM_MOIDS: ${{ secrets.VM_MOIDS }}
         run: make vm-poweroff
 
       - name: "[Debug]: check chaos resources"

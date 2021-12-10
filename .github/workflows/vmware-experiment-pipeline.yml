@@ -59,7 +59,7 @@ jobs:
       - name: Run VM-Poweroff experiment in serial & parallel mode
         if: always()
         env:
-          APP_VM_MOIDS: ${{ secrets.VM_NAMES }}
+          APP_VM_MOIDS: ${{ secrets.VM_MOIDS }}
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
