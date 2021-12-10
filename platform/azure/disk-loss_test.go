@@ -13,15 +13,15 @@ import (
 	"k8s.io/klog"
 )
 
-func TestGoAzureInstaceStop(t *testing.T) {
+func TestGoAzureDiskLoss(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "BDD test")
 }
 
-var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
-	// BDD TEST CASE 1 - azure-vm-instance-stop in parallel mode
-	Context("Check for azure-vm-instance-stop in parallel mode experiment", func() {
-		It("Should check for the  azure vm instance stop in parallel", func() {
+var _ = Describe("BDD of azure-disk-loss experiment", func() {
+	// BDD TEST CASE 1 - azure-disk-loss in parallel mode
+	Context("Check for azure-disk-loss in parallel mode experiment", func() {
+		It("Should check for the  azure disk loss in parallel", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -36,12 +36,12 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "azure-instance-stop", "az-en-par")
-			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
+			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-par")
+			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/engine.yaml"
+			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/rbac.yaml"
+			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml"
+			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/engine.yaml"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -82,10 +82,10 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 		})
 	})
 
-	// BDD TEST CASE 2 - azure-vm-instance-stop in serial mode
-	Context("Check for azure-vm-instance-stop experiment", func() {
+	// BDD TEST CASE 2 - azure-disk-loss in serial mode
+	Context("Check for azure-disk-loss experiment", func() {
 
-		It("Should check for the azure vm instance stop in serial", func() {
+		It("Should check for the azure disk loss in serial", func() {
 
 			testsDetails := types.TestDetails{}
 			clients := environment.ClientSets{}
@@ -100,12 +100,12 @@ var _ = Describe("BDD of azure-vm-instance-stop experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "azure-instance-stop", "az-en-ser")
-			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
+			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-ser")
+			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/engine.yaml"
+			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/rbac.yaml"
+			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml"
+			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/engine.yaml"
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

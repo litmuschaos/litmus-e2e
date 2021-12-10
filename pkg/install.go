@@ -310,14 +310,14 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			Name:  "CHAOS_KILL_COMMAND",
 			Value: testsDetails.MemoryKillCommand,
 		})
-	case "azure-vm-instance-stop":
-		envDetails.SetEnv("AZURE_RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+	case "azure-instance-stop":
+		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
 			SetEnv("AZURE_INSTANCE_NAME", testsDetails.AzureInstanceName).
 			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet)
-	case "azure-vm-disk-loss":
-		envDetails.SetEnv("AZURE_RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+	case "azure-disk-loss":
+		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
 			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet).
-			SetEnv("AZURE_DISK_NAME", testsDetails.AzureDiskName)
+			SetEnv("VIRTUAL_DISK_NAMES", testsDetails.AzureDiskName)
 	case "gcp-vm-instance-stop":
 		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
 			SetEnv("VM_INSTANCE_NAMES", testsDetails.VMInstanceNames).
