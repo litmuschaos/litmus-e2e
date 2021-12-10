@@ -241,6 +241,14 @@ gcp-vm-disk-loss:
 	@echo "------------------------------------------"
 	@go test platform/gcp/gcp-vm-disk-loss_test.go -v -count=1 -timeout=20m
 
+.PHONY: vm-poweroff
+vm-poweroff:
+
+	@echo "------------------------------------------"
+	@echo "Running vm-poweroff experiment"
+	@echo "------------------------------------------"
+	@go test platform/vmware/vm-poweroff_test.go -v -count=1 -timeout=20m
+
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
 

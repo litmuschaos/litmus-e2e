@@ -328,6 +328,8 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
 			SetEnv("DISK_ZONES", testsDetails.DiskZones).
 			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
+	case "vm-poweroff":
+		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
 	}
 
 	// for experiments like pod network latency

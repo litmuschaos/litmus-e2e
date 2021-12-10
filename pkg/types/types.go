@@ -48,6 +48,7 @@ type TestDetails struct {
 	DiskVolumeNames           string
 	DiskZones                 string
 	DeviceNames               string
+	VMIds                     string
 	Region                    string
 	Lib                       string
 	PodsAffectedPercentage    string
