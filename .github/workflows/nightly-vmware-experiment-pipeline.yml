@@ -48,7 +48,7 @@ jobs:
       - name: Run VM Poweroff experiment in serial & parallel mode
         if: always()
         env:
-          APP_VM_MOIDS: "vm-23,vm-24"
+          APP_VM_MOIDS: ${{ secrets.VM_NAMES }}
         run: make vm-poweroff
 
       - name: "[Debug]: check chaos resources"
@@ -60,7 +60,7 @@ jobs:
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
-        run: |      
+        run: |
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt
