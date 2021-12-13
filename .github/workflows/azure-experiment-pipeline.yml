@@ -53,9 +53,9 @@ jobs:
       - name: Create target Azure VM Instances
         if: always()
         run: |
-          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }} -l eastus && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.INSTANCE_TWO }} --image UbuntuLTS --generate-ssh-keys
+          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }} -l eastus && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }} -n ${{ secrets.INSTANCE_TWO }} --image UbuntuLTS --generate-ssh-keys
       
       - name: Litmus Infra Setup
         if: always()
@@ -70,7 +70,7 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           AZURE_INSTANCE_NAME: "${{ secrets.INSTANCE_ONE }},${{ secrets.INSTANCE_TWO }}"
-          AZURE_RESOURCE_GROUP : "${{ secrets.AZURE_RESOURCE_GROUP  }}"
+          AZURE_RESOURCE_GROUP : "${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }}"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -79,8 +79,8 @@ jobs:
       - name: Delete target Azure VM Instances
         if: always()
         run: |
-          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP  }} --query "[].id" -o tsv) --yes
-          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP  }} --yes
+          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }} --query "[].id" -o tsv) --yes
+          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_${{ github.run_number }} --yes
       
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
