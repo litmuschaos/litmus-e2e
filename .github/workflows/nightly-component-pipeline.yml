@@ -318,32 +318,3 @@ jobs:
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh
         
-
-  ### Website Update
-  Pipeline_Update:
-    needs: [ Chaos_Operator_Component_Test,Chaos_Engine_Component_Test,Chaos_Experiment_Component_Test,Chaos_Result_Component_Test]
-    if: always()
-    env:
-      CI_PIPELINE_ID: ${{ github.run_id }}
-      COMPONENT_LEVEL: "true"
-      UPDATE_WEBSITE: "true"
-      GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    runs-on: ubuntu-latest
-    steps:
-
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'    
-
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install pygithub
-        if: ${{ always() }}
-        run: python3 -m pip install pygithub 
-            
-      - name: Pipeline Update
-        if: ${{ always() }}
-        run: make pipeline-status-update

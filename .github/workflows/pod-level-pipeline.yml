@@ -395,12 +395,6 @@ jobs:
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
         run: make pod-affected-perc-ton-parallel
 
-      - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
-        run: |
-          kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
-          kubectl delete ns ${CHAOS_NAMESPACE}
-          
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
@@ -414,7 +408,12 @@ jobs:
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt          
-          
+
+      - name: Experiment Tunables Cleanup
+        if: ${{ always() }}
+        run: |
+          kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
+                    
       - name: Application Cleanup
         if: ${{ always() }}      
         run: make app-cleanup
@@ -479,12 +478,6 @@ jobs:
         if: ${{ always() }}
         run: make pod-affected-perc-ton-series
 
-      - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
-        run: |
-          kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
-          kubectl delete ns ${CHAOS_NAMESPACE}
-          
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
@@ -498,7 +491,12 @@ jobs:
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt          
-          
+
+      - name: Experiment Tunables Cleanup
+        if: ${{ always() }}
+        run: |
+          kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
+                    
       - name: Application Cleanup
         if: ${{ always() }}      
         run: make app-cleanup
@@ -584,10 +582,6 @@ jobs:
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
           kubectl delete ns ${CHAOS_NAMESPACE}
 
-      - name: Litmus Cleanup
-        if: ${{ always() }}      
-        run: make litmus-cleanup 
-        
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh        
