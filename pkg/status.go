@@ -210,7 +210,7 @@ func WaitForEngineStatus(testsDetails *types.TestDetails, clients environment.Cl
 			if err != nil {
 				return errors.Errorf("Fail to get the chaosengine, due to %v", err)
 			}
-
+			log.Infof("the duration is %v and delay is %v and retry is %v", testsDetails.Duration, testsDetails.Delay, uint(testsDetails.Duration/testsDetails.Delay))
 			if string(chaosEngine.Status.EngineStatus) != status {
 				log.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
 				return errors.Errorf("Engine is not yet %v", status)
