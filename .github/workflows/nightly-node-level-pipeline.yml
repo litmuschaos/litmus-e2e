@@ -183,20 +183,3 @@ jobs:
     steps:
       - name: Litmus Cleanup
         run: make litmus-cleanup
-
-  ### Website Update
-  Pipeline_Update:
-    needs: Litmus_Cleanup
-    if: always()
-    env:
-      CI_PIPELINE_ID: ${{ github.run_id }}
-      NODE_LEVEL: "true"
-      UPDATE_WEBSITE: "true"
-      GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-
-    runs-on: [self-hosted, node-level]
-    steps:
-      - name: Pipeline Update
-        run: make pipeline-status-update
