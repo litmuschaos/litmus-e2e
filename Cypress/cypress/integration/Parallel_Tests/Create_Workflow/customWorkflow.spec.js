@@ -102,6 +102,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			} 
 		  };
 		cy.tuneCustomWorkflow(tunningParameters);
+		cy.get("[data-cy=revertChaosSwitch] input").click();
 		// Expected nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete"];
 		// Verify nodes in dagre graph
@@ -179,7 +180,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
+		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
