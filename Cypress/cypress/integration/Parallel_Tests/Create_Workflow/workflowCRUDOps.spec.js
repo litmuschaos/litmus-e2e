@@ -144,6 +144,9 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 	});
 
 	it("Validating graph nodes", () => {
+		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
+		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.get("table")
 			.find("tr")
 			.eq(2)

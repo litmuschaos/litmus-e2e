@@ -167,7 +167,10 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Validating graph nodes", () => {
+		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
+		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.get("table")
 			.find("tr")
 			.eq(2)
