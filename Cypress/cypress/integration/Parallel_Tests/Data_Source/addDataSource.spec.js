@@ -77,6 +77,41 @@ describe("Testing the addition of data source", () => {
       });
   });
 
+  it("Changing name of existing datasource and validating it", () => {
+    cy.visit("/observability");
+    cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
+    cy.get("[data-cy=configureDatasource]").eq(0).click();
+
+    cy.get("[data-cy=inputDataSourceName] input").clear().type("data-source-2");
+    cy.get("[data-cy=dataSourceControlButton]").click();
+
+    cy.get("[data-cy=dataSourceControlButton]").click();
+
+    cy.get("[role=alert]").should("be.visible");
+    cy.get("[role=alert]").should("have.text", "Successfully updated the data source information");
+
+    cy.GraphqlWait("listDataSource", "dataSources");
+    cy.visit("/observability");
+		cy.wait("@dataSources").its("response.statusCode").should("eq", 200);
+    cy.get('table')
+      .find('tr')
+      .eq(1)
+      .then(($div) => {
+        cy.wrap($div)
+          .find('td')
+          .eq(0)
+          .should("have.text", "Active");
+        cy.wrap($div)
+          .find('td')
+          .eq(1)
+          .should("have.text", "data-source-2");
+        cy.wrap($div)
+          .find('td')
+          .eq(2)
+          .should("have.text", "Prometheus");
+      });
+  });
+
   it("Configure data source with incorrect details", () => {
     cy.visit("/observability");
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
@@ -99,5 +134,10 @@ describe("Testing the addition of data source", () => {
     cy.get("[data-cy=deleteDataSourceModal] button").eq(1).click();
 
     cy.get("[role=alert]").should("have.text", "Successfully deleted the data source");
+
+    cy.get('table')
+      .find('tr')
+      .find('td')
+      .should("have.text", "No data source available");
   })
 });
