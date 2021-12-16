@@ -44,3 +44,43 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
     cy.get("[data-cy=FORCE] input").clear().type(tunningParameters.tuneExperiment.force);
     cy.get("[data-cy=TuneExperimentControlButtons] button").eq(1).click();
 });
+
+Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
+    cy.get("[data-cy=statsHeatMap]").should("be.visible");
+    cy.get("[data-cy=statsHeatMap]")
+        .within((el) => {
+            cy.wrap(el)
+                .find('[fill="#E3AD4F"]')
+                .click();
+        });
+
+    cy.get("[data-cy=statsBarGraph]").scrollIntoView();
+    cy.get("[data-cy=statsBarGraph]").should("be.visible");
+    cy.get("[data-cy=statsBarGraph]")
+        .within((el) => {
+            cy.wrap(el)
+                .find('g')
+                .find('rect')
+                .eq(4)
+                .click();
+        });
+    let experimentArray = [
+		{
+			experimentName: "pod-delete",
+			verdict: "Pass",
+			weightOfTest: 5,
+			resultingPoints: 5
+		}
+	];
+	cy.validateExperimentsTable(experimentArray);
+    cy.get("[data-cy=statsBarGraph]").click(650, 250);
+    experimentArray = [
+        {
+			experimentName: "pod-delete",
+			verdict: "Fail",
+			weightOfTest: 5,
+			resultingPoints: 0
+		}
+    ];
+    cy.validateExperimentsTable(experimentArray);
+});

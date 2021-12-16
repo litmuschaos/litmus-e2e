@@ -241,5 +241,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
 		cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
+		cy.validateRecurringStatsWithLessResiliency();
 	});
 });
