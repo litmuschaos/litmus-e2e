@@ -70,6 +70,8 @@ sh kube-api-config.sh <CLUSTER_NAME>
 npx cypress open
 ```
 
+Optional:- For running tests related to Datasource & Monitoring, follow instructions for setting up Monitoring Infrastructure from [here](https://github.com/litmuschaos/litmus/tree/master/monitoring#setup-the-monitoring-infrastructure)
+
 - Developers can manually trigger the tests from the Cypress Test Runner by clicking on test names and play around to get started.
 
 Whenever we add a new test, it will be visible in Cypress Test Runner.
