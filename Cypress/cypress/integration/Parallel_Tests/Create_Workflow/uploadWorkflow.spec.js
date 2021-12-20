@@ -75,13 +75,16 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
 		let Experiments = [
 			{
 				name : "pod-delete",
-				weight : 5
+				weight : 10
 			}
 		];
 		cy.validateVerdict(workflowName, agent, "Succeeded", 100, 1, 1, Experiments);
 	});
 
 	it("Validating graph nodes", () => {
+		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
+		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("table")
 			.find("tr")

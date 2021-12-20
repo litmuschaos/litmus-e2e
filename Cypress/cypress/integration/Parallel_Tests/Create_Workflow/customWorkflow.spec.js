@@ -102,6 +102,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			} 
 		  };
 		cy.tuneCustomWorkflow(tunningParameters);
+		cy.get("[data-cy=revertChaosSwitch] input").click();
 		// Expected nodes
 		const graphNodesNameArray = ["install-chaos-experiments", "pod-delete"];
 		// Verify nodes in dagre graph
@@ -167,6 +168,9 @@ describe("Testing the validation of the final verdict with an existing target ap
 	});
 
 	it("Validating graph nodes", () => {
+		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
+		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("table")
 			.find("tr")
@@ -176,7 +180,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.click({ scrollBehavior: false });
 		cy.get("[data-cy=statsTabs]").find('button').eq(0).click();
 		// Expected Nodes
-		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete", "revert-chaos"];
+		const graphNodesNameArray = [workflowName, "install-chaos-experiments", "pod-delete"];
 		// Verify nodes in dagre graph (TODO: Check status of nodes)
 		cy.validateGraphNodes(graphNodesNameArray);
 	});
@@ -237,5 +241,6 @@ describe("Testing the validation of the final verdict with an existing target ap
 			.click();
 		cy.validateWorkflowInfo(workflowName, workflowNamespace, workflowSubject, agent, "Non cron workflow", "Non cron workflow");
 		cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
+		cy.validateRecurringStatsWithLessResiliency();
 	});
 });

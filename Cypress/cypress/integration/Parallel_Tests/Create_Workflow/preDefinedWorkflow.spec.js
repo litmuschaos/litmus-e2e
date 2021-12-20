@@ -138,6 +138,9 @@ describe("Testing the workflow creation wizard using PreDefined Experiments", ()
 	});
 
 	it("Validating graph nodes", () => {
+		cy.GraphqlWait("workflowListDetails", "listSchedules");
+		cy.visit("/workflows");
+		cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
 		cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running", "Succeeded"]);
 		cy.get("table")
 			.find("tr")
