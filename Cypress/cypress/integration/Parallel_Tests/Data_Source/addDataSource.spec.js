@@ -79,6 +79,7 @@ describe("Testing the addition of data source", () => {
 
   it("Changing name of existing datasource and validating it", () => {
     cy.visit("/observability");
+    cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
     cy.get("[data-cy=configureDatasource]").eq(0).click();
 
