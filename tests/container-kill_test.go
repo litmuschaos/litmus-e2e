@@ -211,75 +211,75 @@ var _ = Describe("BDD of container-kill experiment", func() {
 		})
 
 		// BDD TEST CASE 4
-		Context("Check for pumba lib of container kill experiment", func() {
+		// Context("Check for pumba lib of container kill experiment", func() {
 
-			It("Should check the container-kill experiment when lib is set to pumba", func() {
+		// 	It("Should check the container-kill experiment when lib is set to pumba", func() {
 
-				testsDetails := types.TestDetails{}
-				clients := environment.ClientSets{}
-				chaosExperiment := v1alpha1.ChaosExperiment{}
-				chaosEngine := v1alpha1.ChaosEngine{}
+		// 		testsDetails := types.TestDetails{}
+		// 		clients := environment.ClientSets{}
+		// 		chaosExperiment := v1alpha1.ChaosExperiment{}
+		// 		chaosEngine := v1alpha1.ChaosEngine{}
 
-				klog.Info("RUNNING CONTAINER KILL PUMBA LIB TEST!!!")
-				//Getting kubeConfig and Generate ClientSets
-				By("[PreChaos]: Getting kubeconfig and generate clientset")
-				err := clients.GenerateClientSetFromKubeConfig()
-				Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+		// 		klog.Info("RUNNING CONTAINER KILL PUMBA LIB TEST!!!")
+		// 		//Getting kubeConfig and Generate ClientSets
+		// 		By("[PreChaos]: Getting kubeconfig and generate clientset")
+		// 		err := clients.GenerateClientSetFromKubeConfig()
+		// 		Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
 
-				//Fetching all the default ENV
-				//Note: please don't provide custom experiment name here
-				By("[PreChaos]: Fetching all default ENVs")
-				klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-				environment.GetENV(&testsDetails, "container-kill", "container-kill-pumba")
+		// 		//Fetching all the default ENV
+		// 		//Note: please don't provide custom experiment name here
+		// 		By("[PreChaos]: Fetching all default ENVs")
+		// 		klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+		// 		environment.GetENV(&testsDetails, "container-kill", "container-kill-pumba")
 
-				// Checking the chaos operator running status
-				By("[Status]: Checking chaos operator status")
-				err = pkg.OperatorStatusCheck(&testsDetails, clients)
-				Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+		// 		// Checking the chaos operator running status
+		// 		By("[Status]: Checking chaos operator status")
+		// 		err = pkg.OperatorStatusCheck(&testsDetails, clients)
+		// 		Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
 
-				//Installing RBAC for the experiment
-				By("[Install]: Installing RBAC")
-				err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
-				Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+		// 		//Installing RBAC for the experiment
+		// 		By("[Install]: Installing RBAC")
+		// 		err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+		// 		Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
 
-				//Installing Chaos Experiment for container-kill
-				By("[Install]: Installing chaos experiment")
-				testsDetails.Lib = "pumba"
-				err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
-				Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+		// 		//Installing Chaos Experiment for container-kill
+		// 		By("[Install]: Installing chaos experiment")
+		// 		testsDetails.Lib = "pumba"
+		// 		err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
+		// 		Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
 
-				//Installing Chaos Engine for container-kill
-				By("[Install]: Installing chaos engine")
-				testsDetails.AnnotationCheck = "true"
-				err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
-				Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+		// 		//Installing Chaos Engine for container-kill
+		// 		By("[Install]: Installing chaos engine")
+		// 		testsDetails.AnnotationCheck = "true"
+		// 		err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+		// 		Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
 
-				//Checking runner pod running state
-				By("[Status]: Runner pod running status check")
-				err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-				Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+		// 		//Checking runner pod running state
+		// 		By("[Status]: Runner pod running status check")
+		// 		err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+		// 		Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
 
-				//Chaos pod running status check
-				err = pkg.ChaosPodStatus(&testsDetails, clients)
-				Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+		// 		//Chaos pod running status check
+		// 		err = pkg.ChaosPodStatus(&testsDetails, clients)
+		// 		Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
 
-				//Waiting for chaos pod to get completed
-				//And Print the logs of the chaos pod
-				By("[Status]: Wait for chaos pod completion and then print logs")
-				err = pkg.ChaosPodLogs(&testsDetails, clients)
-				Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+		// 		//Waiting for chaos pod to get completed
+		// 		//And Print the logs of the chaos pod
+		// 		By("[Status]: Wait for chaos pod completion and then print logs")
+		// 		err = pkg.ChaosPodLogs(&testsDetails, clients)
+		// 		Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
 
-				//Checking the chaosresult verdict
-				By("[Verdict]: Checking the chaosresult verdict")
-				err = pkg.ChaosResultVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+		// 		//Checking the chaosresult verdict
+		// 		By("[Verdict]: Checking the chaosresult verdict")
+		// 		err = pkg.ChaosResultVerdict(&testsDetails, clients)
+		// 		Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
 
-				//Checking chaosengine verdict
-				By("Checking the Verdict of Chaos Engine")
-				err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-				Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+		// 		//Checking chaosengine verdict
+		// 		By("Checking the Verdict of Chaos Engine")
+		// 		err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+		// 		Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
 
-			})
-		})
+		// 	})
+		// })
 	})
 })
