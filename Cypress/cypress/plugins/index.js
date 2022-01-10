@@ -35,5 +35,15 @@ module.exports = (on, config) => {
         })
       })
     },
+    getSecuritySetupVariable: () => {
+      if(global.setupVariable) {
+        return global.setupVariable;
+      }
+      return null;
+    },
+    setSetupVariable: (setupVariable) => {
+      global.setupVariable = setupVariable;
+      return null;
+    },
   })
 }
