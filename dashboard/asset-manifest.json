@@ -4,8 +4,8 @@
     "static/js/0.a6641112.chunk.js.map": "/litmus-e2e/dashboard/static/js/0.a6641112.chunk.js.map",
     "static/js/1.895864f6.chunk.js": "/litmus-e2e/dashboard/static/js/1.895864f6.chunk.js",
     "static/js/1.895864f6.chunk.js.map": "/litmus-e2e/dashboard/static/js/1.895864f6.chunk.js.map",
-    "main.js": "/litmus-e2e/dashboard/static/js/main.0b517e61.chunk.js",
-    "main.js.map": "/litmus-e2e/dashboard/static/js/main.0b517e61.chunk.js.map",
+    "main.js": "/litmus-e2e/dashboard/static/js/main.083a1ef9.chunk.js",
+    "main.js.map": "/litmus-e2e/dashboard/static/js/main.083a1ef9.chunk.js.map",
     "runtime-main.js": "/litmus-e2e/dashboard/static/js/runtime-main.d2f32268.js",
     "runtime-main.js.map": "/litmus-e2e/dashboard/static/js/runtime-main.d2f32268.js.map",
     "static/js/4.0c3f915d.chunk.js": "/litmus-e2e/dashboard/static/js/4.0c3f915d.chunk.js",
@@ -33,6 +33,6 @@
   "entrypoints": [
     "static/js/runtime-main.d2f32268.js",
     "static/js/4.0c3f915d.chunk.js",
-    "static/js/main.0b517e61.chunk.js"
+    "static/js/main.083a1ef9.chunk.js"
   ]
 }
