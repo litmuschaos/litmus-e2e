@@ -236,7 +236,7 @@ spec:
   # -------------------------------------------------   
 
   - tcid: TCID-EC2-AZURE-INFRA-INSTANCE-STOP
-    name: "TCID-EC2-AZURE-INFRA-INSTANCE-STO"
+    name: "TCID-EC2-AZURE-INFRA-INSTANCE-STOP"
     description: "Stops an Azure VM instance"
     labels:
       test/feature: "azure"

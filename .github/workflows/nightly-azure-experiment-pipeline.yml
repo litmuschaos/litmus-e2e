@@ -43,9 +43,9 @@ jobs:
       - name: Create target Azure VM Instances
         if: always()
         run: |
-          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -l eastus && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n ${{ secrets.INSTANCE_TWO }} --image UbuntuLTS --generate-ssh-keys
+          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }} -l eastus && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }} -n litmus-e2e-instance-two --image UbuntuLTS --generate-ssh-keys
       
       - name: Litmus Infra Setup
         if: always()
@@ -59,8 +59,8 @@ jobs:
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-          AZURE_INSTANCE_NAME: "${{ secrets.INSTANCE_ONE }},${{ secrets.INSTANCE_TWO }}"
-          AZURE_RESOURCE_GROUP : "${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }}"
+          AZURE_INSTANCE_NAME: "litmus-e2e-instance-one,litmus-e2e-instance-two"
+          AZURE_RESOURCE_GROUP : "${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }}"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -69,8 +69,8 @@ jobs:
       - name: Delete target Azure VM Instances
         if: always()
         run: |
-          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} --query "[].id" -o tsv) --yes
-          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} --yes
+          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }} --query "[].id" -o tsv) --yes
+          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_instance_${{ github.run_number }} --yes
       
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
@@ -128,12 +128,12 @@ jobs:
       - name: Create a Azure VM Instance with target Disk Volumes
         if: always()
         run: |
-          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} -l eastus && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} -n ${{ secrets.INSTANCE_ONE }} --image UbuntuLTS --generate-ssh-keys && \
-          az disk create -n ${{ secrets.DISK_ONE }} -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --size-gb=4 && \
-          az disk create -n ${{ secrets.DISK_TWO }} -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --size-gb=4 && \
-          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_ONE }} && \
-          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_TWO }}
+          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} -l eastus && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
+          az disk create -n litmus-e2e-disk-one -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --size-gb=4 && \
+          az disk create -n litmus-e2e-disk-two -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --size-gb=4 && \
+          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-one && \
+          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-two
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
@@ -146,9 +146,9 @@ jobs:
         if: always()
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-          AZURE_INSTANCE_NAME: "${{ secrets.INSTANCE_ONE }},${{ secrets.INSTANCE_TWO }}"
-          AZURE_DISK_NAME: "${{ secrets.DISK_ONE }},${{ secrets.DISK_TWO }}"
-          AZURE_RESOURCE_GROUP: "${{ secrets.AZURE_RESOURCE_GROUP }}"
+          AZURE_INSTANCE_NAME: "litmus-e2e-instance-one,litmus-e2e-instance-two"
+          AZURE_DISK_NAME: "litmus-e2e-disk-one,litmus-e2e-disk-two"
+          AZURE_RESOURCE_GROUP: "${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }}"
           GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -157,12 +157,12 @@ jobs:
       - name: Delete the VM Instance and target Disk Volumes
         if: always()
         run: |
-          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_ONE }} && \
-          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --vm-name ${{ secrets.INSTANCE_ONE }} -n ${{ secrets.DISK_TWO }} && \
-          az disk delete -n ${{ secrets.DISK_ONE }} -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --yes && \
-          az disk delete -n ${{ secrets.DISK_TWO }} -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --yes && \
-          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --query "[].id" -o tsv) --yes
-          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_disk__${{ github.run_number }} --yes
+          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-one && \
+          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-two && \
+          az disk delete -n litmus-e2e-disk-one -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --yes && \
+          az disk delete -n litmus-e2e-disk-two -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --yes && \
+          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --query "[].id" -o tsv) --yes
+          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_schedule_disk_${{ github.run_number }} --yes
 
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
