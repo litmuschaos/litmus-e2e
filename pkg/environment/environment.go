@@ -44,6 +44,10 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	testDetails.AzureResourceGroup = Getenv("AZURE_RESOURCE_GROUP", "")
+	testDetails.AzureInstanceName = Getenv("AZURE_INSTANCE_NAME", "")
+	testDetails.AzureDiskName = Getenv("AZURE_DISK_NAME", "")
+	testDetails.AzureScaleSet = Getenv("AZURE_SCALE_SET", "")
 	testDetails.Args = Getenv("ARGS", "")
 	testDetails.Command = Getenv("COMMAND", "")
 

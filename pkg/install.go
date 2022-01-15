@@ -220,7 +220,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	//Fetch Experiment file
 	res, err := http.Get(testsDetails.ExperimentPath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
 	}
 
 	// ReadAll reads from response until an error or EOF and returns the data it read.
@@ -319,6 +319,14 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			Name:  "CHAOS_KILL_COMMAND",
 			Value: testsDetails.MemoryKillCommand,
 		})
+	case "azure-instance-stop":
+		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+			SetEnv("AZURE_INSTANCE_NAME", testsDetails.AzureInstanceName).
+			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet)
+	case "azure-disk-loss":
+		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
+			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet).
+			SetEnv("VIRTUAL_DISK_NAMES", testsDetails.AzureDiskName)
 	case "gcp-vm-instance-stop":
 		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
 			SetEnv("VM_INSTANCE_NAMES", testsDetails.VMInstanceNames).

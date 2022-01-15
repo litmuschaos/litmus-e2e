@@ -56,6 +56,10 @@ type TestDetails struct {
 	Version                   string
 	TargetNodes               string
 	NodeLabel                 string
+	AzureResourceGroup        string
+	AzureInstanceName         string
+	AzureDiskName             string
+	AzureScaleSet             string
 	Args                      string
 	Command                   string
 }

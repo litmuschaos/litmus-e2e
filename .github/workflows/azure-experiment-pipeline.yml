@@ -1,0 +1,203 @@
+---
+name: Azure-Experiment-Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      goExperimentImage:
+        description: "Go Experiment Image"
+        default: "litmuschaos/go-runner:ci"
+        required: true
+      operatorImage:
+        description: "Operator Image"
+        default: "litmuschaos/chaos-operator:ci"
+        required: true
+      runnerImage:
+        description: "Runner Image"
+        default: "litmuschaos/chaos-runner:ci"
+        required: true
+      chaosNamespace:
+        description: "Chaos Namespace"
+        default: "default"
+        required: true
+      experimentImagePullPolicy:
+        description: "Experiment Image Pull Policy"
+        default: "Always"
+        required: true
+
+jobs:
+  Azure_VM_Instance_Stop:
+    runs-on: ubuntu-latest
+    steps:
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      
+      - name: Create azure auth file from secrets
+        run: echo "${{ secrets.AZURE_AUTH_FILE }}" > azure.auth
+
+      - name: Create Kubernetes secret for azure experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          kubectl create secret generic cloud-secret --from-file=azure.auth
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create target Azure VM Instances
+        if: always()
+        run: |
+          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -l eastus && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-two --image UbuntuLTS --generate-ssh-keys
+      
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run Azure VM Instance Stop experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          AZURE_INSTANCE_NAME: "litmus-e2e-instance-one,litmus-e2e-instance-two"
+          AZURE_RESOURCE_GROUP : "${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }}"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make azure-instance-stop
+
+      - name: Delete target Azure VM Instances
+        if: always()
+        run: |
+          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} --query "[].id" -o tsv) --yes
+          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} --yes
+      
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh
+
+  Azure_VM_Disk_Loss:
+    runs-on: ubuntu-latest
+    steps:
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.14'
+
+      - name: Create azure auth file from secrets
+        run: echo "${{ secrets.AZURE_AUTH_FILE }}" > azure.auth
+      
+      - name: Create Kubernetes secret for azure experiment
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          kubectl create secret generic cloud-secret --from-file=azure.auth
+          
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create a Azure VM Instance with target Disk Volumes
+        if: always()
+        run: |
+          az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} -l eastus && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
+          az disk create -n litmus-e2e-disk-one -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --size-gb=4 && \
+          az disk create -n litmus-e2e-disk-two -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --size-gb=4 && \
+          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-one && \
+          az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-two
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run Azure VM Disk Loss experiment in serial & parallel mode
+        if: always()
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          AZURE_INSTANCE_NAME: "litmus-e2e-instance-one,litmus-e2e-instance-two"
+          AZURE_DISK_NAME: "litmus-e2e-disk-one,litmus-e2e-disk-two"
+          AZURE_RESOURCE_GROUP: "${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }}"
+          GO_EXPERIMENT_IMAGE: "${{ github.event.inputs.goExperimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make azure-disk-loss
+
+      - name: Delete the VM Instance and target Disk Volumes
+        if: always()
+        run: |
+          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-one && \
+          az vm disk detach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-two && \
+          az disk delete -n litmus-e2e-disk-one -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --yes && \
+          az disk delete -n litmus-e2e-disk-two -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --yes && \
+          az vm delete --ids $(az vm list -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --query "[].id" -o tsv) --yes
+          az group delete -n ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --yes
+
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh

@@ -223,7 +223,23 @@ ebs-loss-by-tag:
 	@echo "------------------------------------------"
 	@echo "Running ebs-loss-by-tag experiment"
 	@echo "------------------------------------------"
-	@go test platform/aws/ebs-loss-by-tag_test.go -v -count=1 -timeout=20m					
+	@go test platform/aws/ebs-loss-by-tag_test.go -v -count=1 -timeout=20m	
+
+.PHONY: azure-instance-stop
+azure-instance-stop:
+
+	@echo "------------------------------------------"
+	@echo "Running azure-instance-stop experiment"
+	@echo "------------------------------------------"
+	@go test platform/azure/instance-stop_test.go -v -count=1 -timeout=20m
+
+.PHONY: azure-disk-loss
+azure-disk-loss:
+
+	@echo "------------------------------------------"
+	@echo "Running azure-disk-loss experiment"
+	@echo "------------------------------------------"
+	@go test platform/azure/disk-loss_test.go -v -count=1 -timeout=20m
 
 .PHONY: gcp-vm-instance-stop
 gcp-vm-instance-stop:
