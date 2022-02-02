@@ -41,3 +41,23 @@ export const updateMyHub = `mutation updateMyHub($myhubInput: UpdateMyHub!, $pro
 export const deleteMyHub = `mutation deleteMyHub($hub_id: String!){
   deleteMyHub(hub_id: $hub_id)
 }`;
+
+export const syncHub = `mutation syncHub($id: ID!){
+  syncHub(id: $id){
+    id
+    RepoURL
+    RepoBranch
+    IsAvailable
+    TotalExp
+    HubName
+    IsPrivate
+    AuthType
+    Token
+    UserName
+    Password
+    IsRemoved
+    SSHPrivateKey
+    SSHPublicKey
+    LastSyncedAt
+  }
+}`;
