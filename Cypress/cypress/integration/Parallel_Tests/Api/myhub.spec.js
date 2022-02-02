@@ -343,7 +343,7 @@ describe("Testing myHub api", () => {
     });
   });
 
-  it("Fetching the experiment manifest from the hub of a project with no access [ Should not be possible ]", () => {
+/*   it("Fetching the experiment manifest from the hub of a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
@@ -364,9 +364,9 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
-  it("Fetching all the pre-defined workflows of a project with no access [ Should not be possible ]", () => {
+/*   it("Fetching all the pre-defined workflows of a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
@@ -382,9 +382,9 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
-  it("Fetching the experiment manifest from a hub of a project with no access [ Should not be possible ]", () => {
+/*   it("Fetching the pre-defined experiment manifest from a hub of a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
@@ -405,9 +405,9 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
-  it("Syncing the hub of a project with no access [ Should not be possible ]", () => {
+/*   it("Syncing the hub of a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
@@ -422,9 +422,9 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
-  it("Deleting the hub of a project with no access [ Should not be possible ]", () => {
+/*   it("Deleting the hub of a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
@@ -439,9 +439,9 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
-  it("Deleting the hub of a project with viewer access [ Should not be possible ]", () => {
+/*   it("Deleting the hub of a project with viewer access [ Should not be possible ]", () => {
     cy.logout();
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
@@ -457,7 +457,7 @@ describe("Testing myHub api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });
+  }); */
 
   it("Deleting the hub of a project with editor access", () => {
     cy.logout();
