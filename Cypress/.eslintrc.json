@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "plugin:cypress/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "cypress/no-unnecessary-waiting": 0
+  }
+}

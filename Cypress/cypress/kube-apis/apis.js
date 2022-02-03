@@ -54,5 +54,5 @@ export const apis = {
 
   deleteDeployment: (namespace, name) => {
     return `${KUBE_API_SERVER}/apis/apps/v1/namespaces/${namespace}/deployments/${name}`;
-  }
+  },
 };

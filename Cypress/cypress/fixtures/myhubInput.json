@@ -1,0 +1,9 @@
+{
+  "HubName": "my-chaos-hub",
+  "RepoURL": "https://github.com/litmuschaos/chaos-charts",
+  "RepoBranch": "master",
+  "IsPrivate": false,
+  "AuthType": "basic",
+  "UserName": "user",
+  "Password": "user"
+}
