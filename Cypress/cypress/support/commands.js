@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-assigning-return-values */
 /// <reference types="Cypress" />
 //This Script provides plugins and common utilities for tests.
 
@@ -153,72 +154,89 @@ Cypress.Commands.add("securityCheckSetup", () => {
   };
   let project1Id, project2Id, user1Id, user2Id, user3Id, accessToken;
   cy.requestLogin(user.AdminName, user.AdminPassword);
-  return cy.getCookie("litmus-cc-token")
+  return cy
+    .getCookie("litmus-cc-token")
     .then((token) => {
-      accessToken=token.value;
+      accessToken = token.value;
       // create user1
-      const createUser1 = cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/create",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: { ...(user.user1) }
-      }).then((res) => {
-        user1Id = res.body._id;
-      });
+      const createUser1 = cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + "/create",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: { ...user.user1 },
+        })
+        .then((res) => {
+          user1Id = res.body._id;
+        });
 
       // create user2
-      const createUser2 = cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/create",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: { ...(user.user2) }
-      }).then((res) => {
+      const createUser2 = cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + "/create",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: { ...user.user2 },
+        })
+        .then((res) => {
           user2Id = res.body._id;
         });
-      
+
       // create user3
-      const createUser3 = cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/create",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: { ...(user.user3) }
-      }).then((res) => {
+      const createUser3 = cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + "/create",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: { ...user.user3 },
+        })
+        .then((res) => {
           user3Id = res.body._id;
         });
-      
+
       // create project1
-      const createProject1 = cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/create_project",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: { 
-          project_name: Projects.project1
-        }
-      }).then((res) => {
+      const createProject1 = cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + "/create_project",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: {
+            project_name: Projects.project1,
+          },
+        })
+        .then((res) => {
           project1Id = res.body.data.ID;
         });
       // create project2
-      const createProject2 = cy.request({
-        method: "POST",
-        url: Cypress.env("authURL") + "/create_project",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: { 
-          project_name: Projects.project2
-        }
-      }).then((res) => {
+      const createProject2 = cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + "/create_project",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: {
+            project_name: Projects.project2,
+          },
+        })
+        .then((res) => {
           project2Id = res.body.data.ID;
         });
-      return Promise.all([createUser1, createUser2, createUser3, createProject1, createProject2]);
+      return Promise.all([
+        createUser1,
+        createUser2,
+        createUser3,
+        createProject1,
+        createProject2,
+      ]);
     })
     .then(() => {
       // send invitation of project1 to user1 with Editor role
@@ -231,9 +249,9 @@ Cypress.Commands.add("securityCheckSetup", () => {
         body: {
           project_id: project1Id,
           user_id: user1Id,
-          role: "Editor"
-        }
-      })
+          role: "Editor",
+        },
+      });
     })
     .then(() => {
       // send invitation of project1 to user3 with Viewer role
@@ -246,9 +264,9 @@ Cypress.Commands.add("securityCheckSetup", () => {
         body: {
           project_id: project1Id,
           user_id: user3Id,
-          role: "Viewer"
-        }
-      })
+          role: "Viewer",
+        },
+      });
     })
     .then(() => {
       // send invitation of project2 to user2 with Viewer role
@@ -261,9 +279,9 @@ Cypress.Commands.add("securityCheckSetup", () => {
         body: {
           project_id: project2Id,
           user_id: user2Id,
-          role: "Viewer"
-        }
-      }) 
+          role: "Viewer",
+        },
+      });
     })
     .then(() => {
       cy.logout();
@@ -278,10 +296,10 @@ Cypress.Commands.add("securityCheckSetup", () => {
           authorization: `Bearer ${token.value}`,
         },
         body: {
-          "project_id": project1Id,
-          "user_id": user3Id
-        }
-      })
+          project_id: project1Id,
+          user_id: user3Id,
+        },
+      });
     })
     .then(() => {
       cy.logout();
@@ -296,10 +314,10 @@ Cypress.Commands.add("securityCheckSetup", () => {
           authorization: `Bearer ${token.value}`,
         },
         body: {
-          "project_id": project1Id,
-          "user_id": user1Id
-        }
-      })
+          project_id: project1Id,
+          user_id: user1Id,
+        },
+      });
     })
     .then(() => {
       cy.logout();
@@ -314,12 +332,15 @@ Cypress.Commands.add("securityCheckSetup", () => {
           authorization: `Bearer ${token.value}`,
         },
         body: {
-          "project_id": project2Id,
-          "user_id": user2Id
-        }
-      })
+          project_id: project2Id,
+          user_id: user2Id,
+        },
+      });
     })
     .then(() => {
-      return {project1Id, project2Id, user1Id, user2Id, user3Id};
+      return cy.logout();
+    })
+    .then(() => {
+      return { project1Id, project2Id, user1Id, user2Id, user3Id };
     });
 });

@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "tests": "cypress run",
+    "lint": "eslint cypress/ --fix",
+    "format": "prettier --write \"cypress/**/*.+(js|json)\" && eslint \"cypress/**/*.+(js|json)\" --fix",
+    "checkformat": "prettier --check \"cypress/**/*.+(js|json)\" && eslint \"cypress/**/*.+(js|json)\"",
     "BasicSetup_Tests": "cypress run --config testFiles='Basic_Setup/**/*.spec.js' --config-file cypress.prod.json",
     "Community_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Community/*.spec.js' --config-file cypress.prod.json",
     "Routes_Tests": "cypress run --spec 'cypress/integration/Parallel_Tests/Routes/*.spec.js' --config-file cypress.prod.json",
@@ -22,7 +25,12 @@
     "@4tw/cypress-drag-drop": "^1.6.0",
     "cypress": "^7.3.0",
     "cypress-file-upload": "^5.0.7",
-    "cypress-wait-until": "^1.7.1"
+    "cypress-wait-until": "^1.7.1",
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1"
   },
   "dependencies": {}
 }

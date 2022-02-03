@@ -16,27 +16,27 @@
  * @type {Cypress.PluginConfig}
  */
 
-const { rmdir } = require('fs');
+const { rmdir } = require("fs");
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  on('task', {
+  on("task", {
     deleteFolder(folderName) {
-      console.log('deleting folder %s', folderName)
+      console.log("deleting folder %s", folderName);
 
       return new Promise((resolve, reject) => {
         rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
           if (err) {
-            console.error(err)
-            return reject(err)
+            console.error(err);
+            return reject(err);
           }
-          resolve(null)
-        })
-      })
+          resolve(null);
+        });
+      });
     },
     getSecuritySetupVariable: () => {
-      if(global.setupVariable) {
+      if (global.setupVariable) {
         return global.setupVariable;
       }
       return null;
@@ -45,5 +45,5 @@ module.exports = (on, config) => {
       global.setupVariable = setupVariable;
       return null;
     },
-  })
-}
+  });
+};
