@@ -99,9 +99,14 @@ describe("Testing the upload Workflow with correct workflow manifest and target 
       "Running",
       "Succeeded",
     ]);
+    cy.get("[data-cy=WorkflowRunsTable] input")
+      .eq(0)
+      .clear()
+      .type(workflowName);
+    cy.wait(1000);
     cy.get("table")
       .find("tr")
-      .eq(2)
+      .eq(1)
       .find("td")
       .eq(2)
       .click({ scrollBehavior: false });
