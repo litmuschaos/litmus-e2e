@@ -79,13 +79,13 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
           hour12: true,
         });
         scheduleTime = scheduleTime.split(" ")[0];
-        cy.wrap($div).find("td").eq(4).should("include.text", scheduleTime);
+        cy.wrap($div).find("td").eq(5).should("include.text", scheduleTime);
         cy.waitUntil(
           () =>
             cy
               .wrap($div)
               .find("td")
-              .eq(4)
+              .eq(5)
               .then((nextRun) => {
                 const currDate = new Date();
                 const currTime = currDate
@@ -139,9 +139,14 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
     cy.GraphqlWait("workflowListDetails", "listSchedules");
     cy.visit("/workflows");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
+    cy.get("[data-cy=WorkflowRunsTable] input")
+      .eq(0)
+      .clear()
+      .type(workflowName);
+    cy.wait(1000);
     cy.get("table")
       .find("tr")
-      .eq(2)
+      .eq(1)
       .find("td")
       .eq(2)
       .click({ scrollBehavior: false });

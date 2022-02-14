@@ -189,9 +189,14 @@ describe("Testing the validation of the final verdict with an existing target ap
       "Running",
       "Succeeded",
     ]);
+    cy.get("[data-cy=WorkflowRunsTable] input")
+      .eq(0)
+      .clear()
+      .type(workflowName);
+    cy.wait(1000);
     cy.get("table")
       .find("tr")
-      .eq(2)
+      .eq(1)
       .find("td")
       .eq(2)
       .click({ scrollBehavior: false });
@@ -245,7 +250,7 @@ describe("Testing the validation of the final verdict with an existing target ap
       .find("tr")
       .eq(1)
       .then(($div) => {
-        cy.wrap($div).find("td").eq(4).should("have.text", "Non cron workflow");
+        cy.wrap($div).find("td").eq(5).should("have.text", "Non cron workflow");
       });
     cy.rerunWorkflow();
   });
