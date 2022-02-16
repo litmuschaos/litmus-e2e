@@ -2,6 +2,7 @@
 
 import * as user from "../../../fixtures/Users.json";
 import { endpoints } from "../../../fixtures/authenticationEndpoints";
+import { unauthorized, invalid_request } from "../../../fixtures/errorCodes";
 
 let adminAccessToken, user1AccessToken, user1Id, adminUserId;
 
@@ -30,7 +31,7 @@ describe("Testing post request to login api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -45,7 +46,7 @@ describe("Testing post request to login api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -94,7 +95,7 @@ describe("Testing post request to createUser api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -113,7 +114,7 @@ describe("Testing post request to createUser api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -132,7 +133,7 @@ describe("Testing post request to createUser api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -151,7 +152,7 @@ describe("Testing post request to createUser api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -170,7 +171,7 @@ describe("Testing post request to createUser api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("invalid_request");
+      expect(res.body.error).to.eq(invalid_request);
     });
   });
 
@@ -224,7 +225,7 @@ describe("Testing post request to createUser api", () => {
       .then((res) => {
         expect(res.body).to.have.property("error");
         expect(res.body).to.have.property("error_description");
-        expect(res.body.error).to.eq("unauthorized");
+        expect(res.body.error).to.eq(unauthorized);
       });
   });
 
@@ -256,7 +257,7 @@ describe("Testing get request to getAllUsers api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -311,7 +312,7 @@ describe("Testing get request to getUserById api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -389,7 +390,7 @@ describe("Testing post request to updateDetails api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -467,7 +468,7 @@ describe("Testing post request to updateState api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -503,7 +504,7 @@ describe("Testing post request to updateState api", () => {
   //   }).then((res) => {
   //     expect(res.body).to.have.property("error");
   //     expect(res.body).to.have.property("error_description");
-  //     expect(res.body.error).to.eq("invalid_request");
+  //     expect(res.body.error).to.eq(invalid_request);
   //   });
   // });
 
@@ -522,7 +523,7 @@ describe("Testing post request to updateState api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -575,7 +576,7 @@ describe("Testing post request to updatePassword api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -684,7 +685,7 @@ describe("Testing post request to resetPassword api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -703,7 +704,7 @@ describe("Testing post request to resetPassword api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("unauthorized");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
