@@ -11,8 +11,9 @@ describe("Testing get request to status api", () => {
       method: "GET",
       url: Cypress.env("authURL") + endpoints.status(),
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("status");
-      expect(res.body.status).to.equal("up");
+      expect(res.body.status).to.eq("up");
     });
   });
 });
@@ -73,6 +74,7 @@ describe("Testing post request to login api", () => {
         password: user.AdminPassword,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("access_token");
       expect(res.body).to.have.property("expires_in");
       adminAccessToken = res.body.access_token;
@@ -183,6 +185,7 @@ describe("Testing post request to createUser api", () => {
         ...user.user1,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("_id");
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("role");
@@ -200,6 +203,7 @@ describe("Testing post request to createUser api", () => {
       },
     })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("access_token");
         expect(res.body).to.have.property("expires_in");
         user1AccessToken = res.body.access_token;
@@ -264,8 +268,9 @@ describe("Testing get request to getAllUsers api", () => {
         authorization: `Bearer ${adminAccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.be.an("array");
-      expect(res.body.length).to.not.equal(0);
+      expect(res.body.length).to.not.eq(0);
       res.body.forEach((userData) => {
         expect(userData).to.have.property("_id");
         expect(userData).to.have.property("username");
@@ -285,8 +290,9 @@ describe("Testing get request to getAllUsers api", () => {
         authorization: `Bearer ${user1AccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.be.an("array");
-      expect(res.body.length).to.not.equal(0);
+      expect(res.body.length).to.not.eq(0);
       res.body.forEach((userData) => {
         expect(userData).to.have.property("_id");
         expect(userData).to.have.property("username");
@@ -317,6 +323,7 @@ describe("Testing get request to getUserById api", () => {
         authorization: `Bearer ${adminAccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("_id");
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("role");
@@ -331,6 +338,7 @@ describe("Testing get request to getUserById api", () => {
         authorization: `Bearer ${adminAccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("_id");
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("role");
@@ -345,6 +353,7 @@ describe("Testing get request to getUserById api", () => {
         authorization: `Bearer ${user1AccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("_id");
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("role");
@@ -359,6 +368,7 @@ describe("Testing get request to getUserById api", () => {
         authorization: `Bearer ${user1AccessToken}`,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("_id");
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("role");
@@ -396,6 +406,7 @@ describe("Testing post request to updateDetails api", () => {
       },
     })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("message");
         return cy.request({
           method: "GET",
@@ -406,8 +417,9 @@ describe("Testing post request to updateDetails api", () => {
         });
       })
       .then((res) => {
-        expect(res.body.name).to.equal("abc");
-        expect(res.body.email).to.equal("test@test.com");
+        expect(res.status).to.eq(200);
+        expect(res.body.name).to.eq("abc");
+        expect(res.body.email).to.eq("test@test.com");
       });
   });
 
@@ -424,6 +436,7 @@ describe("Testing post request to updateDetails api", () => {
       },
     })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("message");
         return cy.request({
           method: "GET",
@@ -434,8 +447,9 @@ describe("Testing post request to updateDetails api", () => {
         });
       })
       .then((res) => {
-        expect(res.body.name).to.equal("abc");
-        expect(res.body.email).to.equal("test@test.com");
+        expect(res.status).to.eq(200);
+        expect(res.body.name).to.eq("abc");
+        expect(res.body.email).to.eq("test@test.com");
       });
   });
 });
@@ -524,6 +538,7 @@ describe("Testing post request to updateState api", () => {
         is_deactivate: true,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("message");
     });
   });
@@ -540,6 +555,7 @@ describe("Testing post request to updateState api", () => {
         is_deactivate: false,
       },
     }).then((res) => {
+      expect(res.status).to.eq(200);
       expect(res.body).to.have.property("message");
     });
   });
@@ -622,6 +638,7 @@ describe("Testing post request to updatePassword api", () => {
       },
     })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("message");
         return cy.request({
           method: "POST",
@@ -636,7 +653,7 @@ describe("Testing post request to updatePassword api", () => {
       .then((res) => {
         expect(res.body).to.have.property("error");
         expect(res.body).to.have.property("error_description");
-        expect(res.body.error).to.equal("invalid_credentials");
+        expect(res.body.error).to.eq("invalid_credentials");
         return cy.request({
           method: "POST",
           url: Cypress.env("authURL") + endpoints.login(),
@@ -647,6 +664,7 @@ describe("Testing post request to updatePassword api", () => {
         });
       })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("access_token");
         user1AccessToken = res.body.access_token;
       });
@@ -733,6 +751,7 @@ describe("Testing post request to resetPassword api", () => {
       },
     })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("message");
         return cy.request({
           method: "POST",
@@ -747,7 +766,7 @@ describe("Testing post request to resetPassword api", () => {
       .then((res) => {
         expect(res.body).to.have.property("error");
         expect(res.body).to.have.property("error_description");
-        expect(res.body.error).to.equal("invalid_credentials");
+        expect(res.body.error).to.eq("invalid_credentials");
         return cy.request({
           method: "POST",
           url: Cypress.env("authURL") + endpoints.login(),
@@ -758,6 +777,7 @@ describe("Testing post request to resetPassword api", () => {
         });
       })
       .then((res) => {
+        expect(res.status).to.eq(200);
         expect(res.body).to.have.property("access_token");
         user1AccessToken = res.body.access_token;
       });
