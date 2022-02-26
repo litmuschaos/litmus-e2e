@@ -20,18 +20,11 @@ import * as myhubInput from "../../../fixtures/myhubInput.json";
 describe("Testing myHub api", () => {
   let project1Id, project2Id, hubId;
   before("Create 3 test users and 2 projects", () => {
-    cy.task("getSecuritySetupVariable")
-      .then((setupVariable) => {
-        if (!setupVariable) {
-          cy.securityCheckSetup().then((createdSetupVariable) => {
-            project1Id = createdSetupVariable.project1Id;
-            project2Id = createdSetupVariable.project2Id;
-            cy.task("setSetupVariable", createdSetupVariable);
-          });
-        } else {
-          project1Id = setupVariable.project1Id;
-          project2Id = setupVariable.project2Id;
-        }
+    cy.task("clearDB");
+    cy.securityCheckSetup()
+      .then((createdSetupVariable) => {
+        project1Id = createdSetupVariable.project1Id;
+        project2Id = createdSetupVariable.project2Id;
       })
       .then(() => {
         cy.requestLogin(user.user2.username, user.user2.password);
