@@ -43,3 +43,31 @@ export const GetPredefinedWorkflowList = `query GetPredefinedWorkflowList($HubNa
 export const GetPredefinedExperimentYAML = `query GetPredefinedExperimentYAML($experimentInput: ExperimentInput!){
   GetPredefinedExperimentYAML(experimentInput: $experimentInput)
 }`;
+
+export const getCluster = `query getCluster($project_id: String!, $cluster_type: String){
+  getCluster(project_id: $project_id, cluster_type: $cluster_type){
+    cluster_id
+    project_id
+    cluster_name
+    description
+    platform_name
+    access_key
+    is_registered
+    is_cluster_confirmed
+    is_active
+    updated_at
+    created_at
+    cluster_type
+    no_of_schedules
+    no_of_workflows
+    token
+    agent_namespace
+    serviceaccount
+    agent_scope
+    agent_ns_exists
+    agent_sa_exists
+    last_workflow_timestamp
+    start_time
+    version
+  }
+}`;

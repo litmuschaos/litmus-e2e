@@ -61,3 +61,15 @@ export const syncHub = `mutation syncHub($id: ID!){
     LastSyncedAt
   }
 }`;
+
+export const userClusterReg = `mutation userClusterReg($clusterInput: ClusterInput!){
+  userClusterReg(clusterInput: $clusterInput){
+    token
+    cluster_id
+    cluster_name
+  }
+}`;
+
+export const deleteClusters = `mutation deleteClusters($projectID: String!, $cluster_ids: [String]!){
+  deleteClusters(projectID: $projectID, cluster_ids: $cluster_ids)
+}`;

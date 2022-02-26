@@ -17,6 +17,46 @@
  */
 
 const { rmdir } = require("fs");
+const MongoClient = require("mongodb").MongoClient;
+
+async function drop(databaseName, mongoClient, collectionName) {
+  const collection = mongoClient.db(databaseName).collection(collectionName);
+  await collection.drop().catch((e) => {
+    if (e.code !== 26) {
+      throw e;
+    }
+  });
+}
+
+async function clearDatabase() {
+  const uri = "mongodb://admin:1234@localhost:27017";
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  try {
+    await client.connect();
+    const collection = client.db("auth").collection("users");
+    await collection.deleteMany({ username: { $ne: "admin" } }).catch((e) => {
+      if (e.code !== 26) {
+        throw e;
+      }
+    });
+    const auth = ["project"];
+    const litmus = ["cluster-collection", "image-registry-collection", "myhub"];
+    for (const element of auth) {
+      await drop("auth", client, element);
+    }
+    for (const element of litmus) {
+      await drop("litmus", client, element);
+    }
+    client.close();
+    return true;
+  } catch (err) {
+    console.log(err.stack);
+    return false;
+  }
+}
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
@@ -35,15 +75,8 @@ module.exports = (on, config) => {
         });
       });
     },
-    getSecuritySetupVariable: () => {
-      if (global.setupVariable) {
-        return global.setupVariable;
-      }
-      return null;
-    },
-    setSetupVariable: (setupVariable) => {
-      global.setupVariable = setupVariable;
-      return null;
+    clearDB: () => {
+      return clearDatabase();
     },
   });
 };
