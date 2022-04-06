@@ -3,7 +3,7 @@
 import * as user from "../../../fixtures/Users.json";
 import {
   userClusterReg,
-  deleteClusterReg,
+  deleteClusters,
 } from "../../../fixtures/graphql/mutation";
 import { getCluster } from "../../../fixtures/graphql/queries";
 
@@ -52,6 +52,54 @@ describe("Testing cluster api", () => {
     });
   });
 
+  /*it("Testing input validation in registering a new cluster", () => {
+    cy.request({
+      method: "POST",
+      url: Cypress.env("apiURL") + "/query",
+      body: {
+        operationName: "userClusterReg",
+        variables: {
+          clusterInput: {
+            cluster_name: "cluster1",
+            platform_name: "",
+            project_id: project1Id,
+            cluster_type: "",
+            agent_scope: "",
+            tolerations: [],
+          },
+        },
+        query: userClusterReg,
+      },
+      failOnStatusCode: false,
+    }).then((res) => {
+      cy.validateErrorMessage(res, "permission_denied");
+    });
+  });*/
+
+  /*it("Registering a new cluster with same name", () => {
+    cy.request({
+      method: "POST",
+      url: Cypress.env("apiURL") + "/query",
+      body: {
+        operationName: "userClusterReg",
+        variables: {
+          clusterInput: {
+            cluster_name: "cluster1",
+            platform_name: "AWS",
+            project_id: project1Id,
+            cluster_type: "external",
+            agent_scope: "Cluster",
+            tolerations: [],
+          },
+        },
+        query: userClusterReg,
+      },
+      failOnStatusCode: false,
+    }).then((res) => {
+      cy.validateErrorMessage(res, "permission_denied");
+    });
+  });*/
+
   it("Listing all cluster", () => {
     cy.request({
       method: "POST",
@@ -67,20 +115,20 @@ describe("Testing cluster api", () => {
       expect(res.status).to.eq(200);
       expect(res.body).to.have.nested.property("data.getCluster");
       expect(res.body.data.getCluster).to.be.an("array");
-      expect(res.body.data.getCluster.length).to.eq(2);
     });
   });
 
-  it("Deleting a cluster", () => {
+  /*it("Deleting a cluster", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "deleteClusterReg",
+        operationName: "deleteClusters",
         variables: {
-          cluster_id: cluster1Id,
+          projectID: project1Id,
+          cluster_ids: [cluster1Id],
         },
-        query: deleteClusterReg,
+        query: deleteClusters,
       },
     })
       .then((res) => {
@@ -104,5 +152,5 @@ describe("Testing cluster api", () => {
         expect(res.body.data.getCluster).to.be.an("array");
         expect(res.body.data.getCluster.length).to.eq(1);
       });
-  });
+  });*/
 });
