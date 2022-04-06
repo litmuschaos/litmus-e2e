@@ -16,6 +16,7 @@ import {
   GetPredefinedExperimentYAML,
 } from "../../../fixtures/graphql/queries";
 import * as myhubInput from "../../../fixtures/myhubInput.json";
+import { permission_denied } from "../../../fixtures/errorCodes";
 
 describe("Testing myHub api", () => {
   let project1Id, project2Id, hubId;
@@ -52,7 +53,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -69,7 +70,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -87,7 +88,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -318,7 +319,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -336,7 +337,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -358,7 +359,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false,
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   });
 
@@ -381,7 +382,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
@@ -399,7 +400,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
@@ -422,7 +423,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
@@ -439,7 +440,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
@@ -456,7 +457,7 @@ describe("Testing myHub api", () => {
       },
       failOnStatusCode: false
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
@@ -474,7 +475,7 @@ describe("Testing myHub api", () => {
         "query": deleteMyHub
       },
     }).then((res) => {
-      cy.validateErrorMessage(res, "permission_denied");
+      cy.validateErrorMessage(res, permission_denied);
     });
   }); */
 
