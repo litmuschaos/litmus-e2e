@@ -60,6 +60,7 @@ type TestDetails struct {
 	AzureInstanceName         string
 	AzureDiskName             string
 	AzureScaleSet             string
+	ProcessIds                string
 	Args                      string
 	Command                   string
 }

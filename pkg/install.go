@@ -338,6 +338,8 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
 	case "vm-poweroff":
 		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
+	case "process-kill":
+		envDetails.SetEnv("PROCESS_IDS", testsDetails.ProcessIds)
 	}
 
 	// for experiments like pod network latency
