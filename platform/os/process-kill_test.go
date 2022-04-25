@@ -42,9 +42,9 @@ var _ = Describe("BDD of process-kill experiment", func() {
 			environment.GetENV(&testsDetails, "process-kill", "process-kill-engine-par")
 			log.Infof("[Info]: The target processes are: %v", testsDetails.ProcessIds)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/engine.yaml"
+			testsDetails.RbacPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/rbac.yaml"
+			testsDetails.ExperimentPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/experiment.yaml"
+			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/engine.yaml"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -107,9 +107,9 @@ var _ = Describe("BDD of process-kill experiment", func() {
 			environment.GetENV(&testsDetails, "process-kill", "process-kill-engine-ser")
 			log.Infof("[Info]: The target processes are: %v", testsDetails.DiskVolumeNames)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/process-kill/engine.yaml"
+			testsDetails.RbacPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/rbac.yaml"
+			testsDetails.ExperimentPath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/experiment.yaml"
+			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/m-agent/charts/os/process-kill/engine.yaml"
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
