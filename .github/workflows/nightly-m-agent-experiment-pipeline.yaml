@@ -1,5 +1,5 @@
 ---
-name: Nightly-GCP-Experiment-Pipeline
+name: Nightly-m-agent-Experiment-Pipeline
 on:
   schedule:
     - cron: "30 22 * * *" # Daily 02:30 AM in midnight
