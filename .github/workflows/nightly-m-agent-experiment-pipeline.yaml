@@ -36,7 +36,7 @@ jobs:
       id: get-credentials
       run: |
         echo "::set-output name=matrix::gcloud compute ssh \ 
-        --zone ua-central1-a litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
+        --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
         -- 'm-agent --get-token --token-expiry-duration 30m'"
 
     - name: Get main PID of the Apache Service as Target Process
@@ -44,7 +44,7 @@ jobs:
       id: get-target-process
       run: |
         echo "::set-output name=pid::gcloud compute ssh \ 
-        --zone us-central1-a litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
+        --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
         -- 'systemctl show --property MainPID --value apache2'"
 
   Process_Kill:
@@ -101,7 +101,7 @@ jobs:
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-m-agent-vm-${{ github.run_number }} \
-          --zone=us-central1-a \
+          --zone=us-east4-c \
           --quiet
 
       - name: "[Debug]: check chaos resources"
