@@ -35,7 +35,7 @@ jobs:
       run: |
         gcloud compute instances create litmus-e2e-m-agent-vm-${{ github.run_number }} \
         --machine-type=f1-micro \
-        --zone=us-central1-a \
+        --zone=us-east4-c \
         --metadata=startup-script='#! /bin/bash
         apt update
         apt -y install apache2
