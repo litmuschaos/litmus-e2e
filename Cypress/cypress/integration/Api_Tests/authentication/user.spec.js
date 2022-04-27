@@ -6,6 +6,10 @@ import { unauthorized, invalid_request } from "../../../fixtures/errorCodes";
 
 let adminAccessToken, user1AccessToken, user1Id, adminUserId;
 
+before("Clear Database", () => {
+  cy.task("clearDB");
+});
+
 describe("Testing get request to status api", () => {
   it("Testing status api", () => {
     cy.request({
