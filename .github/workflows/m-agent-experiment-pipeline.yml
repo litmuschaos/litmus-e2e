@@ -92,6 +92,7 @@ jobs:
           stringData:
             AGENT_ENDPOINT: "${{ needs.Setup_m-agent.outputs.endpoint }}"
             AUTH_TOKEN: "${{ needs.Setup_m-agent.outputs.token }}"
+          EOF
 
       - name: Litmus Infra Setup
         if: always()
