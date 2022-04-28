@@ -50,7 +50,7 @@ jobs:
         # echo "$(gcloud compute ssh \ 
         # --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
         # -- 'm-agent --get-token --token-expiry-duration 30m')"
-
+        sleep 60
         echo "::set-output name=matrix::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
 
     - name: Get main PID of the Apache Service as Target Process
