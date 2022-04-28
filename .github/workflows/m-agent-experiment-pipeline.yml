@@ -51,6 +51,9 @@ jobs:
         echo "::set-output name=endpoint::$(echo $OUTPUT | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
         echo "::set-output name=token::$(echo $OUTPUT | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
 
+        echo $OUTPUT | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
+        echo $OUTPUT | grep -o '"token": "[^"]*' | grep -o '[^"]*$'
+
     - name: Get main PID of the Apache Service as Target Process
       if: always()
       id: get-target-process
