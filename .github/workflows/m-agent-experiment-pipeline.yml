@@ -18,7 +18,8 @@ jobs:
   Setup_m-agent:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.get-credentials.outputs.matrix }}
+      endpoint: ${{ steps.get-credentials.outputs.endpoint }}
+      token: ${{ steps.get-credentials.outputs.token }}
       pid: ${{ steps.get-target-process.outputs.pid }}
     steps:
 
@@ -40,18 +41,15 @@ jobs:
         apt update
         apt -y install apache2
         curl https://raw.githubusercontent.com/litmuschaos/m-agent/master/scripts/install.sh | bash' 
+        sleep 30
 
     - name: Get Agent Endpoint and Auth Token
       if: always()
       id: get-credentials
       run: |
-        # gcloud compute ssh --zone us-central1-a neel-test-instance -- 'm-agent --get-token --token-expiry-duration 30m'
-
-        # echo "$(gcloud compute ssh \ 
-        # --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} \ 
-        # -- 'm-agent --get-token --token-expiry-duration 30m')"
-        sleep 60
-        echo "::set-output name=matrix::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
+        OUTPUT=$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
+        echo "::set-output name=endpoint::$(echo $OUTPUT | jq '.endpoint' | tr -d '"')
+        echo "::set-output name=token::$(echo $OUTPUT | jq '.token' | tr -d '"')
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
@@ -62,8 +60,6 @@ jobs:
   Process_Kill:
     needs: Setup_m-agent
     runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{fromJSON(needs.Setup_m-agent.outputs.matrix)}}
     steps:
 
       #Install and configure a k3s cluster
@@ -90,8 +86,8 @@ jobs:
             name: agent-secret
           type: Opaque
           stringData:
-            AGENT_ENDPOINT: ${{ matrix.endpoint }}
-            AUTH_TOKEN: ${{ matrix.token }} 
+            AGENT_ENDPOINT: "${{ needs.Setup_m-agent.outputs.endpoint }}"
+            AUTH_TOKEN: "${{ needs.Setup_m-agent.outputs.token }}"
 
       - name: Litmus Infra Setup
         if: always()
