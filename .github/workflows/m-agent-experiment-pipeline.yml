@@ -41,7 +41,7 @@ jobs:
         apt update
         apt -y install apache2
         curl https://raw.githubusercontent.com/litmuschaos/m-agent/master/scripts/install.sh | bash' 
-        sleep 30
+        sleep 15
 
     - name: Get Agent Endpoint and Auth Token
       if: always()
