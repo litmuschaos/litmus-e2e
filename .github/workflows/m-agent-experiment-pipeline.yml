@@ -60,10 +60,14 @@ jobs:
   Process_Kill:
     needs: Setup_m-agent
     runs-on: ubuntu-latest
+    env: 
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     steps:
 
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
