@@ -47,9 +47,9 @@ jobs:
       if: always()
       id: get-credentials
       run: |
-        OUTPUT=$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
-        echo "::set-output name=endpoint::$(echo $OUTPUT | jq '.endpoint' | tr -d '"')
-        echo "::set-output name=token::$(echo $OUTPUT | jq '.token' | tr -d '"')
+        OUTPUT=$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')
+        echo "::set-output name=endpoint::$(echo $OUTPUT | jq '.endpoint' | tr -d '"')"
+        echo "::set-output name=token::$(echo $OUTPUT | jq '.token' | tr -d '"')"
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
