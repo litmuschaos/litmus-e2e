@@ -51,6 +51,10 @@ jobs:
         echo "::set-output name=endpoint::$(echo $OUTPUT | jq '.endpoint' | tr -d '"')"
         echo "::set-output name=token::$(echo $OUTPUT | jq '.token' | tr -d '"')"
 
+        echo $OUTPUT
+        echo $OUTPUT | jq '.endpoint' | tr -d '"'
+        echo $OUTPUT | jq '.token' | tr -d '"'
+
     - name: Get main PID of the Apache Service as Target Process
       if: always()
       id: get-target-process
