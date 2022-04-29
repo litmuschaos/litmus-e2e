@@ -47,15 +47,22 @@ jobs:
       if: always()
       id: get-credentials
       run: |
-        export OUTPUT="$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
-        export ENDPOINT="$(echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
-        export TOKEN="$(echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+        # export OUTPUT="$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
+        # export ENDPOINT="$(echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+        # export TOKEN="$(echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
         
-        echo "::set-output name=endpoint::${ENDPOINT}"
-        echo "::set-output name=token::${TOKEN}"
+        # echo "::set-output name=endpoint::${ENDPOINT}"
+        # echo "::set-output name=token::${TOKEN}"
 
         # echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
         # echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$' | sed 's/./& /g'
+
+        gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: m-agent_token
+        path: token.txt
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
@@ -77,6 +84,10 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: m-agent_token
+
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
         env: 
@@ -96,6 +107,9 @@ jobs:
       - name: Create Kubernetes secret for m-agent
         if: always()
         run: |
+          export ENDPOINT="$(cat token.txt | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+          export TOKEN="$(cat token.txt | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Secret
@@ -103,8 +117,8 @@ jobs:
             name: agent-secret
           type: Opaque
           stringData:
-            AGENT_ENDPOINT: "${{ needs.Setup_m-agent.outputs.endpoint }}"
-            AUTH_TOKEN: "${{ needs.Setup_m-agent.outputs.token }}"
+            AGENT_ENDPOINT: "${ENDPOINT}"
+            AUTH_TOKEN: "${TOKEN}"
           EOF
 
       - name: Litmus Infra Setup
