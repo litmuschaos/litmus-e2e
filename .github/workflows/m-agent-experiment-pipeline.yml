@@ -48,11 +48,14 @@ jobs:
       id: get-credentials
       run: |
         export OUTPUT="$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
-        echo "::set-output name=endpoint::$(echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
-        echo "::set-output name=token::$(echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+        export ENDPOINT="$(echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+        export TOKEN="$(echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+        
+        echo "::set-output name=endpoint::${ENDPOINT}"
+        echo "::set-output name=token::${TOKEN}"
 
-        echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
-        echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$'
+        # echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
+        # echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$' | sed 's/./& /g'
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
