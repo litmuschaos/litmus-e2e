@@ -46,18 +46,7 @@ jobs:
     - name: Get Agent Endpoint and Auth Token
       if: always()
       id: get-credentials
-      run: |
-        # export OUTPUT="$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m')"
-        # export ENDPOINT="$(echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
-        # export TOKEN="$(echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
-        
-        # echo "::set-output name=endpoint::${ENDPOINT}"
-        # echo "::set-output name=token::${TOKEN}"
-
-        # echo ${OUTPUT} | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
-        # echo ${OUTPUT} | grep -o '"token": "[^"]*' | grep -o '[^"]*$' | sed 's/./& /g'
-
-        gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
+      run: gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
 
     - uses: actions/upload-artifact@v3
       with:
@@ -67,10 +56,14 @@ jobs:
     - name: Get main PID of the Apache Service as Target Process
       if: always()
       id: get-target-process
-      run: |
-        echo "::set-output name=pid::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
+      run: echo "::set-output name=pid1::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
 
-  Process_Kill:
+    - name: Get main PID of the Apache Service as Target Process
+      if: always()
+      id: get-target-process
+      run: echo "::set-output name=pid2::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value cron')"
+
+  Process_Kill_Serial_Test:
     needs: Setup_m-agent
     runs-on: ubuntu-latest
     env: 
@@ -135,11 +128,111 @@ jobs:
       - name: Run Process Kill experiment in serial & parallel mode
         if: always()
         env:
-          PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid }}"
+          PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid1 }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        run: make process-kill
+        run: make process-kill-serial
+
+      - name: Delete GCP VM Instance
+        if: always()
+        run: |
+          gcloud compute instances delete litmus-e2e-m-agent-vm-${{ github.run_number }} \
+          --zone=us-east4-c \
+          --quiet
+
+      - name: "[Debug]: check chaos resources"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          
+      - name: "[Debug]: check operator logs"
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: |      
+          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
+          kubectl logs $operator_name -n litmus > logs.txt
+          cat logs.txt
+
+      - name: Litmus Cleanup
+        if: ${{ always() }} 
+        run: make litmus-cleanup 
+        
+      - name: Deleting K3S cluster
+        if: always()
+        run: /usr/local/bin/k3s-uninstall.sh
+
+  Process_Kill_Parallel_Test:
+    needs: Setup_m-agent
+    runs-on: ubuntu-latest
+    env: 
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    steps:
+      - name: Set up Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      #Install and configure a k3s cluster
+      - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
+          mkdir -p $HOME/.kube && cat /etc/rancher/k3s/k3s.yaml > $HOME/.kube/config          
+          kubectl get nodes
+          
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - name: Download m-agent token artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: m-agent_token
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Create Kubernetes secret for m-agent
+        if: always()
+        run: |
+          export ENDPOINT="$(cat token.txt | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+          export TOKEN="$(cat token.txt | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: agent-secret
+          type: Opaque
+          stringData:
+            AGENT_ENDPOINT: "${ENDPOINT}"
+            AUTH_TOKEN: "${TOKEN}"
+          EOF
+
+      - name: Litmus Infra Setup
+        if: always()
+        run: make build-litmus
+        env:
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
+
+      - name: Run Process Kill experiment in serial & parallel mode
+        if: always()
+        env:
+          PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid2 }}"
+          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
+          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
+          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+        run: make process-kill-parallel
 
       - name: Delete GCP VM Instance
         if: always()

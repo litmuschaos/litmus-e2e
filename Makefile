@@ -265,13 +265,21 @@ vm-poweroff:
 	@echo "------------------------------------------"
 	@go test platform/vmware/vm-poweroff_test.go -v -count=1 -timeout=20m
 
-.PHONY: process-kill
-process-kill:
+.PHONY: process-kill-serial
+process-kill-serial:
 
 	@echo "------------------------------------------"
-	@echo "Running process-kill experiment"
+	@echo "Running process-kill-serial experiment"
 	@echo "------------------------------------------"
-	@go test platform/os/process-kill_test.go -v -count=1 -timeout=20m
+	@go test platform/os/process-kill-serial_test.go -v -count=1 -timeout=20m
+
+.PHONY: process-kill-parallel
+process-kill-parallel:
+
+	@echo "------------------------------------------"
+	@echo "Running process-kill-parallel experiment"
+	@echo "------------------------------------------"
+	@go test platform/os/process-kill-parallel_test.go -v -count=1 -timeout=20m
 
 .PHONY: operator-reconcile-resiliency-check
  operator-reconcile-resiliency-check:
