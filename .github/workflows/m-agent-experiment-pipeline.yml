@@ -20,7 +20,8 @@ jobs:
     outputs:
       endpoint: ${{ steps.get-credentials.outputs.endpoint }}
       token: ${{ steps.get-credentials.outputs.token }}
-      pid: ${{ steps.get-target-process.outputs.pid }}
+      pid1: ${{ steps.get-apache-target-process.outputs.pid1 }}
+      pid2: ${{ steps.get-crond-target-process.outputs.pid2 }}
     steps:
 
     - name: Set up Google Cloud SDK
@@ -55,12 +56,12 @@ jobs:
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
-      id: get-target-process
+      id: get-apache-target-process
       run: echo "::set-output name=pid1::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
-      id: get-target-process
+      id: get-crond-target-process
       run: echo "::set-output name=pid2::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value cron')"
 
   Process_Kill_Serial_Test:
