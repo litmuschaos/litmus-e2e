@@ -52,9 +52,9 @@ jobs:
         echo "::set-output name=token::$(echo $OUTPUT | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
 
         echo $OUTPUT | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$'
-        echo $OUTPUT | grep -o '"token": "[^"]*' | grep -o '[^"]*$'
+        echo $OUTPUT | grep -o '"token": "[^"]*' | grep -o '[^"]*$' | sed 's/./& /g'
 
-        echo $OUTPUT | head -n 3
+        echo $OUTPUT | head -n 3 
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
