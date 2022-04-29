@@ -84,9 +84,13 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - uses: actions/download-artifact@v3
+      - name: Download m-agent token artifact
+        uses: actions/download-artifact@v3
         with:
           name: m-agent_token
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
