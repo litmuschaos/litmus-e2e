@@ -8,8 +8,6 @@ jobs:
   Setup_m-agent:
     runs-on: ubuntu-latest
     outputs:
-      endpoint: ${{ steps.get-credentials.outputs.endpoint }}
-      token: ${{ steps.get-credentials.outputs.token }}
       pid1: ${{ steps.get-apache-target-process.outputs.pid1 }}
       pid2: ${{ steps.get-crond-target-process.outputs.pid2 }}
     steps:
@@ -81,9 +79,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: m-agent_token
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: Create Kubernetes secret for m-agent
         if: always()
@@ -166,9 +161,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: m-agent_token
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: Create Kubernetes secret for m-agent
         if: always()
