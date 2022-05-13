@@ -1,10 +1,10 @@
 ---
-name: GCP-Experiment-Pipeline
+name: m-agent-Experiment-Pipeline
 on:
   workflow_dispatch:
     inputs:
       experimentImage:
-        default: "litmuschaos/go-runner:ci"
+        default: "litmuschaos/go-runner:m-agent"
       operatorImage:
         default: "litmuschaos/chaos-operator:ci"
       runnerImage:
@@ -15,7 +15,55 @@ on:
         default: "Always"
 
 jobs:
-  GCP_VM_Instance_Stop:
+  Setup_m-agent:
+    runs-on: ubuntu-latest
+    outputs:
+      pid1: ${{ steps.get-apache-target-process.outputs.pid1 }}
+      pid2: ${{ steps.get-crond-target-process.outputs.pid2 }}
+    steps:
+
+    - name: Set up Google Cloud SDK
+      if: always()
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Create a GCP VM Instance to Setup m-agent and Target Resources
+      if: always()
+      run: |
+        gcloud compute instances create litmus-e2e-m-agent-vm-${{ github.run_number }} \
+        --machine-type=f1-micro \
+        --zone=us-east4-c \
+        --metadata=startup-script='#! /bin/bash
+        apt update
+        apt -y install apache2
+        curl https://raw.githubusercontent.com/litmuschaos/m-agent/master/scripts/install.sh | bash' 
+        sleep 30
+
+    - name: Get Agent Endpoint and Auth Token
+      if: always()
+      id: get-credentials
+      run: gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: m-agent_token
+        path: token.txt
+
+    - name: Get main PID of the Apache Service as Target Process
+      if: always()
+      id: get-apache-target-process
+      run: echo "::set-output name=pid1::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
+
+    - name: Get main PID of the Apache Service as Target Process
+      if: always()
+      id: get-crond-target-process
+      run: echo "::set-output name=pid2::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value cron')"
+
+  Process_Kill_Serial_Test:
+    needs: Setup_m-agent
     runs-on: ubuntu-latest
     env: 
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
@@ -23,6 +71,8 @@ jobs:
 
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
@@ -35,42 +85,27 @@ jobs:
         with:
           go-version: '1.16'
 
-      - name: Create Kubernetes secret for gcp experiment
+      - name: Download m-agent token artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: m-agent_token
+
+      - name: Create Kubernetes secret for m-agent
         if: always()
         run: |
+          export ENDPOINT="$(cat token.txt | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+          export TOKEN="$(cat token.txt | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Secret
           metadata:
-            name: cloud-secret
+            name: agent-secret
           type: Opaque
           stringData:
-            type: "service_account"
-            project_id: "${{ secrets.GCP_PROJECT_ID }}"
-            private_key_id: "${{ secrets.PRIVATE_KEY_ID }}"
-            private_key: ${{ secrets.PRIVATE_KEY }}
-            client_email: "${{ secrets.CLIENT_EMAIL }}"
-            client_id: "${{ secrets.CLIENT_ID }}"
-            auth_uri: "${{ secrets.AUTH_URI }}"
-            token_uri: "${{ secrets.TOKEN_URI }}"
-            auth_provider_x509_cert_url: "${{ secrets.AUTH_PROVIDER_CERT_URL }}"
-            client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
+            AGENT_ENDPOINT: "${ENDPOINT}"
+            AUTH_TOKEN: "${TOKEN}"
           EOF
-
-      - name: Set up Google Cloud SDK
-        if: always()
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Create target GCP VM Instances
-        if: always()
-        run: |
-          gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
-          --machine-type=f1-micro \
-          --zone=us-central1-a
 
       - name: Litmus Infra Setup
         if: always()
@@ -79,23 +114,14 @@ jobs:
           OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
           RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
-      - name: Run GCP VM Instance Stop experiment in serial & parallel mode
+      - name: Run Process Kill experiment in serial & parallel mode
         if: always()
         env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
-          INSTANCE_ZONES: "us-central1-a,us-central1-a"
+          PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid1 }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        run: make gcp-vm-instance-stop
-
-      - name: Delete target GCP VM Instances
-        if: always()
-        run: |
-          gcloud compute instances delete litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
-          --zone=us-central1-a \
-          --quiet
+        run: make process-kill-serial
 
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
@@ -112,22 +138,23 @@ jobs:
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}     
+        if: ${{ always() }} 
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh
 
-  GCP_VM_Disk_Loss:
+  Process_Kill_Parallel_Test:
+    needs: Setup_m-agent
     runs-on: ubuntu-latest
     env: 
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-    needs: GCP_VM_Instance_Stop
     steps:
-      
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
+        env: 
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
@@ -140,44 +167,27 @@ jobs:
         with:
           go-version: '1.16'
 
-      - name: Create Kubernetes secret for gcp experiment
+      - name: Download m-agent token artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: m-agent_token
+
+      - name: Create Kubernetes secret for m-agent
         if: always()
         run: |
+          export ENDPOINT="$(cat token.txt | grep -o '"endpoint": "[^"]*' | grep -o '[^"]*$')"
+          export TOKEN="$(cat token.txt | grep -o '"token": "[^"]*' | grep -o '[^"]*$')"
+
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Secret
           metadata:
-            name: cloud-secret
+            name: agent-secret
           type: Opaque
           stringData:
-            type: "service_account"
-            project_id: "${{ secrets.GCP_PROJECT_ID }}"
-            private_key_id: "${{ secrets.PRIVATE_KEY_ID }}"
-            private_key: ${{ secrets.PRIVATE_KEY }}
-            client_email: "${{ secrets.CLIENT_EMAIL }}"
-            client_id: "${{ secrets.CLIENT_ID }}"
-            auth_uri: "${{ secrets.AUTH_URI }}"
-            token_uri: "${{ secrets.TOKEN_URI }}"
-            auth_provider_x509_cert_url: "${{ secrets.AUTH_PROVIDER_CERT_URL }}"
-            client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
+            AGENT_ENDPOINT: "${ENDPOINT}"
+            AUTH_TOKEN: "${TOKEN}"
           EOF
-
-      - name: Set up Google Cloud SDK
-        if: always()
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Create a GCP VM Instance with target Disk Volumes
-        if: always()
-        run: |
-          gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
-          --machine-type=f1-micro \
-          --zone=us-central1-a \
-          --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
-          --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
 
       - name: Litmus Infra Setup
         if: always()
@@ -186,25 +196,14 @@ jobs:
           OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
           RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
-      - name: Run GCP VM Disk Loss experiment in serial & parallel mode
+      - name: Run Process Kill experiment in serial & parallel mode
         if: always()
         env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
-          DISK_ZONES: "us-central1-a,us-central1-a"
-          DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
+          PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid2 }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
-        run: make gcp-vm-disk-loss
-
-      - name: Delete the VM Instance and target Disk Volumes
-        if: always()
-        run: |
-          gcloud compute instances delete litmus-e2e-vm-${{ github.run_number }} \
-          --zone=us-central1-a \
-          --delete-disks=all \
-          --quiet
+        run: make process-kill-parallel
 
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
@@ -221,9 +220,28 @@ jobs:
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}     
+        if: ${{ always() }} 
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh
+
+  Delete_VM:
+    runs-on: ubuntu-latest
+    needs: [Setup_m-agent, Process_Kill_Serial_Test, Process_Kill_Parallel_Test]
+    steps:
+      - name: Set up Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Delete GCP VM Instance
+        if: always()
+        run: |
+          gcloud compute instances delete litmus-e2e-m-agent-vm-${{ github.run_number }} \
+          --zone=us-east4-c \
+          --quiet
