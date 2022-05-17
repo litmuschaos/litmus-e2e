@@ -176,8 +176,8 @@ jobs:
           gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
           --zone=us-central1-a \
-          --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
-          --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
+          --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB \
+          --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB
 
       - name: Litmus Infra Setup
         if: always()
@@ -192,7 +192,6 @@ jobs:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
           DISK_ZONES: "us-central1-a,us-central1-a"
-          DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
