@@ -220,6 +220,7 @@ jobs:
   Delete_VM:
     runs-on: ubuntu-latest
     needs: [Setup_m-agent, Process_Kill_Serial_Test, Process_Kill_Parallel_Test]
+    if: ${{ always() }}
     steps:
       - name: Set up Google Cloud SDK
         if: always()
