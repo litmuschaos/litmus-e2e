@@ -334,8 +334,7 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	case "gcp-vm-disk-loss":
 		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
 			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
-			SetEnv("DISK_ZONES", testsDetails.DiskZones).
-			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
+			SetEnv("DISK_ZONES", testsDetails.DiskZones)
 	case "vm-poweroff":
 		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
 	case "process-kill":
