@@ -33,7 +33,7 @@ var _ = Describe("BDD of Auxilary app Deployment", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -44,12 +44,12 @@ var _ = Describe("BDD of Auxilary app Deployment", func() {
 			By("Creating auxiliary application")
 			command := []string{"run", "testpod", "--image=nginx", "-n", testsDetails.ChaosNamespace}
 			err = pkg.Kubectl(command...)
-			Expect(err).To(BeNil(), "Fail to deploy auxiliary app, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to deploy auxiliary app due to {%v}", err)
 
 			//Get the status of testpod Application
 			By("Running Deployment Status Check")
 			err = pkg.DeploymentStatusCheck(&testsDetails, "testpod", "litmus", clients)
-			Expect(err).To(BeNil(), "Application Status check faied, due to {%v}", err)
+			Expect(err).To(BeNil(), "Application Status check faied due to {%v}", err)
 
 			klog.Infof("Auxiliary Application installed successfully")
 

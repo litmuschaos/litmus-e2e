@@ -35,7 +35,7 @@ var _ = Describe("BDD of litmus cleanup", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err = clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -69,14 +69,14 @@ var _ = Describe("BDD of litmus cleanup", func() {
 				command = []string{"delete", "deploy", "testapp1", "adminapp", "testapp2"}
 				err = pkg.Kubectl(command...)
 				if err != nil {
-					fmt.Println("fail to delete the deployments from default namespace, due to ", err)
+					fmt.Println("Failed to delete the deployments from default namespace due to ", err)
 				}
 
 				//Delete test namespace
 				By("Delete test namespace")
 				command = []string{"delete", "ns", "test"}
 				err = pkg.Kubectl(command...)
-				Expect(err).To(BeNil(), "Fail to delete test namespace")
+				Expect(err).To(BeNil(), "Failed to delete test namespace")
 			}
 		})
 	})

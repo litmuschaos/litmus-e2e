@@ -33,7 +33,7 @@ var _ = Describe("BDD of Application Deployment", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -44,12 +44,12 @@ var _ = Describe("BDD of Application Deployment", func() {
 			By("Deploying liveness pod for the applicaiton")
 			command := []string{"apply", "-f", "../apps/nginx/liveness.yml"}
 			err = pkg.Kubectl(command...)
-			Expect(err).To(BeNil(), "Fail to install liveness probe, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install liveness probe due to {%v}", err)
 
 			//Get the status of liveness pod
 			By("liveness pod status check")
 			err = pkg.PodStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "iveness pod status check faied, due to {%v}", err)
+			Expect(err).To(BeNil(), "iveness pod status check faied due to {%v}", err)
 			klog.Info("Liveness pod established successfully !!!")
 
 		})

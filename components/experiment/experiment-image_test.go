@@ -47,24 +47,24 @@ var _ = Describe("BDD of experiment image test", func() {
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			// Provide wrong experiment image name
 			testsDetails.ExperimentImage = "litmuschaos/dummy-image:v1"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
 			//setting appns for runner pod status check
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).NotTo(BeNil(), "unable to create chaos pod, due to {%v}", err)
+			Expect(err).NotTo(BeNil(), "unable to create chaos pod due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
@@ -94,8 +94,8 @@ var _ = Describe("BDD of experiment image test", func() {
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the chaosengine Verdict, due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("N/A"), "ChaosEngine Verdict is not Awaited, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the chaosengine Verdict due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("N/A"), "ChaosEngine Verdict is not Awaited due to {%v}", err)
 
 		})
 	})
@@ -105,7 +105,7 @@ var _ = Describe("BDD of experiment image test", func() {
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
 			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to delete all litmus components due to {%v}", err)
 
 		})
 

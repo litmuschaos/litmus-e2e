@@ -48,21 +48,21 @@ func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.Cha
 
 	err = InstallGoRbac(testsDetails, testsDetails.ChaosNamespace)
 	if err != nil {
-		return errors.Errorf("Fail to install rbac, due to {%v}", err)
+		return errors.Errorf("Failed to install rbac due to {%v}", err)
 	}
 
 	//Installing Chaos Experiment
 	log.Info("[Install]: Installing chaos experiment")
 	err = InstallGoChaosExperiment(testsDetails, chaosExperiment, testsDetails.ChaosNamespace, clients)
 	if err != nil {
-		return errors.Errorf("Fail to install chaos experiment, due to {%v}", err)
+		return errors.Errorf("Failed to install chaos experiment due to {%v}", err)
 	}
 
 	//Installing Chaos Engine
 	log.Info("[Install]: Installing chaos engine")
 	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, clients)
 	if err != nil {
-		return errors.Errorf("Fail to install chaosengine, due to {%v}", err)
+		return errors.Errorf("Failed to install chaosengine due to {%v}", err)
 	}
 	return nil
 }

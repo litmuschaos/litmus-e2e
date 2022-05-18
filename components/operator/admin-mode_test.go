@@ -48,12 +48,12 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			//Creating application for pod-delete in default namespace
 			By("Creating deployment for pod-delete chaos")
 			err = pkg.CreateDeployment(clients, "adminapp", "nginx:1.12", "default")
-			Expect(err).To(BeNil(), "Deployment adminapp failed to create, due to {%v}", err)
+			Expect(err).To(BeNil(), "Deployment adminapp failed to create due to {%v}", err)
 
 			//Waiting for deployment to get ready
 			err = pkg.DeploymentStatusCheck(&testsDetails, "adminapp", "default", clients)
@@ -65,39 +65,39 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing admin RBAC for the chaos
 			By("[Install]: Installing RBAC for pod-delete")
 			err = pkg.InstallAdminRbac(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to install rbac, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install rbac due to {%v}", err)
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
 			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
 			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
-			Expect(err).To(BeNil(), "Fail to install chaosengine, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "litmus"
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 		})
 	})
@@ -126,7 +126,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Create Namespace for the test
 			By("Creating namespace")
 			err = pkg.CreateNamespace(clients, "test")
-			Expect(err).To(BeNil(), "Namespace creation failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Namespace creation failed due to {%v}", err)
 
 			testsDetails.ChaosNamespace = "test"
 			testsDetails.AppNS = "default"
@@ -134,39 +134,39 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing admin RBAC for the chaos
 			By("[Install]: Installing RBAC")
 			err = pkg.InstallAdminRbac(&testsDetails)
-			Expect(err).To(BeNil(), "Fail to create namespace, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to create namespace due to {%v}", err)
 
 			//Installing Chaos Experiment for pod-delete
 			By("[Install]: Installing pod-delete chaos experiment")
 			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
 
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
 			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
-			Expect(err).To(BeNil(), "Fail to install chaos experiment, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
 
 			//Checking runner pod running state
 			testsDetails.AppNS = "test"
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Unable to check the runner pod status, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to check the runner pod status due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 		})
 	})
 

@@ -118,7 +118,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 func UpdateExperiment(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	experiment, err := clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Get(testsDetails.ExperimentName, v1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("fail to update experiment, err: %v", err)
+		return errors.Errorf("Failed to update experiment, err: %v", err)
 	}
 
 	// Set all environments
@@ -126,7 +126,7 @@ func UpdateExperiment(testsDetails *types.TestDetails, clients environment.Clien
 
 	_, err = clients.LitmusClient.ChaosExperiments(testsDetails.ChaosNamespace).Update(experiment)
 	if err != nil {
-		return errors.Errorf("fail to get experiment,err: %v", err)
+		return errors.Errorf("Failed to get experiment,err: %v", err)
 	}
 	return nil
 }
@@ -137,13 +137,13 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	//Fetch RBAC file
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.RbacPath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+		return errors.Errorf("Failed to fetch the rbac file due to %v", err)
 	}
 	//Modify Namespace field of the RBAC
 	if rbacNamespace != "" {
 		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
 		if err != nil {
-			return errors.Errorf("Fail to Modify rbac file, due to %v", err)
+			return errors.Errorf("Failed to Modify rbac file due to %v", err)
 		}
 	}
 	log.Info("[RBAC]: Installing RBAC...")
@@ -151,7 +151,7 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", rbacNamespace}
 	err := Kubectl(command...)
 	if err != nil {
-		return errors.Errorf("fail to apply rbac file, err: %v", err)
+		return errors.Errorf("Failed to apply rbac file, err: %v", err)
 	}
 	log.Info("[RBAC]: Rbac installed successfully !!!")
 
@@ -220,13 +220,13 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	//Fetch Experiment file
 	res, err := http.Get(testsDetails.ExperimentPath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the experiment file, due to %v", err)
+		return errors.Errorf("Failed to fetch the experiment file due to %v", err)
 	}
 
 	// ReadAll reads from response until an error or EOF and returns the data it read.
 	fileInput, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Errorf("Fail to read data from response: %v", err)
+		log.Errorf("Failed to read data from response: %v", err)
 	}
 
 	// Unmarshal decodes the fileInput into chaosExperiment
@@ -241,14 +241,14 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 	// Marshal serializes the value provided into a YAML document.
 	fileData, err := json.Marshal(chaosExperiment)
 	if err != nil {
-		return errors.Errorf("fail to marshal ChaosExperiment %v", err)
+		return errors.Errorf("Failed to marshal ChaosExperiment %v", err)
 	}
 
 	log.Info("[Experiment]: Installing Experiment...")
 
 	//Creating experiment
 	if err = CreateChaosResource(testsDetails, fileData, testsDetails.ChaosNamespace, clients); err != nil {
-		return errors.Errorf("fail to apply experiment file, err: %v", err)
+		return errors.Errorf("Failed to apply experiment file, err: %v", err)
 	}
 	log.Info("[ChaosExperiment]: Experiment installed successfully !!!")
 	log.Info("[Experiment Image]: Chaos Experiment created successfully with image: " + testsDetails.ExperimentImage + " !!!")
@@ -383,13 +383,13 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	//Fetch Engine file
 	res, err := http.Get(testsDetails.EnginePath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+		return errors.Errorf("Failed to fetch the rbac file due to %v", err)
 	}
 
 	// ReadAll reads from response until an error or EOF and returns the data it read.
 	fileInput, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Errorf("Fail to read data from response: %v", err)
+		log.Errorf("Failed to read data from response: %v", err)
 	}
 
 	// Unmarshal decodes the fileInput into chaosEngine
@@ -404,13 +404,13 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)
 	if err != nil {
-		return errors.Errorf("Fail to marshal ChaosEngine %v", err)
+		return errors.Errorf("Failed to marshal ChaosEngine %v", err)
 	}
 
 	//Creating chaos engine
 	log.Info("[Engine]: Installing ChaosEngine...")
 	if err = CreateChaosResource(testsDetails, fileData, testsDetails.ChaosNamespace, clients); err != nil {
-		return errors.Errorf("fail to apply engine file, err: %v", err)
+		return errors.Errorf("Failed to apply engine file, err: %v", err)
 	}
 	log.Info("[Engine]: ChaosEngine Installed Successfully !!!")
 	return nil
@@ -421,25 +421,25 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 
 	log.Info("Installing Litmus ...")
 	if err := DownloadFile("install-litmus.yaml", testsDetails.InstallLitmus); err != nil {
-		return errors.Errorf("Fail to fetch litmus operator file, due to %v", err)
+		return errors.Errorf("Failed to fetch litmus operator file due to %v", err)
 	}
 	log.Info("Updating ChaosOperator Image ...")
 	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
-		return errors.Errorf("Unable to update operator image, due to %v", err)
+		return errors.Errorf("Unable to update operator image due to %v", err)
 
 	}
 	if err = EditKeyValue("install-litmus.yaml", "  - chaos-operator", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ImagePullPolicy); err != nil {
-		return errors.Errorf("Unable to update image pull policy, due to %v", err)
+		return errors.Errorf("Unable to update image pull policy due to %v", err)
 	}
 	log.Info("Updating Chaos Runner Image ...")
 	if err := EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos/chaos-runner:latest\"", "value: '"+testsDetails.RunnerImage+"'"); err != nil {
-		return errors.Errorf("Unable to update runner image, due to %v", err)
+		return errors.Errorf("Unable to update runner image due to %v", err)
 	}
 	//Creating engine
 	command := []string{"apply", "-f", "install-litmus.yaml"}
 	err := Kubectl(command...)
 	if err != nil {
-		return errors.Errorf("fail to apply litmus installation file, err: %v", err)
+		return errors.Errorf("Failed to apply litmus installation file, err: %v", err)
 	}
 	log.Info("Litmus installed successfully !!!")
 
@@ -453,19 +453,19 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	err = DownloadFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", testsDetails.AdminRbacPath)
 	if err != nil {
-		return errors.Errorf("Fail to fetch the rbac file, due to %v", err)
+		return errors.Errorf("Failed to fetch the rbac file due to %v", err)
 	}
 	//Modify Namespace field of the RBAC
 	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: litmus", "namespace: "+testsDetails.ChaosNamespace)
 	if err != nil {
-		return errors.Errorf("Fail to Modify admin rbac file, due to %v", err)
+		return errors.Errorf("Failed to Modify admin rbac file due to %v", err)
 	}
 	//Creating admin rbac
 	log.Info("[Admin]: Installing Litmus in Administrator Mode")
 	command := []string{"apply", "-f", "/tmp/" + testsDetails.ExperimentName + "-sa.yaml", "-n", testsDetails.ChaosNamespace}
 	err := Kubectl(command...)
 	if err != nil {
-		return errors.Errorf("fail to apply admin rbac file, err: %v", err)
+		return errors.Errorf("Failed to apply admin rbac file, err: %v", err)
 	}
 	log.Info("[Admin]: Admin RBAC installed successfully !!!")
 

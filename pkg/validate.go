@@ -23,7 +23,7 @@ func ValidateTargetPodChaos(testsDetails *types.TestDetails, clients environment
 	//Check if chaos occur on target pod or not
 	for _, pod := range podList.Items {
 		if pod.Name == testsDetails.TargetPod {
-			return errors.Errorf("fail to induce chaos on target pod")
+			return errors.Errorf("Failed to induce chaos on target pod")
 		}
 	}
 	log.Info("[Validate]: Induced chaos on target pod successfully")
@@ -67,7 +67,7 @@ func ValidateNodeName(nodeName string, clients environment.ClientSets, testsDeta
 
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+		return errors.Errorf("Failed to get the chaosresult due to %v", err)
 	}
 
 	for _, target := range chaosResult.Status.History.Targets {

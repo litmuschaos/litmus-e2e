@@ -16,7 +16,7 @@ func EditFile(filepath, old, new string) error {
 	failFlag := true
 	fileData, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to read the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to read the given file due to:%v", err)
 	}
 	lines := strings.Split(string(fileData), "\n")
 
@@ -32,7 +32,7 @@ func EditFile(filepath, old, new string) error {
 	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(filepath, []byte(output), 0644)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to write the data in the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to write the data in the given file due to:%v", err)
 	}
 
 	return nil
@@ -43,7 +43,7 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 	failFlag := true
 	fileData, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to read the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to read the given file due to:%v", err)
 	}
 	lines := strings.Split(string(fileData), "\n")
 
@@ -59,7 +59,7 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(filepath, []byte(output), 0644)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to write the data in the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to write the data in the given file due to:%v", err)
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func AddAfterMatch(filepath, key, newvalue string) error {
 	failFlag := true
 	fileData, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to read the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to read the given file due to:%v", err)
 	}
 	lines := strings.Split(string(fileData), "\n")
 
@@ -88,7 +88,7 @@ func AddAfterMatch(filepath, key, newvalue string) error {
 	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(filepath, []byte(output), 0644)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to write the data in the given file, due to:%v", err)
+		return errors.Wrapf(err, "Failed to write the data in the given file due to:%v", err)
 	}
 
 	return nil
@@ -101,21 +101,21 @@ func DownloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("fail to get the data: %w", err)
+		return fmt.Errorf("Failed to get the data: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		return fmt.Errorf("fail to create the file: %w", err)
+		return fmt.Errorf("Failed to create the file: %w", err)
 	}
 	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		return fmt.Errorf("fail to write the data in file: %w", err)
+		return fmt.Errorf("Failed to write the data in file: %w", err)
 	}
 	return nil
 }

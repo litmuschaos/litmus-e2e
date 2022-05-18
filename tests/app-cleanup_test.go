@@ -43,11 +43,11 @@ var _ = Describe("BDD of Application Cleanup", func() {
 			By("Deleting Application")
 			command := []string{"delete", "-f", "../apps/nginx/nginx.yml"}
 			err = pkg.Kubectl(command...)
-			Expect(err).To(BeNil(), "Fail to delete application and its components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to delete application and its components due to {%v}", err)
 
 			//Get the status of sample Application
 			err = pkg.DeploymentCleanupCheck(&testsDetails, "nginx", clients)
-			Expect(err).To(BeNil(), "Application Status check faied, due to {%v}", err)
+			Expect(err).To(BeNil(), "Application Status check faied due to {%v}", err)
 
 		})
 	})
