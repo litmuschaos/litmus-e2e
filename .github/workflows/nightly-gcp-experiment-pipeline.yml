@@ -5,16 +5,14 @@ on:
     - cron: "30 22 * * *" # Daily 02:30 AM in midnight
 
 jobs:
-  GCP_VM_Instance_Stop:
+  GCP_VM_Instance_Stop_by_Name_And_Label:
     runs-on: ubuntu-latest
-    env:
+    env: 
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     steps:
 
       #Install and configure a k3s cluster
       - name: Installing Prerequisites (K3S Cluster)
-        env: 
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
@@ -62,11 +60,15 @@ jobs:
         run: |
           gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
-          --zone=us-east1-b
+          --zone=us-east1-b \
+          --labels=vm=litmus-e2e-vm-${{ github.run_number }}
 
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
+        env:
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run GCP VM Instance Stop experiment in serial & parallel mode
         if: always()
@@ -75,6 +77,15 @@ jobs:
           VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
           INSTANCE_ZONES: "us-east1-b,us-east1-b"
         run: make gcp-vm-instance-stop
+
+      - name: Run GCP VM Instance Stop By Label experiment in serial & parallel mode
+        if: always()
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          INSTANCE_LABEL: "vm : litmus-e2e-vm-${{ github.run_number }}"
+          INSTANCE_ZONES: "us-east1-b"
+          INSTANCE_AFFECTED_PERC: "100"
+        run: make gcp-vm-instance-stop-by-label
 
       - name: Delete target GCP VM Instances
         if: always()
@@ -98,18 +109,18 @@ jobs:
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() }}     
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
         if: always()
         run: /usr/local/bin/k3s-uninstall.sh
 
-  GCP_VM_Disk_Loss:
+  GCP_VM_Disk_Loss_By_Name_And_Label:
     runs-on: ubuntu-latest
     env: 
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-    needs: GCP_VM_Instance_Stop
+    needs: GCP_VM_Instance_Stop_by_Name_And_Label
     steps:
       
       #Install and configure a k3s cluster
@@ -164,10 +175,15 @@ jobs:
           --zone=us-east1-b \
           --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
           --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
+          gcloud compute disks add-labels litmus-e2e-first-disk-${{ github.run_number }} --labels=disk=litmus-e2e-disk-${{ github.run_number }} --zone=us-east1-b
+          gcloud compute disks add-labels litmus-e2e-second-disk-${{ github.run_number }} --labels=disk=litmus-e2e-disk-${{ github.run_number }} --zone=us-east1-b
 
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
+        env:
+          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
+          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run GCP VM Disk Loss experiment in serial & parallel mode
         if: always()
@@ -177,6 +193,15 @@ jobs:
           DISK_ZONES: "us-east1-b,us-east1-b"
           DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
         run: make gcp-vm-disk-loss
+
+      - name: Run GCP VM Disk Loss By Label experiment in serial & parallel mode
+        if: always()
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          DISK_VOLUME_LABEL: "disk : litmus-e2e-disk-${{ github.run_number }}"
+          DISK_ZONES: "us-east1-b"
+          DISK_AFFECTED_PERC: "100"
+        run: make gcp-vm-disk-loss-by-label
 
       - name: Delete the VM Instance and target Disk Volumes
         if: always()
@@ -201,7 +226,7 @@ jobs:
           cat logs.txt
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() }}     
         run: make litmus-cleanup 
         
       - name: Deleting K3S cluster
