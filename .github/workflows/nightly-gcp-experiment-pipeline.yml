@@ -62,7 +62,7 @@ jobs:
         run: |
           gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
-          --zone=us-central1-a
+          --zone=us-east1-b
 
       - name: Litmus Infra Setup
         if: always()
@@ -73,14 +73,14 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
-          INSTANCE_ZONES: "us-central1-a,us-central1-a"
+          INSTANCE_ZONES: "us-east1-b,us-east1-b"
         run: make gcp-vm-instance-stop
 
       - name: Delete target GCP VM Instances
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
-          --zone=us-central1-a \
+          --zone=us-east1-b \
           --quiet
 
       - name: "[Debug]: check chaos resources"
@@ -161,7 +161,7 @@ jobs:
         run: |
           gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
-          --zone=us-central1-a \
+          --zone=us-east1-b \
           --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-first-disk-${{ github.run_number }} \
           --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB,device-name=litmus-e2e-second-disk-${{ github.run_number }}
 
@@ -174,7 +174,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
-          DISK_ZONES: "us-central1-a,us-central1-a"
+          DISK_ZONES: "us-east1-b,us-east1-b"
           DEVICE_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
         run: make gcp-vm-disk-loss
 
@@ -182,7 +182,7 @@ jobs:
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-vm-${{ github.run_number }} \
-          --zone=us-central1-a \
+          --zone=us-east1-b \
           --delete-disks=all \
           --quiet
 

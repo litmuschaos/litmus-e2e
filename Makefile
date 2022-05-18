@@ -257,6 +257,22 @@ gcp-vm-disk-loss:
 	@echo "------------------------------------------"
 	@go test platform/gcp/gcp-vm-disk-loss_test.go -v -count=1 -timeout=20m
 
+.PHONY: gcp-vm-instance-stop-by-label
+gcp-vm-instance-stop-by-label:
+  
+	@echo "------------------------------------------"
+	@echo "Running gcp-vm-instance-stop-by-label experiment"
+	@echo "------------------------------------------"
+	@go test platform/gcp/gcp-vm-instance-stop-by-label_test.go -v -count=1 -timeout=20m
+
+.PHONY: gcp-vm-disk-loss-by-label
+gcp-vm-disk-loss-by-label:
+  
+	@echo "------------------------------------------"
+	@echo "Running gcp-vm-disk-loss-by-label experiment"
+	@echo "------------------------------------------"
+	@go test platform/gcp/gcp-vm-disk-loss-by-label_test.go -v -count=1 -timeout=20m
+
 .PHONY: vm-poweroff
 vm-poweroff:
 
