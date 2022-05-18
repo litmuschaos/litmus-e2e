@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-    needs: GCP_VM_Instance_Stop
+    needs: GCP_VM_Instance_Stop_by_Name_And_Label
     steps:
       
       #Install and configure a k3s cluster
