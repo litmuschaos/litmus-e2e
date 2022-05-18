@@ -37,7 +37,7 @@ var _ = Describe("BDD of gcp-vm-instance-stop-by-label experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "gcp-vm-instance-stop-by-label", "gcp-vm-engine-par")
+			environment.GetENV(&testsDetails, "gcp-vm-instance-stop-by-label", "gcp-vm-label-engine-par")
 			log.Infof("[Info]: The target VM instances are: %v", testsDetails.VMInstanceNames)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop-by-label/rbac.yaml"
@@ -101,7 +101,7 @@ var _ = Describe("BDD of gcp-vm-instance-stop-by-label experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "gcp-vm-instance-stop-by-label", "gcp-vm-engine-ser")
+			environment.GetENV(&testsDetails, "gcp-vm-instance-stop-by-label", "gcp-vm-label-engine-ser")
 			log.Infof("[Info]: The target VM instances are: %v", testsDetails.VMInstanceNames)
 
 			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop-by-label/rbac.yaml"
