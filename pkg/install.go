@@ -336,6 +336,16 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
 			SetEnv("DISK_ZONES", testsDetails.DiskZones).
 			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
+	case "gcp-vm-instance-stop-by-label":
+		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
+			SetEnv("INSTANCE_LABEL", testsDetails.InstanceLabel).
+			SetEnv("INSTANCE_ZONES", testsDetails.InstanceZones).
+			SetEnv("INSTANCE_AFFECTED_PERC", testsDetails.InstanceAffectedPercentage)
+	case "gcp-vm-disk-loss-by-label":
+		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
+			SetEnv("DISK_VOLUME_LABEL", testsDetails.DiskVolumeLabel).
+			SetEnv("DISK_ZONES", testsDetails.DiskZones).
+			SetEnv("DISK_AFFECTED_PERC", testsDetails.DiskAffectedPercentage)
 	case "vm-poweroff":
 		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
 	case "process-kill":
