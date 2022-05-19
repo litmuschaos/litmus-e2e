@@ -14,6 +14,7 @@
     "AGENT_NAMESPACE" : "litmus",
     "AGENT" : "Self-Agent",
     "TARGET_APP_NS" : "default",
-    "githubToken": ""
+    "githubToken": "",
+    "MONGO_URL": "localhost:27017"
   }
 }

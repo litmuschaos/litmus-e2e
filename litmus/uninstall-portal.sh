@@ -12,7 +12,7 @@ kubectl delete chaosengines --all -A
 kubectl delete chaosresult --all -A
 
 # Shutting down the Litmus-Portal Setup
-curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-cleanup.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/cluster-k8s-manifest.yml --output litmus-portal-cleanup.yml
 
 manifest_image_update $version litmus-portal-cleanup.yml
 

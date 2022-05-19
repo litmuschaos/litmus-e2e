@@ -223,6 +223,18 @@ function setup_ingress(){
     wait_for_ingress litmus-ingress ${namespace}
 }
 
+function get_mongo_url(){
+    namespace=$1
+    kubectl patch svc mongo-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+    export loadBalancer=$(kubectl get services mongo-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+    wait_for_pods ${namespace} 360
+    wait_for_loadbalancer mongo-service ${namespace}
+    export loadBalancerIP=$(kubectl get services mongo-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+    export AccessURL="$loadBalancerIP:27017"
+    echo "MONGO_URL=$AccessURL" >> $GITHUB_ENV
+
+}
+
 # Function to get Access point of ChaosCenter based on Service type(mode) deployed in given namespace
 function get_access_point(){
     namespace=$1

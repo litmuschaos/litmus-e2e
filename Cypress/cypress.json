@@ -16,6 +16,7 @@
     "AGENT" : "Self-Agent",
     "TARGET_APP_NS" : "default",
     "DATA_SOURCE_URL" : "",
-    "githubToken": ""
+    "githubToken": "",
+    "MONGO_URL": "localhost:27017"
   }
 }
