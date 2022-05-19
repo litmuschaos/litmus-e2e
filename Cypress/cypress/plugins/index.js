@@ -65,7 +65,6 @@ async function clearDatabase() {
 }
 
 async function waitUntilAgent(agentName) {
-  console.log("inside task", agentName);
   const uri = "mongodb://admin:1234@localhost:27017";
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
@@ -79,7 +78,6 @@ async function waitUntilAgent(agentName) {
         return collection
           .findOne({ cluster_name: agentName })
           .then((result) => {
-            console.log("result is", result);
             if (result.is_active) {
               client.close();
               resolve(true);
@@ -90,6 +88,7 @@ async function waitUntilAgent(agentName) {
     });
   } catch (err) {
     console.log(err.stack);
+    client.close();
     return false;
   }
 }
@@ -105,7 +104,6 @@ async function getAdminProject() {
     const collection = client.db("auth").collection("project");
     return await new Promise((resolve) => {
       return collection.findOne({}).then((result) => {
-        console.log("result is", result);
         client.close();
         resolve(result);
       });
@@ -137,7 +135,6 @@ module.exports = (on, config) => {
       return clearDatabase();
     },
     waitForAgent: (agentName) => {
-      console.log("inside task", agentName);
       return waitUntilAgent(agentName);
     },
     getAdminProject: () => {

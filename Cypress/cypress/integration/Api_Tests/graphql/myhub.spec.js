@@ -2,47 +2,57 @@
 
 import * as user from "../../../fixtures/Users.json";
 import {
-  addMyHub,
-  updateMyHub,
-  deleteMyHub,
-  syncHub,
-} from "../../../fixtures/graphql/mutation";
+  ADD_MY_HUB,
+  DELETE_HUB,
+  SYNC_REPO,
+  UPDATE_MY_HUB,
+} from "../../../fixtures/graphql/mutations";
 import {
-  getHubStatus,
-  getCharts,
-  getHubExperiment,
-  getYAMLData,
-  GetPredefinedWorkflowList,
-  GetPredefinedExperimentYAML,
+  GET_HUB_STATUS,
+  GET_CHARTS_DATA,
+  GET_EXPERIMENT_DATA,
+  GET_EXPERIMENT_YAML,
+  GET_PREDEFINED_WORKFLOW_LIST,
+  GET_PREDEFINED_EXPERIMENT_YAML,
 } from "../../../fixtures/graphql/queries";
 import * as myhubInput from "../../../fixtures/myhubInput.json";
 import { permission_denied } from "../../../fixtures/errorCodes";
 
+let project1Id, project2Id, hubId;
+before("Clear database", () => {
+  cy.task("clearDB")
+    .then(() => {
+      return cy.createAgent("a1");
+    })
+    .then(() => {
+      return cy.task("getAdminProject");
+    })
+    .then((res) => {
+      return cy.securityCheckSetup(res._id, res.name);
+    })
+    .then((createdSetupVariable) => {
+      project1Id = createdSetupVariable.project1Id;
+      project2Id = createdSetupVariable.project2Id;
+    })
+    .then(() => {
+      cy.requestLogin(user.AdminName, user.AdminPassword);
+    });
+});
+
 describe("Testing myHub api", () => {
-  let project1Id, project2Id, hubId;
-  before("Create 3 test users and 2 projects", () => {
-    cy.task("clearDB");
-    cy.securityCheckSetup()
-      .then((createdSetupVariable) => {
-        project1Id = createdSetupVariable.project1Id;
-        project2Id = createdSetupVariable.project2Id;
-      })
-      .then(() => {
-        cy.requestLogin(user.user2.username, user.user2.password);
-      });
-  });
-  // Currently logged in as user 2
   it("Adding a new MyHub to a project with no access [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "addMyHub",
+        operationName: "addChaosHub",
         variables: {
-          myhubInput: myhubInput.default,
-          projectID: project1Id,
+          request: {
+            ...myhubInput.default,
+            projectID: project2Id,
+          },
         },
-        query: addMyHub,
+        query: ADD_MY_HUB,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -55,11 +65,11 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getHubStatus",
+        operationName: "listHubStatus",
         variables: {
-          projectID: project1Id,
+          projectID: project2Id,
         },
-        query: getHubStatus,
+        query: GET_HUB_STATUS,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -68,16 +78,20 @@ describe("Testing myHub api", () => {
   });
 
   it("Adding a new MyHub to a project with viewer access [ Should not be possible ]", () => {
+    cy.logout();
+    cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "addMyHub",
+        operationName: "addChaosHub",
         variables: {
-          myhubInput: myhubInput.default,
-          projectID: project2Id,
+          request: {
+            ...myhubInput.default,
+            projectID: project2Id,
+          },
         },
-        query: addMyHub,
+        query: ADD_MY_HUB,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -90,15 +104,15 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getHubStatus",
+        operationName: "listHubStatus",
         variables: {
           projectID: project2Id,
         },
-        query: getHubStatus,
+        query: GET_HUB_STATUS,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.getHubStatus[0].id");
+      expect(res.body).to.have.nested.property("data.listHubStatus[0].id");
     });
   });
 
@@ -109,17 +123,19 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "addMyHub",
+        operationName: "addChaosHub",
         variables: {
-          myhubInput: myhubInput.default,
-          projectID: project1Id,
+          request: {
+            ...myhubInput.default,
+            projectID: project1Id,
+          },
         },
-        query: addMyHub,
+        query: ADD_MY_HUB,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.addMyHub.id");
-      hubId = res.body.data.addMyHub.id;
+      expect(res.body).to.have.nested.property("data.addChaosHub.id");
+      hubId = res.body.data.addChaosHub.id;
     });
   });
 
@@ -128,15 +144,15 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getHubStatus",
+        operationName: "listHubStatus",
         variables: {
           projectID: project1Id,
         },
-        query: getHubStatus,
+        query: GET_HUB_STATUS,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.getHubStatus[0].id");
+      expect(res.body).to.have.nested.property("data.listHubStatus[0].id");
     });
   });
 
@@ -145,17 +161,17 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getCharts",
+        operationName: "listCharts",
         variables: {
-          HubName: "my-chaos-hub",
+          hubName: "my-chaos-hub",
           projectID: project1Id,
         },
-        query: getCharts,
+        query: GET_CHARTS_DATA,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.getCharts[0].ApiVersion");
-      expect(res.body).to.have.nested.property("data.getCharts[0].Kind");
+      expect(res.body).to.have.nested.property("data.listCharts[0].apiVersion");
+      expect(res.body).to.have.nested.property("data.listCharts[0].kind");
     });
   });
 
@@ -166,21 +182,21 @@ describe("Testing myHub api", () => {
       body: {
         operationName: "getHubExperiment",
         variables: {
-          experimentInput: {
-            ProjectID: project1Id,
-            ChartName: "generic",
-            ExperimentName: "pod-delete",
-            HubName: "my-chaos-hub",
+          request: {
+            projectID: project1Id,
+            chartName: "generic",
+            experimentName: "pod-delete",
+            hubName: "my-chaos-hub",
           },
         },
-        query: getHubExperiment,
+        query: GET_EXPERIMENT_DATA,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
       expect(res.body).to.have.nested.property(
-        "data.getHubExperiment.ApiVersion"
+        "data.getHubExperiment.apiVersion"
       );
-      expect(res.body).to.have.nested.property("data.getHubExperiment.Kind");
+      expect(res.body).to.have.nested.property("data.getHubExperiment.kind");
     });
   });
 
@@ -191,15 +207,15 @@ describe("Testing myHub api", () => {
       body: {
         operationName: "getYAMLData",
         variables: {
-          experimentInput: {
-            ProjectID: project1Id,
-            ChartName: "generic",
-            ExperimentName: "pod-delete",
-            HubName: "my-chaos-hub",
-            FileType: "experiment",
+          request: {
+            projectID: project1Id,
+            chartName: "generic",
+            experimentName: "pod-delete",
+            hubName: "my-chaos-hub",
+            fileType: "EXPERIMENT",
           },
         },
-        query: getYAMLData,
+        query: GET_EXPERIMENT_YAML,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
@@ -212,17 +228,17 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "GetPredefinedWorkflowList",
+        operationName: "listPredefinedWorkflows",
         variables: {
-          HubName: "my-chaos-hub",
+          hubName: "my-chaos-hub",
           projectID: project1Id,
         },
-        query: GetPredefinedWorkflowList,
+        query: GET_PREDEFINED_WORKFLOW_LIST,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
       expect(res.body).to.have.nested.property(
-        "data.GetPredefinedWorkflowList[0]"
+        "data.listPredefinedWorkflows[0]"
       );
     });
   });
@@ -232,22 +248,22 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "GetPredefinedExperimentYAML",
+        operationName: "getPredefinedExperimentYAML",
         variables: {
-          experimentInput: {
-            ProjectID: project1Id,
-            ChartName: "predefined",
-            ExperimentName: "podtato-head",
-            HubName: "my-chaos-hub",
-            FileType: "workflow",
+          request: {
+            projectID: project1Id,
+            chartName: "predefined",
+            experimentName: "podtato-head",
+            hubName: "my-chaos-hub",
+            fileType: "WORKFLOW",
           },
         },
-        query: GetPredefinedExperimentYAML,
+        query: GET_PREDEFINED_EXPERIMENT_YAML,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
       expect(res.body).to.have.nested.property(
-        "data.GetPredefinedExperimentYAML"
+        "data.getPredefinedExperimentYAML"
       );
     });
   });
@@ -257,21 +273,21 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "updateMyHub",
+        operationName: "updateChaosHub",
         variables: {
-          myhubInput: {
+          request: {
             ...myhubInput.default,
             id: hubId,
-            HubName: "my-chaos-hub-1",
+            hubName: "my-chaos-hub-1",
+            projectID: project1Id,
           },
-          projectID: project1Id,
         },
-        query: updateMyHub,
+        query: UPDATE_MY_HUB,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.updateMyHub.HubName");
-      expect(res.body.data.updateMyHub.HubName).to.eq("my-chaos-hub-1");
+      expect(res.body).to.have.nested.property("data.updateChaosHub.hubName");
+      expect(res.body.data.updateChaosHub.hubName).to.eq("my-chaos-hub-1");
     });
   });
 
@@ -280,15 +296,16 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "syncHub",
+        operationName: "syncChaosHub",
         variables: {
           id: hubId,
+          projectID: project1Id,
         },
-        query: syncHub,
+        query: SYNC_REPO,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.syncHub[0].id");
+      expect(res.body).to.have.nested.property("data.syncChaosHub[0].id");
     });
   });
 
@@ -299,16 +316,16 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "updateMyHub",
+        operationName: "updateChaosHub",
         variables: {
-          myhubInput: {
+          request: {
             ...myhubInput.default,
             id: hubId,
-            HubName: "my-chaos-hub",
+            hubName: "my-chaos-hub",
+            projectID: project1Id,
           },
-          projectID: project1Id,
         },
-        query: updateMyHub,
+        query: UPDATE_MY_HUB,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -321,12 +338,12 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getCharts",
+        operationName: "listCharts",
         variables: {
-          HubName: "my-chaos-hub-1",
+          hubName: "my-chaos-hub-1",
           projectID: project1Id,
         },
-        query: getCharts,
+        query: GET_CHARTS_DATA,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -341,14 +358,14 @@ describe("Testing myHub api", () => {
       body: {
         operationName: "getHubExperiment",
         variables: {
-          experimentInput: {
-            ProjectID: project1Id,
-            ChartName: "generic",
-            ExperimentName: "pod-delete",
-            HubName: "my-chaos-hub-1",
+          request: {
+            projectID: project1Id,
+            chartName: "generic",
+            experimentName: "pod-delete",
+            hubName: "my-chaos-hub-1",
           },
         },
-        query: getHubExperiment,
+        query: GET_EXPERIMENT_DATA,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -363,15 +380,15 @@ describe("Testing myHub api", () => {
       body: { 
         "operationName": "getYAMLData",
         "variables": {
-          "experimentInput": {
-            "ProjectID": project1Id,
-            "ChartName": "generic",
-            "ExperimentName": "pod-delete",
-            "HubName": "my-chaos-hub-1",
-            "FileType": "experiment"
+          "request": {
+            "projectID": project1Id,
+            "chartName": "generic",
+            "experimentName": "pod-delete",
+            "hubName": "my-chaos-hub-1",
+            "fileType": "EXPERIMENT"
           }
         },
-        "query": getYAMLData
+        "query": GET_EXPERIMENT_YAML
       },
       failOnStatusCode: false
     }).then((res) => {
@@ -384,12 +401,12 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
       body: { 
-        "operationName": "GetPredefinedWorkflowList",
+        "operationName": "listPredefinedWorkflows",
         "variables": {
-          "HubName": "my-chaos-hub-1",
+          "hubName": "my-chaos-hub-1",
           "projectID": project1Id,
         },
-        "query": GetPredefinedWorkflowList
+        "query": GET_PREDEFINED_WORKFLOW_LIST
       },
       failOnStatusCode: false
     }).then((res) => {
@@ -402,17 +419,17 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
       body: { 
-        "operationName": "GetPredefinedExperimentYAML",
+        "operationName": "getPredefinedExperimentYAML",
         "variables": {
-          "experimentInput": {
-            "ProjectID": project1Id,
-            "ChartName": "predefined",
-            "ExperimentName": "podtato-head",
-            "HubName": "my-chaos-hub-1",
-            "FileType": "workflow"
+          "request": {
+            "projectID": project1Id,
+            "chartName": "predefined",
+            "experimentName": "podtato-head",
+            "hubName": "my-chaos-hub-1",
+            "fileType": "WORKFLOW"
           }
         },
-        "query": GetPredefinedExperimentYAML
+        "query": GET_PREDEFINED_EXPERIMENT_YAML
       },
       failOnStatusCode: false
     }).then((res) => {
@@ -425,11 +442,11 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
       body: { 
-        "operationName": "syncHub",
+        "operationName": "syncChaosHub",
         "variables": {
           id: hubId
         },
-        "query": syncHub
+        "query": SYNC_REPO
       },
       failOnStatusCode: false
     }).then((res) => {
@@ -442,11 +459,11 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
       body: { 
-        "operationName": "deleteMyHub",
+        "operationName": "deleteChaosHub",
         "variables": {
-          "hub_id": hubId
+          "hubID": hubId
         },
-        "query": deleteMyHub
+        "query": DELETE_HUB
       },
       failOnStatusCode: false
     }).then((res) => {
@@ -461,11 +478,11 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + '/query',
       body: { 
-        "operationName": "deleteMyHub",
+        "operationName": "deleteChaosHub",
         "variables": {
-          "hub_id": hubId
+          "hubID": hubId
         },
-        "query": deleteMyHub
+        "query": DELETE_HUB
       },
     }).then((res) => {
       cy.validateErrorMessage(res, permission_denied);
@@ -479,16 +496,17 @@ describe("Testing myHub api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "deleteMyHub",
+        operationName: "deleteChaosHub",
         variables: {
-          hub_id: hubId,
+          hubID: hubId,
+          projectID: project1Id,
         },
-        query: deleteMyHub,
+        query: DELETE_HUB,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.deleteMyHub");
-      expect(res.body.data.deleteMyHub).to.eq(true);
+      expect(res.body).to.have.nested.property("data.deleteChaosHub");
+      expect(res.body.data.deleteChaosHub).to.eq(true);
     });
   });
 });

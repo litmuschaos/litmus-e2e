@@ -344,38 +344,48 @@ Cypress.Commands.add(
   (agentName, namespace = "n1", projectId = "") => {
     return cy
       .exec(
-        "kubectl -n litmus get -o jsonpath='{.spec.ports[0].nodePort}' services litmusportal-frontend-service"
+        "kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml",
+        { timeout: 60000 }
       )
+      .then(() => {
+        return cy.exec(
+          "kubectl -n litmus get -o jsonpath='{.spec.ports[0].nodePort}' services litmusportal-frontend-service",
+          { timeout: 60000 }
+        );
+      })
       .then((res) => {
         const url = "http://localhost:" + res.stdout;
         return cy.exec(
-          `litmusctl config set-account  --endpoint '${url}' --password 'litmus' --username 'admin'`
+          `litmusctl config set-account  --endpoint '${url}' --password 'litmus' --username 'admin'`,
+          { timeout: 60000 }
         );
       })
       .then((res) => {
         return cy.exec(
-          `kubectl get ns | awk '/${namespace}/' | awk '{print $1}'`
+          `kubectl get ns | awk '/${namespace}/' | awk '{print $1}'`,
+          { timeout: 60000 }
         );
       })
       .then((res) => {
         if (res.stdout === "") {
-          return cy.exec(`kubectl create ns ${namespace}`);
+          return cy.exec(`kubectl create ns ${namespace}`, {
+            timeout: 60000,
+          });
         } else {
           return cy.exec(
-            `kubectl delete ns ${namespace} && kubectl create ns ${namespace}`
+            `kubectl delete ns ${namespace} && kubectl create ns ${namespace}`,
+            { timeout: 60000 }
           );
         }
       })
       .then((res) => {
         return cy.exec(
-          `litmusctl create agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`
+          `litmusctl create agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`,
+          { timeout: 600000 }
         );
       })
       .then((res) => {
-        return cy.task("waitForAgent", agentName);
-      })
-      .then((res) => {
-        console.log(res);
+        return cy.task("waitForAgent", agentName, { timeout: 600000 });
       });
   }
 );

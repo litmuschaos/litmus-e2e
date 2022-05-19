@@ -2,20 +2,44 @@
 
 import * as user from "../../../fixtures/Users.json";
 import {
-  userClusterReg,
-  deleteClusters,
-} from "../../../fixtures/graphql/mutation";
-import { getCluster } from "../../../fixtures/graphql/queries";
+  REGISTER_CLUSTER,
+  // DELETE_CLUSTER,
+} from "../../../fixtures/graphql/mutations";
+import { GET_CLUSTER } from "../../../fixtures/graphql/queries";
 
-let project1Id, cluster1Id;
-before("Clear Database", () => {
-  cy.task("clearDB");
-  cy.securityCheckSetup()
+let project1Id, project2Id, cluster1Id;
+before("Clear database", () => {
+  cy.task("clearDB")
+    .then(() => {
+      return cy.createAgent("a1");
+    })
+    .then(() => {
+      return cy.task("getAdminProject");
+    })
+    .then((res) => {
+      return cy.securityCheckSetup(res._id, res.name);
+    })
     .then((createdSetupVariable) => {
       project1Id = createdSetupVariable.project1Id;
+      project2Id = createdSetupVariable.project2Id;
     })
     .then(() => {
       cy.requestLogin(user.AdminName, user.AdminPassword);
+    })
+    .then(() => {
+      cy.request({
+        method: "POST",
+        url: Cypress.env("apiURL") + "/query",
+        body: {
+          operationName: "listClusters",
+          variables: {
+            projectID: project1Id,
+          },
+          query: GET_CLUSTER,
+        },
+      }).then((res) => {
+        cluster1Id = res.body.data.listClusters[0].clusterID;
+      });
     });
 });
 
@@ -25,30 +49,30 @@ describe("Testing cluster api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "userClusterReg",
+        operationName: "registerCluster",
         variables: {
-          clusterInput: {
-            cluster_name: "cluster1",
-            platform_name: "AWS",
-            project_id: project1Id,
-            cluster_type: "external",
-            agent_scope: "Cluster",
+          request: {
+            clusterName: "cluster1",
+            platformName: "AWS",
+            projectID: project1Id,
+            clusterType: "external",
+            agentScope: "Cluster",
             tolerations: [],
           },
         },
-        query: userClusterReg,
+        query: REGISTER_CLUSTER,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.userClusterReg.token");
+      expect(res.body).to.have.nested.property("data.registerCluster.token");
       expect(res.body).to.have.nested.property(
-        "data.userClusterReg.cluster_id"
+        "data.registerCluster.clusterID"
       );
       expect(res.body).to.have.nested.property(
-        "data.userClusterReg.cluster_name"
+        "data.registerCluster.clusterName"
       );
-      expect(res.body.data.userClusterReg.cluster_name).to.eq("cluster1");
-      cluster1Id = res.body.data.userClusterReg.cluster_id;
+      expect(res.body.data.registerCluster.clusterName).to.eq("cluster1");
+      cluster1Id = res.body.data.registerCluster.clusterID;
     });
   });
 
@@ -57,18 +81,18 @@ describe("Testing cluster api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "userClusterReg",
+        operationName: "registerCluster",
         variables: {
-          clusterInput: {
-            cluster_name: "cluster1",
-            platform_name: "",
-            project_id: project1Id,
-            cluster_type: "",
-            agent_scope: "",
+          request: {
+            clusterName: "cluster1",
+            platformName: "",
+            projectID: project1Id,
+            clusterType: "",
+            agentScope: "",
             tolerations: [],
           },
         },
-        query: userClusterReg,
+        query: REGISTER_CLUSTER,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -81,18 +105,18 @@ describe("Testing cluster api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "userClusterReg",
+        operationName: "registerCluster",
         variables: {
-          clusterInput: {
-            cluster_name: "cluster1",
-            platform_name: "AWS",
-            project_id: project1Id,
-            cluster_type: "external",
-            agent_scope: "Cluster",
+          request: {
+            clusterName: "cluster1",
+            platformName: "AWS",
+            projectID: project1Id,
+            clusterType: "external",
+            agentScope: "Cluster",
             tolerations: [],
           },
         },
-        query: userClusterReg,
+        query: REGISTER_CLUSTER`,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -105,16 +129,16 @@ describe("Testing cluster api", () => {
       method: "POST",
       url: Cypress.env("apiURL") + "/query",
       body: {
-        operationName: "getCluster",
+        operationName: "listClusters",
         variables: {
-          project_id: project1Id,
+          projectID: project1Id,
         },
-        query: getCluster,
+        query: GET_CLUSTER,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.getCluster");
-      expect(res.body.data.getCluster).to.be.an("array");
+      expect(res.body).to.have.nested.property("data.listClusters");
+      expect(res.body.data.listClusters).to.be.an("array");
     });
   });
 
@@ -126,9 +150,9 @@ describe("Testing cluster api", () => {
         operationName: "deleteClusters",
         variables: {
           projectID: project1Id,
-          cluster_ids: [cluster1Id],
+          clusterIDs: [cluster1Id],
         },
-        query: deleteClusters,
+        query: DELETE_CLUSTER,
       },
     })
       .then((res) => {
@@ -138,19 +162,19 @@ describe("Testing cluster api", () => {
           method: "POST",
           url: Cypress.env("apiURL") + "/query",
           body: {
-            operationName: "getCluster",
+            operationName: "listClusters",
             variables: {
-              project_id: project1Id,
+              projectID: project1Id,
             },
-            query: getCluster,
+            query: GET_CLUSTER,
           },
         });
       })
       .then((res) => {
         expect(res.status).to.eq(200);
-        expect(res.body).to.have.nested.property("data.getCluster");
-        expect(res.body.data.getCluster).to.be.an("array");
-        expect(res.body.data.getCluster.length).to.eq(1);
+        expect(res.body).to.have.nested.property("data.listClusters");
+        expect(res.body.data.listClusters).to.be.an("array");
+        expect(res.body.data.listClusters.length).to.eq(1);
       });
   });*/
 });

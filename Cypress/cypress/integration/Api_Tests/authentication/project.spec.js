@@ -4,7 +4,7 @@ import * as user from "../../../fixtures/Users.json";
 import * as myhubInput from "../../../fixtures/myhubInput.json";
 import { endpoints } from "../../../fixtures/authenticationEndpoints";
 import { unauthorized, permission_denied } from "../../../fixtures/errorCodes";
-import { addMyHub } from "../../../fixtures/graphql/mutation";
+import { ADD_MY_HUB } from "../../../fixtures/graphql/mutations";
 
 const Project1Name = "Project1",
   Project2Name = "Project2",
@@ -1226,12 +1226,14 @@ describe("Testing post request to leaveProject api", () => {
           method: "POST",
           url: Cypress.env("apiURL") + "/query",
           body: {
-            operationName: "addMyHub",
+            operationName: "addChaosHub",
             variables: {
-              myhubInput: myhubInput.default,
-              projectID: Project2Id,
+              request: {
+                ...myhubInput.default,
+                projectID: Project2Id,
+              },
             },
-            query: addMyHub,
+            query: ADD_MY_HUB,
           },
           failOnStatusCode: false,
         });
