@@ -27,6 +27,7 @@ jobs:
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
+          k3d-version: v5.2.2
           args: >
             --agents 3
             --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
@@ -36,7 +37,7 @@ jobs:
           kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
           kubectl get nodes
           kubectl get pods -n kube-system
-
+          
       - name: Deploying Litmus-Portal using **k8s-manifest**
         run: |
           chmod 755 ./litmus/install-portal.sh
@@ -74,26 +75,6 @@ jobs:
       # RBAC for allowing Cypress Runner to access Cluster resources
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
-
-      - uses: AbsaOSS/k3d-action@v2
-        name: Create 2nd Cluster
-        with:
-          cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 1
-
-      - name: Configuring and Testing the Agent Installation
-        run: |
-          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-          kubectl get nodes
-          kubectl get pods -n kube-system
-
-      - name: Installing LitmusCTL on Agent Cluster
-        run: |
-          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-          tar -zxvf litmusctl-linux-amd64-master.tar.gz
-          chmod +x litmusctl
-          sudo mv litmusctl /usr/local/bin/litmusctl
-          litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
         uses: cypress-io/github-action@v2
@@ -135,14 +116,6 @@ jobs:
           CYPRESS_TARGET_APP_NS: "default"
           CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
-      # - name: Registering External Agent in Cluster Mode
-      #   if: always()
-      #   run: |
-      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
-      #     sudo apt-get install expect
-      #     chmod 755 litmus/litmusctl-register.sh
-      #     litmus/litmusctl-register.sh "$URL" 1
-
       # TODO: Additional Tests will be added from here
 
       - name: Portal Cleanup
@@ -173,6 +146,7 @@ jobs:
         name: Create 1st Cluster
         with:
           cluster-name: ${{ env.SELF_AGENT }}
+          k3d-version: v5.2.2
           args: >
             --agents 3
             --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
@@ -216,30 +190,10 @@ jobs:
           KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
           echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
           echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
-
+          
       # RBAC for allowing Cypress Runner to access Cluster resources
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
-
-      - uses: AbsaOSS/k3d-action@v2
-        name: Create 2nd Cluster
-        with:
-          cluster-name: ${{ env.EXTERNAL_AGENT }}
-          args: --agents 1
-
-      - name: Configuring and Testing the Agent Installation
-        run: |
-          kubectl cluster-info --context k3d-${{ env.EXTERNAL_AGENT }}
-          kubectl get nodes
-          kubectl get pods -n kube-system
-
-      - name: Installing LitmusCTL on Agent Cluster
-        run: |
-          curl -O https://litmusctl-bucket.s3-eu-west-1.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-          tar -zxvf litmusctl-linux-amd64-master.tar.gz
-          chmod +x litmusctl
-          sudo mv litmusctl /usr/local/bin/litmusctl
-          litmusctl version
 
       - name: Running basic tests (Login and Onboarding Tests)
         uses: cypress-io/github-action@v2
@@ -280,14 +234,6 @@ jobs:
           CYPRESS_AGENT: "Self-Agent"
           CYPRESS_TARGET_APP_NS: ${{ env.NS_MODE_NAMESPACE}}
           CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
-
-      # - name: Registering External Agent in Cluster Mode
-      #   if: always()
-      #   run: |
-      #     kubectl config use-context k3d-${{ env.EXTERNAL_AGENT }}
-      #     sudo apt-get install expect
-      #     chmod 755 litmus/litmusctl-register.sh
-      #     litmus/litmusctl-register.sh "http://localhost:3001" 1
 
       # TODO: Additional Tests will be added from here
 

@@ -11,7 +11,7 @@ describe("Testing the addition of data source", () => {
   });
 
   it("Creating a data source with incorrect details", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='data source']").should("be.visible");
     cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=addDataSource]").click();
@@ -29,7 +29,7 @@ describe("Testing the addition of data source", () => {
   });
 
   it("Creating a data source with correct details", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='data source']").should("be.visible");
     cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=addDataSource]").click();
@@ -75,7 +75,7 @@ describe("Testing the addition of data source", () => {
 
   it("Checking data source table", () => {
     cy.GraphqlWait("listDataSource", "dataSources");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.wait("@dataSources").its("response.statusCode").should("eq", 200);
     cy.get("table")
       .find("tr")
@@ -88,7 +88,7 @@ describe("Testing the addition of data source", () => {
   });
 
   it("Changing name of existing datasource and validating it", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
     cy.get("[data-cy=configureDatasource]").eq(0).click();
@@ -105,7 +105,7 @@ describe("Testing the addition of data source", () => {
     );
 
     cy.GraphqlWait("listDataSource", "dataSources");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.wait("@dataSources").its("response.statusCode").should("eq", 200);
     cy.get("table")
       .find("tr")
@@ -118,7 +118,7 @@ describe("Testing the addition of data source", () => {
   });
 
   it("Configure data source with incorrect details", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
     cy.get("[data-cy=configureDatasource]").eq(0).click();
 
@@ -137,7 +137,7 @@ describe("Testing the addition of data source", () => {
   });
 
   it("Delete data source", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
     cy.get("[data-cy=deleteDatasource]").eq(0).click();
     cy.get("[data-cy=deleteDataSourceModal]").should("be.visible");

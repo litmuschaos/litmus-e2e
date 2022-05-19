@@ -31,7 +31,7 @@ Cypress.Commands.add(
     Experiments
   ) => {
     cy.visit("/workflows");
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.get("[data-cy=runs]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
@@ -141,15 +141,8 @@ Cypress.Commands.add(
     regularity,
     nextRun
   ) => {
-    cy.GraphqlWait("workflowListDetails", "SelectedWorkflowStats");
-    let workflowId = "";
-    let clusterId = "";
-    cy.wait("@recentRuns").then((res) => {
-      workflowId = res.response.body.data.ListWorkflow.workflows[0].workflow_id;
-      clusterId = res.response.body.data.ListWorkflow.workflows[0].cluster_id;
-      cy.get("[data-cy=infoWorkflowId]").should("have.text", workflowId);
-      cy.get("[data-cy=infoClusterId]").should("have.text", clusterId);
-    });
+    cy.GraphqlWait("listWorkflows", "SelectedWorkflowStats");
+    cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowSubject]").should(
@@ -194,6 +187,7 @@ Cypress.Commands.add("validateExperimentsTable", (experimentArray) => {
     }
   );
   experimentArray.forEach((experiment, index) => {
+    cy.wait(1000) // Table is taking time to get refreshed with new data
     cy.get("[data-cy=statsTable]")
       .find("tr")
       .eq(index + 1)

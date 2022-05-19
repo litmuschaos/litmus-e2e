@@ -38,14 +38,14 @@ describe("Testing the workflow creation wizard using Templates", () => {
 
   it("Download schedule manifest", () => {
     cy.visit("/workflows");
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=browseSchedule]").click();
     cy.downloadWorkflowManifest(workflowName);
   });
 
   it("Checking Workflow Browsing Table for scheduled workflow", () => {
-    cy.GraphqlWait("workflowDetails", "listWorkflows");
+    cy.GraphqlWait("listWorkflowRuns", "listWorkflows");
     cy.visit("/workflows");
     cy.get("[data-cy=runs]").click();
     cy.wait("@listWorkflows").its("response.statusCode").should("eq", 200);
@@ -62,13 +62,13 @@ describe("Testing the workflow creation wizard using Templates", () => {
         cy.wrap($div).find("td").eq(2).should("have.text", workflowName); // Matching Workflow Name Regex
         cy.wrap($div).find("td").eq(3).should("have.text", agent); // Matching Target Agent
         // cy.wrap($div).find("td [data-cy=browseWorkflowOptions]").click(); // Clicking on 3 Dots
-        // cy.get("[data-cy=workflowDetails]").eq(0).click(); // Checking Workflow Graph And Other Details
+        // cy.get("[data-cy=listWorkflowRuns]").eq(0).click(); // Checking Workflow Graph And Other Details
       });
   });
 
   it("Saving the created workflow as a template", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
-    cy.GraphqlWait("addWorkflowTemplate", "addTemplate");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
+    cy.GraphqlWait("createWorkflowTemplate", "addTemplate");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.wait(1000);
@@ -101,7 +101,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
     cy.validateWorkflowStatus(workflowName, workflowNamespace, ["Running"]);
     cy.visit("/workflows");
     cy.get("[data-cy=runs]").click();
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.terminateWorkflow();
     cy.get("[data-cy=WorkflowStatus]").eq(0).should("have.text", "Terminated");
@@ -159,7 +159,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
@@ -196,7 +196,7 @@ describe("Testing the workflow creation wizard using Templates", () => {
   });
 
   it("Validating graph nodes", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
@@ -231,8 +231,8 @@ describe("Testing the workflow creation wizard using Templates", () => {
   });
 
   it("Testing the workflow statistics", () => {
-    cy.GraphqlWait("workflowListDetails", "recentRuns");
-    cy.visit("/observability");
+    cy.GraphqlWait("listWorkflows", "recentRuns");
+    cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
