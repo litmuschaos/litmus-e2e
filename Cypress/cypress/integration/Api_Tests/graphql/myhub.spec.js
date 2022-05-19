@@ -22,9 +22,8 @@ let project1Id, project2Id, hubId;
 before("Clear database", () => {
   cy.task("clearDB")
     .then(() => {
-      return cy.createAgent("a1");
-    })
-    .then(() => {
+      cy.requestLogin(user.AdminName, user.AdminPassword);
+      cy.getStarted("litmus");
       return cy.task("getAdminProject");
     })
     .then((res) => {
