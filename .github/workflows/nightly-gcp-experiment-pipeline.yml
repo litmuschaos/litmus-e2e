@@ -66,9 +66,6 @@ jobs:
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
-        env:
-          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run GCP VM Instance Stop experiment in serial & parallel mode
         if: always()
@@ -181,9 +178,6 @@ jobs:
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
-        env:
-          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run GCP VM Disk Loss experiment in serial & parallel mode
         if: always()
