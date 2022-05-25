@@ -50,7 +50,8 @@ jobs:
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
-          tar -zxvf ./litmus/litmusctl-linux-amd64-master.tar.gz
+          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
           chmod +x litmusctl
           sudo mv litmusctl /usr/local/bin/litmusctl
           litmusctl version
@@ -153,7 +154,8 @@ jobs:
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
-          tar -zxvf ./litmus/litmusctl-linux-amd64-master.tar.gz
+          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
           chmod +x litmusctl
           sudo mv litmusctl /usr/local/bin/litmusctl
           litmusctl version
