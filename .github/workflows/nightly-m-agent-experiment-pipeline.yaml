@@ -100,17 +100,12 @@ jobs:
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
-        env:
-          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run Process Kill experiment in serial & parallel mode
         if: always()
         env:
           PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid1 }}"
-          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
-          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+          EXPERIMENT_IMAGE: "litmuschaos/go-runner:m-agent"
         run: make process-kill-serial
 
       - name: "[Debug]: check chaos resources"
@@ -182,17 +177,12 @@ jobs:
       - name: Litmus Infra Setup
         if: always()
         run: make build-litmus
-        env:
-          OPERATOR_IMAGE: "${{ github.event.inputs.operatorImage }}"
-          RUNNER_IMAGE: "${{ github.event.inputs.runnerImage }}"
 
       - name: Run Process Kill experiment in serial & parallel mode
         if: always()
         env:
           PROCESS_IDS: "${{ needs.Setup_m-agent.outputs.pid2 }}"
-          EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
-          EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
-          CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
+          EXPERIMENT_IMAGE: "litmuschaos/go-runner:m-agent"
         run: make process-kill-parallel
 
       - name: "[Debug]: check chaos resources"
@@ -220,6 +210,7 @@ jobs:
   Delete_VM:
     runs-on: ubuntu-latest
     needs: [Setup_m-agent, Process_Kill_Serial_Test, Process_Kill_Parallel_Test]
+    if: ${{ always() }}
     steps:
       - name: Set up Google Cloud SDK
         if: always()
