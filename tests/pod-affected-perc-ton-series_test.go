@@ -48,7 +48,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -58,39 +58,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
 		})
 	})
@@ -109,7 +109,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -120,39 +120,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 		})
 	})
 
@@ -170,7 +170,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -181,39 +181,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
 		})
 	})
@@ -232,7 +232,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -243,39 +243,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
 		})
 	})
@@ -294,7 +294,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -305,39 +305,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
 		})
 	})
@@ -356,7 +356,7 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -367,39 +367,39 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.PodsAffectedPercentage = "100"
 			testsDetails.Sequence = "serial"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
 			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
 			//Waiting for chaos pod to get completed
 			//And Print the logs of the chaos pod
 			By("[Status]: Wait for chaos pod completion and then print logs")
 			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the experiment chaos pod logs, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
 			//Checking the chaosresult verdict
 			By("[Verdict]: Checking the chaosresult verdict")
 			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
 		})
 	})

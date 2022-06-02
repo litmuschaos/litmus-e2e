@@ -17,7 +17,7 @@ func Cleanup() error {
 	command := []string{"delete", "chaosexperiment,chaosresult,chaosengine", "--all", "--all-namespaces"}
 	err := Kubectl(command...)
 	if err != nil {
-		return errors.Errorf("Fail to delete litmus components, due to, err: %v", err)
+		return errors.Errorf("Failed to delete litmus components due to, err: %v", err)
 	}
 
 	return nil
@@ -34,7 +34,7 @@ func ChaosAbort(testsDetails *types.TestDetails, clients environment.ClientSets)
 	if err != nil {
 		log.Infof(fmt.Sprint(err) + ": " + stderr.String())
 		log.Infof("Error: %v", err)
-		return errors.Wrapf(err, "Fail to abort the Chaos, due to:%v", err)
+		return errors.Wrapf(err, "Failed to abort the Chaos due to:%v", err)
 
 	}
 	log.Info("[Abort]: Chaos Experiment Aborted !!!")

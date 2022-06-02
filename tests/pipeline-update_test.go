@@ -39,7 +39,7 @@ var _ = Describe("BDD of pipeline status update", func() {
 
 				// TODO: Currently coverageData is hardcoded as 60%, Need to be changed to actual coverage.
 				err = pkg.UpdatePipelineStatus(&testsDetails, "60")
-				Expect(err).To(BeNil(), "Fail to run the script for pipeline status update,due to {%v}", err)
+				Expect(err).To(BeNil(), "Failed to run the script for pipeline status update,due to {%v}", err)
 				klog.Info("Pipeline status updated successfully !!!")
 
 			})

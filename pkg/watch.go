@@ -23,10 +23,10 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 	}
 	uid, err := GetUID(testsDetails.EngineName, testsDetails.ChaosNamespace, clients)
 	if err != nil {
-		return errors.Errorf("fail to get uid from experiment label,err: %v", err)
+		return errors.Errorf("Failed to get uid from experiment label,err: %v", err)
 	}
 	if err = printHelperPodLogs(testsDetails.ExperimentName, testsDetails.ChaosNamespace, uid, clients); err != nil {
-		return errors.Errorf("fail to get the helper pod", err)
+		return errors.Errorf("Failed to get the helper pod", err)
 	}
 	return nil
 }
@@ -36,16 +36,16 @@ func printChaosPodLogs(testsDetails *types.TestDetails, clients environment.Clie
 
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.AppNS).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
+		return errors.Errorf("Failed to get the chaosengine %v err: %v", testsDetails.EngineName, err)
 	}
 	if len(chaosEngine.Status.Experiments) == 0 {
-		return errors.Errorf("fail to get the chaos pod for the test")
+		return errors.Errorf("Failed to get the chaos pod for the test")
 	}
 	for count := 0; count < 3000; count++ {
 
 		chaosPod, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).Get(chaosEngine.Status.Experiments[0].ExpPod, metav1.GetOptions{})
 		if err != nil {
-			return errors.Errorf("fail to get the chaos pod err: %v", err)
+			return errors.Errorf("Failed to get the chaos pod err: %v", err)
 		}
 		if chaosPod.Status.Phase != "Succeeded" {
 			if chaosPod.Status.Phase != "Running" && chaosPod.Status.Phase != "Pending" {
@@ -73,12 +73,12 @@ func printHelperPodLogs(experimentName, namespace, UID string, clients environme
 
 	podList, err := clients.KubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{})
 	if err != nil || len(podList.Items) == 0 {
-		return errors.Errorf("fail to get the pods in chaos ns, err:%v", err)
+		return errors.Errorf("Failed to get the pods in chaos ns, err:%v", err)
 	}
 	for _, pod := range podList.Items {
 		if strings.Contains(pod.Name, experimentName+"-helper") && pod.Labels["chaosUID"] == UID {
 			if err = getPodLogs(pod.Name, namespace, clients); err != nil {
-				log.Errorf("fail to get the logs of helper pod %v, err: %v", pod.Name, err)
+				log.Errorf("Failed to get the logs of helper pod %v, err: %v", pod.Name, err)
 			}
 		}
 	}
@@ -91,12 +91,12 @@ func getPodLogs(podName, namespace string, clients environment.ClientSets) error
 	req := clients.KubeClient.CoreV1().Pods(namespace).GetLogs(podName, &v1.PodLogOptions{})
 	readCloser, err := req.Stream()
 	if err != nil {
-		return errors.Errorf("fail to print the logs of %v pod", podName, err)
+		return errors.Errorf("Failed to print the logs of %v pod", podName, err)
 	}
 	buf := new(bytes.Buffer)
 	_, err = io.Copy(buf, readCloser)
 	if err != nil {
-		return errors.Errorf("fail to read the logs, err: %v", err)
+		return errors.Errorf("Failed to read the logs, err: %v", err)
 	}
 	fmt.Println("\n"+podName+" logs : \n\n", buf.String())
 	return nil

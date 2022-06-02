@@ -48,19 +48,19 @@ var _ = Describe("BDD of annotation check test", func() {
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			//Remove application annotation
 			By("[Annotate]: Remove the application annotation")
 			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "false", testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to add annotation before test, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to add annotation before test due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			// Providing wrong annotation-check true
 			// in ChaosEngine and false in application
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod creation
 			By("[Status]: Runner pod running status check")
@@ -106,7 +106,7 @@ var _ = Describe("BDD of annotation check test", func() {
 			//Revert the application annotation
 			By("[Annotate]: Remove the application annotation")
 			err = pkg.AddAnnotation("nginx", "litmuschaos.io/chaos", "true", testsDetails.ChaosNamespace)
-			Expect(err).To(BeNil(), "Fail to add annotation after test, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to add annotation after test due to {%v}", err)
 
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
@@ -122,7 +122,7 @@ var _ = Describe("BDD of annotation check test", func() {
 
 			By("[Cleanup]: Removing Litmus Components")
 			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to delete all litmus components due to {%v}", err)
 
 		})
 	})

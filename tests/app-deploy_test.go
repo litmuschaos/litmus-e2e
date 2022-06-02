@@ -32,7 +32,7 @@ var _ = Describe("BDD of Application Deployment", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
@@ -43,12 +43,12 @@ var _ = Describe("BDD of Application Deployment", func() {
 			By("Deploying Sample Application")
 			command := []string{"apply", "-f", "../apps/nginx/nginx.yml"}
 			err = pkg.Kubectl(command...)
-			Expect(err).To(BeNil(), "Fail to create application and its components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to create application and its components due to {%v}", err)
 
 			//Get the status of nginx Application
 			By("Running Deployment Status Check")
 			err = pkg.DeploymentStatusCheck(&testsDetails, "nginx", "litmus", clients)
-			Expect(err).To(BeNil(), "Application Status check faied, due to {%v}", err)
+			Expect(err).To(BeNil(), "Application Status check faied due to {%v}", err)
 
 		})
 	})

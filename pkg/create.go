@@ -50,7 +50,7 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 	_, err := clients.KubeClient.AppsV1().Deployments(namespace).Create(deployment)
 	if err != nil {
 		log.Infof(""+deploymentName+" deployment is not created and error is ", err)
-		return errors.Errorf("Fail to create "+deploymentName+" deployment, due to %v", err)
+		return errors.Errorf("Failed to create "+deploymentName+" deployment due to %v", err)
 	}
 	log.Info("" + deploymentName + " deployment is created successfully !!!")
 
@@ -61,8 +61,8 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 func CreateNamespace(clients environment.ClientSets, namespaceName string) error {
 	nsSpec := &apiv1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespaceName}}
 	if _, err := clients.KubeClient.CoreV1().Namespaces().Create(nsSpec); err != nil {
-		return  errors.Errorf("Fail to create "+namespaceName+" namespace, due to %v", err)
+		return errors.Errorf("Failed to create "+namespaceName+" namespace due to %v", err)
 	}
 	log.Infof("[Info]: %v namespace created successfully!!!", namespaceName)
-	return  nil
+	return nil
 }

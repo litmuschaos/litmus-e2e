@@ -96,7 +96,7 @@ func AddAnnotation(deployment, key, value, ns string) error {
 	command := []string{"annotate", "--overwrite", "deploy/" + deployment, key + "=" + value, "-n", ns}
 	err := Kubectl(command...)
 	if err != nil {
-		return errors.Errorf("fail to modify annotation, err: %v", err)
+		return errors.Errorf("Failed to modify annotation, err: %v", err)
 	}
 	return nil
 }
