@@ -70,7 +70,7 @@ jobs:
         run: |
           gcloud compute instances create litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
-          --zone=us-east1-b
+          --zone=${{ secrets.GCP_ZONE }}
 
       - name: Litmus Infra Setup
         if: always()
@@ -84,7 +84,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VM_INSTANCE_NAMES: "litmus-e2e-first-vm-${{ github.run_number }},litmus-e2e-second-vm-${{ github.run_number }}"
-          INSTANCE_ZONES: "us-east1-b,us-east1-b"
+          INSTANCE_ZONES: "${{ secrets.GCP_ZONE }},${{ secrets.GCP_ZONE }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -94,7 +94,7 @@ jobs:
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-first-vm-${{ github.run_number }} litmus-e2e-second-vm-${{ github.run_number }} \
-          --zone=us-east1-b \
+          --zone=${{ secrets.GCP_ZONE }} \
           --quiet
 
       - name: "[Debug]: check chaos resources"
@@ -175,7 +175,7 @@ jobs:
         run: |
           gcloud compute instances create litmus-e2e-vm-${{ github.run_number }} \
           --machine-type=f1-micro \
-          --zone=us-east1-b \
+          --zone=${{ secrets.GCP_ZONE }} \
           --create-disk name=litmus-e2e-first-disk-${{ github.run_number }},size=1GB \
           --create-disk name=litmus-e2e-second-disk-${{ github.run_number }},size=1GB
 
@@ -191,7 +191,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           DISK_VOLUME_NAMES: "litmus-e2e-first-disk-${{ github.run_number }},litmus-e2e-second-disk-${{ github.run_number }}"
-          DISK_ZONES: "us-east1-b,us-east1-b"
+          DISK_ZONES: "${{ secrets.GCP_ZONE }},${{ secrets.GCP_ZONE }}"
           EXPERIMENT_IMAGE: "${{ github.event.inputs.experimentImage }}"
           EXPERIMENT_IMAGE_PULL_POLICY: "${{ github.event.inputs.experimentImagePullPolicy }}"
           CHAOS_NAMESPACE: "${{ github.event.inputs.chaosNamespace }}"
@@ -201,7 +201,7 @@ jobs:
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-vm-${{ github.run_number }} \
-          --zone=us-east1-b \
+          --zone=${{ secrets.GCP_ZONE }} \
           --delete-disks=all \
           --quiet
 

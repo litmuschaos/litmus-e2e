@@ -35,7 +35,7 @@ jobs:
       run: |
         gcloud compute instances create litmus-e2e-m-agent-vm-${{ github.run_number }} \
         --machine-type=f1-micro \
-        --zone=us-east4-c \
+        --zone=${{ secrets.GCP_ZONE }} \
         --metadata=startup-script='#! /bin/bash
         apt update
         apt -y install apache2
@@ -45,7 +45,7 @@ jobs:
     - name: Get Agent Endpoint and Auth Token
       if: always()
       id: get-credentials
-      run: gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
+      run: gcloud compute ssh --zone ${{ secrets.GCP_ZONE }} litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'm-agent --get-token --token-expiry-duration 30m' > token.txt
 
     - uses: actions/upload-artifact@v3
       with:
@@ -55,12 +55,12 @@ jobs:
     - name: Get main PID of the Apache Service as Target Process
       if: always()
       id: get-apache-target-process
-      run: echo "::set-output name=pid1::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
+      run: echo "::set-output name=pid1::$(gcloud compute ssh --zone ${{ secrets.GCP_ZONE }} litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value apache2')"
 
     - name: Get main PID of the Apache Service as Target Process
       if: always()
       id: get-crond-target-process
-      run: echo "::set-output name=pid2::$(gcloud compute ssh --zone us-east4-c litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value cron')"
+      run: echo "::set-output name=pid2::$(gcloud compute ssh --zone ${{ secrets.GCP_ZONE }} litmus-e2e-m-agent-vm-${{ github.run_number }} -- 'systemctl show --property MainPID --value cron')"
 
   Process_Kill_Serial_Test:
     needs: Setup_m-agent
@@ -243,5 +243,5 @@ jobs:
         if: always()
         run: |
           gcloud compute instances delete litmus-e2e-m-agent-vm-${{ github.run_number }} \
-          --zone=us-east4-c \
+          --zone=${{ secrets.GCP_ZONE }} \
           --quiet
