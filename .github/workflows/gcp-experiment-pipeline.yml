@@ -57,13 +57,15 @@ jobs:
             client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
           EOF
 
+      - name: Authenticate Google Cloud SDK
+        if: always()
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
       - name: Set up Google Cloud SDK
         if: always()
         uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
 
       - name: Create target GCP VM Instances
         if: always()
@@ -162,13 +164,15 @@ jobs:
             client_x509_cert_url: "${{ secrets.CLIENT_CERT_URL }}"
           EOF
 
+      - name: Authenticate Google Cloud SDK
+        if: always()
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
       - name: Set up Google Cloud SDK
         if: always()
         uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
 
       - name: Create a GCP VM Instance with target Disk Volumes
         if: always()

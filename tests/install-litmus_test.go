@@ -32,7 +32,7 @@ var _ = Describe("BDD of Litmus installation", func() {
 			//Getting kubeConfig and Generate ClientSets
 			By("[PreChaos]: Getting kubeconfig and generate clientset")
 			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig, due to {%v}", err)
+			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
 			//Fetching all the default ENV
 			//Note: please don't provide custom experiment name here
@@ -43,12 +43,12 @@ var _ = Describe("BDD of Litmus installation", func() {
 			//Installing Litmus
 			By("Installing Litmus")
 			err = pkg.InstallLitmus(&testsDetails)
-			Expect(err).To(BeNil(), "Litmus installation failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Litmus installation failed due to {%v}", err)
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 		})
 	})
 

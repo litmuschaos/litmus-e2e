@@ -49,14 +49,14 @@ var _ = Describe("BDD of serviceaccount test", func() {
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed, due to {%v}", err)
+			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			//Providing wrong serviceaccount
 			testsDetails.ChaosServiceAccount = "dummy-sa"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod creation
 			//Runner Pod Should Not Get Created due to invalid sa name
@@ -107,7 +107,7 @@ var _ = Describe("BDD of serviceaccount test", func() {
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
 			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to delete all litmus components due to {%v}", err)
 
 		})
 

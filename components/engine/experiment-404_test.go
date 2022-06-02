@@ -49,13 +49,13 @@ var _ = Describe("BDD of experiment name test", func() {
 			//Providing wrong experiment-name
 			testsDetails.NewExperimentName = "dummy-name"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "fail to prepare chaos, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
 			//Checking runner pod creation
 			//Runner pod will come in completed state and experiment pod will not be created at all
 			//Waiting for runner pod completion
 			err = pkg.WaitForRunnerCompletion(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Runner pod dosen't come in completed state, due to {%v}", err)
+			Expect(err).To(BeNil(), "Runner pod dosen't come in completed state due to {%v}", err)
 
 			//Chaos pod running status check
 			err = pkg.ChaosPodStatus(&testsDetails, clients)
@@ -89,8 +89,8 @@ var _ = Describe("BDD of experiment name test", func() {
 			//Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Fail to get the ChaosEngine Verdict, due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not Stopped, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to get the ChaosEngine Verdict due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not Stopped due to {%v}", err)
 
 		})
 	})
@@ -100,7 +100,7 @@ var _ = Describe("BDD of experiment name test", func() {
 		It("Should delete all the litmus CRs", func() {
 			By("[Cleanup]: Removing Litmus Components")
 			err := pkg.Cleanup()
-			Expect(err).To(BeNil(), "Fail to delete all litmus components, due to {%v}", err)
+			Expect(err).To(BeNil(), "Failed to delete all litmus components due to {%v}", err)
 
 		})
 

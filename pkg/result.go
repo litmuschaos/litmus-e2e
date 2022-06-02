@@ -19,11 +19,11 @@ func ChaosResultVerdict(testsDetails *types.TestDetails, clients environment.Cli
 
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+		return errors.Errorf("Failed to get the chaosresult due to %v", err)
 	}
 	log.Infof("Chaos Result Verdict is: %v", chaosResult.Status.ExperimentStatus.Verdict)
 	if string(chaosResult.Status.ExperimentStatus.Verdict) != "Pass" {
-		return errors.Errorf("Fail to get the chaosresult verdict as \"Pass\"")
+		return errors.Errorf("Failed to get the chaosresult verdict as \"Pass\"")
 	}
 
 	return nil
@@ -38,12 +38,12 @@ func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.Cli
 
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("Fail to get the chaosengine, due to %v", err)
+		return errors.Errorf("Failed to get the chaosengine due to %v", err)
 	}
 	log.Infof("Chaos Engine Verdict is: %v", chaosEngine.Status.Experiments[0].Verdict)
 
 	if string(chaosEngine.Status.Experiments[0].Verdict) != "Pass" {
-		return errors.Errorf("Fail to get the chaosengine verdict as \"Pass\"")
+		return errors.Errorf("Failed to get the chaosengine verdict as \"Pass\"")
 	}
 
 	return nil
@@ -58,7 +58,7 @@ func CheckRunHistoryUpdate(testsDetails *types.TestDetails, clients environment.
 
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+		return errors.Errorf("Failed to get the chaosresult due to %v", err)
 	}
 
 	log.InfoWithValues("The chaos result previous run history is as followed", logrus.Fields{
@@ -76,15 +76,15 @@ func CheckRunHistoryUpdate(testsDetails *types.TestDetails, clients environment.
 	switch chaosResult.Status.ExperimentStatus.Verdict {
 	case v1alpha1.ResultVerdictPassed:
 		if chaosResult.Status.History.PassedRuns != previousRunHistory.PassedRuns+1 {
-			return errors.Errorf("Fail to get the run history to update \"Passed Runs\"")
+			return errors.Errorf("Failed to get the run history to update \"Passed Runs\"")
 		}
 	case v1alpha1.ResultVerdictFailed:
 		if chaosResult.Status.History.FailedRuns != previousRunHistory.FailedRuns+1 {
-			return errors.Errorf("Fail to get the run history to update \"Failed Runs\"")
+			return errors.Errorf("Failed to get the run history to update \"Failed Runs\"")
 		}
 	case v1alpha1.ResultVerdictStopped:
 		if chaosResult.Status.History.StoppedRuns != previousRunHistory.StoppedRuns+1 {
-			return errors.Errorf("Fail to get the run history to update \"Stopped Runs\"")
+			return errors.Errorf("Failed to get the run history to update \"Stopped Runs\"")
 		}
 	}
 

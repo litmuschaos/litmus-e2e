@@ -17,18 +17,18 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 
 	//Fetching the runner pod and Checking if it gets in Running state or not
 	if err = CheckRunnerPodCreation(testsDetails.EngineName, runnerNamespace, clients); err != nil {
-		return errors.Errorf("fail to get the runner pod, due to %v", err)
+		return errors.Errorf("Failed to get the runner pod due to %v", err)
 	}
 	runner, err := clients.KubeClient.CoreV1().Pods(runnerNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
 	if err != nil {
-		return errors.Errorf("Unable to get the runner pod, due to %v", err)
+		return errors.Errorf("Unable to get the runner pod due to %v", err)
 	}
 	for i := 0; i < 300; i++ {
 		if string(runner.Status.Phase) != "Running" {
 			time.Sleep(1 * time.Second)
 			runner, err = clients.KubeClient.CoreV1().Pods(runnerNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
 			if err != nil || runner.Status.Phase == "Succeeded" || runner.Status.Phase == "" {
-				return errors.Errorf("Fail to get the runner pod status after sleep, due to %v", err)
+				return errors.Errorf("Failed to get the runner pod status after sleep due to %v", err)
 			}
 			log.Infof("The Runner pod is in %v State ", runner.Status.Phase)
 		} else {
@@ -37,7 +37,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	}
 
 	if runner.Status.Phase != "Running" {
-		return errors.Errorf("Runner pod fail to come in running state, due to %v", err)
+		return errors.Errorf("Runner pod Failed to come in running state due to %v", err)
 	}
 	log.Info("[Status]: Runner pod is in Running state")
 
@@ -52,7 +52,7 @@ func CheckRunnerPodCreation(engineName, runnerNS string, clients environment.Cli
 		Try(func(attempt uint) error {
 			runner, err := clients.KubeClient.CoreV1().Pods(runnerNS).Get(engineName+"-runner", metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Unable to get the runner pod, due to %v", err)
+				return errors.Errorf("Unable to get the runner pod due to %v", err)
 			}
 			if runner.Name == "" {
 				log.Info("waiting for runner pod creation")
@@ -131,7 +131,7 @@ func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName stri
 func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	PodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 	if err != nil {
-		return errors.Errorf("fail to get the list of pods, due to %v", err)
+		return errors.Errorf("Failed to get the list of pods due to %v", err)
 	}
 	var flag = false
 	for _, pod := range PodList.Items {
@@ -139,7 +139,7 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 			for count := 0; count < 20; count++ {
 				PodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 				if err != nil {
-					return errors.Errorf("fail to get the list of pods, due to %v", err)
+					return errors.Errorf("Failed to get the list of pods due to %v", err)
 				}
 				for _, pod := range PodList.Items {
 					if string(pod.Status.Phase) != "Running" {
@@ -155,7 +155,7 @@ func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientS
 					break
 				}
 				if count == 19 {
-					return errors.Errorf("pod fails to come in running state, due to %v", err)
+					return errors.Errorf("pod fails to come in running state due to %v", err)
 				}
 			}
 		}
@@ -172,25 +172,25 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 
 		chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 		if err != nil {
-			return errors.Errorf("fail to get the chaosengine %v err: %v", testsDetails.EngineName, err)
+			return errors.Errorf("Failed to get the chaosengine %v err: %v", testsDetails.EngineName, err)
 		}
 		if len(chaosEngine.Status.Experiments) == 0 {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			log.Info("[Status]: Experiment initializing")
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
-				return errors.Errorf("Experiment pod fail to initialise, due to %v", err)
+				return errors.Errorf("Experiment pod Failed to initialise due to %v", err)
 			}
 
 		} else if chaosEngine.Status.Experiments[0].ExpPod == "" {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
-				return errors.Errorf("Experiment pod fails to create, due to %v", err)
+				return errors.Errorf("Experiment pod fails to create due to %v", err)
 			}
 		} else if chaosEngine.Status.Experiments[0].Status != "Running" {
 			time.Sleep(time.Duration(testsDetails.Delay) * time.Second)
 			log.Infof("[Status]: Currently, the Chaos Pod is in %v state, Please Wait...", chaosEngine.Status.Experiments[0].Status)
 			if count == ((testsDetails.Duration / testsDetails.Delay) - 1) {
-				return errors.Errorf("Experiment pod fails to get in running state, due to %v", err)
+				return errors.Errorf("Experiment pod fails to get in running state due to %v", err)
 			}
 		} else {
 			break
@@ -208,7 +208,7 @@ func WaitForEngineStatus(testsDetails *types.TestDetails, clients environment.Cl
 		Try(func(attempt uint) error {
 			chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Fail to get the chaosengine, due to %v", err)
+				return errors.Errorf("Failed to get the chaosengine due to %v", err)
 			}
 			if string(chaosEngine.Status.EngineStatus) != status {
 				log.Infof("Engine status is %v", chaosEngine.Status.EngineStatus)
@@ -230,7 +230,7 @@ func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environmen
 		Try(func(attempt uint) error {
 			runner, err := clients.KubeClient.CoreV1().Pods(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-runner", metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Unable to get the runner pod, due to %v", err)
+				return errors.Errorf("Unable to get the runner pod due to %v", err)
 			}
 
 			if string(runner.Status.Phase) != "Succeeded" {
@@ -253,7 +253,7 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 		Try(func(attempt uint) error {
 			chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+				return errors.Errorf("Failed to get the chaosresult due to %v", err)
 			}
 
 			if string(chaosResult.Status.ExperimentStatus.Phase) != "Completed" {

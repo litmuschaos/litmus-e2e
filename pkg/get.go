@@ -18,12 +18,12 @@ import (
 func GetApplicationNode(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	appPodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 	if err != nil {
-		return errors.Errorf("Unable to get the list of application pods, due to %v", err)
+		return errors.Errorf("Unable to get the list of application pods due to %v", err)
 	}
 
 	testsDetails.ApplicationNodeName = appPodList.Items[0].Spec.NodeName
 
-	return  nil
+	return nil
 }
 
 //GetChaosEngineVerdict checks the chaosengine verdict
@@ -38,7 +38,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 		Try(func(attempt uint) error {
 			chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Fail to get the chaosengine, due to %v", err)
+				return errors.Errorf("Failed to get the chaosengine due to %v", err)
 			}
 
 			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
@@ -52,7 +52,7 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 	}
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
-		return "", errors.Errorf("Fail to get the chaosengine, due to %v", err)
+		return "", errors.Errorf("Failed to get the chaosengine due to %v", err)
 	}
 	return string(chaosEngine.Status.Experiments[0].Verdict), err
 }
@@ -69,7 +69,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 		Try(func(attempt uint) error {
 			chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 			if err != nil {
-				return errors.Errorf("Fail to get the chaosresult, due to %v", err)
+				return errors.Errorf("Failed to get the chaosresult due to %v", err)
 			}
 
 			if string(chaosResult.Status.ExperimentStatus.Verdict) == "Awaited" {
@@ -83,7 +83,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 	}
 	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
 	if err != nil {
-		return "", errors.Errorf("Fail to get the chaosresult, due to %v", err)
+		return "", errors.Errorf("Failed to get the chaosresult due to %v", err)
 	}
 	return string(chaosResult.Status.ExperimentStatus.Verdict), err
 }
@@ -92,7 +92,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients environment.ClientSets) error {
 	job, err := clients.KubeClient.CoreV1().Pods(jobNamespace).List(metav1.ListOptions{LabelSelector: "name=" + testsDetails.ExperimentName})
 	if err != nil || int(len(job.Items)) == 0 {
-		return errors.Errorf("failed to get the chaos jobs, due to %v", err)
+		return errors.Errorf("failed to get the chaos jobs due to %v", err)
 	}
 	log.Info("[JOB]: The given job is present")
 	return nil
@@ -102,7 +102,7 @@ func GetJobPod(testsDetails *types.TestDetails, jobNamespace string, clients env
 func GetSelectorNode(testsDetails *types.TestDetails, clients environment.ClientSets) (string, error) {
 	nodes, err := clients.KubeClient.CoreV1().Nodes().List(metav1.ListOptions{})
 	if err != nil || len(nodes.Items) == 0 {
-		return "", errors.Errorf("Fail to get nodes, due to %v", err)
+		return "", errors.Errorf("Failed to get nodes due to %v", err)
 	}
 
 	for _, node := range nodes.Items {
@@ -118,7 +118,7 @@ func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (st
 
 	PodList, err := clients.KubeClient.CoreV1().Pods(appNS).List(metav1.ListOptions{LabelSelector: appLabel})
 	if err != nil || len(PodList.Items) == 0 {
-		return "", "", "", errors.Errorf("fail to get the podlist err: %v", err)
+		return "", "", "", errors.Errorf("Failed to get the podlist err: %v", err)
 	}
 
 	log.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)
@@ -133,7 +133,7 @@ func GetUID(engineName, namespace string, clients environment.ClientSets) (strin
 
 	chaosEngine, err := clients.LitmusClient.ChaosEngines(namespace).Get(engineName, metav1.GetOptions{})
 	if err != nil {
-		return "", errors.Errorf("fail to get the chaosengine %v err: %v", engineName, err)
+		return "", errors.Errorf("Failed to get the chaosengine %v err: %v", engineName, err)
 	}
 	return string(chaosEngine.UID), nil
 }
@@ -155,7 +155,7 @@ func GetRunHistoryStatus(testsDetails *types.TestDetails, clients environment.Cl
 func GetRandomNode(clients environment.ClientSets) (*v1.Node, error) {
 	nodes, err := clients.KubeClient.CoreV1().Nodes().List(metav1.ListOptions{})
 	if err != nil || len(nodes.Items) == 0 {
-		return nil, errors.Errorf("Fail to get nodes, due to %v", err)
+		return nil, errors.Errorf("Failed to get nodes due to %v", err)
 	}
 
 	index := rand.Intn(len(nodes.Items))
