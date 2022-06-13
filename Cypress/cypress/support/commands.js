@@ -139,6 +139,7 @@ Cypress.Commands.add("validateScaffold", () => {
 });
 
 Cypress.Commands.add("validateErrorMessage", (res, message) => {
+  expect(res.status).to.eq(200);
   expect(res.body).to.have.nested.property("errors[0].message");
   expect(res.body.errors[0].message).to.eq(message);
 });
