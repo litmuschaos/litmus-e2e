@@ -13,7 +13,7 @@ function install_portal_cs_mode() {
 
     echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
     curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml --output litmus-portal-setup.yml
-    manifest_image_update $version litmus-portal-setup.yml
+    # manifest_image_update $version litmus/cluster-k8s-manifest.yml
 
     kubectl apply -f litmus-portal-setup.yml
 }
@@ -25,19 +25,7 @@ function install_portal_ns_mode(){
     # Installing CRD's, required for namespaced mode
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 
-    # Exporting namespace variable to update `namespaced-k8s-template.yml` manifest
-    export LITMUS_PORTAL_NAMESPACE=${namespace}
-    # Downloading manifest for namespaced mode installation
-    curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-k8s-template.yml --output litmus-portal-namespaced-k8s-template.yml
-
-    # Replacing ${LITMUS_PORTAL_NAMESPACE}
-    envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${namespace}-ns-scoped-litmus-portal-manifest.yml
-    manifest_image_update $version ${namespace}-ns-scoped-litmus-portal-manifest.yml
-
-    cat ${namespace}-ns-scoped-litmus-portal-manifest.yml
-
-    # Applying the manifest
-    kubectl apply -f ${namespace}-ns-scoped-litmus-portal-manifest.yml -n ${namespace}
+    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n ${namespace}
 }
 
 
@@ -62,9 +50,9 @@ function wait_for_portal_to_be_ready(){
     verify_pod litmusportal-server ${namespace}
     verify_pod mongo ${namespace}
 
-    # Images verification
-    verify_deployment_image $version litmusportal-frontend ${namespace}
-    verify_deployment_image $version litmusportal-server ${namespace}
+    # # Images verification
+    # verify_deployment_image $version litmusportal-frontend ${namespace}
+    # verify_deployment_image $version litmusportal-server ${namespace}
 }
 
 if [[ "$installation_mode" == "CS-MODE" ]];then

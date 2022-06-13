@@ -7,7 +7,7 @@ describe("Testing the accessibility of workflow statistics Tab.", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster(agent);
-    cy.visit("/observability");
+    cy.visit("/analytics");
   });
 
   it("Testing workflow stats tab", () => {

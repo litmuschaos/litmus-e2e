@@ -62,7 +62,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
   it("Disable schedule and validate if it's running or not", () => {
     cy.visit("/workflows");
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=browseSchedule]").click();
     cy.disableSchedule();
@@ -98,7 +98,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   it("Checking Schedules Table for scheduled Workflow", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
@@ -172,7 +172,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   it("Validating graph nodes", () => {
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.visit("/workflows");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=WorkflowRunsTable] input")
@@ -202,8 +202,8 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
   });
 
   it("Testing the workflow statistics", () => {
-    cy.GraphqlWait("workflowListDetails", "recentRuns");
-    cy.visit("/observability");
+    cy.GraphqlWait("listWorkflows", "recentRuns");
+    cy.visit("/analytics");
     cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
@@ -230,7 +230,7 @@ describe("Testing the workflow schedule on a recurring basis with a target appli
 
   it("Delete scheduled workflow", () => {
     cy.visit("/workflows");
-    cy.GraphqlWait("workflowListDetails", "listSchedules");
+    cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=browseSchedule]").click();
     cy.deleteSchedule();

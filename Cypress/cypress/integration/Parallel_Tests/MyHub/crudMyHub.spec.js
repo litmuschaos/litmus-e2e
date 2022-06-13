@@ -32,7 +32,7 @@ describe("Testing CRUD operation with MyHub", () => {
   });
 
   it("Adding a new MyHub with correct details", () => {
-    cy.GraphqlWait("addMyHub", "addNewMyHub");
+    cy.GraphqlWait("addChaosHub", "addNewMyHub");
     cy.get("[data-cy=myHubConnectButton]").click();
     cy.wait(1000);
     cy.get("[data-cy=hubName] input").clear().type("my-test-hub");
@@ -56,7 +56,7 @@ describe("Testing CRUD operation with MyHub", () => {
   });
 
   it("Update an existing MyHub details (Update operation)", () => {
-    cy.GraphqlWait("updateMyHub", "updateExistingMyHub");
+    cy.GraphqlWait("updateChaosHub", "updateExistingMyHub");
     cy.get("[data-cy=myHubCardOption]").eq(1).click();
     cy.get("[data-cy=myHubOptions]").should("be.visible");
     cy.get("[data-cy=editHub]").eq(1).click();
@@ -88,7 +88,7 @@ describe("Testing CRUD operation with MyHub", () => {
   });
 
   it("Deleting a MyHub", () => {
-    cy.GraphqlWait("deleteMyHub", "deleteExisitingMyHub");
+    cy.GraphqlWait("deleteChaosHub", "deleteExisitingMyHub");
     cy.get("[data-cy=myHubCardOption]").eq(1).click();
     cy.get("[data-cy=myHubOptions]").should("be.visible");
     cy.get("[data-cy=myHubDelete]")

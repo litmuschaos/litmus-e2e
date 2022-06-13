@@ -1,0 +1,223 @@
+name: litmusctl-e2e-Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      Tag:
+        default: "ci"
+
+# All Environments variables declared and set here.
+env:
+  TAG: "${{github.event.inputs.Tag}}"
+  SELF_AGENT: "self-agent"
+  CS_MODE_NAMESPACE: "litmus"
+  NS_MODE_NAMESPACE: "default"
+
+# Jobs for deploying and testing litmus-portal on a KinD Cluster
+jobs:
+  Namespace-Scope-Mode:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: AbsaOSS/k3d-action@v2
+        name: Create k8s Cluster
+        with:
+          cluster-name: ${{ env.SELF_AGENT }}
+          k3d-version: v5.2.2
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+          
+      - name: Deploying Litmus-Portal using k8s-manifest
+        run: |
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
+        env:
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "NS-MODE"
+
+      - name: Installing LitmusCTL on Agent Cluster
+        run: |
+          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/litmusctl
+          litmusctl version
+
+      - name: Running basic tests (Login and Onboarding Tests)
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+
+      - name: Running Litmusctl CLI tests (Configured with NodeSelectors)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_nodeSelectors
+        env:
+          AGENT_NAMESPACE: "agent-1"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-1"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (Configured with Tolerations)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_tolerations
+        env:
+          AGENT_NAMESPACE: "agent-2"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-2"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (Natively Configured)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_native
+        env:
+          AGENT_NAMESPACE: "agent-3"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-3"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get projects)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_projects
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get agents)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_agents
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+  Cluster-Scope-Mode:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        AcessType: [NodePort, Ingress, LoadBalancer]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: AbsaOSS/k3d-action@v2
+        name: Create 1st Cluster
+        with:
+          cluster-name: ${{ env.SELF_AGENT }}
+          k3d-version: v5.2.2
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+          
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        run: |
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
+        env:
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: ${{ matrix.AcessType }}
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "CS-MODE"
+
+      - name: Installing LitmusCTL on Agent Cluster
+        run: |
+          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/litmusctl
+          litmusctl version
+
+      - name: Running basic tests (Login and Onboarding Tests)
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Basic_Setup/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+
+      - name: Running Litmusctl CLI tests (Configured with NodeSelectors)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_nodeSelectors
+        env:
+          AGENT_NAMESPACE: "agent-1"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-1"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (Configured with Tolerations)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_with_tolerations
+        env:
+          AGENT_NAMESPACE: "agent-2"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-2"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (Natively Configured)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_native
+        env:
+          AGENT_NAMESPACE: "agent-3"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-3"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get projects)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_projects
+        env:
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get agents)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_agents
+        env:
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"

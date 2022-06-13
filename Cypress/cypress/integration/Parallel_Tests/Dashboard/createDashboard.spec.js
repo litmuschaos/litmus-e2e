@@ -20,7 +20,7 @@ describe("Testing the creation of dashboard", () => {
   };
 
   it("Creating a data source", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='data source']").should("be.visible");
     cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=addDataSource]").click();
@@ -41,7 +41,7 @@ describe("Testing the creation of dashboard", () => {
   });
 
   it("Create a new dashboard", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='monitoringDashboard']").should("be.visible");
     cy.get("[data-cy='monitoringDashboard']").click();
     cy.get("[data-cy=createDashboard]").click();
@@ -80,7 +80,7 @@ describe("Testing the creation of dashboard", () => {
 
   it("Validate dashboard table", () => {
     cy.GraphqlWait("listDashboard", "dashboardDetails");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='monitoringDashboard']").should("be.visible");
     cy.get("[data-cy='monitoringDashboard']").click();
     cy.wait("@dashboardDetails").its("response.statusCode").should("eq", 200);
@@ -115,7 +115,7 @@ describe("Testing the creation of dashboard", () => {
 
   it("Delete dashboard", () => {
     cy.GraphqlWait("listDashboard", "dashboardDetails");
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='monitoringDashboard']").should("be.visible");
     cy.get("[data-cy='monitoringDashboard']").click();
     cy.wait("@dashboardDetails").its("response.statusCode").should("eq", 200);
@@ -137,7 +137,7 @@ describe("Testing the creation of dashboard", () => {
   });
 
   it("Delete data source", () => {
-    cy.visit("/observability");
+    cy.visit("/analytics");
     cy.get("[data-cy='data source']").click();
     cy.get("[data-cy=browseDataSourceOptions]").eq(0).click();
     cy.get("[data-cy=deleteDatasource]").eq(0).click();
