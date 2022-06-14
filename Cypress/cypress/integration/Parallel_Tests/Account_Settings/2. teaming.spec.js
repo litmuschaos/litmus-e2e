@@ -393,6 +393,7 @@ describe("Testing the functionality of leaving from project", () => {
     cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=leaveAcceptedProject] Button").click();
     cy.reload(); // Not handled by frontend (Data is updated after refresh)
+    cy.get("[data-cy=teaming]").click();
     cy.get("[data-cy=activeTab]")
       .find("span")
       .eq(0)
