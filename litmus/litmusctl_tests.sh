@@ -23,7 +23,7 @@ function configure_account(){
 function agent_cleanup(){
     echo -e "\n Cleaning up created agent\n"
     kubectl delete ns $namespace
-    kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+    kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
 }
 
 function configure_agent(){
@@ -38,7 +38,7 @@ function configure_agent(){
 
         kubectl create ns ${namespace}
         # Installing CRD's, required for namespaced mode
-        kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+        kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
         
         litmusctl connect agent --agent-name=${agentName} --project-id=${projectID} --installation-mode=namespace --namespace=${namespace} --node-selector=${nodeSelectors} --tolerations=${tolerations} --non-interactive
 

@@ -1,0 +1,80 @@
+name: Portal-E2E-API-Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      Tag:
+        default: "ci"
+
+      Module:
+        default: "All"
+
+# All Environments variables declared and set here.
+env:
+  TAG: "${{github.event.inputs.Tag}}"
+  MODULE: "${{github.event.inputs.Module}}"
+  SELF_AGENT: "self-agent"
+  CS_MODE_NAMESPACE: "litmus"
+  NS_MODE_NAMESPACE: "default"
+  EXTERNAL_AGENT: "external-agent"
+
+# Jobs for deploying and testing litmus-portal on a KinD Cluster
+jobs:
+  CHAOS-CENTER-API-TESTS:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: AbsaOSS/k3d-action@v2
+        name: Create 1st Cluster
+        with:
+          cluster-name: ${{ env.SELF_AGENT }}
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
+
+      - name: Configuring and Testing the Cluster Installation
+        run: |
+          kubectl cluster-info --context k3d-${{ env.SELF_AGENT }}
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
+      - name: Deploying Litmus-Portal using **k8s-manifest**
+        run: |
+          chmod 755 ./litmus/install-portal.sh
+          ./litmus/install-portal.sh
+        env:
+          PORTAL_VERSION: ${{ env.TAG }}
+          ACCESS_TYPE: "Ingress"
+          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          INSTALLATION_MODE: "CS-MODE"
+          DEPLOY_SELF_AGENT: "false"
+
+      - name: Installing LitmusCTL on Agent Cluster
+        run: |
+          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
+          tar -zxvf litmusctl-linux-amd64-master.tar.gz
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/litmusctl
+          litmusctl version
+
+      - name: Running API Tests
+        uses: cypress-io/github-action@v2
+        if: always()
+        continue-on-error: false
+        with:
+          spec: cypress/integration/Api_Tests/**/*.spec.js
+          working-directory: Cypress/
+          config-file: cypress.prod.json
+          env: true
+        env:
+          CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_MONGO_URL: ${{ env.MONGO_URL }}
+
+      - name: Portal Cleanup
+        if: always()
+        run: |
+          kubectl config use-context k3d-${{ env.SELF_AGENT }}
+          chmod 755 ./litmus/uninstall-portal.sh
+          ./litmus/uninstall-portal.sh
+        env:
+          PORTAL_VERSION: ${{ env.TAG }}

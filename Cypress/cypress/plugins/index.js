@@ -18,6 +18,7 @@
 
 const { rmdir } = require("fs");
 const MongoClient = require("mongodb").MongoClient;
+const MONGO_URL = "mongodb://admin:1234@" + process.env.CYPRESS_MONGO_URL;
 
 async function drop(databaseName, mongoClient, collectionName) {
   const collection = mongoClient.db(databaseName).collection(collectionName);
@@ -29,8 +30,7 @@ async function drop(databaseName, mongoClient, collectionName) {
 }
 
 async function clearDatabase() {
-  const uri = "mongodb://admin:1234@localhost:27017";
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
@@ -67,8 +67,7 @@ async function clearDatabase() {
 }
 
 async function waitUntilAgent(agentName) {
-  const uri = "mongodb://admin:1234@localhost:27017";
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
@@ -96,8 +95,7 @@ async function waitUntilAgent(agentName) {
 }
 
 async function getAdminProject() {
-  const uri = "mongodb://admin:1234@localhost:27017";
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });

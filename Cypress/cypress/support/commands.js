@@ -342,10 +342,10 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "createAgent",
-  (agentName, namespace = "n1", projectId = "") => {
+  (agentName, namespace = "n1", projectName = "p1") => {
     return cy
       .exec(
-        "kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml",
+        "kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml",
         { timeout: 60000 }
       )
       .then(() => {
@@ -374,8 +374,21 @@ Cypress.Commands.add(
         }
       })
       .then(() => {
+        // (litmusctl get projects | grep "${projectName}" |  awk '{print $1}'
+        return cy.exec(`litmusctl create project --name='${projectName}'`, {
+          timeout: 600000,
+        });
+      })
+      .then(() => {
         return cy.exec(
-          `litmusctl create agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`,
+          `litmusctl get projects | grep "${projectName}" |  awk '{print $1}'`,
+          { timeout: 600000 }
+        );
+      })
+      .then((res) => {
+        let projectId = res.stdout;
+        return cy.exec(
+          `litmusctl connect agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`,
           { timeout: 600000 }
         );
       })
