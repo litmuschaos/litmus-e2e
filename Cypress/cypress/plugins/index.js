@@ -49,6 +49,8 @@ async function clearDatabase() {
       "myhub",
       "workflow-collection",
       "workflow-template",
+      "gitops-collection",
+      "image-registry-collection",
     ];
     for (const element of auth) {
       await drop("auth", client, element);

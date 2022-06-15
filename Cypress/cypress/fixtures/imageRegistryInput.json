@@ -1,0 +1,16 @@
+{
+  "registry1": {
+    "isDefault": false,
+    "imageRegistryName": "docker.io",
+    "imageRepoName": "testRepo1",
+    "imageRegistryType": "Public",
+    "enableRegistry": true
+  },
+  "registry2": {
+    "isDefault": false,
+    "imageRegistryName": "docker.io",
+    "imageRepoName": "testRepo2",
+    "imageRegistryType": "Public",
+    "enableRegistry": true
+  }
+}

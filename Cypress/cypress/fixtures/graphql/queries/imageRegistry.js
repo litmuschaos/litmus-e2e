@@ -11,18 +11,14 @@ export const LIST_IMAGE_REGISTRY_BY_PROJECT_ID = `
 `;
 
 export const GET_IMAGE_REGISTRY = `
-  query getImageRegistry($imageRegistryID: String!, $projectID: String!) {
-    getImageRegistry(imageRegistryID: $imageRegistryID, projectID: $projectID) {
-      imageRegistryInfo {
-        isDefault
-        enableRegistry
-        secretName
-        secretNamespace
-        imageRegistryName
-        imageRepoName
-        imageRegistryType
-      }
+  query getImageRegistry($imageRegistryID: String!, $projectID: String!){
+    getImageRegistry(imageRegistryID: $imageRegistryID, projectID: $projectID){
+      isDefault
       imageRegistryID
+      projectID
+      updatedAt
+      createdAt
+      isRemoved
     }
   }
 `;

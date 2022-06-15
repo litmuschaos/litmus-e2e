@@ -1,0 +1,12 @@
+{
+  "gitops1": {
+    "branch": "master",
+    "repoURL": "https://github.com/Aman-Codes/litmusGitOps1",
+    "authType": "TOKEN"
+  },
+  "gitops2": {
+    "branch": "main",
+    "repoURL": "https://github.com/Aman-Codes/litmusGitOps1",
+    "authType": "TOKEN"
+  }
+}

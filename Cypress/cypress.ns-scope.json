@@ -11,6 +11,7 @@
     "apiURL": "/api",
     "AGENT_NAMESPACE" : "litmus",
     "AGENT" : "Self-Agent",
-    "TARGET_APP_NS" : "default"
+    "TARGET_APP_NS" : "default",
+    "githubToken": ""
   }
 }

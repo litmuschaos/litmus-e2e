@@ -139,6 +139,7 @@ Cypress.Commands.add("validateScaffold", () => {
 });
 
 Cypress.Commands.add("validateErrorMessage", (res, message) => {
+  expect(res.status).to.eq(200);
   expect(res.body).to.have.nested.property("errors[0].message");
   expect(res.body.errors[0].message).to.eq(message);
 });
@@ -348,19 +349,13 @@ Cypress.Commands.add(
         { timeout: 60000 }
       )
       .then(() => {
-        return cy.exec(
-          "kubectl -n litmus get -o jsonpath='{.spec.ports[0].nodePort}' services litmusportal-frontend-service",
-          { timeout: 60000 }
-        );
-      })
-      .then((res) => {
-        const url = "http://localhost:" + res.stdout;
+        const url = Cypress.config().baseUrl;
         return cy.exec(
           `litmusctl config set-account  --endpoint '${url}' --password 'litmus' --username 'admin'`,
           { timeout: 60000 }
         );
       })
-      .then((res) => {
+      .then(() => {
         return cy.exec(
           `kubectl get ns | awk '/${namespace}/' | awk '{print $1}'`,
           { timeout: 60000 }
@@ -378,13 +373,13 @@ Cypress.Commands.add(
           );
         }
       })
-      .then((res) => {
+      .then(() => {
         return cy.exec(
           `litmusctl create agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`,
           { timeout: 600000 }
         );
       })
-      .then((res) => {
+      .then(() => {
         return cy.task("waitForAgent", agentName, { timeout: 600000 });
       });
   }

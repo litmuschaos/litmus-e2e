@@ -21,14 +21,17 @@ let user1Id,
   Project2Id;
 
 before("create 3 test users", () => {
-  cy.request({
-    method: "POST",
-    url: Cypress.env("authURL") + endpoints.login(),
-    body: {
-      username: user.AdminName,
-      password: user.AdminPassword,
-    },
-  })
+  cy.task("clearDB")
+    .then(() => {
+      return cy.request({
+        method: "POST",
+        url: Cypress.env("authURL") + endpoints.login(),
+        body: {
+          username: user.AdminName,
+          password: user.AdminPassword,
+        },
+      });
+    })
     .then((res) => {
       adminAccessToken = res.body.access_token;
       return cy.request({
@@ -243,7 +246,7 @@ describe("Testing get request to listProjects api", () => {
   });
 });
 
-describe("Testing get request to getProjectById api [ Should not be possible ]", () => {
+describe("Testing get request to getProjectById api", () => {
   it("Testing api without access_token [ Should not be possible ]", () => {
     cy.request({
       method: "GET",
@@ -285,7 +288,7 @@ describe("Testing get request to getProjectById api [ Should not be possible ]",
       },
       failOnStatusCode: false,
     }).then((res) => {
-      expect(res.body).to.have.property("data");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -732,7 +735,7 @@ describe("Testing get request to getUserWithProject api", () => {
     }).then((res) => {
       expect(res.body).to.have.property("error");
       expect(res.body).to.have.property("error_description");
-      expect(res.body.error).to.eq("user does not exists");
+      expect(res.body.error).to.eq(unauthorized);
     });
   });
 
@@ -788,8 +791,7 @@ describe("Testing get request to getUserWithProject api", () => {
     cy.request({
       method: "GET",
       url:
-        Cypress.env("authURL") +
-        endpoints.getUserWithProject(user.user2.username),
+        Cypress.env("authURL") + endpoints.getUserWithProject(user.AdminName),
       headers: {
         authorization: `Bearer ${adminAccessToken}`,
       },
@@ -1217,10 +1219,8 @@ describe("Testing post request to leaveProject api", () => {
       })
       .then((res) => {
         expect(res.status).to.eq(200);
-        expect(res.body).to.have.property("data");
-        res.body.data.forEach((project) => {
-          // expect(project.ID).to.not.eq(Project2Id);
-        });
+        expect(res.body).to.have.property("message");
+        expect(res.body.message).to.eq("No projects found");
         cy.requestLogin(user.user2.username, user.user2.password);
         return cy.request({
           method: "POST",
