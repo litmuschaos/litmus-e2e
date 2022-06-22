@@ -7,6 +7,7 @@ export const dataSourceUrl = Cypress.env("DATA_SOURCE_URL");
 describe("Testing the addition of data source", () => {
   before("Clearing the Cookies and deleting the Cookies", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
+    cy.visit("/");
     cy.waitForCluster(agent);
   });
 

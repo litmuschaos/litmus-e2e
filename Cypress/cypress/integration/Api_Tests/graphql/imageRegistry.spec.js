@@ -8,25 +8,26 @@ import {
   DELETE_IMAGE_REGISTRY,
 } from "../../../fixtures/graphql/mutations";
 import { GET_IMAGE_REGISTRY } from "../../../fixtures/graphql/queries";
+import endpoints from "../../../fixtures/endpoints";
 
-let project1Id, project2Id, imageRegistryID;
+let project1Id, imageRegistryID;
 before("Clear database", () => {
   cy.task("clearDB")
     .then(() => {
       return cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
-      return cy.getStarted("litmus");
+      return cy.createProject("admin's project");
     })
-    .then(() => {
-      return cy.task("getAdminProject");
+    .then((projectId) => {
+      project1Id = projectId;
+      let usersData = [user.user1, user.user2, user.user3];
+      return cy.createTestUsers(usersData);
     })
     .then((res) => {
-      return cy.securityCheckSetup(res._id, res.name);
+      return cy.createTestProjects(project1Id, res[0], res[1], res[2]);
     })
-    .then((createdSetupVariable) => {
-      project1Id = createdSetupVariable.project1Id;
-      project2Id = createdSetupVariable.project2Id;
+    .then(() => {
       cy.requestLogin(user.user3.username, user.user3.password);
     });
 });
@@ -35,7 +36,7 @@ describe("Testing image registry api", () => {
   it("Create image registry by user with viewer access", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createImageRegistry",
         variables: {
@@ -53,7 +54,7 @@ describe("Testing image registry api", () => {
   it("Create image registry by user with no access", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createImageRegistry",
         variables: {
@@ -73,7 +74,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createImageRegistry",
         variables: {
@@ -94,7 +95,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
@@ -114,7 +115,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
@@ -134,7 +135,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
@@ -169,7 +170,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateImageRegistry",
         variables: {
@@ -190,7 +191,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateImageRegistry",
         variables: {
@@ -211,7 +212,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateImageRegistry",
         variables: {
@@ -227,7 +228,7 @@ describe("Testing image registry api", () => {
         expect(res.body).to.have.nested.property("data.updateImageRegistry");
         return cy.request({
           method: "POST",
-          url: Cypress.env("apiURL") + "/query",
+          url: Cypress.env("apiURL") + endpoints.query(),
           body: {
             operationName: "getImageRegistry",
             variables: {
@@ -264,7 +265,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "deleteImageRegistry",
         variables: {
@@ -284,7 +285,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "deleteImageRegistry",
         variables: {
@@ -304,7 +305,7 @@ describe("Testing image registry api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "deleteImageRegistry",
         variables: {

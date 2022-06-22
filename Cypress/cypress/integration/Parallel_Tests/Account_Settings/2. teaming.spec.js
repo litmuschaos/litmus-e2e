@@ -58,6 +58,7 @@ describe("Test case to check the Invitation Functionality (Invitation as a Viewe
   it("Logging in with newly created user & logout", () => {
     // //Login as the intivation receipent (Project creation required for sending invitation)
     cy.requestLogin(user1.username, user1.password);
+    cy.visit("/");
     cy.getStarted(user1.password);
     cy.validateScaffold();
     cy.wait(5000);
@@ -222,6 +223,7 @@ describe("Test case to check the Invitation Functionality (Invitation as an Edit
   it("Logging in with newly created user & logout", () => {
     // //Login as the intivation receipent (Project creation required for sending invitation)
     cy.requestLogin(user2.username, user2.password);
+    cy.visit("/");
     cy.getStarted(user2.password);
     cy.validateScaffold();
     cy.wait(5000);
@@ -231,7 +233,7 @@ describe("Test case to check the Invitation Functionality (Invitation as an Edit
   it("Logging In as Admin again, invite the user as viewer", () => {
     // //Login again as Admin
     cy.requestLogin(AdminName, AdminPassword);
-
+    cy.visit("/");
     //Visit the teaming section and invite the newly created user as viewer"
     cy.visit("/settings");
     cy.get("[data-cy=teaming]").should("be.visible").click();

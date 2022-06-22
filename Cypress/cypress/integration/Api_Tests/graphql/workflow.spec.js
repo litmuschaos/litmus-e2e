@@ -3,9 +3,9 @@
 import * as user from "../../../fixtures/Users.json";
 import {
   CREATE_WORKFLOW,
-  // RERUN_CHAOS_WORKFLOW,
+  RERUN_CHAOS_WORKFLOW,
   UPDATE_SCHEDULE,
-  // DELETE_WORKFLOW,
+  DELETE_WORKFLOW,
   ADD_WORKFLOW_TEMPLATE,
 } from "../../../fixtures/graphql/mutations";
 import {
@@ -15,30 +15,36 @@ import {
   GET_MANIFEST_TEMPLATE,
   GET_TEMPLATE_BY_ID,
 } from "../../../fixtures/graphql/queries";
+import endpoints from "../../../fixtures/endpoints";
 
 let project1Id, project2Id, cluster1Id, workflow1Id, template1Id;
 before("Clear database", () => {
   cy.task("clearDB")
     .then(() => {
-      return cy.createAgent("a1");
+      return cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
-      return cy.task("getAdminProject");
+      return cy.createProject("admin's project");
+    })
+    .then((projectId) => {
+      project1Id = projectId;
+      return cy.createNamespaceAgent("a1", project1Id);
+    })
+    .then(() => {
+      let usersData = [user.user1, user.user2, user.user3];
+      return cy.createTestUsers(usersData);
     })
     .then((res) => {
-      return cy.securityCheckSetup(res._id, res.name);
+      return cy.createTestProjects(project1Id, res[0], res[1], res[2]);
     })
-    .then((createdSetupVariable) => {
-      project1Id = createdSetupVariable.project1Id;
-      project2Id = createdSetupVariable.project2Id;
-    })
-    .then(() => {
+    .then((res) => {
+      project2Id = res.project2Id;
       cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
       cy.request({
         method: "POST",
-        url: Cypress.env("apiURL") + "/query",
+        url: Cypress.env("apiURL") + endpoints.query(),
         body: {
           operationName: "listClusters",
           variables: {
@@ -56,7 +62,7 @@ describe("Testing chaos workflow api", () => {
   it("Creating chaos workflow with different workflow_name in manifest [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createChaosWorkFlow",
         variables: {
@@ -88,7 +94,7 @@ describe("Testing chaos workflow api", () => {
   it("Creating chaos workflow with projectId and clusterId mismatch [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createChaosWorkFlow",
         variables: {
@@ -120,7 +126,7 @@ describe("Testing chaos workflow api", () => {
   it("Creating chaos workflow", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createChaosWorkFlow",
         variables: {
@@ -152,10 +158,10 @@ describe("Testing chaos workflow api", () => {
     });
   });
 
-  /*it("Creating workflow with existing workflow name [ Should not be possible ]", () => {
+  it("Creating workflow with existing workflow name [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createChaosWorkFlow",
         variables: {
@@ -182,12 +188,12 @@ describe("Testing chaos workflow api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });*/
+  });
 
   it("Fetching all chaos workflow runs", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "listWorkflowRuns",
         variables: {
@@ -213,7 +219,7 @@ describe("Testing chaos workflow api", () => {
   it("Fetching all chaos workflows", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "listWorkflows",
         variables: {
@@ -232,10 +238,10 @@ describe("Testing chaos workflow api", () => {
     });
   });
 
-  /*it("Rerun a chaos workflow", () => {
+  it("Rerun a chaos workflow", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "reRunChaosWorkFlow",
         variables: {
@@ -248,12 +254,12 @@ describe("Testing chaos workflow api", () => {
       expect(res.status).to.eq(200);
       expect(res.body).to.have.nested.property("data.reRunChaosWorkFlow");
     });
-  });*/
+  });
 
-  /*it("Updating chaos workflow without workflow_id [Should not be possible]", () => {
+  it("Updating chaos workflow without workflow_id [Should not be possible]", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateChaosWorkflow",
         variables: {
@@ -280,12 +286,12 @@ describe("Testing chaos workflow api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });*/
+  });
 
   it("Updating chaos workflow", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateChaosWorkflow",
         variables: {
@@ -318,10 +324,10 @@ describe("Testing chaos workflow api", () => {
     });
   });
 
-  /*it("Deleting chaos workflow", () => {
+  it("Deleting chaos workflow", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "deleteChaosWorkflow",
         variables: {
@@ -335,12 +341,12 @@ describe("Testing chaos workflow api", () => {
       expect(res.body).to.have.nested.property("data.deleteChaosWorkflow");
       expect(res.body.data.deleteChaosWorkflow).to.eq(true);
     });
-  });*/
+  });
 
   it("Test to save a scheduled workflow as a template", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createWorkflowTemplate",
         variables: {
@@ -367,7 +373,7 @@ describe("Testing chaos workflow api", () => {
   it("Test to list all available template manifests", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "listWorkflowManifests",
         variables: {
@@ -389,7 +395,7 @@ describe("Testing chaos workflow api", () => {
   it("Test to get template manifests by template_id", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getWorkflowManifestByID",
         variables: {

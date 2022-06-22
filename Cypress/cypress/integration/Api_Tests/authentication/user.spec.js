@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 
 import * as user from "../../../fixtures/Users.json";
-import { endpoints } from "../../../fixtures/authenticationEndpoints";
+import endpoints from "../../../fixtures/endpoints";
 import { unauthorized, invalid_request } from "../../../fixtures/errorCodes";
 
 let adminAccessToken, user1AccessToken, user1Id, adminUserId;
@@ -494,23 +494,23 @@ describe("Testing post request to updateState api", () => {
   });
 
   // Should give error but currently considering null value to be false
-  // it("Testing api from admin account without is_deactivate [ Should not be possible ]", () => {
-  //   cy.request({
-  //     method: "POST",
-  //     url: Cypress.env("authURL") + endpoints.updateState(),
-  //     headers: {
-  //       authorization: `Bearer ${adminAccessToken}`,
-  //     },
-  //     body: {
-  //       username: user.user1.username,
-  //     },
-  //     failOnStatusCode: false,
-  //   }).then((res) => {
-  //     expect(res.body).to.have.property("error");
-  //     expect(res.body).to.have.property("error_description");
-  //     expect(res.body.error).to.eq(invalid_request);
-  //   });
-  // });
+  it("Testing api from admin account without is_deactivate [ Should not be possible ]", () => {
+    cy.request({
+      method: "POST",
+      url: Cypress.env("authURL") + endpoints.updateState(),
+      headers: {
+        authorization: `Bearer ${adminAccessToken}`,
+      },
+      body: {
+        username: user.user1.username,
+      },
+      failOnStatusCode: false,
+    }).then((res) => {
+      expect(res.body).to.have.property("error");
+      expect(res.body).to.have.property("error_description");
+      expect(res.body.error).to.eq(invalid_request);
+    });
+  });
 
   it("Testing api from user account [ Should not be possible ]", () => {
     cy.request({

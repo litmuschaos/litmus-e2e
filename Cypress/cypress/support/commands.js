@@ -8,6 +8,7 @@ import "cypress-file-upload";
 import "cypress-wait-until";
 import { apis, KUBE_API_TOKEN } from "../kube-apis/apis";
 import * as user from "../fixtures/Users.json";
+import endpoints from "../fixtures/endpoints";
 
 //Custom Command for waiting for required Agent to come in active state.
 Cypress.Commands.add("waitForCluster", (agentName) => {
@@ -35,7 +36,7 @@ Cypress.Commands.add("waitForCluster", (agentName) => {
 
 // GraphQL Waiting
 Cypress.Commands.add("GraphqlWait", (operationName, alias) => {
-  cy.intercept("POST", Cypress.env("apiURL") + "/query", (req) => {
+  cy.intercept("POST", Cypress.env("apiURL") + endpoints.query(), (req) => {
     if (req.body.operationName.includes(operationName)) {
       req.alias = alias;
     }
@@ -148,73 +149,53 @@ Cypress.Commands.add("validateErrorMessage", (res, message) => {
   Project1: Admin(Owner), user1(Editor), user3(Viewer)
   Project2: user1(Owner), user2(Viewer)
 */
+Cypress.Commands.add("createTestUsers", (usersData) => {
+  let adminAccessToken;
+  let arr = [];
+  cy.requestLogin(user.AdminName, user.AdminPassword);
+  return cy.getCookie("litmus-cc-token").then((token) => {
+    adminAccessToken = token.value;
+    cy.wrap(usersData)
+      .each((userData) => {
+        return cy
+          .request({
+            method: "POST",
+            url: Cypress.env("authURL") + endpoints.createUser(),
+            headers: {
+              authorization: `Bearer ${adminAccessToken}`,
+            },
+            body: userData,
+          })
+          .then((res) => {
+            arr.push(res.body._id);
+          });
+      })
+      .then(() => {
+        return arr;
+      });
+  });
+});
+
 Cypress.Commands.add(
-  "securityCheckSetup",
-  (adminProjectId, adminProjectName) => {
+  "createTestProjects",
+  (adminProjectId, user1Id, user2Id, user3Id) => {
     const Projects = {
-      project1: adminProjectName,
       project2: "user1's project",
     };
     let project1Id = adminProjectId,
       project2Id,
-      user1Id,
-      user2Id,
-      user3Id,
       adminAccessToken,
       user1AccessToken;
+    cy.logout();
     cy.requestLogin(user.AdminName, user.AdminPassword);
     return cy
       .getCookie("litmus-cc-token")
       .then((token) => {
         adminAccessToken = token.value;
-        // create user1
-        const createUser1 = cy
-          .request({
-            method: "POST",
-            url: Cypress.env("authURL") + "/create",
-            headers: {
-              authorization: `Bearer ${adminAccessToken}`,
-            },
-            body: { ...user.user1 },
-          })
-          .then((res) => {
-            user1Id = res.body._id;
-          });
-
-        // create user2
-        const createUser2 = cy
-          .request({
-            method: "POST",
-            url: Cypress.env("authURL") + "/create",
-            headers: {
-              authorization: `Bearer ${adminAccessToken}`,
-            },
-            body: { ...user.user2 },
-          })
-          .then((res) => {
-            user2Id = res.body._id;
-          });
-
-        // create user3
-        const createUser3 = cy
-          .request({
-            method: "POST",
-            url: Cypress.env("authURL") + "/create",
-            headers: {
-              authorization: `Bearer ${adminAccessToken}`,
-            },
-            body: { ...user.user3 },
-          })
-          .then((res) => {
-            user3Id = res.body._id;
-          });
-        return Promise.all([createUser1, createUser2, createUser3]);
-      })
-      .then(() => {
         // send invitation of project1 to user1 with Editor role
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/send_invitation",
+          url: Cypress.env("authURL") + endpoints.sendInvitation(),
           headers: {
             authorization: `Bearer ${adminAccessToken}`,
           },
@@ -229,7 +210,7 @@ Cypress.Commands.add(
         // send invitation of project1 to user3 with Viewer role
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/send_invitation",
+          url: Cypress.env("authURL") + endpoints.sendInvitation(),
           headers: {
             authorization: `Bearer ${adminAccessToken}`,
           },
@@ -250,7 +231,7 @@ Cypress.Commands.add(
         return cy
           .request({
             method: "POST",
-            url: Cypress.env("authURL") + "/create_project",
+            url: Cypress.env("authURL") + endpoints.createProject(),
             headers: {
               authorization: `Bearer ${user1AccessToken}`,
             },
@@ -266,7 +247,7 @@ Cypress.Commands.add(
         // send invitation of project2 to user2 with Viewer role
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/send_invitation",
+          url: Cypress.env("authURL") + endpoints.sendInvitation(),
           headers: {
             authorization: `Bearer ${user1AccessToken}`,
           },
@@ -285,7 +266,7 @@ Cypress.Commands.add(
       .then((token) => {
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/accept_invitation",
+          url: Cypress.env("authURL") + endpoints.acceptInvitation(),
           headers: {
             authorization: `Bearer ${token.value}`,
           },
@@ -303,7 +284,7 @@ Cypress.Commands.add(
       .then((token) => {
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/accept_invitation",
+          url: Cypress.env("authURL") + endpoints.acceptInvitation(),
           headers: {
             authorization: `Bearer ${token.value}`,
           },
@@ -321,7 +302,7 @@ Cypress.Commands.add(
       .then((token) => {
         return cy.request({
           method: "POST",
-          url: Cypress.env("authURL") + "/accept_invitation",
+          url: Cypress.env("authURL") + endpoints.acceptInvitation(),
           headers: {
             authorization: `Bearer ${token.value}`,
           },
@@ -340,9 +321,34 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add("createProject", (projectName) => {
+  let projectId;
+  return cy
+    .getCookie("litmus-cc-token")
+    .then((token) => {
+      return cy
+        .request({
+          method: "POST",
+          url: Cypress.env("authURL") + endpoints.createProject(),
+          headers: {
+            authorization: `Bearer ${token.value}`,
+          },
+          body: {
+            project_name: projectName,
+          },
+        })
+        .then((res) => {
+          projectId = res.body.data.ID;
+        });
+    })
+    .then(() => {
+      return projectId;
+    });
+});
+
 Cypress.Commands.add(
-  "createAgent",
-  (agentName, namespace = "n1", projectName = "p1") => {
+  "createNamespaceAgent",
+  (agentName, projectId, namespace = "n1") => {
     return cy
       .exec(
         "kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml",
@@ -374,19 +380,6 @@ Cypress.Commands.add(
         }
       })
       .then(() => {
-        // (litmusctl get projects | grep "${projectName}" |  awk '{print $1}'
-        return cy.exec(`litmusctl create project --name='${projectName}'`, {
-          timeout: 600000,
-        });
-      })
-      .then(() => {
-        return cy.exec(
-          `litmusctl get projects | grep "${projectName}" |  awk '{print $1}'`,
-          { timeout: 600000 }
-        );
-      })
-      .then((res) => {
-        let projectId = res.stdout;
         return cy.exec(
           `litmusctl connect agent --agent-name='${agentName}' --project-id='${projectId}' --namespace='${namespace}'  --installation-mode='namespace' --non-interactive`,
           { timeout: 600000 }
@@ -397,3 +390,18 @@ Cypress.Commands.add(
       });
   }
 );
+
+Cypress.Commands.add("getAccessToken", (username, password) => {
+  return cy
+    .request({
+      method: "POST",
+      url: Cypress.env("authURL") + endpoints.login(),
+      body: {
+        username,
+        password,
+      },
+    })
+    .then((res) => {
+      return res.body.access_token;
+    });
+});
