@@ -9,6 +9,7 @@ import {
   preDefinedWorkflowSmokeTest,
   templateWorkflowSmokeTest,
   uploadWorkflowSmokeTest,
+  setup,
 } from "./smoke";
 
 it("Smoke Test Login Page", () => {

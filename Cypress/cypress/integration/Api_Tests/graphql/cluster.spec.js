@@ -3,33 +3,39 @@
 import * as user from "../../../fixtures/Users.json";
 import {
   REGISTER_CLUSTER,
-  // DELETE_CLUSTER,
+  DELETE_CLUSTER,
 } from "../../../fixtures/graphql/mutations";
 import { GET_CLUSTER } from "../../../fixtures/graphql/queries";
+import endpoints from "../../../fixtures/endpoints";
 
 let project1Id, project2Id, cluster1Id;
 before("Clear database", () => {
   cy.task("clearDB")
     .then(() => {
-      return cy.createAgent("a1");
+      return cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
-      return cy.task("getAdminProject");
+      return cy.createProject("admin's project");
+    })
+    .then((projectId) => {
+      project1Id = projectId;
+      return cy.createNamespaceAgent("a1", project1Id);
+    })
+    .then(() => {
+      let usersData = [user.user1, user.user2, user.user3];
+      return cy.createTestUsers(usersData);
     })
     .then((res) => {
-      return cy.securityCheckSetup(res._id, res.name);
+      return cy.createTestProjects(project1Id, res[0], res[1], res[2]);
     })
-    .then((createdSetupVariable) => {
-      project1Id = createdSetupVariable.project1Id;
-      project2Id = createdSetupVariable.project2Id;
-    })
-    .then(() => {
+    .then((res) => {
+      project2Id = res.project2Id;
       cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
       cy.request({
         method: "POST",
-        url: Cypress.env("apiURL") + "/query",
+        url: Cypress.env("apiURL") + endpoints.query(),
         body: {
           operationName: "listClusters",
           variables: {
@@ -47,7 +53,7 @@ describe("Testing cluster api", () => {
   it("Registering a new cluster", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "registerCluster",
         variables: {
@@ -76,10 +82,10 @@ describe("Testing cluster api", () => {
     });
   });
 
-  /*it("Testing input validation in registering a new cluster", () => {
+  it("Testing input validation in registering a new cluster", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "registerCluster",
         variables: {
@@ -98,12 +104,12 @@ describe("Testing cluster api", () => {
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });*/
+  });
 
-  /*it("Registering a new cluster with same name", () => {
+  it("Registering a new cluster with same name", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "registerCluster",
         variables: {
@@ -116,18 +122,18 @@ describe("Testing cluster api", () => {
             tolerations: [],
           },
         },
-        query: REGISTER_CLUSTER`,
+        query: REGISTER_CLUSTER,
       },
       failOnStatusCode: false,
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
-  });*/
+  });
 
   it("Listing all cluster", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "listClusters",
         variables: {
@@ -142,10 +148,10 @@ describe("Testing cluster api", () => {
     });
   });
 
-  /*it("Deleting a cluster", () => {
+  it("Deleting a cluster", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "deleteClusters",
         variables: {
@@ -160,7 +166,7 @@ describe("Testing cluster api", () => {
         expect(res.body).to.have.nested.property("data.deleteClusterReg");
         return cy.request({
           method: "POST",
-          url: Cypress.env("apiURL") + "/query",
+          url: Cypress.env("apiURL") + endpoints.query(),
           body: {
             operationName: "listClusters",
             variables: {
@@ -176,5 +182,5 @@ describe("Testing cluster api", () => {
         expect(res.body.data.listClusters).to.be.an("array");
         expect(res.body.data.listClusters.length).to.eq(1);
       });
-  });*/
+  });
 });

@@ -23,7 +23,7 @@ export const UPDATE_SCHEDULE = `
 `;
 
 export const RERUN_CHAOS_WORKFLOW = `
-  mutation reRunChaosWorkflow($projectID: String!, $workflowID: String!) {
+  mutation reRunChaosWorkFlow($projectID: String!, $workflowID: String!){
     reRunChaosWorkFlow(projectID: $projectID, workflowID: $workflowID)
   }
 `;

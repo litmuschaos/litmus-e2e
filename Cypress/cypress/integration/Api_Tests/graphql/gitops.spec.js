@@ -8,6 +8,7 @@ import {
   DISABLE_GITOPS,
 } from "../../../fixtures/graphql/mutations";
 import { GET_GITOPS_DATA } from "../../../fixtures/graphql/queries";
+import endpoints from "../../../fixtures/endpoints";
 
 let project1Id, project2Id;
 before("Clear database", () => {
@@ -16,17 +17,21 @@ before("Clear database", () => {
       return cy.requestLogin(user.AdminName, user.AdminPassword);
     })
     .then(() => {
-      return cy.getStarted("litmus");
+      return cy.createProject("admin's project");
+    })
+    .then((projectId) => {
+      project1Id = projectId;
+      return cy.createNamespaceAgent("a1", project1Id);
     })
     .then(() => {
-      return cy.task("getAdminProject");
+      let usersData = [user.user1, user.user2, user.user3];
+      return cy.createTestUsers(usersData);
     })
     .then((res) => {
-      return cy.securityCheckSetup(res._id, res.name);
+      return cy.createTestProjects(project1Id, res[0], res[1], res[2]);
     })
-    .then((createdSetupVariable) => {
-      project1Id = createdSetupVariable.project1Id;
-      project2Id = createdSetupVariable.project2Id;
+    .then((res) => {
+      project2Id = res.project2Id;
       cy.requestLogin(user.user3.username, user.user3.password);
     });
 });
@@ -35,7 +40,7 @@ describe("Testing GitOps api", () => {
   it("Enabling Gitops by user with viewer access", () => {
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "enableGitOps",
         variables: {
@@ -59,7 +64,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "enableGitOps",
         variables: {
@@ -83,7 +88,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "enableGitOps",
         variables: {
@@ -108,7 +113,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getGitOpsDetails",
         variables: {
@@ -127,7 +132,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getGitOpsDetails",
         variables: {
@@ -146,7 +151,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getGitOpsDetails",
         variables: {
@@ -174,7 +179,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateGitOps",
         variables: {
@@ -197,7 +202,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateGitOps",
         variables: {
@@ -220,7 +225,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "updateGitOps",
         variables: {
@@ -239,7 +244,7 @@ describe("Testing GitOps api", () => {
         expect(res.body.data.updateGitOps).to.eq(true);
         return cy.request({
           method: "POST",
-          url: Cypress.env("apiURL") + "/query",
+          url: Cypress.env("apiURL") + endpoints.query(),
           body: {
             operationName: "getGitOpsDetails",
             variables: {
@@ -275,7 +280,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "disableGitOps",
         variables: {
@@ -294,7 +299,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "disableGitOps",
         variables: {
@@ -313,7 +318,7 @@ describe("Testing GitOps api", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
-      url: Cypress.env("apiURL") + "/query",
+      url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "disableGitOps",
         variables: {
@@ -328,7 +333,7 @@ describe("Testing GitOps api", () => {
         expect(res.body.data.disableGitOps).to.eq(true);
         return cy.request({
           method: "POST",
-          url: Cypress.env("apiURL") + "/query",
+          url: Cypress.env("apiURL") + endpoints.query(),
           body: {
             operationName: "getGitOpsDetails",
             variables: {

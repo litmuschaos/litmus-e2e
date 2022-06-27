@@ -1,4 +1,5 @@
-export const endpoints = {
+const endpoints = {
+  query: () => "/query",
   status: () => "/status",
   login: () => "/login",
   getAllUsers: () => "/users",
@@ -19,3 +20,5 @@ export const endpoints = {
   removeInvitation: () => "/remove_invitation",
   leaveProject: () => "/leave_project",
 };
+
+export default endpoints;
