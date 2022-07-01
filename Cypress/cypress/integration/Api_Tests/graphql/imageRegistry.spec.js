@@ -1,6 +1,5 @@
 /// <reference types="Cypress" />
 
-import * as user from "../../../fixtures/Users.json";
 import * as imageRegistryInput from "../../../fixtures/imageRegistryInput.json";
 import {
   ADD_IMAGE_REGISTRY,
@@ -10,26 +9,19 @@ import {
 import { GET_IMAGE_REGISTRY } from "../../../fixtures/graphql/queries";
 import endpoints from "../../../fixtures/endpoints";
 
-let project1Id, imageRegistryID;
-before("Clear database", () => {
-  cy.task("clearDB")
-    .then(() => {
-      return cy.requestLogin(user.AdminName, user.AdminPassword);
-    })
-    .then(() => {
-      return cy.createProject("admin's project");
-    })
-    .then((projectId) => {
-      project1Id = projectId;
-      let usersData = [user.user1, user.user2, user.user3];
-      return cy.createTestUsers(usersData);
-    })
-    .then((res) => {
-      return cy.createTestProjects(project1Id, res[0], res[1], res[2]);
-    })
-    .then(() => {
-      cy.requestLogin(user.user3.username, user.user3.password);
-    });
+let imageRegistryID,
+  adminProjectId,
+  adminAccessToken,
+  user2AccessToken,
+  user3AccessToken;
+
+before("Initial RBAC Setup", () => {
+  cy.initialRBACSetup(false).then((data) => {
+    adminProjectId = data.adminProjectId;
+    adminAccessToken = data.adminAccessToken;
+    user2AccessToken = data.user2AccessToken;
+    user3AccessToken = data.user3AccessToken;
+  });
 });
 
 describe("Testing image registry api", () => {
@@ -40,10 +32,13 @@ describe("Testing image registry api", () => {
       body: {
         operationName: "createImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry1,
         },
         query: ADD_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user3AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -58,10 +53,13 @@ describe("Testing image registry api", () => {
       body: {
         operationName: "createImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry1,
         },
         query: ADD_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user2AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -70,18 +68,19 @@ describe("Testing image registry api", () => {
   });
 
   it("Create image registry by user with admin access", () => {
-    cy.logout();
-    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "createImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry1,
         },
         query: ADD_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: adminAccessToken,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
@@ -91,18 +90,19 @@ describe("Testing image registry api", () => {
   });
 
   it("Get image registry by user with viewer access", () => {
-    cy.logout();
-    cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryID: imageRegistryID,
         },
         query: GET_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user3AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -112,37 +112,40 @@ describe("Testing image registry api", () => {
 
   it("Get image registry by user with no access", () => {
     cy.logout();
-    cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryID: imageRegistryID,
         },
         query: GET_IMAGE_REGISTRY,
-        failOnStatusCode: false,
       },
+      headers: {
+        authorization: user2AccessToken,
+      },
+      failOnStatusCode: false,
     }).then((res) => {
       cy.validateErrorMessage(res, "permission_denied");
     });
   });
 
   it("Get image registry by user with admin access", () => {
-    cy.logout();
-    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
       body: {
         operationName: "getImageRegistry",
         variables: {
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryID: imageRegistryID,
         },
         query: GET_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: adminAccessToken,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
@@ -161,13 +164,11 @@ describe("Testing image registry api", () => {
       expect(res.body.data.getImageRegistry.imageRegistryID).to.eq(
         imageRegistryID
       );
-      expect(res.body.data.getImageRegistry.projectID).to.eq(project1Id);
+      expect(res.body.data.getImageRegistry.projectID).to.eq(adminProjectId);
     });
   });
 
   it("Update image registry by user with viewer access", () => {
-    cy.logout();
-    cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -175,10 +176,13 @@ describe("Testing image registry api", () => {
         operationName: "updateImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry2,
         },
         query: UPDATE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user3AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -187,8 +191,6 @@ describe("Testing image registry api", () => {
   });
 
   it("Update image registry by user with no access", () => {
-    cy.logout();
-    cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -196,10 +198,13 @@ describe("Testing image registry api", () => {
         operationName: "updateImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry2,
         },
         query: UPDATE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user2AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -208,8 +213,6 @@ describe("Testing image registry api", () => {
   });
 
   it("Update image registry by user with admin access", () => {
-    cy.logout();
-    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -217,10 +220,13 @@ describe("Testing image registry api", () => {
         operationName: "updateImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
           imageRegistryInfo: imageRegistryInput.registry2,
         },
         query: UPDATE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: adminAccessToken,
       },
     })
       .then((res) => {
@@ -232,10 +238,13 @@ describe("Testing image registry api", () => {
           body: {
             operationName: "getImageRegistry",
             variables: {
-              projectID: project1Id,
+              projectID: adminProjectId,
               imageRegistryID: imageRegistryID,
             },
             query: GET_IMAGE_REGISTRY,
+          },
+          headers: {
+            authorization: adminAccessToken,
           },
         });
       })
@@ -256,13 +265,11 @@ describe("Testing image registry api", () => {
         expect(res.body.data.getImageRegistry.imageRegistryID).to.eq(
           imageRegistryID
         );
-        expect(res.body.data.getImageRegistry.projectID).to.eq(project1Id);
+        expect(res.body.data.getImageRegistry.projectID).to.eq(adminProjectId);
       });
   });
 
   it("Delete image registry by user with viewer access", () => {
-    cy.logout();
-    cy.requestLogin(user.user3.username, user.user3.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -270,9 +277,12 @@ describe("Testing image registry api", () => {
         operationName: "deleteImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
         },
         query: DELETE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user3AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -281,8 +291,6 @@ describe("Testing image registry api", () => {
   });
 
   it("Delete image registry by user with no access", () => {
-    cy.logout();
-    cy.requestLogin(user.user2.username, user.user2.password);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -290,9 +298,12 @@ describe("Testing image registry api", () => {
         operationName: "deleteImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
         },
         query: DELETE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: user2AccessToken,
       },
       failOnStatusCode: false,
     }).then((res) => {
@@ -301,8 +312,6 @@ describe("Testing image registry api", () => {
   });
 
   it("Delete image registry", () => {
-    cy.logout();
-    cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.request({
       method: "POST",
       url: Cypress.env("apiURL") + endpoints.query(),
@@ -310,9 +319,12 @@ describe("Testing image registry api", () => {
         operationName: "deleteImageRegistry",
         variables: {
           imageRegistryID: imageRegistryID,
-          projectID: project1Id,
+          projectID: adminProjectId,
         },
         query: DELETE_IMAGE_REGISTRY,
+      },
+      headers: {
+        authorization: adminAccessToken,
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
