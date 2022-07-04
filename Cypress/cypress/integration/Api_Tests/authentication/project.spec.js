@@ -28,11 +28,19 @@ let user1Id,
 before("create 3 test users", () => {
   cy.task("clearDB")
     .then(() => {
-      return cy.requestLogin(user.AdminName, user.AdminPassword);
+      cy.clearCookie("litmus-cc-token");
+      indexedDB.deleteDatabase("localforage");
+    })
+    .then(() => {
+      return cy.getAccessToken(user.AdminName, user.AdminPassword);
+    })
+    .then((token) => {
+      adminAccessToken = token;
+      return cy.createProject("admin's project", adminAccessToken);
     })
     .then(() => {
       let usersData = [user.user1, user.user2, user.user3];
-      return cy.createTestUsers(usersData);
+      return cy.createTestUsers(usersData, adminAccessToken);
     })
     .then((res) => {
       user1Id = res[0];
@@ -1180,7 +1188,6 @@ describe("Testing post request to leaveProject api", () => {
         expect(res.status).to.eq(200);
         expect(res.body).to.have.property("message");
         expect(res.body.message).to.eq("No projects found");
-        cy.requestLogin(user.user2.username, user.user2.password);
         return cy.request({
           method: "POST",
           url: Cypress.env("apiURL") + endpoints.query(),
@@ -1193,6 +1200,9 @@ describe("Testing post request to leaveProject api", () => {
               },
             },
             query: ADD_MY_HUB,
+          },
+          headers: {
+            authorization: user2AccessToken,
           },
           failOnStatusCode: false,
         });
