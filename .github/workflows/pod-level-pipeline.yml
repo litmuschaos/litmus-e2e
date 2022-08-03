@@ -54,9 +54,8 @@ jobs:
     
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
-          
-          kubectl  --kubeconfig /etc/rancher/k3s/k3s.yaml wait node --all --for condition=ready --timeout=90s
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
+          kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
       - name: Litmus Infra Setup In Cluster-1
@@ -139,7 +138,7 @@ jobs:
 
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
@@ -230,7 +229,7 @@ jobs:
     
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
@@ -301,7 +300,7 @@ jobs:
     
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
@@ -375,7 +374,7 @@ jobs:
 
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
@@ -450,7 +449,7 @@ jobs:
 
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
@@ -530,7 +529,7 @@ jobs:
 
       - name: Installing Prerequisites (K3S Cluster)
         run: |
-          curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 664
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
           kubectl wait node --all --for condition=ready --timeout=90s
           kubectl get nodes
           
