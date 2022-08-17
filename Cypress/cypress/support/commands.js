@@ -490,7 +490,7 @@ Cypress.Commands.add("initialRBACSetup", (createAgent) => {
         body: {
           operationName: "listClusters",
           variables: {
-            projectID: project1Id,
+            projectID: adminProjectId,
           },
           query: GET_CLUSTER,
         },
@@ -500,14 +500,9 @@ Cypress.Commands.add("initialRBACSetup", (createAgent) => {
       });
     })
     .then((res) => {
-      cluster1Id = getNested(
-        res,
-        "body",
-        "data",
-        "listClusters",
-        "at(0)",
-        "clusterID"
-      );
+      if (createAgent){
+        cluster1Id = res.body.data.listClusters[0].clusterID
+      }
       return {
         adminProjectId,
         project1Id,

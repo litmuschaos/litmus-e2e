@@ -146,6 +146,10 @@ export const GET_WORKFLOW_RUNS_STATS = `
 // getPredefinedWorkflowList
 export const GET_PREDEFINED_WORKFLOW_LIST = `
   query listPredefinedWorkflows($hubName: String!, $projectID: String!) {
-    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID)
+    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID){
+      workflowName
+      workflowCSV
+      workflowManifest
+    }
   }
 `;

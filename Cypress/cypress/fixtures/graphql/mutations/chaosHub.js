@@ -32,14 +32,7 @@ export const UPDATE_MY_HUB = `
 
 export const SYNC_REPO = `
   mutation syncChaosHub($id: ID!, $projectID: String!) {
-    syncChaosHub(id: $id, projectID: $projectID) {
-      id
-      repoURL
-      repoBranch
-      isAvailable
-      totalExp
-      hubName
-    }
+    syncChaosHub(id: $id, projectID: $projectID)
   }
 `;
 
