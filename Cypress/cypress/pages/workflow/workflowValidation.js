@@ -30,7 +30,7 @@ Cypress.Commands.add(
     TotalExperiments,
     Experiments
   ) => {
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.GraphqlWait("listWorkflows", "listSchedules");
     cy.get("[data-cy=runs]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
@@ -92,7 +92,7 @@ Cypress.Commands.add(
           .click({ scrollBehavior: false });
       });
     Experiments.map((experiment) => {
-      cy.get("[data-cy=expName]").should("have.text", experiment.name);
+      cy.get("[data-cy=expName]").should("include.text", experiment.name);
       cy.get("[data-cy=expWeight]").should(
         "have.text",
         experiment.weight === 1 || 0
@@ -136,7 +136,6 @@ Cypress.Commands.add(
   (
     workflowName,
     workflowNamespace,
-    workflowSubject,
     agentName,
     regularity,
     nextRun
@@ -145,17 +144,13 @@ Cypress.Commands.add(
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=statsWorkflowName]").should("have.text", workflowName);
     cy.get("[data-cy=infoWorkflowName]").should("have.text", workflowName);
-    cy.get("[data-cy=infoWorkflowSubject]").should(
-      "have.text",
-      workflowSubject
-    );
     cy.get("[data-cy=infoWorkflowNamespace]").should(
       "have.text",
       workflowNamespace
     );
     cy.get("[data-cy=infoAgentName]").should("have.text", agentName);
 
-    if (regularity === "Non cron workflow") {
+    if (regularity === "Non Cron Chaos Scenario") {
       cy.get("[data-cy=infoWorkflowRegularity]").should(
         "have.text",
         `Regularity :${regularity}`

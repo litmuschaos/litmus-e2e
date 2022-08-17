@@ -2,11 +2,6 @@
 
 Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
   // tunningParameters = {
-  //   general : {
-  //     hubName : "Litmus ChaosHub",
-  //     experimentName : "pod-delete",
-  //     context : "pod-delete_litmus"
-  //   },
   //   targetApp : {
   //     annotationCheckToggle : false,
   //     appns : "default",
@@ -22,19 +17,7 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
   //   }
   // }
 
-  // General
-  cy.get("[data-cy=ExperimentName] input")
-    .clear()
-    .type(tunningParameters.general.experimentName);
-  cy.get("[data-cy=Context] input")
-    .clear()
-    .type(tunningParameters.general.context);
-  cy.get("[data-cy=GeneralNext]").click();
-
   // Target Application
-  cy.get("[data-cy=AnnotationCheckToggle] button")
-    .eq(tunningParameters.targetApp.annotationCheckToggle ? 0 : 1)
-    .click();
   cy.get("[data-cy=Appns] input")
     .clear()
     .type(tunningParameters.targetApp.appns)
@@ -45,7 +28,7 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
     .clear()
     .type(tunningParameters.targetApp.appLabel)
     .type("{esc}");
-  cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
+  cy.get("[data-cy=TargetControlButtons] button").eq(0).click();
 
   // Steady State
   cy.get("[data-cy=SteadyStateControlButtons] button").eq(1).click();
@@ -61,6 +44,7 @@ Cypress.Commands.add("tuneCustomWorkflow", (tunningParameters) => {
     .clear()
     .type(tunningParameters.tuneExperiment.force);
   cy.get("[data-cy=TuneExperimentControlButtons] button").eq(1).click();
+  cy.get("[data-cy=TuneExperimentControlButtons] button").eq(3).click();
 });
 
 Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
@@ -72,7 +56,7 @@ Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
   cy.get("[data-cy=statsBarGraph]").scrollIntoView();
   cy.get("[data-cy=statsBarGraph]").should("be.visible");
   cy.get("[data-cy=statsBarGraph]").within((el) => {
-    cy.wrap(el).find("g").find("rect").eq(4).click();
+    cy.wrap(el).get('g[class$="visx-group"]').last().find("rect").click({ position: "left" ,force: true});
   });
   let experimentArray = [
     {
@@ -83,8 +67,9 @@ Cypress.Commands.add("validateRecurringStatsWithLessResiliency", () => {
     },
   ];
   cy.validateExperimentsTable(experimentArray);
-  cy.get("[data-cy=statsBarGraph]").click(650, 250);
-  cy.get("[data-cy=statsBarGraph]").click(650, 250);
+  cy.get("[data-cy=statsBarGraph]").within((el) => {
+    cy.wrap(el).get('g[class$="visx-group"]').last().find("rect").click({ position: "right" ,force: true});
+  });
   experimentArray = [
     {
       experimentName: "pod-delete",

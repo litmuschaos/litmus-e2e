@@ -23,6 +23,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
       - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
@@ -47,21 +51,6 @@ jobs:
           ACCESS_TYPE: ${{ matrix.AcessType }}
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
-
-      - name: Deploying Prometheus as a DataSource
-        run: |
-          mkdir monitoring && cd monitoring
-          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
-          kubectl create ns monitoring
-          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-          source ../../../litmus/utils.sh
-          wait_for_pods monitoring 720
-          wait_for_loadbalancer prometheus-k8s monitoring
-          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          DATA_SOURCE="http://$loadBalancerIP:9090"
-          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
 
       # Fetching Access Point & Token for accessing kube api server
       - run: |
@@ -114,7 +103,6 @@ jobs:
           CYPRESS_AGENT_NAMESPACE: ${{ env.CS_MODE_NAMESPACE}}
           CYPRESS_AGENT: "Self-Agent"
           CYPRESS_TARGET_APP_NS: "default"
-          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # TODO: Additional Tests will be added from here
 
@@ -142,6 +130,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
       - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
@@ -167,21 +159,6 @@ jobs:
           NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "NS-MODE"
 
-      - name: Deploying Prometheus as a DataSource
-        run: |
-          mkdir monitoring && cd monitoring
-          git clone https://github.com/litmuschaos/litmus.git && cd litmus/monitoring
-          kubectl create ns monitoring
-          kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-          kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-          kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-          source ../../../litmus/utils.sh
-          wait_for_pods monitoring 720
-          wait_for_loadbalancer prometheus-k8s monitoring
-          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          DATA_SOURCE="http://$loadBalancerIP:9090"
-          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
-
       # Fetching Access Point & Token for accessing kube api server
       - run: |
           kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
@@ -190,7 +167,7 @@ jobs:
           KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
           echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
           echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
-          
+
       # RBAC for allowing Cypress Runner to access Cluster resources
       - run: |
           kubectl apply -f Cypress/cypress-rbac.yml
@@ -233,7 +210,6 @@ jobs:
           CYPRESS_AGENT_NAMESPACE: ${{ env.NS_MODE_NAMESPACE}}
           CYPRESS_AGENT: "Self-Agent"
           CYPRESS_TARGET_APP_NS: ${{ env.NS_MODE_NAMESPACE}}
-          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       # TODO: Additional Tests will be added from here
 

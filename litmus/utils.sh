@@ -209,6 +209,8 @@ function setup_ingress(){
     # Enabling Ingress in Portal
     kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS="true"
 
+    kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS_NAME="litmus-ingress"
+
     # Installing ingress-nginx
     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     helm repo update
@@ -243,27 +245,28 @@ function get_access_point(){
     if [[ "$accessType" == "LoadBalancer" ]];then
 
         kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+        kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
         export loadBalancer=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         wait_for_pods ${namespace} 360
         wait_for_loadbalancer litmusportal-frontend-service ${namespace}
         export loadBalancerIP=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-        export AccessURL="http://$loadBalancerIP:9091"
+        export AccessURL="http://$loadBalancerIP:9091/"
         wait_for_url $AccessURL
         echo "URL=$AccessURL" >> $GITHUB_ENV
 
-    elif [[ "$acessType" == "Ingress" ]];then
+    elif [[ "$accessType" == "Ingress" ]];then
 
         setup_ingress ${namespace}
         # Ingress IP for accessing Portal
         export AccessURL=$(kubectl get ing litmus-ingress -n ${namespace} -o=jsonpath='{.status.loadBalancer.ingress[0].ip}' | awk '{print $1}')
-        echo "URL=http://$AccessURL" >> $GITHUB_ENV
+        echo "URL=http://$AccessURL/" >> $GITHUB_ENV
 
     else 
         # By default NodePort will be used. 
         export NODE_NAME=$(kubectl -n ${namespace} get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
         export NODE_IP=$(kubectl -n ${namespace} get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
         export NODE_PORT=$(kubectl -n ${namespace} get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service)
-        export AccessURL="http://$NODE_IP:$NODE_PORT"
+        export AccessURL="http://$NODE_IP:$NODE_PORT/"
         echo "URL=$AccessURL" >> $GITHUB_ENV
 
     fi

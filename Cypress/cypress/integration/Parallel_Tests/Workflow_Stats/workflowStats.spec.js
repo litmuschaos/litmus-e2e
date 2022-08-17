@@ -9,9 +9,4 @@ describe("Testing the accessibility of workflow statistics Tab.", () => {
     cy.waitForCluster(agent);
     cy.visit("/analytics");
   });
-
-  it("Testing workflow stats tab", () => {
-    cy.get("[data-cy=litmusDashboard]").should("be.visible");
-    cy.get("[data-cy=litmusDashboard]").click();
-  });
 });

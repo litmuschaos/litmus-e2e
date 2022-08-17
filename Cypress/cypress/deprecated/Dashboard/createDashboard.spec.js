@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-import * as user from "../../../fixtures/Users.json";
+import * as user from "../../fixtures/Users.json";
 
 export const agent = Cypress.env("AGENT");
 export const dataSourceUrl = Cypress.env("DATA_SOURCE_URL");

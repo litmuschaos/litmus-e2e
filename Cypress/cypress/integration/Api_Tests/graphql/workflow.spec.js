@@ -15,17 +15,18 @@ import {
 } from "../../../fixtures/graphql/queries";
 import endpoints from "../../../fixtures/endpoints";
 
-let adminProjectId, adminAccessToken, cluster1Id, workflow1Id, template1Id;
-
-before("Clear database", () => {
-  cy.initialRBACSetup(true).then((data) => {
-    adminProjectId = data.adminProjectId;
-    adminAccessToken = data.adminAccessToken;
-    cluster1Id = data.cluster1Id;
-  });
-});
+let adminProjectId, adminAccessToken, cluster1Id, workflow1Id, template1Id, project1Id;
 
 describe("Testing chaos workflow api", () => {
+  before("Clear database", () => {
+    cy.initialRBACSetup(true).then((data) => {
+      adminProjectId = data.adminProjectId;
+      adminAccessToken = data.adminAccessToken;
+      cluster1Id = data.cluster1Id;
+      project1Id = data.project1Id;
+    });
+  });
+
   it("Creating chaos workflow with different workflow_name in manifest [ Should not be possible ]", () => {
     cy.request({
       method: "POST",
@@ -81,7 +82,7 @@ describe("Testing chaos workflow api", () => {
                 weightage: 10,
               },
             ],
-            projectID: adminProjectId,
+            projectID: project1Id,
             clusterID: cluster1Id,
           },
         },
@@ -318,6 +319,7 @@ describe("Testing chaos workflow api", () => {
     });
   });
 
+  // workflowRunID should be removed from here, since this is an optional field.
   it("Deleting chaos workflow", () => {
     cy.request({
       method: "POST",
@@ -327,6 +329,7 @@ describe("Testing chaos workflow api", () => {
         variables: {
           projectID: adminProjectId,
           workflowID: workflow1Id,
+          workflowRunID: ""
         },
         query: DELETE_WORKFLOW,
       },

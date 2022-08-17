@@ -24,6 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
       - uses: AbsaOSS/k3d-action@v2
         name: Create 1st Cluster
         with:
@@ -44,19 +48,10 @@ jobs:
           ./litmus/install-portal.sh
         env:
           PORTAL_VERSION: ${{ env.TAG }}
-          ACCESS_TYPE: "Ingress"
+          ACCESS_TYPE: "LoadBalancer"
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
           DEPLOY_SELF_AGENT: "false"
-
-      - name: Installing LitmusCTL on Agent Cluster
-        run: |
-          curl -O https://litmusctl-production-bucket.s3.amazonaws.com/litmusctl-linux-amd64-master.tar.gz
-          tar -zxvf litmusctl-linux-amd64-master.tar.gz
-          chmod +x litmusctl
-          sudo mv litmusctl /usr/local/bin/litmusctl
-          litmusctl version
-
       - name: Running API Tests
         uses: cypress-io/github-action@v2
         if: always()

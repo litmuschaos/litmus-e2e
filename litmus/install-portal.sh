@@ -17,6 +17,7 @@ function install_portal_cs_mode() {
     # manifest_image_update $version litmus/cluster-k8s-manifest.yml
 
     kubectl apply -f litmus-portal-setup.yml
+    # kubectl apply -f litmus/cluster-k8s-manifest.yml
 }
 
 function install_portal_ns_mode(){
@@ -27,6 +28,7 @@ function install_portal_ns_mode(){
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
 
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/namespace-k8s-manifest.yml -n ${namespace}
+    # kubectl apply -f litmus/namespaced-k8s-template.yml -n ${namespace}
 }
 
 

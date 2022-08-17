@@ -340,7 +340,7 @@ describe("Testing myHub api", () => {
       },
     }).then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.nested.property("data.syncChaosHub[0].id");
+      expect(res.body.data.syncChaosHub).to.eq("Successfully synced ChaosHub");
     });
   });
 

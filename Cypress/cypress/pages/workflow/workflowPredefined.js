@@ -2,9 +2,6 @@ Cypress.Commands.add(
   "validatePredefinedWorkflowParameters",
   (workflowParameters) => {
     // const workflowParameters = {
-    //   general : {
-    //     context : "podtato-main-pod-delete-chaos_litmus"
-    //   },
     //   targetApp : {
     //     annotationCheckToggle : false,
     //     appns : "litmus",
@@ -19,13 +16,6 @@ Cypress.Commands.add(
     //   }
     // };
 
-    // General
-    cy.get("[data-cy=Context] input").should(
-      "have.value",
-      workflowParameters.general.context
-    );
-    cy.get("[data-cy=GeneralNext]").click();
-
     // Target Application
     // cy.get("[data-cy=Appns] input").should("have.value", workflowParameters.targetApp.appns);
     cy.get("[data-cy=AppKind] input").should(
@@ -36,7 +26,7 @@ Cypress.Commands.add(
       "have.value",
       workflowParameters.targetApp.appLabel
     );
-    cy.get("[data-cy=TargetControlButtons] button").eq(1).click();
+    cy.get("[data-cy=TargetControlButtons] button").eq(0).click();
 
     // Steady State
     cy.get("[data-cy=SteadyStateControlButtons] button").eq(1).click();
@@ -55,5 +45,6 @@ Cypress.Commands.add(
       workflowParameters.tuneExperiment.force
     );
     cy.get("[data-cy=TuneExperimentControlButtons] button").eq(1).click();
+    cy.get("[data-cy=TuneExperimentControlButtons] button").eq(3).click();
   }
 );
