@@ -10,11 +10,10 @@ describe("Testing the validation of the final verdict with an existing target ap
   before("Loggin in and checking if agent exists", () => {
     cy.requestLogin(user.AdminName, user.AdminPassword);
     cy.waitForCluster(agent);
-    cy.visit("/create-workflow");
+    cy.visit("/create-scenario");
   });
 
   let workflowName = "";
-  let workflowSubject = "";
 
   it("Creating a target application", () => {
     cy.createTargetApplication(targetAppNamespace, "target-app-1", "nginx");
@@ -84,11 +83,6 @@ describe("Testing the validation of the final verdict with an existing target ap
     // cy.validateExperiment(experimentArray);
     cy.get("table").find("tr").eq(1).find("td").eq(0).click();
     const tunningParameters = {
-      general: {
-        hubName: "Litmus ChaosHub",
-        experimentName: "pod-delete",
-        context: `pod-delete_${workflowNamespace}`,
-      },
       targetApp: {
         annotationCheckToggle: false,
         appns: "default",
@@ -118,22 +112,10 @@ describe("Testing the validation of the final verdict with an existing target ap
       workflows.customWorkflowDescription,
       0
     );
-    cy.get("[data-cy=WorkflowSubject]").should(
-      "have.text",
-      `${workflows.customWorkflow}_${workflowNamespace}`
-    );
-    cy.get("[data-cy=WorkflowSubject] textarea")
-      .eq(0)
-      .clear()
-      .type("custom-workflow-subject");
     cy.get("[data-cy=ControlButtons] Button").eq(0).click(); // Clicking on finish Button
     cy.get("[data-cy=FinishModal]").should("be.visible");
     cy.get("[data-cy=WorkflowName]").then(($name) => {
       workflowName = $name.text();
-      return;
-    });
-    cy.get("[data-cy=WorkflowSubject]").then(($subject) => {
-      workflowSubject = $subject.text();
       return;
     });
     cy.get("[data-cy=GoToWorkflowButton]").click();
@@ -147,7 +129,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Checking Schedules Table for scheduled Workflow", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.get("[data-cy=workflowSchedulesTable] input")
@@ -184,7 +166,7 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   it("Validating graph nodes", () => {
     cy.GraphqlWait("listWorkflows", "listSchedules");
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.wait("@listSchedules").its("response.statusCode").should("eq", 200);
     cy.validateWorkflowStatus(workflowName, workflowNamespace, [
       "Running",
@@ -219,16 +201,14 @@ describe("Testing the validation of the final verdict with an existing target ap
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
-    cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
-      "Non cron workflow",
-      "Non cron workflow"
+      "Non Cron Chaos Scenario",
+      "Non Cron Chaos Scenario"
     );
     cy.validateWorkflowStatsGraph(1, 0, 100, 100, 0);
     const experimentArray = [
@@ -244,14 +224,14 @@ describe("Testing the validation of the final verdict with an existing target ap
 
   // This will runs the above workflow without target application
   it("Rerun a non-recurring workflow", () => {
-    cy.visit("/workflows");
+    cy.visit("/scenarios");
     cy.get("[data-cy=browseSchedule]").click();
     cy.wait(2000);
     cy.get("table")
       .find("tr")
       .eq(1)
       .then(($div) => {
-        cy.wrap($div).find("td").eq(5).should("have.text", "Non cron workflow");
+        cy.wrap($div).find("td").eq(5).should("have.text", "Non Cron Chaos Scenario");
       });
     cy.rerunWorkflow();
   });
@@ -269,16 +249,14 @@ describe("Testing the validation of the final verdict with an existing target ap
   it("Testing the workflow statistics", () => {
     cy.GraphqlWait("listWorkflows", "recentRuns");
     cy.visit("/analytics");
-    cy.get("[data-cy=litmusDashboard]").click();
     cy.wait("@recentRuns").its("response.statusCode").should("eq", 200);
     cy.get(`[data-cy=${workflowName}]`).find("[data-cy=statsButton]").click();
     cy.validateWorkflowInfo(
       workflowName,
       workflowNamespace,
-      workflowSubject,
       agent,
-      "Non cron workflow",
-      "Non cron workflow"
+      "Non Cron Chaos Scenario",
+      "Non Cron Chaos Scenario"
     );
     cy.validateWorkflowStatsGraph(1, 1, 50, 50, 50);
     cy.validateRecurringStatsWithLessResiliency();

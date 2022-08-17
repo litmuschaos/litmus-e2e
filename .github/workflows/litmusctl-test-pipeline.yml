@@ -19,7 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort, Ingress, LoadBalancer]
+        # Cannot connect external chaos-delegate in namespaced scope mode.
+        AccessType: [Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -44,9 +45,10 @@ jobs:
           ./litmus/install-portal.sh
         env:
           PORTAL_VERSION: ${{ env.TAG }}
-          ACCESS_TYPE: ${{ matrix.AcessType }}
-          NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
+          ACCESS_TYPE: ${{ matrix.AccessType }}
+          NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "NS-MODE"
+          DEPLOY_SELF_AGENT: "false"
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
@@ -118,12 +120,34 @@ jobs:
           ACCESS_URL: ${{ env.URL }}
           PROJECT_NAME: "admin's project"
 
+      - name: Running Litmusctl CLI tests (litmusctl create project)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-4"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-4"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-delegate)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
-        AcessType: [NodePort, Ingress, LoadBalancer]
+        AccessType: [NodePort, Ingress, LoadBalancer]
     steps:
       - uses: actions/checkout@v2
 
@@ -142,15 +166,16 @@ jobs:
           kubectl get nodes
           kubectl get pods -n kube-system
           
-      - name: Deploying Litmus-Portal using **k8s-manifest**
+      - name: Deploying Litmus-Portal using k8s-manifest
         run: |
           chmod 755 ./litmus/install-portal.sh
           ./litmus/install-portal.sh
         env:
           PORTAL_VERSION: ${{ env.TAG }}
-          ACCESS_TYPE: ${{ matrix.AcessType }}
+          ACCESS_TYPE: ${{ matrix.AccessType }}
           NAMESPACE: ${{ env.CS_MODE_NAMESPACE }}
           INSTALLATION_MODE: "CS-MODE"
+          DEPLOY_SELF_AGENT: "false"
 
       - name: Installing LitmusCTL on Agent Cluster
         run: |
@@ -220,4 +245,26 @@ jobs:
         env:
           INSTALLATION_MODE: "CS-MODE"
           ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl create project)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-4"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-4"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-delegate)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "CS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
           PROJECT_NAME: "admin's project"

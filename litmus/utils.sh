@@ -209,6 +209,8 @@ function setup_ingress(){
     # Enabling Ingress in Portal
     kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS="true"
 
+    kubectl set env deployment/litmusportal-server -n ${namespace} --containers="graphql-server" INGRESS_NAME="litmus-ingress"
+
     # Installing ingress-nginx
     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     helm repo update
@@ -243,6 +245,7 @@ function get_access_point(){
     if [[ "$accessType" == "LoadBalancer" ]];then
 
         kubectl patch svc litmusportal-frontend-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
+        kubectl patch svc litmusportal-server-service -p '{"spec": {"type": "LoadBalancer"}}' -n ${namespace}
         export loadBalancer=$(kubectl get services litmusportal-frontend-service -n ${namespace} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
         wait_for_pods ${namespace} 360
         wait_for_loadbalancer litmusportal-frontend-service ${namespace}
@@ -251,7 +254,7 @@ function get_access_point(){
         wait_for_url $AccessURL
         echo "URL=$AccessURL" >> $GITHUB_ENV
 
-    elif [[ "$acessType" == "Ingress" ]];then
+    elif [[ "$accessType" == "Ingress" ]];then
 
         setup_ingress ${namespace}
         # Ingress IP for accessing Portal
