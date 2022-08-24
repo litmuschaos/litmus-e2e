@@ -47,7 +47,6 @@ type TestDetails struct {
 	InstanceZones             string
 	DiskVolumeNames           string
 	DiskZones                 string
-	DeviceNames               string
 	VMIds                     string
 	Region                    string
 	Lib                       string
