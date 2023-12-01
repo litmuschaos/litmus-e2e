@@ -1,5 +1,5 @@
 # Dockerfile of the default image of litmus-generic-e2e docker executor
-FROM golang:alpine
+FROM golang:1.21.4-alpine3.18
 
 ARG KUBECTL_VERSION=1.18.0
 
