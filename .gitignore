@@ -5,3 +5,5 @@
 **/screenshots
 **/cypress/downloads
 agent-manifest.yaml
+**/chaoscenter/node_modules
+**/chaoscenter/cypress/downloads
