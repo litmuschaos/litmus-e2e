@@ -1,6 +1,7 @@
 import { create_env, list_infra, register_infra, update_infra, delete_infra } from "../fixtures/chaosinfra";
 
 describe('testing chaosinfra', () => {
+    /*
     before(() => {
         cy.requestLogin(Cypress.env('username'),Cypress.env('password'));
     })
@@ -16,8 +17,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     description: "",
-                    environmentID: "kkkkk",
-                    name: "kkkkk",
+                    environmentID: "kkkkkkk",
+                    name: "kkkkkkk",
                     tags: [],
                     type: "NON_PROD"
                 }
@@ -34,7 +35,7 @@ describe('testing chaosinfra', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.createEnvironment.name).to.equal("kkkkk");
+            expect(response.body.data.createEnvironment.name).to.equal("kkkkkkk");
         });
 
 
@@ -45,8 +46,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     infraScope: 'cluster',
-                    name: "kkkkk",
-                    environmentID: "kkkkk",
+                    name: "kkkkkkk",
+                    environmentID: "kkkkkkk",
                     description: '',
                     platformName: 'Kubernetes',
                     infraNamespace: 'litmus',
@@ -77,7 +78,7 @@ describe('testing chaosinfra', () => {
             operationName: 'listInfras',
             variables: {
               projectID: projectID,
-              request: { environmentID: 'kkkkk' }, 
+              request: { environmentID: 'kkkkkkk' }, 
             },
             query: list_infra
         };
@@ -141,22 +142,22 @@ describe('testing chaosinfra', () => {
                 expect(response.body.data.deleteInfra).to.equal("infra deleted successfully");
             });
         });
-    });
-/*
+    });*/
+
     it('testing chaosinfra through UI', () => {
         cy.login(Cypress.env('username'),Cypress.env('password'));
 
         //creating environment
         cy.contains('Environments').click();
         cy.contains('New Environment').click();
+        cy.get('input[name= "name"]').type('sample12');
+        cy.contains('Save').click();
 
         //adding chaosinfra
-        cy.get('input[name= "name"]').type('sample3');
-        cy.contains('Save').click();
-        cy.contains('sample3').should('exist');
+        cy.contains('sample12').should('exist');
         cy.get('.TableV2--row').click();
         cy.contains('Enable Chaos').click();
-        cy.get('.bp3-form-content').type('sample3');
+        cy.get('.bp3-form-content').type('sample12');
         cy.contains('Next').click();
         cy.contains('Next').click();
         cy.contains('Download').click();
@@ -183,5 +184,5 @@ describe('testing chaosinfra', () => {
         cy.on('window alert', () => {
             expect(message).to.equal('Chaos Infrastructure Successfully Disabled');
         });
-    });*/
+    });
 })

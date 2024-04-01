@@ -159,7 +159,7 @@ describe('testing chaoshub', () => {
     cy.get('input[name="name"]').clear().type('sample');
     cy.contains('Continue').click();
     cy.get('button[aria-label = "Edit ChaosHub"]').click();
-    cy.wait(40000);
+    cy.wait(30000);
     cy.reload();
     cy.on('window:alert', () => {
         expect(message).to.equal('Chaoshub updated successfully');
