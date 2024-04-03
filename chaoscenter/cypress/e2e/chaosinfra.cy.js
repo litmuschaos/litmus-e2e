@@ -17,8 +17,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     description: "",
-                    environmentID: "sample22",
-                    name: "sample22",
+                    environmentID: "sample26",
+                    name: "sample26",
                     tags: [],
                     type: "NON_PROD"
                 }
@@ -35,7 +35,7 @@ describe('testing chaosinfra', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.createEnvironment.name).to.equal("sample22");
+            expect(response.body.data.createEnvironment.name).to.equal("sample26");
         });
 
 
@@ -46,8 +46,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     infraScope: 'cluster',
-                    name: "sample22",
-                    environmentID: "sample22",
+                    name: "sample26",
+                    environmentID: "sample26",
                     description: '',
                     platformName: 'Kubernetes',
                     infraNamespace: 'litmus',
@@ -79,7 +79,7 @@ describe('testing chaosinfra', () => {
             operationName: 'listInfras',
             variables: {
               projectID: projectID,
-              request: { environmentIDs: ["sample22"] }, 
+              request: { environmentIDs: ["sample26"] }, 
             },
             query: list_infra
         };
@@ -148,18 +148,12 @@ describe('testing chaosinfra', () => {
 
     it('testing chaosinfra through UI', () => {
         cy.login(Cypress.env('username'),Cypress.env('password'));
-
-        //creating environment
         cy.contains('Environments').click();
-        cy.contains('New Environment').click();
-        cy.get('input[name= "name"]').type('sample51');
-        cy.contains('Save').click();
 
         //adding chaosinfra
-        cy.contains('sample51').should('exist');
-        cy.get('.TableV2--row').click();
+        cy.get('.TableV2--row').eq(0).click();
         cy.contains('Enable Chaos').click();
-        cy.get('.bp3-form-content').type('sample51');
+        cy.get('.bp3-form-content').type('sample55');
         cy.contains('Next').click();
         cy.contains('Next').click();
         cy.contains('Download').click();
