@@ -1,7 +1,7 @@
 import { create_env, list_infra, register_infra, update_infra, delete_infra } from "../fixtures/chaosinfra";
 
 describe('testing chaosinfra', () => {
-    /*
+    
     before(() => {
         cy.requestLogin(Cypress.env('username'),Cypress.env('password'));
     })
@@ -17,8 +17,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     description: "",
-                    environmentID: "kkkkkkk",
-                    name: "kkkkkkk",
+                    environmentID: "sample22",
+                    name: "sample22",
                     tags: [],
                     type: "NON_PROD"
                 }
@@ -35,7 +35,7 @@ describe('testing chaosinfra', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.createEnvironment.name).to.equal("kkkkkkk");
+            expect(response.body.data.createEnvironment.name).to.equal("sample22");
         });
 
 
@@ -46,8 +46,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     infraScope: 'cluster',
-                    name: "kkkkkkk",
-                    environmentID: "kkkkkkk",
+                    name: "sample22",
+                    environmentID: "sample22",
                     description: '',
                     platformName: 'Kubernetes',
                     infraNamespace: 'litmus',
@@ -70,6 +70,7 @@ describe('testing chaosinfra', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
+            expect(response.body.data).to.have.property('registerInfra');
         })
 
 
@@ -78,7 +79,7 @@ describe('testing chaosinfra', () => {
             operationName: 'listInfras',
             variables: {
               projectID: projectID,
-              request: { environmentID: 'kkkkkkk' }, 
+              request: { environmentIDs: ["sample22"] }, 
             },
             query: list_infra
         };
@@ -92,7 +93,7 @@ describe('testing chaosinfra', () => {
             body: listInfra_payload,
           }).then((response) => {
             expect(response.status).to.equal(200);
-            localStorage.setItem('infraID', response.body.data.listInfras.infras.infraID);
+            localStorage.setItem('infraID', response.body.data.listInfras.infras[0].infraID);
           });
 
         cy.wrap(null).then(() => {
@@ -118,6 +119,7 @@ describe('testing chaosinfra', () => {
                 body: updateInfra_payload,
             }).then((response) => {
                 expect(response.status).to.equal(200);
+                expect(response.body.data).to.have.property('getInfraManifest');
             });
 
             //disable Infra
@@ -142,7 +144,7 @@ describe('testing chaosinfra', () => {
                 expect(response.body.data.deleteInfra).to.equal("infra deleted successfully");
             });
         });
-    });*/
+    });
 
     it('testing chaosinfra through UI', () => {
         cy.login(Cypress.env('username'),Cypress.env('password'));
@@ -150,14 +152,14 @@ describe('testing chaosinfra', () => {
         //creating environment
         cy.contains('Environments').click();
         cy.contains('New Environment').click();
-        cy.get('input[name= "name"]').type('sample12');
+        cy.get('input[name= "name"]').type('sample51');
         cy.contains('Save').click();
 
         //adding chaosinfra
-        cy.contains('sample12').should('exist');
+        cy.contains('sample51').should('exist');
         cy.get('.TableV2--row').click();
         cy.contains('Enable Chaos').click();
-        cy.get('.bp3-form-content').type('sample12');
+        cy.get('.bp3-form-content').type('sample51');
         cy.contains('Next').click();
         cy.contains('Next').click();
         cy.contains('Download').click();
@@ -185,4 +187,4 @@ describe('testing chaosinfra', () => {
             expect(message).to.equal('Chaos Infrastructure Successfully Disabled');
         });
     });
-})
+});

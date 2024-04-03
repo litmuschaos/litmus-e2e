@@ -19,7 +19,6 @@ export const register_infra = `
     mutation registerInfra($projectID: ID!, $request: RegisterInfraRequest!) {
         registerInfra(projectID: $projectID, request: $request) {
         manifest
-        __typename
         }
     }
 `

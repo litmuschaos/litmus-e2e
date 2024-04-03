@@ -2,7 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://192.168.49.2:31044',
+    baseUrl: 'http://192.168.49.2:31190',
     requestTimeout: 40000,
   },
   env: {
