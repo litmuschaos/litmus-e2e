@@ -3,8 +3,9 @@ Cypress.Commands.add('login', (Username,Password) => {
     cy.visit('/login');
     cy.get('input[name="username"]').type(Username);
     cy.get('input[name="password"]').type(Password);
+    cy.intercept('POST','auth/login').as('login');
     cy.get('.bp3-button').click({ });
-    cy.wait(1000);
+    cy.wait('@login');
     cy.url().should('include','/dashboard');
   });
 
