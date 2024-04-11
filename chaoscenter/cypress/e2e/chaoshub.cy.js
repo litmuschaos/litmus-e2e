@@ -135,12 +135,13 @@ describe('testing chaoshub', () => {
 
     //Add new chaoshub with public repo
     cy.contains('New ChaosHub').click();
-    cy.get('input[name="name"]').type('testing');
+    cy.get('input[name="name"]').type('testing1');
     cy.contains('Continue').click();
     cy.get('input[name="repoURL"]').type('https://github.com/litmuschaos/chaos-charts.git');
     cy.get('input[name="repoBranch"]').type('master');
+    cy.intercept('POST','/api/query').as('Query');
     cy.get('button[aria-label = "Connect Hub"]').click();
-    cy.wait(30000);
+    cy.wait('@Query');
     cy.on('window:alert', () => {
         expect(message).to.equal('Chaoshub added successfully');
     });
@@ -156,10 +157,10 @@ describe('testing chaoshub', () => {
     //Updating chaoshub name
     cy.get('.Card--cardMenu .bp3-button').eq(1).click();
     cy.contains('Edit Hub').click();
-    cy.get('input[name="name"]').clear().type('sample');
+    cy.get('input[name="name"]').clear().type('sample1');
     cy.contains('Continue').click();
     cy.get('button[aria-label = "Edit ChaosHub"]').click();
-    cy.wait(30000);
+    cy.wait('@Query');
     cy.reload();
     cy.on('window:alert', () => {
         expect(message).to.equal('Chaoshub updated successfully');

@@ -17,8 +17,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     description: "",
-                    environmentID: "sample26",
-                    name: "sample26",
+                    environmentID: "exp5",
+                    name: "exp5",
                     tags: [],
                     type: "NON_PROD"
                 }
@@ -35,7 +35,7 @@ describe('testing chaosinfra', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.createEnvironment.name).to.equal("sample26");
+            expect(response.body.data.createEnvironment.name).to.equal("exp5");
         });
 
 
@@ -46,8 +46,8 @@ describe('testing chaosinfra', () => {
                 projectID: projectID,
                 request: {
                     infraScope: 'cluster',
-                    name: "sample26",
-                    environmentID: "sample26",
+                    name: "exp5",
+                    environmentID: "exp5",
                     description: '',
                     platformName: 'Kubernetes',
                     infraNamespace: 'litmus',
@@ -79,7 +79,7 @@ describe('testing chaosinfra', () => {
             operationName: 'listInfras',
             variables: {
               projectID: projectID,
-              request: { environmentIDs: ["sample26"] }, 
+              request: { environmentIDs: ["exp5"] }, 
             },
             query: list_infra
         };
@@ -153,7 +153,7 @@ describe('testing chaosinfra', () => {
         //adding chaosinfra
         cy.get('.TableV2--row').eq(0).click();
         cy.contains('Enable Chaos').click();
-        cy.get('.bp3-form-content').type('sample55');
+        cy.get('.bp3-form-content').type('exp97');
         cy.contains('Next').click();
         cy.contains('Next').click();
         cy.contains('Download').click();
@@ -163,7 +163,7 @@ describe('testing chaosinfra', () => {
         cy.contains('Done').click();
 
         //updating chaosinfra
-        cy.contains('Update').click();
+        cy.contains('Update').eq(0).click();
         cy.get('button[aria-label= "Download"]').click();
         cy.on('window alert', () => {
             expect(message).to.equal('Download request successfully sent');
@@ -174,7 +174,7 @@ describe('testing chaosinfra', () => {
         });
         
         //disable chaosinfra
-        cy.get('.Card--dots').click();
+        cy.get('.Card--dots').eq(0).click();
         cy.contains('Disable').click();
         cy.contains('Confirm').click();
         cy.on('window alert', () => {
