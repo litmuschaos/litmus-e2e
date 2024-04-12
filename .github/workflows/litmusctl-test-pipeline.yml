@@ -111,10 +111,10 @@ jobs:
           ACCESS_URL: ${{ env.URL }}
           PROJECT_NAME: "admin's project"
 
-      - name: Running Litmusctl CLI tests (litmusctl get agents)
+      - name: Running Litmusctl CLI tests (litmusctl get infras)
         run: |
           chmod 755 ./litmus/litmusctl_tests.sh
-          ./litmus/litmusctl_tests.sh test_get_agents
+          ./litmus/litmusctl_tests.sh test_get_infras
         env:
           INSTALLATION_MODE: "NS-MODE"
           ACCESS_URL: ${{ env.URL }}
@@ -131,16 +131,118 @@ jobs:
           AGENT_NAME: "agent-4"
           PROJECT_NAME: "admin's project"
 
-      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-delegate)
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-infra)
         run: |
           chmod 755 ./litmus/litmusctl_tests.sh
-          ./litmus/litmusctl_tests.sh test_create_project
+          ./litmus/litmusctl_tests.sh test_disconnect_infra
         env:
           AGENT_NAMESPACE: "agent-5"
           INSTALLATION_MODE: "NS-MODE"
           ACCESS_URL: ${{ env.URL }}
           AGENT_NAME: "agent-5"
           PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl create chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+
+      - name: Running Litmusctl CLI tests (litmusctl delete chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_delete_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+  
+      - name: Running Litmusctl CLI tests (litmusctl save chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_save_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-experiments)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_experiments
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl delete chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_delete_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl run chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_run_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-experiment-runs)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_experiment_run
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
 
   Cluster-Scope-Mode:
     runs-on: ubuntu-20.04
@@ -268,3 +370,144 @@ jobs:
           ACCESS_URL: ${{ env.URL }}
           AGENT_NAME: "agent-5"
           PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get projects)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_projects
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl get infras)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_infras
+        env:
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl create project)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_project
+        env:
+          AGENT_NAMESPACE: "agent-4"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-4"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl disconnect chaos-infra)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_disconnect_infra
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+
+      - name: Running Litmusctl CLI tests (litmusctl create chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_create_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+
+      - name: Running Litmusctl CLI tests (litmusctl delete chaos-enviroment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_delete_environment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+  
+      - name: Running Litmusctl CLI tests (litmusctl save chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_save_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-experiments)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_experiments
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl delete chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_delete_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl run chaos-experiment)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_run_experiment
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
+
+      - name: Running Litmusctl CLI tests (litmusctl get chaos-experiment-runs)
+        run: |
+          chmod 755 ./litmus/litmusctl_tests.sh
+          ./litmus/litmusctl_tests.sh test_get_experiment_run
+        env:
+          AGENT_NAMESPACE: "agent-5"
+          INSTALLATION_MODE: "NS-MODE"
+          ACCESS_URL: ${{ env.URL }}
+          AGENT_NAME: "agent-5"
+          PROJECT_NAME: "admin's project"
+          ENVIRONMENT_NAME: "testenv"
+          EXPERIMENT_NAME: "testexp"
