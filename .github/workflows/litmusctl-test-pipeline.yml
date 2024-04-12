@@ -1,9 +1,12 @@
 name: litmusctl-e2e-Pipeline
 on:
-  workflow_dispatch:
-    inputs:
-      Tag:
-        default: "ci"
+  push:
+    branches:
+      - litmusctl_e2e
+  # workflow_dispatch:
+  #   inputs:
+  #     Tag:
+  #       default: "ci"
 
 # All Environments variables declared and set here.
 env:
