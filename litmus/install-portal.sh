@@ -25,7 +25,7 @@ function install_portal_ns_mode(){
     echo -e "\n---------------Installing Litmus-Portal in Namespace Scope----------\n"
     kubectl create ns ${namespace}
     # Installing CRD's, required for namespaced mode
-    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
+    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/chaoscenter/manifests/litmus-portal-crds.yml
 
     kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/chaoscenter/manifests/litmus-namespaced-scope.yaml -n ${namespace}
     # kubectl apply -f litmus/namespaced-k8s-template.yml -n ${namespace}
