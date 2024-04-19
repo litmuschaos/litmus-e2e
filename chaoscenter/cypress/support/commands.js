@@ -19,9 +19,8 @@ Cypress.Commands.add("requestLogin", (loginName, loginPassword) => {
       username: loginName,
       password: loginPassword,
     },
-  })
-    .its("body")
-    .then((response) => {
+  }).then((response) => {
+      expect(response.status).to.equal(200);
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem('projectID', response.projectID);
     });
