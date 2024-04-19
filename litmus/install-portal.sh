@@ -56,10 +56,20 @@ function wait_for_portal_to_be_ready(){
     verify_pod litmusportal-server ${namespace}
     verify_pod mongo ${namespace}
 
+#    
     # # Images verification
     # verify_deployment_image $version litmusportal-frontend ${namespace}
     # verify_deployment_image $version litmusportal-server ${namespace}
 }
+
+#  installation of mongoDB separately
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+echo -e "\n---------------Installing MongoDB---------\n"
+
+# create a yaml file for mongo values
+
+helm install my-release bitnami/mongodb --values mongo-values.yml -n ${namespace} --create-namespace
 
 if [[ "$installation_mode" == "CS-MODE" ]];then
     install_portal_cs_mode
@@ -71,5 +81,5 @@ else
 fi
 
 wait_for_portal_to_be_ready
-get_mongo_url ${namespace}
+# get_mongo_url ${namespace}
 get_access_point ${namespace} ${accessType}
