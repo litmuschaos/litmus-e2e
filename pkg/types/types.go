@@ -1,5 +1,10 @@
 package types
 
+const (
+	SetupAppInfoIfEmpty    = true
+	SetupAppInfoIfNotEmpty = false
+)
+
 // TestDetails is for collecting all the test-related details
 type TestDetails struct {
 	ExperimentName            string

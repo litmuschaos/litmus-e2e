@@ -105,7 +105,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 	engine.Spec.EngineState = v1alpha1.EngineStateActive
 
 	// Set all environments
-	setEngineVar(engine, testsDetails)
+	setEngineVar(engine, testsDetails, types.SetupAppInfoIfNotEmpty)
 
 	_, err = clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Update(engine)
 	if err != nil {
@@ -257,7 +257,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 }
 
 // setEngineVar setting up variables of engine
-func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails) {
+func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails, setAppInfo bool) {
 
 	// contains all the envs
 	envDetails := ENVDetails{
@@ -275,7 +275,7 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	chaosEngine.ObjectMeta.Namespace = testsDetails.ChaosNamespace
 
 	// If ChaosEngine contain App Info then update it
-	if chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "" {
+	if (chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "") || setAppInfo {
 		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
 		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
 	}
@@ -378,7 +378,7 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 }
 
 // InstallGoChaosEngine installs the given go based chaos engine
-func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets) error {
 
 	//Fetch Engine file
 	res, err := http.Get(testsDetails.EnginePath)
@@ -399,7 +399,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	}
 
 	// Initialise engine
-	setEngineVar(chaosEngine, testsDetails)
+	setEngineVar(chaosEngine, testsDetails, setAppInfo)
 
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)

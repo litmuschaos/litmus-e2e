@@ -21,8 +21,8 @@ func TestReconcileResiliency(t *testing.T) {
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for operator reconcile resiliency
-//Checking for the creation of runner pod for application in same namespace
+// BDD Tests for operator reconcile resiliency
+// Checking for the creation of runner pod for application in same namespace
 var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 	// BDD TEST CASE 1
@@ -109,7 +109,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Creating Chaos-Engine for container-kill
 			By("[Install]: Install Chaos Engine for container-kill")
 			testsDetails.AppLabel = "run=testapp2"
-			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfNotEmpty, clients)
 			Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 			//Checking the runner pod status
@@ -128,7 +128,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			By("[Install]: Install Chaos Engine for pod-delete")
 			testsDetails.AppLabel = "run=testapp1"
 			testsDetails.AppNS = "default"
-			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfNotEmpty, clients)
 			Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 			// Checking the runner pod status

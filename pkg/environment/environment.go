@@ -7,7 +7,7 @@ import (
 	types "github.com/litmuschaos/litmus-e2e/pkg/types"
 )
 
-//GetENV fetches all the env variables from the runner pod
+// GetENV fetches all the env variables from the runner pod
 func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.ExperimentName = expName
 	testDetails.EngineName = engineName
@@ -61,8 +61,8 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 
 	// All Links for running chaos testing
 	testDetails.RbacPath = Getenv("RBAC_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/"+expName+"/rbac.yaml")
-	testDetails.ExperimentPath = Getenv("EXPERIMENT_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/"+expName+"/experiment.yaml")
-	testDetails.EnginePath = Getenv("ENGINE_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/"+expName+"/engine.yaml")
+	testDetails.ExperimentPath = Getenv("EXPERIMENT_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/"+expName+"/fault.yaml")
+	testDetails.EnginePath = Getenv("ENGINE_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/faults/kubernetes/"+expName+"/engine.yaml")
 	testDetails.AnsibleRbacPath = Getenv("ANSIBLE_RBAC_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/"+expName+"/ansible/rbac.yaml")
 	testDetails.AnsibleExperimentPath = Getenv("ANSIBLE_EXPERIMENT_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/"+expName+"/ansible/experiment.yaml")
 	testDetails.AnsibleEnginePath = Getenv("ANSIBLE_ENGINE_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/"+expName+"/ansible/engine.yaml")
