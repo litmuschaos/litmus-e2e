@@ -66,7 +66,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			Expect(err).To(BeNil(), "create testapp2 deployment due to {%v}", err)
 
 			//Waiting for deployment to get ready
-			err = pkg.DeploymentStatusCheck(&testsDetails, "testapp2", "default", clients)
+			err = pkg.DeploymentStatusCheck(&testsDetails, "testapp2", "litmus", clients)
 			Expect(err).To(BeNil(), "Error Timeout due to {%v}", err)
 
 			////////////////////////////////////////////////////////

@@ -16,8 +16,13 @@ RUN apk --update add \
         sshpass\
         build-base
 
-# Update pip version
-RUN python3 -m pip install pygithub 
+# Update pip version and install pygithub in a virtual environment
+RUN python3 -m venv /venv \
+    && source /venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install pygithub \
+    && deactivate
+
 # change default shell from ash to bash
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
  

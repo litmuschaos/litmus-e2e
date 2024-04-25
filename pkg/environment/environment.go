@@ -61,7 +61,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.LibImage = Getenv("LIB_IMAGE", "")
 
 	// All Links for running chaos testing
-	testDetails.RbacPath = Getenv("RBAC_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/"+expName+"/rbac.yaml")
+	testDetails.RbacPath = Getenv("RBAC_PATH", "https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml")
 	testDetails.ExperimentPath = Getenv("EXPERIMENT_PATH", "https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/"+expName+"/fault.yaml")
 	testDetails.EnginePath = Getenv("ENGINE_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/faults/kubernetes/"+expName+"/engine.yaml")
 	testDetails.AnsibleRbacPath = Getenv("ANSIBLE_RBAC_PATH", "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/"+expName+"/ansible/rbac.yaml")

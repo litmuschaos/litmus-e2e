@@ -141,10 +141,14 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	}
 	//Modify Namespace field of the RBAC
 	if rbacNamespace != "" {
-		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
+		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: litmus", "namespace: "+rbacNamespace)
 		if err != nil {
 			return errors.Errorf("Failed to Modify rbac file due to %v", err)
 		}
+	}
+	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "litmus-admin", testsDetails.ExperimentName+"-sa")
+	if err != nil {
+		return errors.Errorf("Failed to Modify rbac file due to %v", err)
 	}
 	log.Info("[RBAC]: Installing RBAC...")
 	//Creating rbac
@@ -472,3 +476,5 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	return nil
 }
+
+
