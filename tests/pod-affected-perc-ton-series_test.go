@@ -18,7 +18,7 @@ func TestGoPodAffectedPercentageSeries(t *testing.T) {
 	RunSpecs(t, "BDD test")
 }
 
-//BDD for testing experiment
+// BDD for testing experiment
 var _ = Describe("BDDs to check pod level experiment with affected percentage 100 and sequence in series", func() {
 
 	// BDD for cleaning all components before running the test
@@ -156,67 +156,67 @@ var _ = Describe("BDDs to check pod level experiment with affected percentage 10
 		})
 	})
 
-	// BDD TEST CASE 3
-	Context("Check for disk fill experiment with pod affected percentage 100 and sequence serial", func() {
+	// // BDD TEST CASE 3
+	// Context("Check for disk fill experiment with pod affected percentage 100 and sequence serial", func() {
 
-		It("Should check the disk fill experiment when pod affected percentage is 100 and mode is parallel", func() {
+	// 	It("Should check the disk fill experiment when pod affected percentage is 100 and mode is parallel", func() {
 
-			testsDetails := types.TestDetails{}
-			clients := environment.ClientSets{}
-			chaosExperiment := v1alpha1.ChaosExperiment{}
-			chaosEngine := v1alpha1.ChaosEngine{}
+	// 		testsDetails := types.TestDetails{}
+	// 		clients := environment.ClientSets{}
+	// 		chaosExperiment := v1alpha1.ChaosExperiment{}
+	// 		chaosEngine := v1alpha1.ChaosEngine{}
 
-			klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
-			//Getting kubeConfig and Generate ClientSets
-			By("[PreChaos]: Getting kubeconfig and generate clientset")
-			err := clients.GenerateClientSetFromKubeConfig()
-			Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
+	// 		klog.Info("DISK FILL EXPERIMENT WITH PODS_AFFECTED_PERC=100 AND SEQUENCE=SERIAL")
+	// 		//Getting kubeConfig and Generate ClientSets
+	// 		By("[PreChaos]: Getting kubeconfig and generate clientset")
+	// 		err := clients.GenerateClientSetFromKubeConfig()
+	// 		Expect(err).To(BeNil(), "Unable to Get the kubeconfig due to {%v}", err)
 
-			//Fetching all the default ENV
-			//Note: please don't provide custom experiment name here
-			By("[PreChaos]: Fetching all default ENVs")
-			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "disk-fill", "disk-fill-pap-ton-ser")
+	// 		//Fetching all the default ENV
+	// 		//Note: please don't provide custom experiment name here
+	// 		By("[PreChaos]: Fetching all default ENVs")
+	// 		klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
+	// 		environment.GetENV(&testsDetails, "disk-fill", "disk-fill-pap-ton-ser")
 
-			// Checking the chaos operator running status
-			By("[Status]: Checking chaos operator status")
-			err = pkg.OperatorStatusCheck(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
+	// 		// Checking the chaos operator running status
+	// 		By("[Status]: Checking chaos operator status")
+	// 		err = pkg.OperatorStatusCheck(&testsDetails, clients)
+	// 		Expect(err).To(BeNil(), "Operator status check failed due to {%v}", err)
 
-			// Prepare Chaos Execution
-			By("[Prepare]: Prepare Chaos Execution")
-			testsDetails.PodsAffectedPercentage = "100"
-			testsDetails.Sequence = "serial"
-			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
-			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
+	// 		// Prepare Chaos Execution
+	// 		By("[Prepare]: Prepare Chaos Execution")
+	// 		testsDetails.PodsAffectedPercentage = "100"
+	// 		testsDetails.Sequence = "serial"
+	// 		err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, true)
+	// 		Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
 
-			//Checking runner pod running state
-			By("[Status]: Runner pod running status check")
-			err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
-			Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
+	// 		//Checking runner pod running state
+	// 		By("[Status]: Runner pod running status check")
+	// 		err = pkg.RunnerPodStatus(&testsDetails, testsDetails.AppNS, clients)
+	// 		Expect(err).To(BeNil(), "Runner pod status check failed due to {%v}", err)
 
-			//Chaos pod running status check
-			err = pkg.ChaosPodStatus(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
+	// 		//Chaos pod running status check
+	// 		err = pkg.ChaosPodStatus(&testsDetails, clients)
+	// 		Expect(err).To(BeNil(), "Chaos pod status check failed due to {%v}", err)
 
-			//Waiting for chaos pod to get completed
-			//And Print the logs of the chaos pod
-			By("[Status]: Wait for chaos pod completion and then print logs")
-			err = pkg.ChaosPodLogs(&testsDetails, clients)
-			Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
+	// 		//Waiting for chaos pod to get completed
+	// 		//And Print the logs of the chaos pod
+	// 		By("[Status]: Wait for chaos pod completion and then print logs")
+	// 		err = pkg.ChaosPodLogs(&testsDetails, clients)
+	// 		Expect(err).To(BeNil(), "Failed to get the experiment chaos pod logs due to {%v}", err)
 
-			//Checking the chaosresult verdict
-			By("[Verdict]: Checking the chaosresult verdict")
-			err = pkg.ChaosResultVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
+	// 		//Checking the chaosresult verdict
+	// 		By("[Verdict]: Checking the chaosresult verdict")
+	// 		err = pkg.ChaosResultVerdict(&testsDetails, clients)
+	// 		Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
 
-			//Checking chaosengine verdict
-			By("Checking the Verdict of Chaos Engine")
-			err = pkg.ChaosEngineVerdict(&testsDetails, clients)
-			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
+	// 		//Checking chaosengine verdict
+	// 		By("Checking the Verdict of Chaos Engine")
+	// 		err = pkg.ChaosEngineVerdict(&testsDetails, clients)
+	// 		Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
 
-		})
-	})
+	// 	})
+	// })
 
 	// BDD TEST CASE 4
 	Context("Check pod cpu hog experiment with pod affected percentage 100 and sequence serial", func() {

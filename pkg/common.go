@@ -60,7 +60,7 @@ func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.Cha
 
 	//Installing Chaos Engine
 	log.Info("[Install]: Installing chaos engine")
-	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfNotEmpty, clients)
+	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 	if err != nil {
 		return errors.Errorf("Failed to install chaosengine due to {%v}", err)
 	}

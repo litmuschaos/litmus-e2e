@@ -279,7 +279,7 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	chaosEngine.ObjectMeta.Namespace = testsDetails.ChaosNamespace
 
 	// If ChaosEngine contain App Info then update it
-	if (chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "") || setAppInfo {
+	if setAppInfo {
 		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
 		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
 		chaosEngine.Spec.Appinfo.AppKind = testsDetails.Appkind
@@ -476,5 +476,6 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	return nil
 }
+
 
 

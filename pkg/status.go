@@ -247,6 +247,7 @@ func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environmen
 
 // WaitForChaosResultCompletion waits for chaosresult state to get completed
 func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	isError := false
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
@@ -260,10 +261,18 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 				klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 				return errors.Errorf("ChaosResult is not yet completed")
 			}
+			if string(chaosResult.Status.ExperimentStatus.Phase) == "Error" {
+				isError = true
+				return nil
+			}
 			klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 
 			return nil
 		})
+
+	if isError {
+		return errors.Errorf("the chaos result status is 'Error'")
+	}
 
 	return err
 }
