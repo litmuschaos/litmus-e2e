@@ -144,7 +144,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfNotEmpty, clients)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
 
 			//Checking runner pod running state

@@ -15,6 +15,7 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.ChaosNamespace = Getenv("CHAOS_NAMESPACE", "litmus")
 	testDetails.AppNS = Getenv("APP_NS", "litmus")
 	testDetails.AppLabel = Getenv("APP_LABEL", "run=nginx")
+	testDetails.Appkind = Getenv("APP_KIND", "deployment")
 	testDetails.JobCleanUpPolicy = Getenv("JOB_CLEANUP_POLICY", "retain")
 	testDetails.AnnotationCheck = Getenv("ANNOTATION_CHECK", "false")
 	testDetails.ApplicationNodeName = Getenv("APPLICATION_NODE_NAME", "")

@@ -278,6 +278,7 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	if (chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "") || setAppInfo {
 		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
 		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
+		chaosEngine.Spec.Appinfo.AppKind = testsDetails.Appkind
 	}
 	if testsDetails.ChaosServiceAccount != "" {
 		chaosEngine.Spec.ChaosServiceAccount = testsDetails.ChaosServiceAccount

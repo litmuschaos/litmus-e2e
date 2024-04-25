@@ -20,6 +20,7 @@ type TestDetails struct {
 	AnsibleExperimentImage    string
 	AppNS                     string
 	AppLabel                  string
+	Appkind                   string
 	JobCleanUpPolicy          string
 	AnnotationCheck           string
 	ApplicationNodeName       string
@@ -69,3 +70,4 @@ type TestDetails struct {
 	Args                      string
 	Command                   string
 }
+
