@@ -29,7 +29,7 @@ import (
 
 var err error
 
-//CreateChaosResource creates litmus components with given inputs
+// CreateChaosResource creates litmus components with given inputs
 func CreateChaosResource(testsDetails *types.TestDetails, fileData []byte, namespace string, clients environment.ClientSets) error {
 
 	decoder := yamlutil.NewYAMLOrJSONDecoder(bytes.NewReader(fileData), 100)
@@ -105,7 +105,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 	engine.Spec.EngineState = v1alpha1.EngineStateActive
 
 	// Set all environments
-	setEngineVar(engine, testsDetails)
+	setEngineVar(engine, testsDetails, types.SetupAppInfoIfNotEmpty)
 
 	_, err = clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Update(engine)
 	if err != nil {
@@ -131,7 +131,7 @@ func UpdateExperiment(testsDetails *types.TestDetails, clients environment.Clien
 	return nil
 }
 
-//InstallGoRbac installs and configure rbac for running go based chaos
+// InstallGoRbac installs and configure rbac for running go based chaos
 func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error {
 
 	//Fetch RBAC file
@@ -141,10 +141,14 @@ func InstallGoRbac(testsDetails *types.TestDetails, rbacNamespace string) error 
 	}
 	//Modify Namespace field of the RBAC
 	if rbacNamespace != "" {
-		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: default", "namespace: "+rbacNamespace)
+		err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "namespace: litmus", "namespace: "+rbacNamespace)
 		if err != nil {
 			return errors.Errorf("Failed to Modify rbac file due to %v", err)
 		}
+	}
+	err = EditFile("/tmp/"+testsDetails.ExperimentName+"-sa.yaml", "litmus-admin", testsDetails.ExperimentName+"-sa")
+	if err != nil {
+		return errors.Errorf("Failed to Modify rbac file due to %v", err)
 	}
 	log.Info("[RBAC]: Installing RBAC...")
 	//Creating rbac
@@ -214,7 +218,7 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 	}
 }
 
-//InstallGoChaosExperiment installs the given go based chaos experiment
+// InstallGoChaosExperiment installs the given go based chaos experiment
 func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
 
 	//Fetch Experiment file
@@ -257,7 +261,7 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 }
 
 // setEngineVar setting up variables of engine
-func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails) {
+func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails, setAppInfo bool) {
 
 	// contains all the envs
 	envDetails := ENVDetails{
@@ -275,9 +279,10 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	chaosEngine.ObjectMeta.Namespace = testsDetails.ChaosNamespace
 
 	// If ChaosEngine contain App Info then update it
-	if chaosEngine.Spec.Appinfo.Appns != "" && chaosEngine.Spec.Appinfo.Applabel != "" {
+	if setAppInfo {
 		chaosEngine.Spec.Appinfo.Appns = testsDetails.AppNS
 		chaosEngine.Spec.Appinfo.Applabel = testsDetails.AppLabel
+		chaosEngine.Spec.Appinfo.AppKind = testsDetails.Appkind
 	}
 	if testsDetails.ChaosServiceAccount != "" {
 		chaosEngine.Spec.ChaosServiceAccount = testsDetails.ChaosServiceAccount
@@ -377,8 +382,8 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	}
 }
 
-//InstallGoChaosEngine installs the given go based chaos engine
-func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+// InstallGoChaosEngine installs the given go based chaos engine
+func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets) error {
 
 	//Fetch Engine file
 	res, err := http.Get(testsDetails.EnginePath)
@@ -399,7 +404,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	}
 
 	// Initialise engine
-	setEngineVar(chaosEngine, testsDetails)
+	setEngineVar(chaosEngine, testsDetails, setAppInfo)
 
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)
@@ -416,7 +421,7 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	return nil
 }
 
-//InstallLitmus installs the latest version of litmus
+// InstallLitmus installs the latest version of litmus
 func InstallLitmus(testsDetails *types.TestDetails) error {
 
 	log.Info("Installing Litmus ...")
@@ -424,7 +429,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Failed to fetch litmus operator file due to %v", err)
 	}
 	log.Info("Updating ChaosOperator Image ...")
-	if err := EditFile("install-litmus.yaml", "image: litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
+	if err := EditFile("install-litmus.yaml", "image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:latest", "image: "+testsDetails.OperatorImage); err != nil {
 		return errors.Errorf("Unable to update operator image due to %v", err)
 
 	}
@@ -432,7 +437,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Unable to update image pull policy due to %v", err)
 	}
 	log.Info("Updating Chaos Runner Image ...")
-	if err := EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos/chaos-runner:latest\"", "value: '"+testsDetails.RunnerImage+"'"); err != nil {
+	if err := EditKeyValue("install-litmus.yaml", "CHAOS_RUNNER_IMAGE", "value: \"litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:latest\"", "value: '"+testsDetails.RunnerImage+"'"); err != nil {
 		return errors.Errorf("Unable to update runner image due to %v", err)
 	}
 	//Creating engine
@@ -446,7 +451,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 	return nil
 }
 
-//InstallAdminRbac installs admin rbac to run chaos
+// InstallAdminRbac installs admin rbac to run chaos
 func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	//Fetch RBAC file
@@ -471,3 +476,6 @@ func InstallAdminRbac(testsDetails *types.TestDetails) error {
 
 	return nil
 }
+
+
+

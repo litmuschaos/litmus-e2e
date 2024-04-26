@@ -12,7 +12,7 @@ import (
 	"k8s.io/klog"
 )
 
-//RunnerPodStatus will check the runner pod running state
+// RunnerPodStatus will check the runner pod running state
 func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, clients environment.ClientSets) error {
 
 	//Fetching the runner pod and Checking if it gets in Running state or not
@@ -47,7 +47,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 // CheckRunnerPodCreation will check for the create of runner pod
 func CheckRunnerPodCreation(engineName, runnerNS string, clients environment.ClientSets) error {
 	err := retry.
-		Times(uint(10 / 2)).
+		Times(uint(20 / 2)).
 		Wait(time.Duration(2) * time.Second).
 		Try(func(attempt uint) error {
 			runner, err := clients.KubeClient.CoreV1().Pods(runnerNS).Get(engineName+"-runner", metav1.GetOptions{})
@@ -65,7 +65,7 @@ func CheckRunnerPodCreation(engineName, runnerNS string, clients environment.Cli
 	return err
 }
 
-//DeploymentStatusCheck checks running status of deployment with deployment name and namespace
+// DeploymentStatusCheck checks running status of deployment with deployment name and namespace
 func DeploymentStatusCheck(testsDetails *types.TestDetails, deploymentName, deploymentNS string, clients environment.ClientSets) error {
 
 	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
@@ -85,7 +85,7 @@ func DeploymentStatusCheck(testsDetails *types.TestDetails, deploymentName, depl
 	return nil
 }
 
-//OperatorStatusCheck checks the running status of chaos operator
+// OperatorStatusCheck checks the running status of chaos operator
 func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(testsDetails.ChaosNamespace).Get(testsDetails.OperatorName, metav1.GetOptions{})
 
@@ -106,7 +106,7 @@ func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.Cl
 	return nil
 }
 
-//DeploymentCleanupCheck checks the termination of deployment
+// DeploymentCleanupCheck checks the termination of deployment
 func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName string, clients environment.ClientSets) error {
 
 	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(testsDetails.AppNS).Get(deploymentName, metav1.GetOptions{})
@@ -127,7 +127,7 @@ func DeploymentCleanupCheck(testsDetails *types.TestDetails, deploymentName stri
 	return nil
 }
 
-//PodStatusCheck checks the pod running status
+// PodStatusCheck checks the pod running status
 func PodStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	PodList, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).List(metav1.ListOptions{LabelSelector: testsDetails.AppLabel})
 	if err != nil {
@@ -200,7 +200,7 @@ func ChaosPodStatus(testsDetails *types.TestDetails, clients environment.ClientS
 	return nil
 }
 
-//WaitForEngineStatus waits for engine state to get completed
+// WaitForEngineStatus waits for engine state to get completed
 func WaitForEngineStatus(testsDetails *types.TestDetails, clients environment.ClientSets, status string) error {
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
@@ -222,7 +222,7 @@ func WaitForEngineStatus(testsDetails *types.TestDetails, clients environment.Cl
 	return err
 }
 
-//WaitForRunnerCompletion waits for runner pod completion
+// WaitForRunnerCompletion waits for runner pod completion
 func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
@@ -245,8 +245,9 @@ func WaitForRunnerCompletion(testsDetails *types.TestDetails, clients environmen
 	return err
 }
 
-//WaitForChaosResultCompletion waits for chaosresult state to get completed
+// WaitForChaosResultCompletion waits for chaosresult state to get completed
 func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients environment.ClientSets) error {
+	isError := false
 	err := retry.
 		Times(uint(testsDetails.Duration / testsDetails.Delay)).
 		Wait(time.Duration(testsDetails.Delay) * time.Second).
@@ -260,10 +261,18 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 				klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 				return errors.Errorf("ChaosResult is not yet completed")
 			}
+			if string(chaosResult.Status.ExperimentStatus.Phase) == "Error" {
+				isError = true
+				return nil
+			}
 			klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 
 			return nil
 		})
+
+	if isError {
+		return errors.Errorf("the chaos result status is 'Error'")
+	}
 
 	return err
 }

@@ -20,7 +20,7 @@ func TestGoMemoryHog(t *testing.T) {
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for pod-memory-hog experiment
+// BDD Tests for pod-memory-hog experiment
 var _ = Describe("BDD of pod-memory-hog experiment", func() {
 
 	// BDD TEST CASE 1

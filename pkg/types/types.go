@@ -1,5 +1,10 @@
 package types
 
+const (
+	SetupAppInfoIfEmpty    = true
+	SetupAppInfoIfNotEmpty = false
+)
+
 // TestDetails is for collecting all the test-related details
 type TestDetails struct {
 	ExperimentName            string
@@ -15,6 +20,7 @@ type TestDetails struct {
 	AnsibleExperimentImage    string
 	AppNS                     string
 	AppLabel                  string
+	Appkind                   string
 	JobCleanUpPolicy          string
 	AnnotationCheck           string
 	ApplicationNodeName       string
@@ -64,3 +70,4 @@ type TestDetails struct {
 	Args                      string
 	Command                   string
 }
+

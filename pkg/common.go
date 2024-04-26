@@ -38,7 +38,7 @@ func Kubectl(command ...string) error {
 	return nil
 }
 
-//PrepareChaos install all the Chaos resourses like rbac, experiment and engine
+// PrepareChaos install all the Chaos resourses like rbac, experiment and engine
 func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, chaosEngine *v1alpha1.ChaosEngine, clients environment.ClientSets, annotation bool) error {
 
 	testsDetails.AnnotationCheck = strconv.FormatBool(annotation)
@@ -60,7 +60,7 @@ func PrepareChaos(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.Cha
 
 	//Installing Chaos Engine
 	log.Info("[Install]: Installing chaos engine")
-	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, clients)
+	err = InstallGoChaosEngine(testsDetails, chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 	if err != nil {
 		return errors.Errorf("Failed to install chaosengine due to {%v}", err)
 	}

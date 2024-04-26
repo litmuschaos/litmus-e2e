@@ -26,7 +26,7 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 		return errors.Errorf("Failed to get uid from experiment label,err: %v", err)
 	}
 	if err = printHelperPodLogs(testsDetails.ExperimentName, testsDetails.ChaosNamespace, uid, clients); err != nil {
-		return errors.Errorf("Failed to get the helper pod", err)
+		return errors.Errorf("failed to get the helper pod, err: %v", err)
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func printChaosPodLogs(testsDetails *types.TestDetails, clients environment.Clie
 	return nil
 }
 
-//printHelperPodLogs will print the helper pod logs when the experiment is not passed
+// printHelperPodLogs will print the helper pod logs when the experiment is not passed
 func printHelperPodLogs(experimentName, namespace, UID string, clients environment.ClientSets) error {
 
 	podList, err := clients.KubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{})
@@ -85,13 +85,13 @@ func printHelperPodLogs(experimentName, namespace, UID string, clients environme
 	return nil
 }
 
-//getPodLogs will print the logs of the given pod
+// getPodLogs will print the logs of the given pod
 func getPodLogs(podName, namespace string, clients environment.ClientSets) error {
 
 	req := clients.KubeClient.CoreV1().Pods(namespace).GetLogs(podName, &v1.PodLogOptions{})
 	readCloser, err := req.Stream()
 	if err != nil {
-		return errors.Errorf("Failed to print the logs of %v pod", podName, err)
+		return errors.Errorf("failed to print the logs of '%v' pod, err: %v", podName, err)
 	}
 	buf := new(bytes.Buffer)
 	_, err = io.Copy(buf, readCloser)

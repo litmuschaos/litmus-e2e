@@ -19,8 +19,8 @@ func TestAdminModeTest(t *testing.T) {
 	RunSpecs(t, "BDD test")
 }
 
-//BDD Tests for testing admin mode functionality
-//Checking for the creation of runner pod for application in same namespace
+// BDD Tests for testing admin mode functionality
+// Checking for the creation of runner pod for application in same namespace
 var _ = Describe("BDD of operator reconcile resiliency check", func() {
 
 	// BDD TEST CASE 1
@@ -75,7 +75,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 			Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 			//Checking runner pod running state
@@ -144,7 +144,7 @@ var _ = Describe("BDD of operator reconcile resiliency check", func() {
 			//Installing Chaos Engine for container-kill
 			By("[Install]: Installing chaos engine")
 			testsDetails.ChaosServiceAccount = "litmus-admin"
-			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+			err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
 
 			//Checking runner pod running state
