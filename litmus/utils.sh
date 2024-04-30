@@ -87,7 +87,7 @@ function verify_deployment(){
     deployment=$1
     namespace=$2
 
-    RETRY=0; RETRY_MAX=40;
+    RETRY=0; RETRY_MAX=10;
 
     while [[ $RETRY -lt $RETRY_MAX ]]; do
         DEPLOYMENT_LIST=$(eval "kubectl get deployments -n ${namespace} | awk '/$deployment /'" | awk '{print $1}') # list of multiple deployments when starting with the same name

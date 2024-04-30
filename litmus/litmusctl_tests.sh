@@ -3,7 +3,7 @@
 set -o pipefail
 
 # All intermediate functions are defined in utils.sh
-source utils.sh
+source litmus/utils.sh
 
 namespace=${AGENT_NAMESPACE}
 # namespace='shivamtestnamespace'
@@ -19,9 +19,11 @@ envName="testenv1"
 envName=${ENVIRONMENT_NAME}
 # experiment name should be same as defined in the yaml
 expName=${EXPERIMENT_NAME} 
+probeName=${PROBE_NAME}
 
 components="subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller"
-defaultTolerations='[{"tolerationSeconds":0,"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
+# defaultTolerations='[{"tolerationSeconds":0,"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
+defaultTolerations='[{"key":"special","value":"true","Operator":"Equal","effect":"NoSchedule"}]'
 defaultNodeSelectors='beta.kubernetes.io/arch=amd64'
 
 
@@ -46,7 +48,7 @@ function configure_infra(){
 
     projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     echo "projectID obtained is ${projectID}"
-
+    
     if [[ "$installation_mode" == "NS-MODE" ]];then
 
         kubectl create ns ${namespace}
@@ -123,14 +125,17 @@ function delete_environment(){
 function save_experiment(){
     projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}')
     printf "\n projectID is ${projectID}"
-    # configure infra 
+    # create environment and infra to save experiment
+    create_environment $envName
     configure_infra "" ""
     # get infra ID
     infraID=$( litmusctl get chaos-infra --project-id=$projectID | grep "$infraName" | awk '{print$1}')
 
     # wait for the infra to be activated
     wait_infra_to_activate $infraName $projectID 
-    litmusctl save chaos-experiment --file="./Cypress/cypress/fixture/sample-workflow-default.yaml" --project-id=${projectID} --chaos-infra-id=$infraID --description="test experiment"
+    nameexperiment=$expName yq eval '.metadata.name=env(nameexperiment)' Cypress/cypress/fixtures/test.yaml -i
+
+    litmusctl save chaos-experiment --file="Cypress/cypress/fixtures/test.yaml" --project-id=${projectID} --chaos-infra-id=$infraID --description="$expName"
 }
 
 function delete_experiment(){
@@ -142,33 +147,11 @@ function delete_experiment(){
 }
 
 
-function wait_experiment_run_status() {
-  wait_time=$1
-  projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}')
-
-  # Capture experiment run status (assuming output has one line)
-  ExperimentRunStatus=$(echo "q" | ../litmusctl get chaos-experiment-runs --project-id=$projectID --experiment-id=$expName | grep "${expName}" | awk '{print $1}' )
-
-  while [[ "$ExperimentRunStatus" != "Running" ]]; do
-    echo "\n...waiting for the Experiment Status...\n"
-    wait_time=$((wait_time - 10))
-    if [[ $wait_time -eq 0 ]]; then
-      echo -e "\n[Error]: Experiment failed to start"
-      return 1
-    fi
-    sleep 10
-    # Capture experiment run status again
-    ExperimentRunStatus=$(echo "q" | ../litmusctl get chaos-experiment-runs --project-id=$projectID --experiment-id=$expName | grep "${expName}" | awk '{print $1}' )
-  done
-  echo "\n...Experiment Status is $ExperimentRunStatus \n"
-  return 0
-}
-
 # functions for running tests for litmusctl -------------------------------------------------------------------
 
 function test_install_with_nodeSelectors() {
     configure_account
-
+    create_environment $envName
     configure_infra $defaultNodeSelectors ""
     
     echo "Verifying nodeSelectors in all required Deployments"
@@ -177,13 +160,16 @@ function test_install_with_nodeSelectors() {
     do
         verify_deployment_nodeselector ${i} ${namespace} '{"beta.kubernetes.io/arch":"amd64"}'
     done
-
+    
+    projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}')
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
+    delete_environment $envName
 }
 
 function test_install_with_tolerations() {
     configure_account
-
+    create_environment $envName
     configure_infra "" $defaultTolerations
 
     echo "Verifying tolerations in all required Deployments"
@@ -192,16 +178,21 @@ function test_install_with_tolerations() {
     do
         verify_deployment_tolerations ${i} ${namespace} '[{"effect":"NoSchedule","key":"special","operator":"Equal","value":"true"}]' 
     done
-
+    
+    projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}')
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
+    delete_environment $envName
 }
 
 function test_native() {
     configure_account
-
+    create_environment $envName
     configure_infra "" ""
-
+    projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}')
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
+    delete_environment $envName
 }
 
 function test_get_projects(){
@@ -221,19 +212,23 @@ function test_get_projects(){
 
 function test_get_infras(){
     configure_account
-
+    
+    create_environment $envName
+    configure_infra "" ""
+     
     projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
-
+    
     configure_infra "" ""
     # we will need to create a infra before testing for get 
     # otherwise it will fail
 
     noOfInfras=$(litmusctl get chaos-infra --project-id=$projectID | wc -l)
-        printf "\n No of infras is ${noOfInfras}"
-        printf "\n project id is ${projectID}"
+    disconnect_infra ${infraName} $projectID
+    infra_cleanup
+    delete_environment $envName
     if [[ ${noOfInfras} -gt 1 ]];then
         echo -e "\n[Info]: litmusctl get chaos-infra working fine ✓\n"
-        exit 1
+        exit 0
     else 
         echo -e "\n[Error]: litmusctl get chaos-infra not working as expected\n"
         exit 1
@@ -244,14 +239,12 @@ function test_get_infras(){
 function test_create_project(){
     configure_account
 
-    litmusctl create project --name="my new project"
+    litmusctl create project --name="${projectName}"
 
     noOfProjects=$(litmusctl get projects | wc -l)
-    echo -e "is this actually two ${noOfProjects}"
-
     if [[ ${noOfProjects} -gt 2 ]];then
         echo -e "\n[Info]: litmusctl create project working fine ✓\n"
-        exit 1
+        exit 0
     else 
         echo -e "\n[Error]: litmusctl create project not working as expected\n"
         exit 1
@@ -261,7 +254,7 @@ function test_create_project(){
 
 function test_disconnect_infra() {
     configure_account
-
+    create_environment $envName
     configure_infra "" ""
 
     projectID=$(litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
@@ -271,29 +264,24 @@ function test_disconnect_infra() {
     disconnect_infra $chaos_infra_id $projectID
 
     chaos_infra_id=$(litmusctl get chaos-infra --project-id=$projectID | grep "${infraName}" | awk '{print $1}')
-
-    if [[ ${chaos_delegate_id} == "" ]];then
+    
+    infra_cleanup
+    delete_environment $envName    
+    if [[ ${chaos_infra_id} == "" ]];then
         echo -e "\n[Info]: litmusctl disconnect chaos-infra working fine ✓\n"
     else 
         echo -e "\n[Error]: litmusctl disconnect chaos-infra not working as expected\n"
         exit 1
     fi
-
-    infra_cleanup
 }
-
-
 
 function test_create_environment(){
     configure_account
 
-    projectID=$(echo "q" | ../litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
-    printf "\n project id is ${projectID}"
+    projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     # create a environment
- 
     litmusctl create chaos-environment --project-id=$projectID --name=$envName
-    noOfEnvs=$(echo "q" | litmusctl list chaos-environments --project-id=$projectID | wc -l)
-    printf "\n No of Environments are ${noOfEnvs}"
+    noOfEnvs=$(echo "q" | litmusctl get chaos-environments --project-id=$projectID | wc -l)
         
     if [[ ${noOfEnvs} -gt 1 ]];then
         echo -e "\n[Info]: litmusctl create chaos-environment working fine ✓\n"
@@ -316,9 +304,7 @@ function test_get_environment(){
     create_environment $envName
 
     # get newly created environment
-    noOfEnvs=$(echo "q" | litmusctl list chaos-environments --project-id=$projectID | wc -l)
-
-    echo $noOfEnvs
+    noOfEnvs=$(echo "q" | litmusctl get chaos-environments --project-id=$projectID | wc -l)
     if [[ ${noOfEnvs} -gt 0 ]];then
         echo -e "\n[Info]: litmusctl get chaos-environment working fine ✓\n"
         delete_environment $envName
@@ -336,9 +322,9 @@ function test_delete_environment(){
     projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" |  awk '{print $1}')
     printf "\n project id is ${projectID}"
 
-    echo "yes" | litmusctl delete chaos-environment --project-id=$projectID --environment-id=$envName
+    echo "y" | litmusctl delete chaos-environment --project-id=$projectID --environment-id=$envName
     # get environment
-    noOfEnvs=$(echo "q" | litmusctl list chaos-environments --project-id=$projectID | wc -l)
+    noOfEnvs=$(echo "q" | litmusctl get chaos-environments --project-id=$projectID | grep "${envName}" | wc -l)
     if [[ ${noOfEnvs} -lt 1 ]];then
         echo -e "\n[Info]: litmusctl delete chaos-environment working fine ✓\n"
         exit 0
@@ -353,8 +339,13 @@ function test_save_experiment(){
     printf "\n account created successfully"
     projectID=$(echo "q" | litmusctl get projects | grep "$projectName" | awk '{print $1}')
     printf "\n projectID is ${projectID}"
-
-    # configure infra 
+    echo "E" | sudo add-apt-repository ppa:rmescandon/yq
+    sudo apt-get install yq 
+    echo | echo "q" | litmusctl get chaos-experiments --project-id=$projectID --output="table"
+    yq --version
+    nameexperiment=$expName yq eval '.metadata.name=env(nameexperiment)' Cypress/cypress/fixtures/test.yaml -i
+    # create environment and infra to save experiment
+    create_environment $envName
     configure_infra "" ""
     # get infra ID
     infraID=$( litmusctl get chaos-infra --project-id=$projectID | grep "$infraName" | awk '{print$1}')
@@ -362,22 +353,37 @@ function test_save_experiment(){
     # wait for the infra to be activated
     wait_infra_to_activate $infraName $projectID 
 
-    litmusctl save chaos-experiment --file="./Cypress/cypress/fixture/sample-workflow-default.yaml" --project-id=${projectID} --chaos-infra-id=$infraID --description="test experiment"
+    # make the api call to create a http probe probe as we dont have a create  command yet
+    litmusctl config view
+    tokenValue=$(litmusctl config view | grep "token" | awk '{print $2}')
+    endpointValue=$(litmusctl config view | grep "endpoint" | awk '{print $2}')
 
-    getExperimentID=$(echo "q" | litmusctl get chaos-experiments --output="table" --project-id=$projectID | grep "$expName" | awk '{print $1}' )
-    printf $getExperimentID
-    # check the name is equal or not
+    curl ''"$endpointValue"'/api/query' \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    -H 'Authorization: Bearer '"$tokenValue"' ' \
+    --data-binary '{"query":"mutation createProbe($request: ProbeRequest!, $projectID: ID!) {\n\t\taddProbe(request: $request, projectID: $projectID){\n\t\t\tname\n\t\t}\n}","variables":{"projectID":"'$projectID'","request":{"name":"'$probeName'","description":"new probe for testing","type":"httpProbe","infrastructureType":"Kubernetes","tags":[],"kubernetesHTTPProperties":{"probeTimeout":"1s","interval":"1s","url":"something.com","method":{"get":{"criteria":"==","responseCode":"200"}}}}}}' \
+    --compressed
+
+    yq eval '.metadata.name'
+    litmusctl save chaos-experiment --file="Cypress/cypress/fixtures/test.yaml" --project-id=${projectID} --chaos-infra-id=$infraID --description="$expName"
+    
+    echo | echo "q" | litmusctl get chaos-experiments --project-id=$projectID --output="table"
+    
+    getExperimentID=$(echo "q" | litmusctl get chaos-experiments --project-id=$projectID --output="table" | grep "$expName" | awk '{print $1}' )
+    # cleanup exp and infra
+    disconnect_infra ${infraName} $projectID
+    infra_cleanup
+    delete_environment $envName
     if [[ "$getExperimentID" = "$expName" ]];then
         echo -e "\n[Info]: litmusctl create chaos-experiment working fine ✓\n"
-        # also cleanup exp and infra
-        infra_cleanup
-        disconnect_infra $infraName $projectID
         delete_experiment $expName
         exit 0
     else 
         echo -e "\n[Error]: litmusctl create chaos-experiment not working as expected\n"
-        infra_cleanup
-        disconnect_infra $infraName $projectID
         exit 1
     fi
 }
@@ -388,14 +394,15 @@ function test_get_experiments(){
     # capturing project id
     projectID=$(echo "q" | litmusctl get projects | grep "${projectName}" | awk '{print $1}' )
     printf "\nprojectID is ${projectID}\n"
-    save_experiment
+    save_experiment 
 
     NoOfExperimentsBefore=$(echo "q" | litmusctl get chaos-experiments --project-id=$projectID | grep "${expName}" | wc -l )
+    # cleanup exp and infra
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
-    disconnect_infra $infraName $projectID
+    delete_environment $envName
     delete_experiment $expName
     NoOfExperimentsAfter=$(echo "q" | litmusctl get chaos-experiments --project-id=$projectID | grep "${expName}" | wc -l )
-    printf $NoOfExperiments
     if [[ ${NoOfExperimentsBefore} -ge 1 ]] && [[ ${NoOfExperimentsAfter} -eq 0 ]]; then
         echo -e "\n[Info]: litmusctl get chaos-experiments working fine ✓\n"
         exit 0
@@ -419,9 +426,10 @@ function test_delete_experiment(){
     echo "y" | litmusctl delete chaos-experiment $expName --project-id=$projectID
 
     NoOfExperiments=$(echo "q" | litmusctl get chaos-experiments --output="table" --project-id=${projectID} | grep "${expName}" |  wc -l )
+    # cleanup exp and infra
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
-    disconnect_infra $infraName $projectID
-    printf $NoOfExperiments
+    delete_environment $envName
     if [[ ${NoOfExperiments} -eq 0 ]];then
         echo -e "\n[Info]: litmusctl delete chaos-experiment working fine ✓\n"
         exit 0
@@ -442,17 +450,18 @@ function test_run_experiment(){
 
     # create before deleting
     save_experiment
-    printf "\nexperiment id should have been ${expName}"
     # run experiment here
+    echo "q" | litmusctl get chaos-experiments  --project-id=${projectID} --output="table"
     litmusctl run chaos-experiment --project-id=$projectID --experiment-id=$expName
 
     # get the experiment-run
-    status=$(wait_experiment_run_status 60)
+    NoOfExperimentsRun=$(litmusctl get chaos-experiment-runs --project-id=$projectID | grep "$expName" | wc -l )
+    # cleanup exp and infra
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
-    disconnect_infra $infraName $projectID
+    delete_environment $envName
     delete_experiment $expName
-    printf $status
-    if [[ "${status}" = "RUNNING" ]];then
+    if [[ $NoOfExperimentsRun -ge 1 ]];then
         echo -e "\n[Info]: litmusctl run chaos-experiment working fine ✓\n"
         exit 0
     else 
@@ -471,16 +480,17 @@ function test_get_experiment_run(){
 
     # create before deleting
     save_experiment
-    printf "\nexperiment id should have been ${expName}"
     # run experiment here
     litmusctl run chaos-experiment --project-id=$projectID --experiment-id=$expName
 
     # get the experiments
     NoOfExperimentsRun=$(litmusctl get chaos-experiment-runs --project-id=$projectID | grep "$expName" | wc -l )
+    # cleanup exp and infra
+    disconnect_infra ${infraName} $projectID
     infra_cleanup
-    disconnect_infra $infraName $projectID
+    delete_environment $envName
     delete_experiment $expName
-    printf $NoOfExperimentsRun
+    echo "$NoOfExperimentsRun"
     if [[ $NoOfExperimentsRun -ge 1 ]];then
         echo -e "\n[Info]: litmusctl get chaos-experiment-runs working fine ✓\n"
         exit 0

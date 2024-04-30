@@ -14,6 +14,7 @@ function install_portal_cs_mode() {
 
     echo -e "\n---------------Installing Litmus-Portal in Cluster Scope----------\n"
     curl https://raw.githubusercontent.com/litmuschaos/litmus/master/chaoscenter/manifests/litmus-cluster-scope.yaml --output litmus-portal-setup.yml
+
     # manifest_image_update $version litmus/cluster-k8s-manifest.yml
 
     kubectl apply -f litmus-portal-setup.yml
@@ -69,7 +70,7 @@ echo -e "\n---------------Installing MongoDB---------\n"
 
 # create a yaml file for mongo values
 
-helm install my-release bitnami/mongodb --values mongo-values.yml -n ${namespace} --create-namespace
+helm install my-release bitnami/mongodb --values litmus/mongo-values.yml -n ${namespace} --create-namespace
 
 if [[ "$installation_mode" == "CS-MODE" ]];then
     install_portal_cs_mode
