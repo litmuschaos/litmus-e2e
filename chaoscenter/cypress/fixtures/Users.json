@@ -1,0 +1,16 @@
+{
+    "user1": {
+      "username": "user1",
+      "password": "user1",
+      "role": "user",
+      "email": "user1@litmus.com",
+      "name": "Test Account 1"
+    },
+    "user2": {
+        "username": "user2",
+        "password": "user2",
+        "role": "user",
+        "email": "user2@litmus.com",
+        "name": "Test Account 2"
+    }
+}
