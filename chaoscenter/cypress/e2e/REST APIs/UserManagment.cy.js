@@ -84,6 +84,26 @@ describe('Test Cases for User-Management', () => {
     it('Disable user', () => {
         const accessToken = localStorage.getItem('accessToken');
 
+        //negative test case for disable user
+        const disable_payload1 = {
+            username: '123',
+            isDeactivate: true
+          };
+        
+        cy.request({
+        method: 'POST',
+        url: '/auth/update/state', 
+        failOnStatusCode: false,
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        },
+        body: disable_payload1,
+        }).then((response) => {
+            expect(response.body.error).to.equal('user does not exist');
+        });
+
+
+        //disable user
         const disable_payload = {
             username: user.username,
             isDeactivate: true

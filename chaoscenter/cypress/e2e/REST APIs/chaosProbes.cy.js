@@ -15,7 +15,7 @@ describe('Testing http chaos Probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                  name: "exp1",
+                  name: "exp1111",
                   description: '',
                   tags: [],
                   type: 'httpProbe',
@@ -45,7 +45,7 @@ describe('Testing http chaos Probes', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.addProbe.name).to.equal("exp1");
+            expect(response.body.data.addProbe.name).to.equal("exp1111");
         });
     });
 
@@ -59,7 +59,7 @@ describe('Testing http chaos Probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                  name: "exp1",
+                  name: "exp1111",
                   description: '',
                   tags: [],
                   type: 'httpProbe',
@@ -89,7 +89,7 @@ describe('Testing http chaos Probes', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp1" }]');
+            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp1111" }]');
         });
     });
 
@@ -101,7 +101,7 @@ describe('Testing http chaos Probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                  name: "exp1",
+                  name: "exp1111",
                   description: '',
                   tags: [],
                   type: 'httpProbe',
@@ -138,11 +138,34 @@ describe('Testing http chaos Probes', () => {
     it('Delete chaos probe', () => {
         const accessToken = localStorage.getItem('accessToken');
         const projectID = localStorage.getItem('projectID');
+
+        //negative test case for delete chaos probe
+        const deleteProbe_payload1 = {
+            operationName: 'deleteProbe',
+            variables: {
+              projectID: projectID,
+              probeName: "exp0"
+            },
+            query: delete_httpprobe
+        }
+
+        cy.request({
+            method: 'POST',
+            url: '/api/query',
+            body: deleteProbe_payload1,
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }).then((response) => {
+            expect(response.body.errors[0].message).to.equal('mongo: no documents in result');
+        });
+
+        //delete chaos probe
         const deleteProbe_payload = {
             operationName: 'deleteProbe',
             variables: {
               projectID: projectID,
-              probeName: "exp1"
+              probeName: "exp1111"
             },
             query: delete_httpprobe
         }
@@ -176,7 +199,7 @@ describe('testing CMD chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp2",
+                    name: "exp2222",
                     description: "",
                     tags: [],
                     type: "cmdProbe",
@@ -209,7 +232,7 @@ describe('testing CMD chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.addProbe.name).to.equal("exp2");
+            expect(response.body.data.addProbe.name).to.equal("exp2222");
         });    
     });
 
@@ -221,7 +244,7 @@ describe('testing CMD chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp2",
+                    name: "exp2222",
                     description: "",
                     tags: [],
                     type: "cmdProbe",
@@ -253,7 +276,7 @@ describe('testing CMD chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp2" }]');
+            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp2222" }]');
         });
     });
 
@@ -266,7 +289,7 @@ describe('testing CMD chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp2",
+                    name: "exp2222",
                     description: "",
                     tags: [],
                     type: "cmdProbe",
@@ -309,12 +332,34 @@ describe('testing CMD chaos probes', () => {
     it('delete chaos probe', () => {
         const accessToken = localStorage.getItem('accessToken');
         const projectID = localStorage.getItem('projectID');
+
+        //negative test case for delete chaos probe
+        const deleteCMDProbe_payload1 = {
+            operationName: "deleteProbe",
+            variables: {
+                projectID: projectID,
+                probeName: "exp0",
+            },
+            query: delete_CMDprobe,
+        };
+        
+        cy.request({
+            method: "POST",
+            url: "/api/query",
+            body: deleteCMDProbe_payload1,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        }).then((response) => {
+            expect(response.body.errors[0].message).to.equal('mongo: no documents in result');
+        });
+
         //delete probe
         const deleteCMDProbe_payload = {
             operationName: "deleteProbe",
             variables: {
                 projectID: projectID,
-                probeName: "exp2",
+                probeName: "exp2222",
             },
             query: delete_CMDprobe,
         };
@@ -348,7 +393,7 @@ describe('testing prometheus chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp3",
+                    name: "exp3333",
                     description: "",
                     tags: [],
                     type: "promProbe",
@@ -382,7 +427,7 @@ describe('testing prometheus chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.addProbe.name).to.equal("exp3");
+            expect(response.body.data.addProbe.name).to.equal("exp3333");
         });  
     });
 
@@ -394,7 +439,7 @@ describe('testing prometheus chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp3",
+                    name: "exp3333",
                     description: "",
                     tags: [],
                     type: "promProbe",
@@ -428,7 +473,7 @@ describe('testing prometheus chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp3" }]');
+            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp3333" }]');
         });
     });
 
@@ -441,7 +486,7 @@ describe('testing prometheus chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp3",
+                    name: "exp3333",
                     description: "",
                     tags: [],
                     type: "promProbe",
@@ -485,12 +530,34 @@ describe('testing prometheus chaos probes', () => {
     it('delete chaos probe', () => {
         const accessToken = localStorage.getItem('accessToken');
         const projectID = localStorage.getItem('projectID');
-         //delete probe
-         const deletePROMProbe_payload = {
+
+        //negative test case for delete chaos probe
+        const deletePROMProbe_payload1 = {
             operationName: "deleteProbe",
             variables: {
                 projectID: projectID,
-                probeName: "exp3",
+                probeName: "exp0",
+            },
+            query: delete_PROMProbe,
+        };
+        
+        cy.request({
+            method: "POST",
+            url: "/api/query",
+            body: deletePROMProbe_payload1,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        }).then((response) => {
+            expect(response.body.errors[0].message).to.equal('mongo: no documents in result');
+        });
+
+         //delete probe
+        const deletePROMProbe_payload = {
+            operationName: "deleteProbe",
+            variables: {
+                projectID: projectID,
+                probeName: "exp3333",
             },
             query: delete_PROMProbe,
         };
@@ -524,7 +591,7 @@ describe('testing kubernetes chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp4",
+                    name: "exp4444",
                     description: "",
                     tags: [],
                     type: "k8sProbe",
@@ -556,7 +623,7 @@ describe('testing kubernetes chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.data.addProbe.name).to.equal("exp4");
+            expect(response.body.data.addProbe.name).to.equal("exp4444");
         });
     });
 
@@ -568,7 +635,7 @@ describe('testing kubernetes chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp4",
+                    name: "exp4444",
                     description: "",
                     tags: [],
                     type: "k8sProbe",
@@ -600,7 +667,7 @@ describe('testing kubernetes chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp4" }]');
+            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp4444" }]');
     
         });
     });
@@ -614,7 +681,7 @@ describe('testing kubernetes chaos probes', () => {
             variables: {
                 projectID: projectID,
                 request: {
-                    name: "exp4",
+                    name: "exp4444",
                     description: "",
                     tags: [],
                     type: "k8sProbe",
@@ -658,12 +725,34 @@ describe('testing kubernetes chaos probes', () => {
     it('delete chaos probe', () => {
         const accessToken = localStorage.getItem('accessToken');
         const projectID = localStorage.getItem('projectID');
+
+        //negative test case for chaos probe
+        const delete_K8SProbe_payload1 = {
+            operationName: "deleteProbe",
+            variables: {
+                projectID: projectID,
+                probeName: "exp0",
+            },
+            query: delete_k8sProbe,
+        };
+        
+        cy.request({
+            method: "POST",
+            url: "/api/query",
+            body: delete_K8SProbe_payload1,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        }).then((response) => {
+            expect(response.body.errors[0].message).to.equal('mongo: no documents in result');
+        });
+
         //delete probe
         const delete_K8SProbe_payload = {
             operationName: "deleteProbe",
             variables: {
                 projectID: projectID,
-                probeName: "exp4",
+                probeName: "exp4444",
             },
             query: delete_k8sProbe,
         };
