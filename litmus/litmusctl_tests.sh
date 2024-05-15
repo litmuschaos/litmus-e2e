@@ -6,16 +6,10 @@ set -o pipefail
 source litmus/utils.sh
 
 namespace=${AGENT_NAMESPACE}
-# namespace='shivamtestnamespace'
 installation_mode=${INSTALLATION_MODE}
-# installation_mode='NS-MODE'
 accessPoint=${ACCESS_URL}
-# accessPoint='http://192.168.49.2:30186'
 infraName=${AGENT_NAME}
-# infraName='infratest'
 projectName=${PROJECT_NAME}
-# projectName='my new project'
-envName="testenv1"
 envName=${ENVIRONMENT_NAME}
 # experiment name should be same as defined in the yaml
 expName=${EXPERIMENT_NAME} 
@@ -199,7 +193,6 @@ function test_get_projects(){
     configure_account
 
     projects=$( echo "q" | litmusctl get projects | wc -l)
-    echo "${projects}"
 
     if [[ ${projects} -gt 1 ]];then
         echo -e "\n[Info]: litmusctl get projects working fine ✓\n"
@@ -269,6 +262,7 @@ function test_disconnect_infra() {
     delete_environment $envName    
     if [[ ${chaos_infra_id} == "" ]];then
         echo -e "\n[Info]: litmusctl disconnect chaos-infra working fine ✓\n"
+        exit 0
     else 
         echo -e "\n[Error]: litmusctl disconnect chaos-infra not working as expected\n"
         exit 1
@@ -339,10 +333,7 @@ function test_save_experiment(){
     printf "\n account created successfully"
     projectID=$(echo "q" | litmusctl get projects | grep "$projectName" | awk '{print $1}')
     printf "\n projectID is ${projectID}"
-    echo "E" | sudo add-apt-repository ppa:rmescandon/yq
-    sudo apt-get install yq 
     echo | echo "q" | litmusctl get chaos-experiments --project-id=$projectID --output="table"
-    yq --version
     nameexperiment=$expName yq eval '.metadata.name=env(nameexperiment)' Cypress/cypress/fixtures/test.yaml -i
     # create environment and infra to save experiment
     create_environment $envName
