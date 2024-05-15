@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "cypress": "^13.7.0",
+    "cypress-localstorage-commands": "^2.2.5"
+  }
+}
