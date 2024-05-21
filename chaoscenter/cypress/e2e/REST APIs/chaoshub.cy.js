@@ -101,7 +101,7 @@ describe('testing chaoshub', () => {
             Authorization: `Bearer ${accessToken}`
         }
     }).then((response) => {
-        expect(response.body.errors[0].message).to.equal('Name Already exists');
+        expect(response.body.errors[0].message).to.equal('name already exists');
     });
   });
 

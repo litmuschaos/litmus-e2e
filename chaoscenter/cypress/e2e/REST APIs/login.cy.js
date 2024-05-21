@@ -14,7 +14,7 @@ describe('Testing login page of chaoscenter via REST APIs', () => {
       },
   }).then((response) => {
       expect(response.status).to.equal(400);
-      expect(response.body.error).to.equal('user does not exist');
+      expect(response.body.error).to.equal('invalid_credentials');
   });
   })
 });

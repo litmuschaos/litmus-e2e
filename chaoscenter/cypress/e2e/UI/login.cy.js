@@ -9,7 +9,7 @@ describe('Testing login page of chaoscenter via UI', () => {
       cy.get('input[name="password"]').type('invalid_password');
       cy.get('button[type="submit"]').click();
       cy.on('window:alert', (message) => {
-          expect(message).to.equal('user does not exist');
+          expect(message).to.equal('invalid_credentials');
       });
   });
 });

@@ -11,7 +11,6 @@ describe('testing of HTTP chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="kubernetesHTTPProperties.probeTimeout"]').type('1s');
         cy.get('input[name="kubernetesHTTPProperties.interval"]').type('1s');
-        cy.get('input[name="kubernetesHTTPProperties.retry"]').type('5');
         cy.get('input[name="kubernetesHTTPProperties.attempt"]').type('5');
         cy.get('input[name="kubernetesHTTPProperties.probePollingInterval"]').type('1s');
         cy.get('input[name="kubernetesHTTPProperties.evaluationTimeout"]').type('1s');
@@ -74,7 +73,6 @@ describe('testing of CMD chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="kubernetesCMDProperties.probeTimeout"]').type('1s');
         cy.get('input[name="kubernetesCMDProperties.interval"]').type('1s');
-        cy.get('input[name="kubernetesCMDProperties.retry"]').type('5');
         cy.get('input[name="kubernetesCMDProperties.attempt"]').type('5');
         cy.get('input[name="kubernetesCMDProperties.probePollingInterval"]').type('1s');
         cy.get('input[name="kubernetesCMDProperties.evaluationTimeout"]').type('1s');
@@ -137,7 +135,6 @@ describe('testing of Prometheus chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="promProperties.probeTimeout"]').type('1s');
         cy.get('input[name="promProperties.interval"]').type('1s');
-        cy.get('input[name="promProperties.retry"]').type('5');
         cy.get('input[name="promProperties.attempt"]').type('5');
         cy.get('input[name="promProperties.probePollingInterval"]').type('1s');
         cy.get('input[name="promProperties.evaluationTimeout"]').type('1s');
@@ -201,7 +198,6 @@ describe('testing of kubernetes chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="k8sProperties.probeTimeout"]').type('1s');
         cy.get('input[name="k8sProperties.interval"]').type('1s');
-        cy.get('input[name="k8sProperties.retry"]').type('5');
         cy.get('input[name="k8sProperties.attempt"]').type('5');
         cy.get('input[name="k8sProperties.probePollingInterval"]').type('1s');
         cy.get('input[name="k8sProperties.evaluationTimeout"]').type('1s');

@@ -1,0 +1,82 @@
+name: ChaosCenter E2E testing
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Minikube
+        run: |
+          sudo apt update && sudo apt install -y curl
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+          minikube start
+
+      - name: Install kubectl
+        run: |
+          sudo apt update && sudo apt install -y kubectl
+      
+      - name: Install helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+  run-litmus:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Add litmus Chaos Repository
+        run: helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+        
+      - name: Start minikube
+        run: minikube start
+        
+      - name: Create litmus namespace
+        run: kubectl create ns litmus
+
+      - name: Install Litmus
+        run: |
+          helm install chaos litmuschaos/litmus \
+            --namespace=litmus \
+            --set portal.frontend.service.type=NodePort
+
+      - name: Wait for pods to be ready
+        run: |
+          sleep 60s
+          while true; do
+            if kubectl get pods --namespace litmus | grep -q "1/1"; then
+              break
+            fi
+            sleep 20
+          done
+            
+      - name: Extract Minikube IP and NodePort
+        id: extract-urls
+        run: |
+          MINIKUBE_IP=$(minikube ip)
+          NODE_PORT=$(kubectl get svc chaos-litmus-frontend-service -n litmus -o jsonpath='{.spec.ports[0].nodePort}')
+          echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
+          echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
+    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run with env
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          working-directory: chaoscenter
+        env:
+          CYPRESS_baseUrl: http://${{ env.MINIKUBE_IP }}:${{ env.NODE_PORT }}
+          
+
+  
+      
