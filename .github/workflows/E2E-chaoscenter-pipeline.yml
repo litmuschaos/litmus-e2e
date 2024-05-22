@@ -9,28 +9,7 @@ on:
       - main 
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Minikube
-        run: |
-          sudo apt update && sudo apt install -y curl
-          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          sudo install minikube-linux-amd64 /usr/local/bin/minikube
-          minikube start
-
-      - name: Install kubectl
-        run: |
-          sudo apt update && sudo apt install -y kubectl
-      
-      - name: Install helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-
   run-litmus:
-    needs: setup
     runs-on: ubuntu-latest
     steps: 
       - name: Add litmus Chaos Repository
@@ -50,13 +29,13 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          sleep 60s
-          while true; do
-            if kubectl get pods --namespace litmus | grep -q "1/1"; then
-              break
-            fi
-            sleep 20
+          sleep 30s
+          while [[ $(kubectl get pods -n litmus --no-headers | grep -v 'Running\|Completed' | wc -l) -gt 0 ]]; do
+            echo "Waiting for pods to be ready..."
+            kubectl get pods -n litmus
+            sleep 10
           done
+          echo "All pods are ready!"
             
       - name: Extract Minikube IP and NodePort
         id: extract-urls
