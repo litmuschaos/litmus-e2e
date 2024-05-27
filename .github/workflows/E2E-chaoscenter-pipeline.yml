@@ -24,6 +24,7 @@ jobs:
 
     - name: Wait for Litmus pods to be ready
       run: |
+        sleep 30
         kubectl wait --for=condition=Ready pods --all --namespace=litmus --timeout=300s
             
       - name: Extract Minikube IP and NodePort
