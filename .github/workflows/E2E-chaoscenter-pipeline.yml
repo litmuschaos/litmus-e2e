@@ -14,18 +14,27 @@ jobs:
     steps: 
       - name: Add litmus Chaos Repository
         run: helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
-        
+
       - name: Start minikube
         run: minikube start
-        
-      - name: Apply Litmus manifest
-      run: |
-        kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/chaoscenter/manifests/litmus-cluster-scope.yaml
 
-    - name: Wait for Litmus pods to be ready
-      run: |
-        sleep 30
-        kubectl wait --for=condition=Ready pods --all --namespace=litmus --timeout=300s
+      - name: Create litmus namespace
+        run: kubectl create ns litmus
+
+      - name: Install Litmus
+        run: |
+          helm install chaos litmuschaos/litmus \
+            --namespace=litmus \
+            --set portal.frontend.service.type=NodePort
+      - name: Wait for pods to be ready
+        run: |
+          sleep 30s
+          while [[ $(kubectl get pods -n litmus --no-headers | grep -v 'Running\|Completed' | wc -l) -gt 0 ]]; do
+            echo "Waiting for pods to be ready..."
+            kubectl get pods -n litmus
+            sleep 10
+          done
+          echo "All pods are ready!"
             
       - name: Extract Minikube IP and NodePort
         id: extract-urls
@@ -45,7 +54,3 @@ jobs:
           working-directory: chaoscenter
         env:
           CYPRESS_baseUrl: http://${{ env.MINIKUBE_IP }}:${{ env.NODE_PORT }}
-          
-
-  
-      
