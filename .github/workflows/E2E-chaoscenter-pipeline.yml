@@ -1,0 +1,56 @@
+name: ChaosCenter E2E testing
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  run-litmus:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Add litmus Chaos Repository
+        run: helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+
+      - name: Start minikube
+        run: minikube start
+
+      - name: Create litmus namespace
+        run: kubectl create ns litmus
+
+      - name: Install Litmus
+        run: |
+          helm install chaos litmuschaos/litmus \
+            --namespace=litmus \
+            --set portal.frontend.service.type=NodePort
+      - name: Wait for pods to be ready
+        run: |
+          sleep 30s
+          while [[ $(kubectl get pods -n litmus --no-headers | grep -v 'Running\|Completed' | wc -l) -gt 0 ]]; do
+            echo "Waiting for pods to be ready..."
+            kubectl get pods -n litmus
+            sleep 10
+          done
+          echo "All pods are ready!"
+            
+      - name: Extract Minikube IP and NodePort
+        id: extract-urls
+        run: |
+          MINIKUBE_IP=$(minikube ip)
+          NODE_PORT=$(kubectl get svc chaos-litmus-frontend-service -n litmus -o jsonpath='{.spec.ports[0].nodePort}')
+          echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
+          echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
+    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run with env
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          working-directory: chaoscenter
+        env:
+          CYPRESS_baseUrl: http://${{ env.MINIKUBE_IP }}:${{ env.NODE_PORT }}

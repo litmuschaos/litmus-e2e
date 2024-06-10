@@ -2,7 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://192.168.49.2:30829',
+    baseUrl: process.env.CYPRESS_baseUrl || "http://localhost:3000", // default value
     requestTimeout: 60000,
     responseTimeout: 60000
   },
