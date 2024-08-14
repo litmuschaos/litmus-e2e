@@ -1,12 +1,7 @@
 name: ChaosCenter E2E testing
 
 on:
-  push:
-    branches:
-      - main  
-  pull_request:
-    branches:
-      - main 
+  workflow_dispatch:
 
 jobs:
   run-litmus:
