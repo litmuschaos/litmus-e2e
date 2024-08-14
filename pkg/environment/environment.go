@@ -39,7 +39,6 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.InstanceZones = Getenv("INSTANCE_ZONES", "")
 	testDetails.DiskVolumeNames = Getenv("DISK_VOLUME_NAMES", "")
 	testDetails.DiskZones = Getenv("DISK_ZONES", "")
-	testDetails.DeviceNames = Getenv("DEVICE_NAMES", "")
 	testDetails.VMIds = Getenv("APP_VM_MOIDS", "")
 	testDetails.Region = Getenv("REGION", "us-west-1")
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
