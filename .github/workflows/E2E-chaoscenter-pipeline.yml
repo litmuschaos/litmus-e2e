@@ -20,7 +20,7 @@ jobs:
         run: |
           helm install chaos litmuschaos/litmus \
             --namespace=litmus \
-            --set portal.frontend.service.type=NodePort
+            --set portal.frontend.service.type=NodePort -f ./litmus/values-ci.yaml
       - name: Wait for pods to be ready
         run: |
           sleep 30s
