@@ -1,4 +1,11 @@
 {
+  "name": "chaoscenter-e2e",
+  "version": "1.0.0",
+  "description": "Package for Testing",
+  "main": "index.js",
+  "scripts": {
+    "start": "cypress run",
+  },
   "devDependencies": {
     "cypress": "^13.7.0",
     "cypress-localstorage-commands": "^2.2.5"
