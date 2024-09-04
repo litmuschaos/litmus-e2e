@@ -72,7 +72,8 @@ describe('testing chaosinfra via REST APIs', () => {
             url: '/api/query',
             body: registerInfra_payload,
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessToken}`,
+                Referer: 'https://localhost:3000/'
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
@@ -159,7 +160,8 @@ describe('testing chaosinfra via REST APIs', () => {
             method: 'POST',
             url: '/api/query', 
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessToken}`,
+                Referer: 'https://localhost:3000/'
             },
             body: updateInfra_payload,
         }).then((response) => {
