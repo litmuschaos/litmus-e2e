@@ -65,7 +65,7 @@ describe('Test Cases for User-Management', () => {
         const edit_payload = {
             username: user.username,
             oldPassword: '',
-            newPassword: '1'
+            newPassword: '!Qwer1234'
           };
 
         cy.request({

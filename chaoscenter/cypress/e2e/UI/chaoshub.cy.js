@@ -15,6 +15,8 @@ describe('testing chaoshub via UI', () => {
         cy.contains('Continue').click();
         cy.get('input[name="repoURL"]').type('https://github.com/litmuschaos/chaos-charts.git');
         cy.get('input[name="repoBranch"]').type('master');
+        cy.get('div[data-testid = "dropdown-button"]').click();
+        cy.contains('GitHub').click();
         cy.intercept('POST','/api/query').as('Query');
         cy.get('button[aria-label = "Connect Hub"]').click();
         cy.wait('@Query');
@@ -36,6 +38,8 @@ describe('testing chaoshub via UI', () => {
         cy.contains('Continue').click();
         cy.get('input[name="repoURL"]').type('1');
         cy.get('input[name="repoBranch"]').type('1');
+        cy.get('div[data-testid = "dropdown-button"]').click();
+        cy.contains('GitHub').click();
         cy.get('button[aria-label = "Connect Hub"]').click();
         cy.on('window:alert', () => {
             expect(message).to.equal('name already exists');

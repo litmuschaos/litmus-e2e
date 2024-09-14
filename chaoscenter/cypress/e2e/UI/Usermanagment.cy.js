@@ -31,8 +31,8 @@ describe('testing for User management', () => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Reset Password').click();
-        cy.get('input[name="password"]').type('22222');
-        cy.get('input[name="reEnterPassword"]').type('22222');
+        cy.get('input[name="password"]').type(user.resetpassword);
+        cy.get('input[name="reEnterPassword"]').type(user.resetpassword);
         cy.intercept('POST','/auth/reset/password').as('reset');
         cy.contains('Confirm').click();
         cy.wait('@reset');

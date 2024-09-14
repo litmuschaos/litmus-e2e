@@ -4,7 +4,7 @@
   "description": "Package for Testing",
   "main": "index.js",
   "scripts": {
-    "start": "cypress run",
+    "start": "cypress run"
   },
   "devDependencies": {
     "cypress": "^13.7.0",

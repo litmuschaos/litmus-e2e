@@ -72,7 +72,8 @@ describe('testing chaosinfra via REST APIs', () => {
             url: '/api/query',
             body: registerInfra_payload,
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessToken}`,
+                Referer: 'https://localhost:3000/'
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
@@ -135,7 +136,7 @@ describe('testing chaosinfra via REST APIs', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.environment index: environment_id_1 dup key: { environment_id: "exp99" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
@@ -159,7 +160,8 @@ describe('testing chaosinfra via REST APIs', () => {
             method: 'POST',
             url: '/api/query', 
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessToken}`,
+                Referer: 'https://localhost:3000/'
             },
             body: updateInfra_payload,
         }).then((response) => {

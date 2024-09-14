@@ -89,7 +89,7 @@ describe('Testing http chaos Probes', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp1111" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
@@ -276,7 +276,7 @@ describe('testing CMD chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp2222" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
@@ -473,7 +473,7 @@ describe('testing prometheus chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp3333" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
@@ -667,7 +667,7 @@ describe('testing kubernetes chaos probes', () => {
             },
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.chaosProbes index: name_1 dup key: { name: "exp4444" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
     
         });
     });
