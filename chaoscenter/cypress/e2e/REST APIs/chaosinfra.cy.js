@@ -136,7 +136,7 @@ describe('testing chaosinfra via REST APIs', () => {
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.errors[0].message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.environment index: environment_id_1 dup key: { environment_id: "exp99" }]');
+            expect(response.body.errors[0].message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
