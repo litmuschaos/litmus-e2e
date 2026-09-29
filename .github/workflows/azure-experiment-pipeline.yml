@@ -56,7 +56,7 @@ jobs:
           kubectl create secret generic cloud-secret --from-file=azure.auth
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -64,8 +64,8 @@ jobs:
         if: always()
         run: |
           az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -l eastus && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-two --image UbuntuLTS --generate-ssh-keys
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-one --image Ubuntu2204 --generate-ssh-keys && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_instance_${{ github.run_number }} -n litmus-e2e-instance-two --image Ubuntu2204 --generate-ssh-keys
       
       - name: Litmus Infra Setup
         if: always()
@@ -141,7 +141,7 @@ jobs:
           kubectl create secret generic cloud-secret --from-file=azure.auth
           
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -149,7 +149,7 @@ jobs:
         if: always()
         run: |
           az group create -n ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} -l eastus && \
-          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} -n litmus-e2e-instance-one --image UbuntuLTS --generate-ssh-keys && \
+          az vm create -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} -n litmus-e2e-instance-one --image Ubuntu2204 --generate-ssh-keys && \
           az disk create -n litmus-e2e-disk-one -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --size-gb=4 && \
           az disk create -n litmus-e2e-disk-two -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --size-gb=4 && \
           az vm disk attach -g ${{ secrets.AZURE_RESOURCE_GROUP }}_disk_${{ github.run_number }} --vm-name litmus-e2e-instance-one -n litmus-e2e-disk-one && \
