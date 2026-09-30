@@ -120,7 +120,7 @@ jobs:
         env:
           PORTAL_VERSION: ${{ env.TAG }}
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: Cluster-Scope-Mode-${{ matrix.AcessType }}-screenshots
@@ -228,7 +228,7 @@ jobs:
           PORTAL_VERSION: ${{ env.TAG }}
           PORTAL_NAMESPACE: ${{ env.NS_MODE_NAMESPACE }}
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: Namespaced-Scope-Mode-${{ matrix.AcessType }}-screenshots
