@@ -13,7 +13,7 @@ describe('Testing login page of chaoscenter via REST APIs', () => {
           password: 'invalid_password',
       },
   }).then((response) => {
-      expect(response.status).to.equal(400);
+      expect(response.status).to.equal(401);
       expect(response.body.error).to.equal('invalid_credentials');
   });
   })

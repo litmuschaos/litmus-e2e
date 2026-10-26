@@ -25,6 +25,7 @@ describe('testing chaoshub', () => {
       request: {
           name: 'testing',
           repoBranch: 'master',
+          remoteHub: 'GitHub',
           description: '',
           tags: [],
           authType: 'NONE',
@@ -82,6 +83,7 @@ describe('testing chaoshub', () => {
       request: {
           name: 'testing',
           repoBranch: 'master',
+          remoteHub: 'Github',
           description: '',
           tags: [],
           authType: 'NONE',
@@ -118,6 +120,7 @@ describe('testing chaoshub', () => {
           id: hubID,
           name: 'sample',
           repoBranch: 'master',
+          remoteHub: 'GitHub',
           description: '',
           authType: 'NONE',
           isPrivate: false,

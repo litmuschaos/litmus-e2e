@@ -4,6 +4,7 @@ export const add_hub = `
             name
             repoURL
             repoBranch
+            remoteHub
             hubType
             isPrivate
             __typename
@@ -17,6 +18,7 @@ export const update_hub =`
             name
             repoURL
             repoBranch
+            remoteHub
             __typename
         }
     }
@@ -33,6 +35,7 @@ export const list_hub = `
             id
             repoURL
             repoBranch
+            remoteHub
             authType
             isAvailable
             totalFaults
