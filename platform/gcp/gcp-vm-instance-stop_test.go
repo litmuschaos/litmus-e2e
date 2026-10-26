@@ -40,9 +40,7 @@ var _ = Describe("BDD of gcp-vm-instance-stop experiment", func() {
 			environment.GetENV(&testsDetails, "gcp-vm-instance-stop", "gcp-vm-engine-par")
 			log.Infof("[Info]: The target VM instances are: %v", testsDetails.VMInstanceNames)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "gcp", "gcp-vm-instance-stop")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -104,9 +102,7 @@ var _ = Describe("BDD of gcp-vm-instance-stop experiment", func() {
 			environment.GetENV(&testsDetails, "gcp-vm-instance-stop", "gcp-vm-engine-ser")
 			log.Infof("[Info]: The target VM instances are: %v", testsDetails.VMInstanceNames)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "gcp", "gcp-vm-instance-stop")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
