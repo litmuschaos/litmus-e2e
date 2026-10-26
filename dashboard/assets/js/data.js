@@ -383,3 +383,57 @@ export function whatChanged(b) {
     buildsConsidered: m.buildsConsidered || 0,
   };
 }
+
+// ---- live view: the runs of the workflows that are running now, read from the GitHub Actions API by the browser
+
+/** owner/name of the repository the data was generated for, null when it is not a plausible one. */
+export function repoOf(latest) {
+  const r = latest && latest.repository;
+  return typeof r === 'string' && /^[\w.-]+\/[\w.-]+$/.test(r) ? r : null;
+}
+
+/** Workflow files (and the files they call) of the configured workflows, name by file. */
+export function workflowFiles(latest) {
+  const map = new Map();
+  for (const w of (latest && latest.config && latest.config.workflows) || []) {
+    for (const f of [w.file, ...(w.alsoFiles || [])]) if (f) map.set(f, w);
+  }
+  return map;
+}
+
+/**
+ * The runs worth showing: the ones in progress or queued, and the ones that finished in the last `recentMin` minutes.
+ * Only the workflows of the configuration are considered, newest first.
+ */
+export function liveRuns(runs, files, now = Date.now(), recentMin = 20) {
+  const out = [];
+  for (const r of runs || []) {
+    const file = String(r.path || '').split('/').pop();
+    const wf = files.get(file);
+    if (!wf) continue;
+    const active = r.status === 'in_progress' || r.status === 'queued' || r.status === 'waiting' || r.status === 'pending';
+    const ended = r.updated_at ? new Date(r.updated_at).getTime() : 0;
+    if (!active && !(r.status === 'completed' && now - ended < recentMin * 60000)) continue;
+    out.push({ id: r.id, name: wf.name, category: wf.category, required: !!wf.required, status: r.status, conclusion: r.conclusion || null, branch: r.head_branch, sha: (r.head_sha || '').slice(0, 7), url: r.html_url, startedAt: r.run_started_at || r.created_at, updatedAt: r.updated_at, active });
+  }
+  return out.sort((a, b) => Number(b.active) - Number(a.active) || String(b.startedAt).localeCompare(String(a.startedAt)));
+}
+
+/** How far a run is, from its jobs: finished jobs and the steps of the running ones. null without jobs. */
+export function jobProgress(jobs) {
+  if (!jobs || !jobs.length) return null;
+  let done = 0, failed = 0, frac = 0;
+  const running = [];
+  for (const j of jobs) {
+    if (j.status === 'completed') { done += 1; if (j.conclusion === 'failure') failed += 1; continue; }
+    if (j.status === 'in_progress') {
+      const steps = j.steps || [];
+      const fin = steps.filter((s) => s.status === 'completed').length;
+      const cur = steps.find((s) => s.status === 'in_progress');
+      if (steps.length) frac += fin / steps.length;
+      running.push({ job: j.name, step: cur ? cur.name : null });
+    }
+  }
+  const total = jobs.length;
+  return { total, done, failed, running, percent: Math.min(100, Math.round(((done + frac) / total) * 100)) };
+}

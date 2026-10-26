@@ -335,6 +335,7 @@
   "workflows": [
    {
     "category": "pod-level",
+    "file": "nightly-pod-level-pipeline.yml",
     "name": "Pod level",
     "note": null,
     "required": true,
@@ -342,6 +343,7 @@
    },
    {
     "category": "node-level",
+    "file": "nightly-node-level-pipeline.yml",
     "name": "Node level",
     "note": null,
     "required": true,
@@ -349,13 +351,18 @@
    },
    {
     "category": "component",
+    "file": "nightly-component-pipeline.yml",
     "name": "Components",
     "note": null,
     "required": true,
     "suite": "bdd"
    },
    {
+    "alsoFiles": [
+     "E2E-chaoscenter-pipeline.yml"
+    ],
     "category": "chaoscenter",
+    "file": "nightly-chaoscenter-pipeline.yml",
     "name": "ChaosCenter",
     "note": null,
     "required": true,

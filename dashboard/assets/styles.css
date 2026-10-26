@@ -235,6 +235,27 @@ details.opt { margin-top: 16px; } details.opt summary { cursor: pointer; color: 
 .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s var(--ease) .2s forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
+/* ---- live view */
+.live { padding: 18px 22px; display: grid; gap: 12px; }
+.live-h { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.live-status { color: var(--muted); font-weight: 500; font-size: .92rem; }
+.live-stamp { font-size: .8rem; }
+.live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--faint); position: relative; flex: none; }
+.live[data-live="running"] .live-dot { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+.live[data-live="running"] .live-dot::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--ok); animation: ping 1.6s ease-out infinite; }
+.live[data-live="paused"] .live-dot { background: var(--warn); }
+@keyframes ping { from { transform: scale(.5); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+.live[data-live="idle"] .live-list:empty, .live-list:empty { display: none; }
+.live-list .live-row { display: grid; grid-template-columns: minmax(150px, 220px) minmax(120px, 1fr) minmax(0, 2fr) 70px auto; gap: 8px 16px; align-items: center; font-size: .88rem; }
+.live-name { display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
+.live-bar { height: 8px; border-radius: 999px; background: var(--glass2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; display: block; }
+.live-bar i { display: block; height: 100%; width: var(--w); border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, transparent), var(--accent)); transition: width .8s var(--ease); position: relative; overflow: hidden; }
+.live-bar i.ok { background: var(--ok); } .live-bar i.bad { background: var(--bad); }
+.live-row.on .live-bar i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .45) 50%, transparent 70%); transform: translate3d(-100%, 0, 0); animation: sheen 1.8s linear infinite; }
+@keyframes sheen { to { transform: translate3d(100%, 0, 0); } }
+.live-what { color: var(--muted); overflow-wrap: anywhere; } .live-time { text-align: right; }
+@media (max-width: 900px) { .live-list .live-row { grid-template-columns: 1fr auto; } .live-bar, .live-what { grid-column: 1 / -1; } .live-time { text-align: left; } }
+
 /* ---- charts */
 .chart-box { overflow-x: auto; } .trend { width: 100%; height: auto; min-width: 440px; display: block; }
 .trend .grid-line { stroke: var(--line); stroke-dasharray: 3 5; } .trend .axis { fill: var(--muted); font: 11px var(--mono); }

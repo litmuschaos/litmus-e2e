@@ -3,6 +3,7 @@ import * as D from '../data.js';
 import { ring, sparkline, trendChart, stackedBar, srTable } from '../charts.js';
 import { countUp, embers, tilt, magnetic } from '../motion.js';
 import { pageHead, buildDot, runMeta, buildGap, idLink, testTitle } from './common.js';
+import { liveView } from './live.js';
 
 const SUITE_NAMES = { bdd: 'Experiment BDD', frontend: 'ChaosCenter frontend E2E' };
 const VERDICT = {
@@ -142,7 +143,9 @@ function trend(b) {
 export function overview(ctx) {
   const b = ctx.current;
   const root = h('div', { class: 'stack' });
+  const live = liveView(ctx);
   root.append(
+    ...(live ? [live] : []),
     h('div', { class: 'strip-grid reveal', role: 'group', 'aria-label': 'Builds' }, ctx.builds.map((x) => stripCard(x, ctx, x.key === b.key))),
     hero(b, ctx));
   if (b.state !== 'ready' || !D.buildOf(b)) {
