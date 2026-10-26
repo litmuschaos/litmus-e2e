@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <testsuite name="app-deploy" tests="1" failures="0" errors="0" time="4.1">
+      <testcase name="BDD of Application Deployment Check for the application Should check for creation of application" classname="app-deploy" time="4.1"></testcase>
+  </testsuite>

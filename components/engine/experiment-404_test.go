@@ -15,7 +15,7 @@ import (
 
 func TestExperimentName(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for experiment-name in engine

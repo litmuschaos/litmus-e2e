@@ -17,7 +17,7 @@ import (
 // TestRunHistory runs the test to check run history updation
 func TestRunHistory(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 // BDD for testing components

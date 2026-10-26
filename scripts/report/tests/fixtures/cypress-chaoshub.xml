@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="12.3" tests="3" failures="1">
+  <testsuite name="Root Suite" timestamp="2026-10-26T01:10:00" tests="0" file="cypress/e2e/UI/chaoshub.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="testing chaoshub via UI" timestamp="2026-10-26T01:10:00" tests="3" time="12.2" failures="1">
+    <testcase name="testing chaoshub via UI Create new ChaosHub" time="4.2" classname="Create new ChaosHub">
+    </testcase>
+    <testcase name="testing chaoshub via UI negative test case for chaoshub" time="3.1" classname="negative test case for chaoshub">
+      <failure message="GraphQL errors: expected [ { message: &apos;boom&apos; } ] to equal undefined" type="AssertionError"><![CDATA[AssertionError: GraphQL errors: expected [ { message: 'boom' } ] to equal undefined
+    at Context.eval (webpack:///./cypress/support/commands.js:43:54)]]></failure>
+    </testcase>
+    <testcase name="testing chaoshub via UI Delete ChaosHub" time="0.0" classname="Delete ChaosHub">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>

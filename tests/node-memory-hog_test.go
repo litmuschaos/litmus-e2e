@@ -16,7 +16,7 @@ import (
 func TestGoNodeMemoryHog(t *testing.T) {
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for node-memory-hog experiment

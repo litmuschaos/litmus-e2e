@@ -22,6 +22,9 @@ GitLab provides a scheduling option that is easy to configure. The litmus generi
 - [General Availability(GA) Build](https://litmuschaos.github.io/litmus-e2e/generic-pipeline/generic#general-availabilityga-build)
 
 
+## Nightly dashboard
+The results of the Nightly, Release Candidate and GA builds (experiment BDD and frontend E2E) are published as a static dashboard from the `dashboard/` directory. It reads `data/latest.json` and `data/history.json` (`data/rc/` and `data/ga/` for the release builds), which the `Nightly-Report` workflow generates from the nightly runs (see [scripts/report](scripts/report/README.md) and [docs/nightly.md](docs/nightly.md)). The site has no build step and no dependencies, to look at it locally see [dashboard-test](dashboard-test/README.md).
+
 ## Working Group Information
 There is a [Special Interest Groups (SIG)](https://github.com/litmuschaos/litmus/wiki/Special-Interest-Groups#sig-testing) to test the litmus components. To contribute to or use the test suite you can join the [slack channel](https://kubernetes.slack.com/archives/CNXNB0ZTN), weekly meetings, and interact in GitHub via issues.
 

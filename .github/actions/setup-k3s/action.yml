@@ -1,0 +1,43 @@
+name: Setup k3s
+description: Installs a single node k3s cluster and fails when the cluster does not become ready
+
+inputs:
+  channel:
+    description: k3s release channel, a minor version such as v1.31 or stable
+    default: v1.31
+
+runs:
+  using: composite
+  steps:
+    - name: Installing Prerequisites (K3S Cluster)
+      shell: bash
+      env:
+        K3S_CHANNEL: ${{ inputs.channel }}
+      run: |
+        set -euo pipefail
+        curl -sfL https://get.k3s.io | \
+          INSTALL_K3S_CHANNEL="${K3S_CHANNEL}" \
+          INSTALL_K3S_EXEC="server --disable traefik --disable metrics-server --write-kubeconfig-mode 664" \
+          sh -s -
+        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+        # the node is ready before k3s has created the coredns deployment, wait for it to exist first
+        ready() {
+          kubectl wait node --all --for condition=Ready --timeout=180s || return 1
+          for _ in $(seq 1 60); do
+            kubectl -n kube-system get deployment/coredns >/dev/null 2>&1 && break
+            sleep 3
+          done
+          kubectl -n kube-system rollout status deployment/coredns --timeout=180s
+        }
+        if ! ready; then
+          echo "::error::the k3s cluster did not become ready"
+          systemctl status k3s.service --no-pager || true
+          journalctl -u k3s.service --no-pager | tail -n 100 || true
+          exit 1
+        fi
+        # the runtime socket of k3s is not the /run/containerd/containerd.sock the chaos-charts default to,
+        # which on a runner with docker is another containerd. The e2e suites hand this to the experiments.
+        echo "CONTAINER_RUNTIME=containerd" >> "$GITHUB_ENV"
+        echo "SOCKET_PATH=/run/k3s/containerd/containerd.sock" >> "$GITHUB_ENV"
+        mkdir -p "$HOME/.kube" && cp "$KUBECONFIG" "$HOME/.kube/config"
+        kubectl get nodes -o wide

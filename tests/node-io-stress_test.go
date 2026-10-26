@@ -16,7 +16,7 @@ import (
 func TestGoNodeIOStress(t *testing.T) {
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for node-io-stress experiment

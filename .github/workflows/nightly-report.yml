@@ -1,0 +1,168 @@
+---
+name: Nightly-Report
+# Builds the data of the nightly dashboard from the runs of the nightly workflows and publishes it to the nightly/ folder
+# of the gh-pages branch, so it is served at https://<owner>.github.io/<repo>/nightly/ by the Pages setup of the repository.
+# The home of the site (https://<owner>.github.io/<repo>/) redirects to it.
+on:
+  workflow_run:
+    workflows:
+      - Nightly-Pod-Level-Pipeline
+      - Nightly-Node-Level-Pipeline
+      - Nightly-Component-Pipeline
+      - Nightly-ChaosCenter-E2E-Pipeline
+      - Nightly-AWS-Experiment-Pipeline
+      - Scheduled-Azure-Experiment-Pipeline
+      - Nightly-GCP-Experiment-Pipeline
+      - Nightly-VMWare-Experiment-Pipeline
+      - Nightly-m-agent-Experiment-Pipeline
+    types: [completed]
+  schedule:
+    # safety net, runs once all the nightly pipelines had time to finish
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch whose nightly runs are reported (default branch when empty)
+        required: false
+        default: ""
+      rc_branch:
+        description: Branch or tag whose runs are the release candidate build (repository variable RC_BRANCH when empty)
+        required: false
+        default: ""
+      rc_version:
+        description: Version shown for the release candidate (repository variable RC_VERSION when empty)
+        required: false
+        default: ""
+      ga_branch:
+        description: Branch or tag whose runs are the GA build (repository variable GA_BRANCH when empty)
+        required: false
+        default: ""
+      ga_version:
+        description: Version shown for the GA build (repository variable GA_VERSION when empty)
+        required: false
+        default: ""
+      publish:
+        description: Publish although the run is not on the default branch
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+# one publication at a time, the newest run has the most complete data
+concurrency:
+  group: nightly-report
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test the report generator
+        run: python -m unittest discover -s scripts/report/tests
+
+      - name: Build the report data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RC_BRANCH: ${{ inputs.rc_branch || vars.RC_BRANCH }}
+          RC_VERSION: ${{ inputs.rc_version || vars.RC_VERSION }}
+          GA_BRANCH: ${{ inputs.ga_branch || vars.GA_BRANCH }}
+          GA_VERSION: ${{ inputs.ga_version || vars.GA_VERSION }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          site="https://${owner}.github.io/${name}/nightly/data"
+          # the history published earlier, a missing file starts a new history
+          python scripts/report/build_report.py \
+            --out dashboard/data \
+            --branch "${{ inputs.branch }}" \
+            --previous "${site}/history.json"
+          # the release candidate and the GA build are reported the same way from the runs of their branch or tag,
+          # a stream without a branch is not published and the dashboard shows it as "no run yet"
+          if [ -n "$RC_BRANCH" ]; then
+            python scripts/report/build_report.py --out dashboard/data/rc --branch "$RC_BRANCH" \
+              ${RC_VERSION:+--version "$RC_VERSION"} --previous "${site}/rc/history.json"
+          fi
+          if [ -n "$GA_BRANCH" ]; then
+            python scripts/report/build_report.py --out dashboard/data/ga --branch "$GA_BRANCH" \
+              ${GA_VERSION:+--version "$GA_VERSION"} --previous "${site}/ga/history.json"
+          fi
+
+      # GitHub Pages lets browsers cache files for ten minutes. A visitor holding old modules next to new ones would
+      # get import errors, so every module, the script and the stylesheet are requested with the commit as version.
+      - name: Version the asset URLs
+        run: |
+          v="${GITHUB_SHA::10}"
+          find dashboard/assets/js -name '*.js' -exec sed -i -E "s#((from|import\()[[:space:]]*['\"]\.{1,2}/[^'\"]+\.js)(['\"])#\1?v=${v}\3#g" {} +
+          sed -i -E "s#(assets/js/[A-Za-z/]+\.js)\"#\1?v=${v}\"#g; s#assets/styles\.css\"#assets/styles.css?v=${v}\"#" dashboard/index.html
+          grep -c "?v=${v}" dashboard/index.html
+
+      - name: Upload the site
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-dashboard
+          path: dashboard
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    # only the default branch publishes, a run of another branch has to ask for it
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || inputs.publish }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nightly-dashboard
+          path: site
+
+      # The site is committed to the nightly/ folder of the gh-pages branch, which keeps the pages already
+      # served from that branch and needs no change of the Pages settings.
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          echo "::add-mask::$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          url="https://github.com/${GITHUB_REPOSITORY}.git"
+          git() { command git -c http.extraheader="$auth" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" "$@"; }
+          for attempt in 1 2 3; do
+            rm -rf pages
+            if git ls-remote --exit-code --heads "$url" gh-pages >/dev/null 2>&1; then
+              git clone --quiet --depth 1 --branch gh-pages "$url" pages
+            else
+              mkdir pages && git -C pages init --quiet --initial-branch gh-pages && git -C pages remote add origin "$url"
+            fi
+            rm -rf pages/nightly
+            mkdir -p pages/nightly
+            cp -r site/. pages/nightly/
+            # the home of the site sends visitors to the dashboard, it used to serve a default Create React App page
+            printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LitmusChaos E2E Dashboard</title><meta http-equiv="refresh" content="0; url=nightly/"><link rel="canonical" href="nightly/"><script>location.replace("nightly/" + location.hash);</script></head><body><p>Opening the <a href="nightly/">LitmusChaos E2E Dashboard</a>.</p></body></html>' > pages/index.html
+            cd pages
+            git add -A
+            if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+            git commit --quiet -m "Update the nightly dashboard (run ${GITHUB_RUN_ID})"
+            if git push --quiet origin HEAD:gh-pages; then
+              echo "published to https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/nightly/"
+              exit 0
+            fi
+            cd ..
+            echo "push rejected, trying again"
+            sleep $((attempt * 5))
+          done
+          echo "::error::could not publish to gh-pages"
+          exit 1

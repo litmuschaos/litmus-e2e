@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <testsuite name="pod-delete" tests="3" failures="1" errors="0" time="212.4">
+      <testcase name="BDD of pod-delete experiment Check for pod-delete experiment Should check for the pod delete experiment" classname="pod-delete" time="95.1"></testcase>
+      <testcase name="BDD of pod-delete experiment Abort-Chaos check for pod delete experiment Should check the abort of pod-delete experiment" classname="pod-delete" time="101.3">
+          <failure type="Failure">/home/runner/work/litmus-e2e/litmus-e2e/tests/pod-delete_test.go:134&#xA;Runner pod status check failed due to {Failed to get the runner pod due to Unable to get the runner pod due to pods &quot;pod-delete-abort-runner&quot; not found}&#xA;Expected&#xA;    &lt;*errors.fundamental | 0xc0003f5720&gt;: {}&#xA;to be nil</failure>
+      </testcase>
+      <testcase name="BDD of pod-delete experiment pending spec" classname="pod-delete" time="0">
+          <skipped></skipped>
+      </testcase>
+  </testsuite>

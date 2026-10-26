@@ -3,6 +3,7 @@ name: Nightly-Pod-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight
+  workflow_dispatch:
 
 jobs:
 
@@ -10,59 +11,56 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"      
     
     steps:
     
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'           
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
     
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
-        if: ${{ always() }}      
+        id: litmus
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
-        if: ${{ always() }}      
+        id: app
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: make app-deploy
-    
+
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-CORRUPTION
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-network-corruption
 
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LATENCY
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-network-latency
 
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-LOSS
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-network-loss
 
       - name: TCID-K3S-GENERIC-APP-POD-NETWORK-DUPLICATION
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-network-duplication
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -73,82 +71,88 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup 
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh
         
   Stress_Chaos_Test:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"     
     
     steps:
     
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'         
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
 
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
-        if: ${{ always() }}      
+        id: litmus
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
-        if: ${{ always() }}      
+        id: app
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: make app-deploy
-    
+
       - name: TCID-K3S-GENERIC-APP-POD-CPU-HOG
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-cpu-hog
 
       - name: TCID-K3S-GENERIC-APP-POD-MEMORY-HOG
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-memory-hog
 
       - name: TCID-K3S-GENERIC-APP-POD-CPU-HOG-EXEC
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-cpu-hog-exec
 
       - name: TCID-K3S-GENERIC-APP-POD-MEMORY-HOG-EXEC
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-memory-hog-exec        
 
       - name: TCID-K3S-GENERIC-APP-POD-IO-STRESS
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-io-stress
 
       - name: TCID-K3S-GENERIC-APP-DISK-FILL
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make disk-fill
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -159,62 +163,68 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup         
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh   
 
   Container_Kill_Test:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"     
     
     steps:
     
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'          
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
     
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
-        if: ${{ always() }}      
+        id: litmus
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
-        if: ${{ always() }}      
+        id: app
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: make app-deploy
-    
+
       - name: TCID-K3S-GENERIC-APP-CONTAINER-KILL
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make container-kill
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -225,62 +235,68 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup      
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh        
 
   Pod_Delete_Test:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"       
     
     steps:
     
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'          
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
     
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
-        if: ${{ always() }}      
+        id: litmus
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
-        if: ${{ always() }}      
+        id: app
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: make app-deploy
-    
+
       - name: TCID-K3S-GENERIC-APP-POD-DELETE
-        if: ${{ always() }}      
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-delete
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -291,15 +307,24 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup      
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh        
 
 
@@ -308,47 +333,49 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"        
     
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'          
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
 
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: litmus
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: app
         run: make app-deploy
-        
+
       - name: Create Namespace and deploy Application
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-PARALLEL
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-affected-perc-ton-parallel
 
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -359,20 +386,29 @@ jobs:
           cat logs.txt      
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
           
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup   
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh        
 
   ### Runing Experiment Tunables
@@ -380,49 +416,50 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"      
     
     steps:
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'        
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
 
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: litmus
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: app
         run: make app-deploy
 
       - name: Create Namespace and deploy Application
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
-          
+
       - name: TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-affected-perc-ton-series
-          
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -433,20 +470,29 @@ jobs:
           cat logs.txt   
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}       
           
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup 
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup             
         
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh        
 
 
@@ -455,49 +501,50 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     env:
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
       CHAOS_NAMESPACE: "litmus"
       APP_NS: "litmus"
-      UPDATE_WEBSITE: "true"
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml   
       POD_LEVEL: "true"      
     
     steps:
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.16'        
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'litmuschaos/litmus-e2e'
-          ref: 'master'      
+      - uses: actions/checkout@v4
 
       - name: Installing Prerequisites (K3S Cluster)
-        run: |
-          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.11+k3s1 sh -s - --docker --write-kubeconfig-mode 664
-          kubectl wait node --all --for condition=ready --timeout=90s
-          kubectl get nodes
-          
+        id: cluster
+        uses: ./.github/actions/setup-k3s
+
       - name: Litmus Infra Setup In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: litmus
         run: |
           make build-litmus
 
       - name: Deploy App In Cluster-1
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: app
         run: make app-deploy
-        
+
       - name: Create Namespace and deploy Application
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
       - name: TCID-K3S-GENERIC-APP-MULTIPLE-APP-DEPLOY
-        if: ${{ always() }}
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make multiple-app-deploy
-        
+
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
+          bash build/debug.sh
           
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
@@ -508,11 +555,20 @@ jobs:
           cat logs.txt        
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
           kubectl delete ns ${CHAOS_NAMESPACE}
 
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
+
       - name: Deleting K3S cluster
         if: always()
+        continue-on-error: true
         run: /usr/local/bin/k3s-uninstall.sh        

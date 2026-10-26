@@ -16,7 +16,7 @@ import (
 func TestGoDiskFill(t *testing.T) {
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 // BDD Tests for disk-fill experiment

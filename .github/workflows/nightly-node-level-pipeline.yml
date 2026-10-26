@@ -3,183 +3,109 @@ name: Nightly-Node-Level-Pipeline
 on:
   schedule:
     - cron: "30 20 * * *" # Daily 02:30 AM in midnight
+  workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: /go/src
+permissions:
+  contents: read
 
 jobs:
-  ### Setup Litmus
-  Setup_Litmus_Infra:
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, node-level]
+  Node_Level_Test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      CHAOS_NAMESPACE: "litmus"
+      APP_NS: "litmus"
+      NODE_LEVEL: "true"
+      KUBECONFIG: /home/runner/.kube/config
+      JUNIT_REPORT_DIR: ${{ github.workspace }}/results/bdd
 
     steps:
-      - name: Litmus Infra Setup In Cluster-3
-        run: |
-          make build-litmus
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.16'
 
-  ### Setup App
-  Setup_App_Deployment:
-    needs: Setup_Litmus_Infra
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
+      - uses: actions/checkout@v4
 
-    runs-on: [self-hosted, node-level]
-    steps:
-      - name: Deploy App In Cluster-3
+      # a multi node cluster, the self hosted runners used earlier for this pipeline do not exist anymore
+      - name: Installing Prerequisites (Kubernetes Cluster)
+        id: cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: litmus-e2e
+          config: .github/kind/node-level.yaml
+          wait: 180s
+
+      - name: Litmus Infra Setup
+        id: litmus
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
+        run: make build-litmus
+
+      - name: Deploy App
+        id: app
+        if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
         run: make app-deploy
 
-    ## TODO: Make use of app liveness check and aux app
-    # - name: Liveness In Cluster-3
-    #   if: always()
-    #   run: make liveness
-
-    # - name: Auxiliary App In Cluster-3
-    #   if: always()
-    #   run: make auxiliary-app
-
-  ### Runing Pod Level Tests
-
-  Node_Level_Test:
-    needs: Setup_App_Deployment
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, node-level]
-    steps:
-      - name: TCID-EC2-GENERIC-INFRA-POD-AUTOSCALER
+      - name: TCID-KIND-GENERIC-INFRA-POD-AUTOSCALER
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make pod-autoscaler
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-CPU-HOG
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-CPU-HOG
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-cpu-hog
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-MEMORY-HOG
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-MEMORY-HOG
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-memory-hog
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-DRAIN
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-DRAIN
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-drain
 
-      - name: TCID-EC2-GENERIC-INFRA-KUBELET-SERVICE-KILL
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-KUBELET-SERVICE-KILL
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make kubelet-service-kill
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-TAINT
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-TAINT
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-taint
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-IO-STRESS
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-IO-STRESS
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-io-stress
 
-      - name: TCID-EC2-GENERIC-INFRA-NODE-SELECTOR
-        if: always()
+      - name: TCID-KIND-GENERIC-INFRA-NODE-SELECTOR
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make node-selector
 
-      - name: "[Debug]: check chaos resources"
-        if: ${{ failure() }}
-        continue-on-error: true
-        run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
-          
-      - name: "[Debug]: check operator logs"
-        if: ${{ failure() }}
-        continue-on-error: true
-        run: |      
-          operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
-          kubectl logs $operator_name -n litmus > logs.txt
-          cat logs.txt
-
-  ### Runing Experiment Tunables
-  Engine_Test:
-    needs: Node_Level_Test
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, node-level]
-    steps:
-      - name: TCID-EC2-GENERIC-INFRA-WITH-APP-INFO
+      - name: TCID-KIND-GENERIC-INFRA-WITH-APP-INFO
+        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make with-app-info
 
       - name: "[Debug]: check chaos resources"
         if: ${{ failure() }}
         continue-on-error: true
-        run: |
-          bash <(curl -s https://raw.githubusercontent.com/litmuschaos/litmus-e2e/master/build/debug.sh)
-          
+        run: bash build/debug.sh
+
       - name: "[Debug]: check operator logs"
         if: ${{ failure() }}
         continue-on-error: true
-        run: |      
+        run: |
           operator_name=$(kubectl get pods -n litmus -l app.kubernetes.io/component=operator --no-headers | awk '{print$1}')
           kubectl logs $operator_name -n litmus > logs.txt
           cat logs.txt
 
-  ### App Cleanup
-  App_Cleanup:
-    needs: Engine_Test
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-
-    runs-on: [self-hosted, node-level]
-    steps:
       - name: Application Cleanup
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
-  ### Litmus Cleanup
-
-  Litmus_Cleanup:
-    needs: App_Cleanup
-    if: always()
-    container:
-      image: "litmuschaos/litmus-e2e:ci"
-      volumes:
-        - /home/ubuntu/.kube:/root/.kube
-        - /home/ubuntu/.aws:/root/.aws
-        - /etc/kubernetes:/etc/kubernetes
-      env:
-        KUBECONFIG: /root/.kube/config
-        NODE_LEVEL: "true"
-
-    runs-on: [self-hosted, node-level]
-    steps:
       - name: Litmus Cleanup
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup
+
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-junit-${{ github.job }}
+          path: results/bdd/*.xml
+          if-no-files-found: ignore
