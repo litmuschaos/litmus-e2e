@@ -99,6 +99,15 @@ jobs:
               ${GA_VERSION:+--version "$GA_VERSION"} --previous "${site}/ga/history.json"
           fi
 
+      # GitHub Pages lets browsers cache files for ten minutes. A visitor holding old modules next to new ones would
+      # get import errors, so every module, the script and the stylesheet are requested with the commit as version.
+      - name: Version the asset URLs
+        run: |
+          v="${GITHUB_SHA::10}"
+          find dashboard/assets/js -name '*.js' -exec sed -i -E "s#((from|import\()[[:space:]]*['\"]\.{1,2}/[^'\"]+\.js)(['\"])#\1?v=${v}\3#g" {} +
+          sed -i -E "s#(assets/js/[A-Za-z/]+\.js)\"#\1?v=${v}\"#g; s#assets/styles\.css\"#assets/styles.css?v=${v}\"#" dashboard/index.html
+          grep -c "?v=${v}" dashboard/index.html
+
       - name: Upload the site
         uses: actions/upload-artifact@v4
         with:
