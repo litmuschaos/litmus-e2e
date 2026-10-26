@@ -31,41 +31,50 @@ func ChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSet
 	return nil
 }
 
+// chaosPodCompletionTimeout is the maximum time to wait for the chaos pod to complete
+const chaosPodCompletionTimeout = 20 * time.Minute
+
 // printChaosPodLogs will wait for the chaosPod to get completed and then prints the logs of it.
 func printChaosPodLogs(testsDetails *types.TestDetails, clients environment.ClientSets) error {
 
-	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.AppNS).Get(testsDetails.EngineName, metav1.GetOptions{})
+	chaosEngine, err := clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Get(testsDetails.EngineName, metav1.GetOptions{})
 	if err != nil {
 		return errors.Errorf("Failed to get the chaosengine %v err: %v", testsDetails.EngineName, err)
 	}
 	if len(chaosEngine.Status.Experiments) == 0 {
 		return errors.Errorf("Failed to get the chaos pod for the test")
 	}
-	for count := 0; count < 3000; count++ {
+	chaosPodName := chaosEngine.Status.Experiments[0].ExpPod
 
-		chaosPod, err := clients.KubeClient.CoreV1().Pods(testsDetails.AppNS).Get(chaosEngine.Status.Experiments[0].ExpPod, metav1.GetOptions{})
+	completed := false
+	deadline := time.Now().Add(chaosPodCompletionTimeout)
+	for time.Now().Before(deadline) {
+
+		chaosPod, err := clients.KubeClient.CoreV1().Pods(testsDetails.ChaosNamespace).Get(chaosPodName, metav1.GetOptions{})
 		if err != nil {
 			return errors.Errorf("Failed to get the chaos pod err: %v", err)
 		}
-		if chaosPod.Status.Phase != "Succeeded" {
-			if chaosPod.Status.Phase != "Running" && chaosPod.Status.Phase != "Pending" {
-				return errors.Errorf("chaos pod is in %v state", chaosPod.Status.Phase)
-			}
-			time.Sleep(10 * time.Second)
-			log.Infof("[Status]: Currently, the Chaos Pod is in %v State, Please Wait for its completion", chaosPod.Status.Phase)
-		} else {
+		if chaosPod.Status.Phase == "Succeeded" {
+			completed = true
 			break
 		}
+		if chaosPod.Status.Phase != "Running" && chaosPod.Status.Phase != "Pending" {
+			// print what the pod logged before reporting the failure
+			if logErr := getPodLogs(chaosPodName, testsDetails.ChaosNamespace, clients); logErr != nil {
+				log.Errorf("Failed to get the logs of chaos pod %v, err: %v", chaosPodName, logErr)
+			}
+			return errors.Errorf("chaos pod is in %v state", chaosPod.Status.Phase)
+		}
+		log.Infof("[Status]: Currently, the Chaos Pod is in %v State, Please Wait for its completion", chaosPod.Status.Phase)
+		time.Sleep(10 * time.Second)
+	}
+	if !completed {
+		return errors.Errorf("chaos pod %v did not complete within %v", chaosPodName, chaosPodCompletionTimeout)
 	}
 
 	//Getting the jobList after the job gets completed
-	chaosPodName := (chaosEngine.Status.Experiments[0].ExpPod)
 	log.Infof("[Info]: chaos pod name is: %v ", chaosPodName)
-	if err = getPodLogs(chaosPodName, testsDetails.ChaosNamespace, clients); err != nil {
-		return err
-	}
-
-	return nil
+	return getPodLogs(chaosPodName, testsDetails.ChaosNamespace, clients)
 }
 
 // printHelperPodLogs will print the helper pod logs when the experiment is not passed

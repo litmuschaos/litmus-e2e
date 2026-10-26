@@ -21,6 +21,9 @@ func GetApplicationNode(testsDetails *types.TestDetails, clients environment.Cli
 		return errors.Errorf("Unable to get the list of application pods due to %v", err)
 	}
 
+	if len(appPodList.Items) == 0 {
+		return errors.Errorf("No application pod found with label %v in namespace %v", testsDetails.AppLabel, testsDetails.AppNS)
+	}
 	testsDetails.ApplicationNodeName = appPodList.Items[0].Spec.NodeName
 
 	return nil
@@ -41,6 +44,9 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 				return errors.Errorf("Failed to get the chaosengine due to %v", err)
 			}
 
+			if len(chaosEngine.Status.Experiments) == 0 {
+				return errors.Errorf("ChaosEngine %v has no experiment status yet", testsDetails.EngineName)
+			}
 			if string(chaosEngine.Status.Experiments[0].Verdict) == "Awaited" {
 				return errors.Errorf("Verdict of Chaos Engine is Awaited")
 			}
@@ -54,7 +60,10 @@ func GetChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.
 	if err != nil {
 		return "", errors.Errorf("Failed to get the chaosengine due to %v", err)
 	}
-	return string(chaosEngine.Status.Experiments[0].Verdict), err
+	if len(chaosEngine.Status.Experiments) == 0 {
+		return "", errors.Errorf("ChaosEngine %v has no experiment status", testsDetails.EngineName)
+	}
+	return string(chaosEngine.Status.Experiments[0].Verdict), nil
 }
 
 //GetChaosResultVerdict checks the chaos result verdict
@@ -73,9 +82,9 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 			}
 
 			if string(chaosResult.Status.ExperimentStatus.Verdict) == "Awaited" {
-				return errors.Errorf("Verdict of Chaos Engine is Awaited")
+				return errors.Errorf("Verdict of Chaos Result is Awaited")
 			}
-			log.Infof("Chaos Engine Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
+			log.Infof("Chaos Result Verdict is %v", chaosResult.Status.ExperimentStatus.Verdict)
 
 			return nil
 		}); err != nil {
@@ -85,7 +94,7 @@ func GetChaosResultVerdict(testsDetails *types.TestDetails, clients environment.
 	if err != nil {
 		return "", errors.Errorf("Failed to get the chaosresult due to %v", err)
 	}
-	return string(chaosResult.Status.ExperimentStatus.Verdict), err
+	return string(chaosResult.Status.ExperimentStatus.Verdict), nil
 }
 
 //GetJobPod checks the job pod is present or not
@@ -117,8 +126,8 @@ func GetSelectorNode(testsDetails *types.TestDetails, clients environment.Client
 func GetAppNameAndIP(appLabel, appNS string, clients environment.ClientSets) (string, string, string, error) {
 
 	PodList, err := clients.KubeClient.CoreV1().Pods(appNS).List(metav1.ListOptions{LabelSelector: appLabel})
-	if err != nil || len(PodList.Items) == 0 {
-		return "", "", "", errors.Errorf("Failed to get the podlist err: %v", err)
+	if err != nil || len(PodList.Items) < 2 {
+		return "", "", "", errors.Errorf("Failed to get at least 2 application pods (target and helper) with label %v, err: %v", appLabel, err)
 	}
 
 	log.Infof("The target pod is %v with IP %v", PodList.Items[0].Name, PodList.Items[0].Status.PodIP)

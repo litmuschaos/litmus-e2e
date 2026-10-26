@@ -39,9 +39,7 @@ var _ = Describe("BDD of azure-instance-stop experiment", func() {
 			environment.GetENV(&testsDetails, "azure-instance-stop", "az-en-par")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "azure", "azure-instance-stop")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -103,9 +101,7 @@ var _ = Describe("BDD of azure-instance-stop experiment", func() {
 			environment.GetENV(&testsDetails, "azure-instance-stop", "az-en-ser")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.AzureInstanceName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-instance-stop/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "azure", "azure-instance-stop")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

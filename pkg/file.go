@@ -1,12 +1,12 @@
 package pkg
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -65,6 +65,28 @@ func EditKeyValue(filepath, key, oldvalue, newvalue string) error {
 	return nil
 }
 
+// EditNextMatch replaces old with new on the first line containing it that follows the first line containing key
+func EditNextMatch(filepath, key, old, new string) error {
+	fileData, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to read the given file due to:%v", err)
+	}
+	lines := strings.Split(string(fileData), "\n")
+
+	keyFound := false
+	for i, line := range lines {
+		if !keyFound {
+			keyFound = strings.Contains(line, key)
+			continue
+		}
+		if strings.Contains(line, old) {
+			lines[i] = strings.Replace(line, old, new, 1)
+			return ioutil.WriteFile(filepath, []byte(strings.Join(lines, "\n")), 0644)
+		}
+	}
+	return errors.Errorf("Error in updating \"%v\", no match found after \"%v\" please check the file", old, key)
+}
+
 // AddAfterMatch will add a new line when a match is found
 func AddAfterMatch(filepath, key, newvalue string) error {
 	failFlag := true
@@ -94,27 +116,46 @@ func AddAfterMatch(filepath, key, newvalue string) error {
 	return nil
 }
 
-// DownloadFile will download a url to a local file. It's efficient because it will
-// write as it downloads and not load the whole file into memory.
-func DownloadFile(filepath string, url string) error {
+// hubErrorPrefix is the body returned by the ChaosHub API (with HTTP 200) when the requested file does not exist
+const hubErrorPrefix = "file content parsing error"
 
-	// Get the data
-	resp, err := http.Get(url)
+// FetchManifest downloads a manifest and fails when the server did not return a usable file.
+// The ChaosHub API answers missing files with HTTP 200 and an error message as the body,
+// so the status code alone cannot be trusted.
+func FetchManifest(url string) ([]byte, error) {
+	client := http.Client{Timeout: 60 * time.Second}
+	resp, err := client.Get(url)
 	if err != nil {
-		return fmt.Errorf("Failed to get the data: %w", err)
+		return nil, fmt.Errorf("Failed to get the data from %v: %w", url, err)
 	}
 	defer resp.Body.Close()
 
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return fmt.Errorf("Failed to create the file: %w", err)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Failed to get the data from %v: unexpected status %v", url, resp.Status)
 	}
-	defer out.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read the data from %v: %w", url, err)
+	}
+	if len(bytes.TrimSpace(data)) == 0 {
+		return nil, fmt.Errorf("Failed to get the data from %v: empty response", url)
+	}
+	if strings.HasPrefix(strings.TrimSpace(string(data)), hubErrorPrefix) {
+		return nil, fmt.Errorf("Failed to get the data from %v: %v", url, strings.TrimSpace(string(data)))
+	}
+	return data, nil
+}
+
+// DownloadFile will download a url to a local file, only the validated content is written
+func DownloadFile(filepath string, url string) error {
+
+	data, err := FetchManifest(url)
+	if err != nil {
+		return err
+	}
 
 	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
+	if err := ioutil.WriteFile(filepath, data, 0644); err != nil {
 		return fmt.Errorf("Failed to write the data in file: %w", err)
 	}
 	return nil
