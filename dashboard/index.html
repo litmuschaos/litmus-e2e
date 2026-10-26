@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Litmus E2E Nightly</title>
+  <meta name="description" content="Results of the nightly LitmusChaos experiment BDD and frontend E2E test runs.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    // set the stored theme before the first paint, a blocked storage keeps the system theme
+    try { var t = localStorage.getItem('e2e-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#/" aria-label="Litmus E2E Nightly, overview">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 10 4l4 8 2-4 4 10z" fill="currentColor"/></svg>
+        <span>Litmus E2E <b>Nightly</b></span>
+      </a>
+      <nav id="nav" aria-label="Sections">
+        <a href="#/" data-route="overview">Overview</a>
+        <a href="#/experiments" data-route="experiments">Experiments</a>
+        <a href="#/frontend" data-route="frontend">Frontend</a>
+        <a href="#/history" data-route="history">History</a>
+        <a href="#/about" data-route="about">Data</a>
+      </nav>
+      <button id="theme" class="icon-btn" type="button" aria-label="Theme: system" title="Theme: system"></button>
+    </div>
+  </header>
+  <main id="main" tabindex="-1"></main>
+  <div id="live" class="sr-only" role="status" aria-live="polite"></div>
+  <div id="tooltip" class="tooltip" aria-hidden="true" hidden></div>
+  <noscript><p class="notice">The dashboard needs JavaScript. The data is available as <a href="data/latest.json">latest.json</a> and <a href="data/history.json">history.json</a>.</p></noscript>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

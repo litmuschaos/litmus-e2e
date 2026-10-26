@@ -1,0 +1,698 @@
+{
+ "build": null,
+ "config": {
+  "staleAfterHours": 36,
+  "suites": [
+   {
+    "id": "bdd",
+    "name": "Experiment BDD"
+   },
+   {
+    "id": "frontend",
+    "name": "Frontend E2E"
+   }
+  ],
+  "workflows": [
+   {
+    "category": "pod-level",
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "node-level",
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "component",
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "chaoscenter",
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "suite": "frontend"
+   },
+   {
+    "category": "aws",
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "azure",
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "gcp",
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "vmware",
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "m-agent",
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   }
+  ]
+ },
+ "coverage": {
+  "byCategory": {
+   "aws": [
+    "ebs-loss-by-id",
+    "ebs-loss-by-tag",
+    "ec2-terminate-by-id",
+    "ec2-terminate-by-tag"
+   ],
+   "azure": [
+    "disk-loss",
+    "instance-stop"
+   ],
+   "component": [
+    "admin-mode",
+    "annotation-check",
+    "appinfo",
+    "engine-state",
+    "env-from-secret-and-cm",
+    "experiment-image",
+    "job-cleanup-policy",
+    "reconcile-resiliency",
+    "run-history",
+    "service-account",
+    "target-pod"
+   ],
+   "gcp": [
+    "gcp-vm-disk-loss",
+    "gcp-vm-instance-stop"
+   ],
+   "m-agent": [
+    "process-kill-parallel",
+    "process-kill-serial"
+   ],
+   "node-level": [
+    "kubelet-service-kill",
+    "node-cpu-hog",
+    "node-drain",
+    "node-io-stress",
+    "node-memory-hog",
+    "node-selector",
+    "node-taint",
+    "pod-autoscaler",
+    "with-appinfo"
+   ],
+   "pod-level": [
+    "container-kill",
+    "disk-fill",
+    "multiple-app-deploy",
+    "pod-affected-perc-ton-parallel",
+    "pod-affected-perc-ton-series",
+    "pod-cpu-hog",
+    "pod-cpu-hog-exec",
+    "pod-delete",
+    "pod-io-stress",
+    "pod-memory-hog",
+    "pod-memory-hog-exec",
+    "pod-network-corruption",
+    "pod-network-duplication",
+    "pod-network-latency",
+    "pod-network-loss"
+   ],
+   "vmware": [
+    "vm-poweroff"
+   ]
+  },
+  "catalog": {
+   "admin-mode": {
+    "kind": "experiment",
+    "path": "components/operator/admin-mode_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "annotation-check": {
+    "kind": "experiment",
+    "path": "components/engine/annotation-check_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "app-cleanup": {
+    "kind": "setup",
+    "path": "tests/app-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-deploy": {
+    "kind": "setup",
+    "path": "tests/app-deploy_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-liveness": {
+    "kind": "setup",
+    "path": "tests/app-liveness_test.go",
+    "workflows": []
+   },
+   "appinfo": {
+    "kind": "experiment",
+    "path": "components/engine/appinfo_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "auxiliary-app": {
+    "kind": "experiment",
+    "path": "tests/auxiliary-app_test.go",
+    "workflows": []
+   },
+   "container-kill": {
+    "kind": "experiment",
+    "path": "tests/container-kill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-fill": {
+    "kind": "experiment",
+    "path": "tests/disk-fill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-loss": {
+    "kind": "experiment",
+    "path": "platform/azure/disk-loss_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "ebs-loss-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ebs-loss-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "engine-state": {
+    "kind": "experiment",
+    "path": "components/engine/engine-state_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "env-from-secret-and-cm": {
+    "kind": "experiment",
+    "path": "tests/env-from-secret-and-cm_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "experiment-404": {
+    "kind": "experiment",
+    "path": "components/engine/experiment-404_test.go",
+    "workflows": []
+   },
+   "experiment-image": {
+    "kind": "experiment",
+    "path": "components/experiment/experiment-image_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "gcp-vm-disk-loss": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-disk-loss_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "gcp-vm-instance-stop": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-instance-stop_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "install-litmus": {
+    "kind": "setup",
+    "path": "tests/install-litmus_test.go",
+    "workflows": [
+     "node-level",
+     "aws",
+     "azure",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "instance-stop": {
+    "kind": "experiment",
+    "path": "platform/azure/instance-stop_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "job-cleanup-policy": {
+    "kind": "experiment",
+    "path": "components/engine/job-cleanup-policy_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "kubelet-service-kill": {
+    "kind": "experiment",
+    "path": "tests/kubelet-service-kill_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "litmus-cleanup": {
+    "kind": "setup",
+    "path": "tests/litmus-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component",
+     "aws",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "multiple-app-deploy": {
+    "kind": "experiment",
+    "path": "tests/multiple-app-deploy_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "node-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/node-cpu-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-drain": {
+    "kind": "experiment",
+    "path": "tests/node-drain_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-io-stress": {
+    "kind": "experiment",
+    "path": "tests/node-io-stress_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/node-memory-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-selector": {
+    "kind": "experiment",
+    "path": "tests/node-selector_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-taint": {
+    "kind": "experiment",
+    "path": "tests/node-taint_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pipeline-update": {
+    "kind": "setup",
+    "path": "tests/pipeline-update_test.go",
+    "workflows": []
+   },
+   "pod-affected-perc-ton-parallel": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-parallel_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-affected-perc-ton-series": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-series_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-autoscaler": {
+    "kind": "experiment",
+    "path": "tests/pod-autoscaler_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pod-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-cpu-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-delete": {
+    "kind": "experiment",
+    "path": "tests/pod-delete_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-io-stress": {
+    "kind": "experiment",
+    "path": "tests/pod-io-stress_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-corruption": {
+    "kind": "experiment",
+    "path": "tests/pod-network-corruption_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-duplication": {
+    "kind": "experiment",
+    "path": "tests/pod-network-duplication_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-latency": {
+    "kind": "experiment",
+    "path": "tests/pod-network-latency_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-loss": {
+    "kind": "experiment",
+    "path": "tests/pod-network-loss_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "process-kill-parallel": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-parallel_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "process-kill-serial": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-serial_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "reconcile-resiliency": {
+    "kind": "experiment",
+    "path": "components/operator/reconcile-resiliency_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "run-history": {
+    "kind": "experiment",
+    "path": "components/result/run-history_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "service-account": {
+    "kind": "experiment",
+    "path": "components/engine/service-account_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "target-pod": {
+    "kind": "experiment",
+    "path": "components/experiment/target-pod_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "vm-poweroff": {
+    "kind": "experiment",
+    "path": "platform/vmware/vm-poweroff_test.go",
+    "workflows": [
+     "vmware"
+    ]
+   },
+   "with-appinfo": {
+    "kind": "experiment",
+    "path": "tests/with-appinfo_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   }
+  },
+  "defined": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "auxiliary-app",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-404",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "executed": [],
+  "executedPercent": 0.0,
+  "notScheduled": [
+   "auxiliary-app",
+   "experiment-404"
+  ],
+  "scheduled": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "scheduledNotExecuted": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ]
+ },
+ "generatedAt": "2026-10-26T00:00:00Z",
+ "metrics": {
+  "buildsConsidered": 0,
+  "durationChange": null,
+  "flakyTests": [],
+  "newlyFailing": [],
+  "recovered": [],
+  "recurringFailures": []
+ },
+ "repository": "example/litmus-e2e",
+ "schemaVersion": 1,
+ "tests": []
+}
