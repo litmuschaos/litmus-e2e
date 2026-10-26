@@ -518,15 +518,6 @@ ansible-node-drain:
 ### NEGATIVE TESTS ###
 ######################
 
-.PHONY: annotation-check
-annotation-check:
-
-	@echo "-----------------------------------------"
-	@echo "Running Annotation Check For Chaos Engine"
-	@echo "-----------------------------------------"
-	@go test components/engine/annotation-check_test.go -v -count=1
-
-
 .PHONY: appinfo
 appinfo:
 
