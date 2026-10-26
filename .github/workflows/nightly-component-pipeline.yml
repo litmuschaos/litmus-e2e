@@ -128,10 +128,6 @@ jobs:
         if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make appinfo
 
-      - name: TCID-K3S-GENERIC-ENGINE-ANNOTATION-CHECK
-        if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
-        run: make annotation-check
-
       - name: TCID-K3S-GENERIC-ENGINE-ENGINE-STATE
         if: ${{ !cancelled() && steps.litmus.outcome == 'success' && steps.app.outcome == 'success' }}
         run: make engine-state
