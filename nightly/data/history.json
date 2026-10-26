@@ -1,7 +1,7 @@
 {
  "builds": [
   {
-   "durationSec": 7576,
+   "durationSec": 10895,
    "id": "2026-10-26",
    "results": {
     "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
@@ -32,6 +32,10 @@
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs#2": "p",
     "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod": "p",
     "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should uncordon the app node": "p",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for container kill experiment with 50% affected in parallel Should check the container kill with pod affected percentage 50 and mode is parallel": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for disk fill experiment with 50% affected in parallel Should check the disk fill experiment when pod affected percentage is 50 and mode is parallel": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for pod-delete experiment with 50% affected in parallel Should check for the pod delete experiment": "p",
@@ -181,12 +185,12 @@
       "total": 104
      },
      "optionalCounts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
-      "passRate": null,
+      "passRate": 0.0,
       "passed": 0,
-      "skipped": 0,
-      "total": 0
+      "skipped": 2,
+      "total": 4
      },
      "status": "failed"
     },
@@ -278,16 +282,16 @@
     },
     "m-agent": {
      "counts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
       "passed": 0,
-      "skipped": 0
+      "skipped": 2
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 40413721767,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40413721767",
+     "status": "failed"
     },
     "node-level": {
      "counts": {
@@ -331,7 +335,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T21:41:51Z",
+ "generatedAt": "2026-10-26T22:37:11Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
