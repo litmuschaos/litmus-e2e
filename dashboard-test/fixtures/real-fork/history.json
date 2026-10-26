@@ -69,7 +69,7 @@
      "durationSec": 24,
      "failureKind": "infrastructure",
      "runId": 39081548276,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081548276",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39081548276",
      "status": "failed"
     },
     "azure": {
@@ -82,7 +82,7 @@
      "durationSec": 30,
      "failureKind": "infrastructure",
      "runId": 39081548634,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081548634",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39081548634",
      "status": "failed"
     },
     "chaoscenter": {
@@ -121,7 +121,7 @@
      "durationSec": 36,
      "failureKind": "infrastructure",
      "runId": 39081782131,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081782131",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39081782131",
      "status": "failed"
     },
     "m-agent": {
@@ -134,7 +134,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 39081603777,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081603777",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39081603777",
      "status": "failed"
     },
     "node-level": {
@@ -173,7 +173,7 @@
      "durationSec": 22,
      "failureKind": "infrastructure",
      "runId": 39081617676,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081617676",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39081617676",
      "status": "failed"
     }
    }
@@ -264,7 +264,7 @@
      "durationSec": 20,
      "failureKind": "infrastructure",
      "runId": 39180027561,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180027561",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39180027561",
      "status": "failed"
     },
     "azure": {
@@ -277,7 +277,7 @@
      "durationSec": 31,
      "failureKind": "infrastructure",
      "runId": 39180028933,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180028933",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39180028933",
      "status": "failed"
     },
     "chaoscenter": {
@@ -303,7 +303,7 @@
      "durationSec": 1354,
      "failureKind": "infrastructure",
      "runId": 39172629437,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172629437",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39172629437",
      "status": "failed"
     },
     "gcp": {
@@ -316,7 +316,7 @@
      "durationSec": 45,
      "failureKind": "infrastructure",
      "runId": 39180457707,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180457707",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39180457707",
      "status": "failed"
     },
     "m-agent": {
@@ -329,7 +329,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 39180268848,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180268848",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39180268848",
      "status": "failed"
     },
     "node-level": {
@@ -342,7 +342,7 @@
      "durationSec": 432004,
      "failureKind": null,
      "runId": 39172667672,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172667672",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39172667672",
      "status": "cancelled"
     },
     "pod-level": {
@@ -355,7 +355,7 @@
      "durationSec": 717,
      "failureKind": "infrastructure",
      "runId": 39172490372,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172490372",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39172490372",
      "status": "failed"
     },
     "vmware": {
@@ -368,7 +368,7 @@
      "durationSec": 18,
      "failureKind": "infrastructure",
      "runId": 39180249587,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180249587",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39180249587",
      "status": "failed"
     }
    }
@@ -459,7 +459,7 @@
      "durationSec": 22,
      "failureKind": "infrastructure",
      "runId": 39351644783,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351644783",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39351644783",
      "status": "failed"
     },
     "azure": {
@@ -472,7 +472,7 @@
      "durationSec": 37,
      "failureKind": "infrastructure",
      "runId": 39351645904,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351645904",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39351645904",
      "status": "failed"
     },
     "chaoscenter": {
@@ -498,7 +498,7 @@
      "durationSec": 1346,
      "failureKind": "infrastructure",
      "runId": 39344263819,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39344263819",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39344263819",
      "status": "failed"
     },
     "gcp": {
@@ -511,7 +511,7 @@
      "durationSec": 39,
      "failureKind": "infrastructure",
      "runId": 39351832766,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351832766",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39351832766",
      "status": "failed"
     },
     "m-agent": {
@@ -524,7 +524,7 @@
      "durationSec": 38,
      "failureKind": "infrastructure",
      "runId": 39351719298,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351719298",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39351719298",
      "status": "failed"
     },
     "node-level": {
@@ -537,7 +537,7 @@
      "durationSec": 432004,
      "failureKind": null,
      "runId": 39344335213,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39344335213",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39344335213",
      "status": "cancelled"
     },
     "pod-level": {
@@ -550,7 +550,7 @@
      "durationSec": 822,
      "failureKind": "infrastructure",
      "runId": 39343990419,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39343990419",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39343990419",
      "status": "failed"
     },
     "vmware": {
@@ -563,7 +563,7 @@
      "durationSec": 24,
      "failureKind": "infrastructure",
      "runId": 39351736591,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351736591",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39351736591",
      "status": "failed"
     }
    }
@@ -654,7 +654,7 @@
      "durationSec": 38,
      "failureKind": "infrastructure",
      "runId": 39522867568,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39522867568",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39522867568",
      "status": "failed"
     },
     "azure": {
@@ -667,7 +667,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 39522899873,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39522899873",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39522899873",
      "status": "failed"
     },
     "chaoscenter": {
@@ -693,7 +693,7 @@
      "durationSec": 1083,
      "failureKind": "infrastructure",
      "runId": 39514091837,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39514091837",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39514091837",
      "status": "failed"
     },
     "gcp": {
@@ -706,7 +706,7 @@
      "durationSec": 40,
      "failureKind": "infrastructure",
      "runId": 39523373161,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523373161",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39523373161",
      "status": "failed"
     },
     "m-agent": {
@@ -719,7 +719,7 @@
      "durationSec": 37,
      "failureKind": "infrastructure",
      "runId": 39523000389,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523000389",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39523000389",
      "status": "failed"
     },
     "node-level": {
@@ -732,7 +732,7 @@
      "durationSec": 432004,
      "failureKind": null,
      "runId": 39514109441,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39514109441",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39514109441",
      "status": "cancelled"
     },
     "pod-level": {
@@ -745,7 +745,7 @@
      "durationSec": 678,
      "failureKind": "infrastructure",
      "runId": 39513879116,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39513879116",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39513879116",
      "status": "failed"
     },
     "vmware": {
@@ -758,7 +758,7 @@
      "durationSec": 19,
      "failureKind": "infrastructure",
      "runId": 39523049266,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523049266",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39523049266",
      "status": "failed"
     }
    }
@@ -849,7 +849,7 @@
      "durationSec": 26,
      "failureKind": "infrastructure",
      "runId": 39701597826,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701597826",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39701597826",
      "status": "failed"
     },
     "azure": {
@@ -862,7 +862,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 39701622910,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701622910",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39701622910",
      "status": "failed"
     },
     "chaoscenter": {
@@ -888,7 +888,7 @@
      "durationSec": 1440,
      "failureKind": "infrastructure",
      "runId": 39694056265,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39694056265",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39694056265",
      "status": "failed"
     },
     "gcp": {
@@ -901,7 +901,7 @@
      "durationSec": 46,
      "failureKind": "infrastructure",
      "runId": 39702000964,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39702000964",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39702000964",
      "status": "failed"
     },
     "m-agent": {
@@ -914,7 +914,7 @@
      "durationSec": 27,
      "failureKind": "infrastructure",
      "runId": 39701698839,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701698839",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39701698839",
      "status": "failed"
     },
     "node-level": {
@@ -927,7 +927,7 @@
      "durationSec": null,
      "failureKind": null,
      "runId": 39694090633,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39694090633",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39694090633",
      "status": "in_progress"
     },
     "pod-level": {
@@ -940,7 +940,7 @@
      "durationSec": 834,
      "failureKind": "infrastructure",
      "runId": 39693714557,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39693714557",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39693714557",
      "status": "failed"
     },
     "vmware": {
@@ -953,7 +953,7 @@
      "durationSec": 18,
      "failureKind": "infrastructure",
      "runId": 39701705652,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701705652",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39701705652",
      "status": "failed"
     }
    }
@@ -1043,7 +1043,7 @@
      "durationSec": 31,
      "failureKind": "infrastructure",
      "runId": 39879960170,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39879960170",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39879960170",
      "status": "failed"
     },
     "azure": {
@@ -1056,7 +1056,7 @@
      "durationSec": 34,
      "failureKind": "infrastructure",
      "runId": 39879983433,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39879983433",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39879983433",
      "status": "failed"
     },
     "chaoscenter": {
@@ -1082,7 +1082,7 @@
      "durationSec": 1415,
      "failureKind": "infrastructure",
      "runId": 39872229319,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872229319",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39872229319",
      "status": "failed"
     },
     "gcp": {
@@ -1095,7 +1095,7 @@
      "durationSec": 45,
      "failureKind": "infrastructure",
      "runId": 39880416303,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880416303",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39880416303",
      "status": "failed"
     },
     "m-agent": {
@@ -1108,7 +1108,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 39880096120,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880096120",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39880096120",
      "status": "failed"
     },
     "node-level": {
@@ -1121,7 +1121,7 @@
      "durationSec": null,
      "failureKind": null,
      "runId": 39872225358,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872225358",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39872225358",
      "status": "in_progress"
     },
     "pod-level": {
@@ -1134,7 +1134,7 @@
      "durationSec": 797,
      "failureKind": "infrastructure",
      "runId": 39872062193,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872062193",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39872062193",
      "status": "failed"
     },
     "vmware": {
@@ -1147,7 +1147,7 @@
      "durationSec": 20,
      "failureKind": "infrastructure",
      "runId": 39880128524,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880128524",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/39880128524",
      "status": "failed"
     }
    }
@@ -1236,7 +1236,7 @@
      "durationSec": 35,
      "failureKind": "infrastructure",
      "runId": 40046975367,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40046975367",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40046975367",
      "status": "failed"
     },
     "azure": {
@@ -1249,7 +1249,7 @@
      "durationSec": 36,
      "failureKind": "infrastructure",
      "runId": 40046993256,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40046993256",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40046993256",
      "status": "failed"
     },
     "chaoscenter": {
@@ -1275,7 +1275,7 @@
      "durationSec": 1474,
      "failureKind": "infrastructure",
      "runId": 40039175060,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40039175060",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40039175060",
      "status": "failed"
     },
     "gcp": {
@@ -1288,7 +1288,7 @@
      "durationSec": 40,
      "failureKind": "infrastructure",
      "runId": 40047483210,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047483210",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40047483210",
      "status": "failed"
     },
     "m-agent": {
@@ -1301,7 +1301,7 @@
      "durationSec": 38,
      "failureKind": "infrastructure",
      "runId": 40047184461,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047184461",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40047184461",
      "status": "failed"
     },
     "node-level": {
@@ -1314,7 +1314,7 @@
      "durationSec": null,
      "failureKind": null,
      "runId": 40039293046,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40039293046",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40039293046",
      "status": "in_progress"
     },
     "pod-level": {
@@ -1327,7 +1327,7 @@
      "durationSec": 767,
      "failureKind": "infrastructure",
      "runId": 40038750117,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40038750117",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40038750117",
      "status": "failed"
     },
     "vmware": {
@@ -1340,7 +1340,7 @@
      "durationSec": 19,
      "failureKind": "infrastructure",
      "runId": 40047206719,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047206719",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40047206719",
      "status": "failed"
     }
    }
@@ -1428,7 +1428,7 @@
      "durationSec": 26,
      "failureKind": "infrastructure",
      "runId": 40146513426,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146513426",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40146513426",
      "status": "failed"
     },
     "azure": {
@@ -1441,7 +1441,7 @@
      "durationSec": 38,
      "failureKind": "infrastructure",
      "runId": 40146511663,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146511663",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40146511663",
      "status": "failed"
     },
     "chaoscenter": {
@@ -1467,7 +1467,7 @@
      "durationSec": 1997,
      "failureKind": "infrastructure",
      "runId": 40139541815,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139541815",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40139541815",
      "status": "failed"
     },
     "gcp": {
@@ -1480,7 +1480,7 @@
      "durationSec": 40,
      "failureKind": "infrastructure",
      "runId": 40146730570,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146730570",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40146730570",
      "status": "failed"
     },
     "m-agent": {
@@ -1493,7 +1493,7 @@
      "durationSec": 32,
      "failureKind": "infrastructure",
      "runId": 40146652780,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146652780",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40146652780",
      "status": "failed"
     },
     "node-level": {
@@ -1506,7 +1506,7 @@
      "durationSec": null,
      "failureKind": null,
      "runId": 40139553867,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139553867",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40139553867",
      "status": "in_progress"
     },
     "pod-level": {
@@ -1519,7 +1519,7 @@
      "durationSec": 766,
      "failureKind": "infrastructure",
      "runId": 40139288452,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139288452",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40139288452",
      "status": "failed"
     },
     "vmware": {
@@ -1532,7 +1532,7 @@
      "durationSec": 20,
      "failureKind": "infrastructure",
      "runId": 40146657136,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146657136",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40146657136",
      "status": "failed"
     }
    }
@@ -1618,7 +1618,7 @@
      "durationSec": 23,
      "failureKind": "infrastructure",
      "runId": 40249644106,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249644106",
      "status": "failed"
     },
     "azure": {
@@ -1631,7 +1631,7 @@
      "durationSec": 30,
      "failureKind": "infrastructure",
      "runId": 40249654618,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249654618",
      "status": "failed"
     },
     "chaoscenter": {
@@ -1657,7 +1657,7 @@
      "durationSec": 1477,
      "failureKind": "infrastructure",
      "runId": 40241594586,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241594586",
      "status": "failed"
     },
     "gcp": {
@@ -1670,7 +1670,7 @@
      "durationSec": 56,
      "failureKind": "infrastructure",
      "runId": 40250035278,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40250035278",
      "status": "failed"
     },
     "m-agent": {
@@ -1683,7 +1683,7 @@
      "durationSec": 34,
      "failureKind": "infrastructure",
      "runId": 40249725124,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249725124",
      "status": "failed"
     },
     "node-level": {
@@ -1696,7 +1696,7 @@
      "durationSec": null,
      "failureKind": null,
      "runId": 40241615343,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241615343",
      "status": "in_progress"
     },
     "pod-level": {
@@ -1709,7 +1709,7 @@
      "durationSec": 768,
      "failureKind": "infrastructure",
      "runId": 40241465680,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241465680",
      "status": "failed"
     },
     "vmware": {
@@ -1722,13 +1722,13 @@
      "durationSec": 22,
      "failureKind": "infrastructure",
      "runId": 40249742476,
-     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476",
+     "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249742476",
      "status": "failed"
     }
    }
   }
  ],
  "generatedAt": "2026-10-26T16:30:00Z",
- "repository": "uditgaurav/litmus-e2e",
+ "repository": "example/litmus-e2e",
  "schemaVersion": 1
 }

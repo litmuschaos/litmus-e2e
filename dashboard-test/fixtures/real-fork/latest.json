@@ -71,7 +71,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "PAP_100_Mode_Parallel",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965402"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965402"
      },
      {
       "conclusion": "failure",
@@ -85,7 +85,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "PAP_100_Mode_Serial",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965419"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965419"
      },
      {
       "conclusion": "failure",
@@ -97,7 +97,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Multiple_App_Deploy",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965445"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965445"
      },
      {
       "conclusion": "failure",
@@ -117,7 +117,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Stress_Chaos_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965451"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965451"
      },
      {
       "conclusion": "failure",
@@ -134,7 +134,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Network_Chaos_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965458"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965458"
      },
      {
       "conclusion": "failure",
@@ -148,7 +148,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Pod_Delete_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965501"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965501"
      },
      {
       "conclusion": "failure",
@@ -163,7 +163,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Container_Kill_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965587"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965587"
      }
     ],
     "name": "Pod level",
@@ -171,7 +171,7 @@
     "required": true,
     "resultsSource": "jobs",
     "runId": 40241465680,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241465680",
     "startedAt": "2026-10-25T22:42:36Z",
     "status": "failed",
     "suite": "bdd",
@@ -195,7 +195,7 @@
       "failedSteps": [],
       "firstFailedStep": null,
       "name": "Setup_Litmus_Infra",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343/job/121314423472"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241615343/job/121314423472"
      }
     ],
     "name": "Node level",
@@ -203,7 +203,7 @@
     "required": true,
     "resultsSource": "jobs",
     "runId": 40241615343,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241615343",
     "startedAt": "2026-10-25T22:44:39Z",
     "status": "in_progress",
     "suite": "bdd",
@@ -236,7 +236,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Chaos_Experiment_Component_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363493"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363493"
      },
      {
       "conclusion": "failure",
@@ -250,7 +250,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Chaos_Result_Component_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363605"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363605"
      },
      {
       "conclusion": "failure",
@@ -265,7 +265,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Chaos_Operator_Component_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363650"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363650"
      },
      {
       "conclusion": "failure",
@@ -284,7 +284,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Chaos_Engine_Component_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363708"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363708"
      }
     ],
     "name": "Components",
@@ -292,7 +292,7 @@
     "required": true,
     "resultsSource": "jobs",
     "runId": 40241594586,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40241594586",
     "startedAt": "2026-10-25T22:44:23Z",
     "status": "failed",
     "suite": "bdd",
@@ -350,7 +350,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "AWS_EC2_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338527016"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249644106/job/121338527016"
      },
      {
       "conclusion": "skipped",
@@ -358,7 +358,7 @@
       "failedSteps": [],
       "firstFailedStep": null,
       "name": "AWS_EBS_Loss",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338626858"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249644106/job/121338626858"
      }
     ],
     "name": "AWS",
@@ -366,7 +366,7 @@
     "required": false,
     "resultsSource": "jobs",
     "runId": 40249644106,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249644106",
     "startedAt": "2026-10-26T00:29:53Z",
     "status": "failed",
     "suite": "bdd",
@@ -397,7 +397,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Azure_VM_Disk_Loss",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338559940"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249654618/job/121338559940"
      },
      {
       "conclusion": "failure",
@@ -412,7 +412,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "Azure_VM_Instance_Stop",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338560056"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249654618/job/121338560056"
      }
     ],
     "name": "Azure",
@@ -420,7 +420,7 @@
     "required": false,
     "resultsSource": "jobs",
     "runId": 40249654618,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249654618",
     "startedAt": "2026-10-26T00:30:01Z",
     "status": "failed",
     "suite": "bdd",
@@ -453,7 +453,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "GCP_VM_Instance_Stop",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339721907"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40250035278/job/121339721907"
      },
      {
       "conclusion": "skipped",
@@ -461,7 +461,7 @@
       "failedSteps": [],
       "firstFailedStep": null,
       "name": "GCP_VM_Disk_Loss",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339943319"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40250035278/job/121339943319"
      }
     ],
     "name": "GCP",
@@ -469,7 +469,7 @@
     "required": false,
     "resultsSource": "jobs",
     "runId": 40250035278,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40250035278",
     "startedAt": "2026-10-26T00:34:44Z",
     "status": "failed",
     "suite": "bdd",
@@ -499,7 +499,7 @@
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "VM_Poweroff",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476/job/121338814402"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249742476/job/121338814402"
      }
     ],
     "name": "VMware",
@@ -507,7 +507,7 @@
     "required": false,
     "resultsSource": "jobs",
     "runId": 40249742476,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249742476",
     "startedAt": "2026-10-26T00:30:59Z",
     "status": "failed",
     "suite": "bdd",
@@ -533,7 +533,7 @@
       ],
       "firstFailedStep": "Set up job",
       "name": "Setup_m-agent",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338760424"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338760424"
      },
      {
       "conclusion": "failure",
@@ -544,7 +544,7 @@
       ],
       "firstFailedStep": "Authenticate Google Cloud SDK",
       "name": "Delete_VM",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338780407"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338780407"
      },
      {
       "conclusion": "skipped",
@@ -552,7 +552,7 @@
       "failedSteps": [],
       "firstFailedStep": null,
       "name": "Process_Kill_Parallel_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781290"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338781290"
      },
      {
       "conclusion": "skipped",
@@ -560,7 +560,7 @@
       "failedSteps": [],
       "firstFailedStep": null,
       "name": "Process_Kill_Serial_Test",
-      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781777"
+      "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338781777"
      }
     ],
     "name": "m-agent",
@@ -568,7 +568,7 @@
     "required": false,
     "resultsSource": "jobs",
     "runId": 40249725124,
-    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124",
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/40249725124",
     "startedAt": "2026-10-26T00:30:46Z",
     "status": "failed",
     "suite": "bdd",
@@ -1426,7 +1426,7 @@
    }
   ]
  },
- "repository": "uditgaurav/litmus-e2e",
+ "repository": "example/litmus-e2e",
  "schemaVersion": 1,
  "tests": [
   {
@@ -1440,7 +1440,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965402",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965402",
    "workflow": "pod-level"
   },
   {
@@ -1454,7 +1454,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965419",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965419",
    "workflow": "pod-level"
   },
   {
@@ -1468,7 +1468,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965445",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965445",
    "workflow": "pod-level"
   },
   {
@@ -1482,7 +1482,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965451",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965451",
    "workflow": "pod-level"
   },
   {
@@ -1496,7 +1496,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965458",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965458",
    "workflow": "pod-level"
   },
   {
@@ -1510,7 +1510,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965501",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965501",
    "workflow": "pod-level"
   },
   {
@@ -1524,7 +1524,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965587",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241465680/job/121313965587",
    "workflow": "pod-level"
   },
   {
@@ -1538,7 +1538,7 @@
    "source": "job",
    "status": "skipped",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343/job/121314423472",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241615343/job/121314423472",
    "workflow": "node-level"
   },
   {
@@ -1552,7 +1552,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363493",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363493",
    "workflow": "component"
   },
   {
@@ -1566,7 +1566,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363605",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363605",
    "workflow": "component"
   },
   {
@@ -1580,7 +1580,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363650",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363650",
    "workflow": "component"
   },
   {
@@ -1594,7 +1594,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363708",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40241594586/job/121314363708",
    "workflow": "component"
   },
   {
@@ -1608,7 +1608,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338527016",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249644106/job/121338527016",
    "workflow": "aws"
   },
   {
@@ -1622,7 +1622,7 @@
    "source": "job",
    "status": "skipped",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338626858",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249644106/job/121338626858",
    "workflow": "aws"
   },
   {
@@ -1636,7 +1636,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338559940",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249654618/job/121338559940",
    "workflow": "azure"
   },
   {
@@ -1650,7 +1650,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338560056",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249654618/job/121338560056",
    "workflow": "azure"
   },
   {
@@ -1664,7 +1664,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339721907",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40250035278/job/121339721907",
    "workflow": "gcp"
   },
   {
@@ -1678,7 +1678,7 @@
    "source": "job",
    "status": "skipped",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339943319",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40250035278/job/121339943319",
    "workflow": "gcp"
   },
   {
@@ -1692,7 +1692,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476/job/121338814402",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249742476/job/121338814402",
    "workflow": "vmware"
   },
   {
@@ -1706,7 +1706,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338760424",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338760424",
    "workflow": "m-agent"
   },
   {
@@ -1720,7 +1720,7 @@
    "source": "job",
    "status": "error",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338780407",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338780407",
    "workflow": "m-agent"
   },
   {
@@ -1734,7 +1734,7 @@
    "source": "job",
    "status": "skipped",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781290",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338781290",
    "workflow": "m-agent"
   },
   {
@@ -1748,7 +1748,7 @@
    "source": "job",
    "status": "skipped",
    "suite": "bdd",
-   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781777",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/40249725124/job/121338781777",
    "workflow": "m-agent"
   }
  ]
