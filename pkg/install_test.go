@@ -157,3 +157,35 @@ func TestLiveManifestsMatchE2EInputs(t *testing.T) {
 		})
 	}
 }
+
+func TestSetEngineVarPassesTheContainerRuntime(t *testing.T) {
+	engine := engineFrom(t, `
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: container-kill
+spec:
+  engineState: active
+  experiments:
+    - name: container-kill
+      spec:
+        components:
+          env:
+            - name: CONTAINER_RUNTIME
+              value: containerd
+            - name: SOCKET_PATH
+              value: /run/containerd/containerd.sock
+`)
+	details := &types.TestDetails{}
+	environment.GetENV(details, "container-kill", "engine")
+	details.SocketPath = "/run/k3s/containerd/containerd.sock"
+	if err := setEngineVar(engine, details, false); err != nil {
+		t.Fatal(err)
+	}
+	if v, _ := envValue(engine, "SOCKET_PATH"); v != "/run/k3s/containerd/containerd.sock" {
+		t.Errorf("SOCKET_PATH = %q", v)
+	}
+	if v, _ := envValue(engine, "CONTAINER_RUNTIME"); v != "containerd" {
+		t.Errorf("an unset runtime must keep the engine default, got %q", v)
+	}
+}

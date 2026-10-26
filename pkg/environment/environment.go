@@ -45,6 +45,9 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	// the runtime and the socket of the nodes, the chaos-charts default to containerd at /run/containerd/containerd.sock
+	testDetails.ContainerRuntime = Getenv("CONTAINER_RUNTIME", "")
+	testDetails.SocketPath = Getenv("SOCKET_PATH", "")
 	testDetails.AzureResourceGroup = Getenv("AZURE_RESOURCE_GROUP", "")
 	testDetails.AzureInstanceName = Getenv("AZURE_INSTANCE_NAME", "")
 	testDetails.AzureDiskName = Getenv("AZURE_DISK_NAME", "")
