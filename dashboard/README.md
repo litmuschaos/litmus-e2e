@@ -15,6 +15,8 @@ is shareable, and switching builds redraws the page in place.
 | `#/history` | Heatmap with a cell per run and experiment, zoom, scrubber, tooltips with a trend strip, flaky rows, overlay of all builds (`all=1`) |
 | `#/about` | The published files, their state and how the numbers are defined |
 
+The overview starts with a collapsed **Live** bar: the nightly workflows that are queued or running, their progress by jobs, the current step and the elapsed time, and the runs that finished in the last 20 minutes. The browser asks the public GitHub Actions API about once a minute (the repository comes from `latest.json`), pauses in a hidden tab, and the bar disappears when the API limit is reached or the repository is not found. Unauthenticated requests are limited to 60 per hour per network by GitHub, cached answers do not count.
+
 Ctrl/Cmd+K opens the command palette (pages, builds, experiments, runs), `/` focuses the search.
 
 ## Data
