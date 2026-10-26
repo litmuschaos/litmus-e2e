@@ -46,6 +46,17 @@ const PATHS = {
   sun: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-13v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4',
   moon: 'M20 14.5A8.5 8.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z',
   auto: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-18v18',
+  x: 'M18 6 6 18M6 6l12 12',
+  command: 'M15 9V6a3 3 0 1 1 3 3h-3Zm0 0v6m0-6H9m6 6v3a3 3 0 1 0 3-3h-3Zm0 0H9m0 0v3a3 3 0 1 1-3-3h3Zm0 0V9m0 0V6a3 3 0 1 0-3 3h3Z',
+  arrow: 'M5 12h14m-6-6 6 6-6 6',
+  layers: 'm12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5m-18 4 9 5 9-5',
+  flask: 'M9 3h6m-5 0v6L4.5 19A1.5 1.5 0 0 0 5.8 21h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3',
+  history: 'M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5m4-1v5l3 2',
+  database: 'M12 8c4.4 0 8-1.3 8-3s-3.6-3-8-3-8 1.3-8 3 3.6 3 8 3Zm8-3v14c0 1.7-3.6 3-8 3s-8-1.3-8-3V5m16 7c0 1.7-3.6 3-8 3s-8-1.3-8-3',
+  compare: 'M7 4v16M17 4v16M3 8h8M13 16h8',
+  home: 'm3 11 9-8 9 8M5 10v10h14V10',
+  tag: 'M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9Zm5-5h.01',
+  clock: 'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z',
   inbox: 'M22 12h-6l-2 3h-4l-2-3H2m20 0-3.5-7.3A2 2 0 0 0 16.7 3.5H7.3a2 2 0 0 0-1.8 1.2L2 12m20 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6',
 };
 
@@ -75,7 +86,7 @@ export function announce(text) {
 let tipEl;
 export function showTip(target, lines) {
   tipEl = tipEl || document.getElementById('tooltip');
-  tipEl.replaceChildren(...lines.map((l, i) => (i === 0 ? h('b', {}, l) : h('span', {}, l, h('br')))));
+  tipEl.replaceChildren(...lines.filter(Boolean).map((l, i) => (l instanceof Node ? l : i === 0 ? h('b', {}, l) : h('span', {}, l, h('br')))));
   tipEl.hidden = false;
   const r = target.getBoundingClientRect();
   const t = tipEl.getBoundingClientRect();

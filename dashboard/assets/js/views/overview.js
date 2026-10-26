@@ -1,117 +1,157 @@
-import { h, icon, badge, link, countUp, tip } from '../dom.js';
-import { ring, timeline, stackedBar } from '../charts.js';
+import { h, icon, badge, link } from '../dom.js';
 import * as D from '../data.js';
-import { emptyState } from './common.js';
+import { ring, sparkline, trendChart, stackedBar, srTable } from '../charts.js';
+import { countUp, embers, tilt, magnetic } from '../motion.js';
+import { pageHead, buildDot, runMeta, buildGap, idLink, testTitle } from './common.js';
 
-const HEADLINE = { passed: 'Nightly build passed', failed: 'Nightly build failed', incomplete: 'Nightly build incomplete' };
+const SUITE_NAMES = { bdd: 'Experiment BDD', frontend: 'ChaosCenter frontend E2E' };
+const VERDICT = {
+  failed: 'Failing', error: 'Failing', passed: 'All green', incomplete: 'Incomplete', skipped: 'Skipped',
+};
 
-export function overview({ latest, history }, nav) {
-  const b = latest && latest.build;
-  if (!b) {
-    return h('div', { class: 'stack' }, h('h1', {}, 'Nightly build'),
-      emptyState('No nightly build yet', 'The nightly workflows have not run on the default branch within the history window, or the report was not generated yet. This page fills in after the first nightly run.'));
+function verdictOf(hd) {
+  if (hd.status === 'failed') {
+    const n = hd.counts.failed + hd.counts.error;
+    return { big: String(n), small: n === 1 ? 'test failing' : 'tests failing', numeric: n };
   }
-  const wfs = b.workflows;
-  const required = wfs.filter((w) => w.required);
-  const optional = wfs.filter((w) => !w.required);
-  const failedReq = required.filter((w) => w.status === 'failed');
-  const notRunReq = required.filter((w) => !['passed', 'failed'].includes(w.status));
-  const counts = D.addCounts(Object.values(b.suites).map((s) => s.counts));
+  if (hd.status === 'passed') return { big: 'All green', small: `${hd.counts.passed} tests passed`, numeric: null };
+  return { big: VERDICT[hd.status] || hd.status, small: 'the build did not finish every required workflow', numeric: null };
+}
 
-  const suiteLine = latest.config.suites.map((su) => {
-    const c = b.suites[su.id].counts;
-    return `${su.name} ${D.fmtRate(D.passRate(c))} passed` + (c.failed + c.error ? ` (${c.failed + c.error} of ${D.total(c)} failed)` : '');
-  }).join(' · ');
-  let summary;
-  if (b.status === 'passed') summary = `All ${required.length} required workflows passed. ${suiteLine}.`;
-  else if (b.status === 'failed') summary = `${failedReq.length} of ${required.length} required workflows failed` + (notRunReq.length ? `, ${notRunReq.length} did not finish or run` : '') + `. ${suiteLine}.`;
-  else summary = `${notRunReq.length} of ${required.length} required workflows did not run or finish, the result is partial. ${suiteLine}.`;
+function hero(b, ctx) {
+  const info = D.buildInfo(b.key);
+  const hd = D.headline(b);
+  const wrap = h('section', { class: 'hero glass', 'data-b': b.key });
+  if (!hd) {
+    return buildGap(b, ctx.retry);
+  }
+  const v = verdictOf(hd);
+  const failing = hd.status === 'failed';
+  wrap.dataset.state = failing ? 'fail' : hd.status === 'passed' ? 'pass' : 'warn';
+  const rateEl = h('b', { class: 'ring-num' }, '–');
+  const ringBox = h('div', { class: 'ring-box', style: 'view-transition-name:hero-ring' },
+    failing ? h('canvas', { class: 'embers', 'aria-hidden': 'true' }) : null,
+    ring({ rate: hd.rate, status: hd.status, size: 220, stroke: 12, build: b.key }),
+    h('div', { class: 'ring-center' }, h('span', { class: 'ring-label' }, 'Pass rate'), h('span', { class: 'ring-value' }, rateEl, hd.rate != null ? h('small', {}, '%') : null)));
+  wrap.append(
+    h('div', { class: 'hero-copy' },
+      h('p', { class: 'kicker' }, buildDot(b.key, info.long)),
+      h('h1', { class: 'verdict', 'aria-live': 'polite' }, h('span', { class: 'verdict-big glitch', 'data-text': v.big }, v.big)),
+      h('p', { class: 'lede' }, `${v.small}. ${hd.executed} executed${hd.counts.skipped ? ', ' + hd.counts.skipped + ' skipped' : ''} across the experiment BDD and frontend suites${hd.counts.error ? '; ' + hd.counts.error + ' did not run to a result' : ''}.`),
+      runMeta(b),
+      h('div', { class: 'cta' },
+        magnetic(h('a', { class: 'btn primary', href: ctx.href('experiments') }, 'Open experiments', icon('arrow'))),
+        magnetic(h('a', { class: 'btn', href: ctx.href('readiness') }, 'Release readiness')))),
+    ringBox);
+  countUp(rateEl, hd.rate, (x) => (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, ''), 1100);
+  if (failing) { const c = ringBox.querySelector('canvas'); ctx.onLeave(embers(c, { count: Math.min(40, 12 + hd.counts.failed * 3) })); }
+  return wrap;
+}
 
-  const hero = h('section', { class: 'card hero rise', 'aria-labelledby': 'hero-title' },
-    h('div', { class: 'hero-mark ' + b.status }, icon(b.status === 'passed' ? 'passed' : b.status === 'failed' ? 'failed' : 'incomplete')),
-    h('div', {},
-      h('h1', { id: 'hero-title' }, HEADLINE[b.status] || 'Nightly build'),
-      h('p', { class: 'lede', style: 'margin:0' }, summary),
-      h('div', { class: 'hero-meta' },
-        h('span', {}, 'Build ', h('b', {}, b.id)),
-        h('span', {}, 'Started ', h('b', {}, D.fmtDate(b.startedAt)), ' (', D.fmtAgo(b.startedAt), ')'),
-        h('span', {}, 'Duration ', h('b', {}, D.fmtDuration(b.durationSec))),
-        h('span', {}, 'Report generated ', h('b', {}, D.fmtAgo(latest.generatedAt))))),
-    b.stale ? h('div', { class: 'banner bad', role: 'note' }, icon('error'), h('div', {}, h('b', {}, 'This is not a recent build. '), `The newest nightly build started ${D.fmtAgo(b.startedAt)}, more than ${latest.config.staleAfterHours} hours ago. The nightly workflows may be disabled, GitHub disables scheduled workflows after 60 days without repository activity.`)) : null,
-    b.status === 'incomplete' ? h('div', { class: 'banner', role: 'note' }, icon('incomplete'), h('div', {}, h('b', {}, 'Partial result. '), 'Workflows that did not run or finish are not counted as passing: ', notRunReq.map((w) => w.name).join(', ') + '.')) : null);
+function stripCard(b, ctx, selected) {
+  const info = D.buildInfo(b.key);
+  const hd = D.headline(b);
+  const series = b.history ? D.rateSeries(b.history).slice(-14).map((s) => s.rate) : [];
+  const status = hd ? hd.status : b.state === 'error' ? 'error' : 'not_run';
+  const rateEl = h('b', { class: 'mono' }, '–');
+  const card = h('a', { class: 'glass strip-card', href: ctx.href(ctx.route, { b: b.key }), 'data-b': b.key, 'data-state': hd ? (hd.status === 'failed' ? 'fail' : hd.status === 'passed' ? 'pass' : 'warn') : 'none', 'aria-current': selected ? 'true' : null, style: `view-transition-name:strip-${b.key}`,
+    onclick: (e) => { e.preventDefault(); ctx.selectBuild(b.key); } },
+    h('div', { class: 'strip-top' }, buildDot(b.key, info.long), hd ? badge(status) : h('span', { class: 'badge none' }, b.state === 'error' ? 'Unreadable' : 'No run yet')),
+    h('div', { class: 'strip-mid' },
+      h('div', { class: 'mini-ring' }, ring({ rate: hd ? hd.rate : null, status, size: 72, stroke: 7, build: b.key }), h('span', { class: 'mini-ring-v' }, rateEl, hd && hd.rate != null ? h('small', {}, '%') : null)),
+      sparkline(series, { w: 132, h: 40 })),
+    h('div', { class: 'strip-bot' }, hd ? [h('span', {}, D.fmtAgo(D.buildOf(b).startedAt)), D.versionOf(b) ? h('span', { class: 'mono' }, D.versionOf(b)) : null] : h('span', {}, b.state === 'error' ? 'Data could not be read' : 'Waiting for the first run')));
+  if (hd) countUp(rateEl, hd.rate, (x) => (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, ''));
+  else rateEl.textContent = '–';
+  return tilt(card, 5);
+}
 
-  const kpi = (key, label, value) => h('div', { class: 'card kpi rise' }, h('div', { class: 'label' }, h('span', { class: 'dot ' + key }), label), h('div', { class: 'value', 'data-v': value }, String(value)));
-  const kpis = h('section', { class: 'grid cols-4', 'aria-label': 'Test counts of the required suites' },
-    kpi('passed', 'Passed', counts.passed), kpi('failed', 'Failed', counts.failed), kpi('error', 'Errors', counts.error), kpi('skipped', 'Skipped', counts.skipped));
-  kpis.querySelectorAll('.card').forEach((c, i) => c.style.setProperty('--i', i + 1));
-  kpis.querySelectorAll('.value').forEach((el) => countUp(el, Number(el.dataset.v)));
+function changed(b, ctx) {
+  const w = D.whatChanged(b);
+  const list = (ids, tone, empty) => (ids.length
+    ? h('ul', { class: 'plain' }, ids.slice(0, 6).map((id) => { const t = testTitle(id); return h('li', {}, h('i', { class: 'dotmark ' + tone, 'aria-hidden': 'true' }), idLink(id), h('span', { class: 'sub' }, t.name)); }))
+    : h('p', { class: 'muted' }, empty));
+  const onlyOne = w.buildsConsidered < 2;
+  return h('section', { class: 'glass panel reveal', 'aria-labelledby': 'chg' },
+    h('h2', { id: 'chg' }, 'What changed since the last run'),
+    onlyOne ? h('p', { class: 'note' }, 'Only one run of this build is on record, so there is nothing to compare it with yet. The comparison starts with the second run.') : null,
+    h('div', { class: 'grid cols-3 changed' },
+      h('div', {}, h('h3', { class: 'bad-ink' }, `New failures (${w.newlyFailing.length})`), onlyOne ? h('p', { class: 'muted' }, 'Needs two runs.') : list(w.newlyFailing, 'bad', 'No test started failing.')),
+      h('div', {}, h('h3', { class: 'ok-ink' }, `Recovered (${w.recovered.length})`), onlyOne ? h('p', { class: 'muted' }, 'Needs two runs.') : list(w.recovered, 'ok', 'Nothing recovered.')),
+      h('div', {}, h('h3', {}, 'Slowest'),
+        w.slowest.length ? h('ul', { class: 'plain' }, w.slowest.map((t) => h('li', {}, h('span', { class: 'mono dur' }, D.fmtDuration(t.durationSec)), h('span', { class: 'sub', title: t.id }, D.shortName(t.name || t.id))))) : h('p', { class: 'muted' }, 'No timings in the results.'))),
+    w.durationChange && w.durationChange.percent != null ? h('p', { class: 'note' }, `The build took ${D.fmtDuration(w.durationChange.latestSec)}, ${Math.abs(w.durationChange.percent)}% ${w.durationChange.percent < 0 ? 'less' : 'more'} than the one before.`) : null);
+}
 
-  const suiteCard = (s, i) => {
-    const sb = b.suites[s.id];
-    const series = D.suiteSeries(history, s.id).slice(-14);
-    const failed = wfs.filter((w) => w.suite === s.id && w.required && w.status === 'failed').length;
-    const color = s.id === 'bdd' ? 'var(--series-1)' : 'var(--series-2)';
-    const ringColor = sb.status === 'passed' ? 'var(--good)' : sb.status === 'failed' ? 'var(--bad)' : 'var(--warn)';
-    return h('article', { class: 'card rise', style: `--i:${i + 2}`, 'aria-labelledby': 'suite-' + s.id },
-      h('div', { class: 'card-head' }, h('h2', { id: 'suite-' + s.id }, s.name), badge(sb.status)),
-      h('div', { class: 'suite' },
-        ring(D.passRate(sb.counts), ringColor, s.name + ' pass rate'),
-        h('div', {},
-          h('div', { class: 'countline' },
-            h('span', {}, h('b', {}, sb.counts.passed), ' passed'), h('span', {}, h('b', {}, sb.counts.failed), ' failed'),
-            h('span', {}, h('b', {}, sb.counts.error), ' errors'), h('span', {}, h('b', {}, sb.counts.skipped), ' skipped')),
-          h('div', { style: 'margin-top:10px' }, D.executed(sb.counts) || sb.counts.skipped ? stackedBar(sb.counts) : h('p', { class: 'muted', style: 'margin:0' }, 'No result in this build.')),
-          h('p', { class: 'muted', style: 'margin:8px 0 0;font-size:13px' }, failed ? `${failed} workflow${failed > 1 ? 's' : ''} failed.` : (sb.status === 'incomplete' ? 'Required workflow missing or unfinished.' : 'No failing workflow.')))),
-      series.length ? h('div', { style: 'margin-top:14px' }, h('div', { class: 'muted', style: 'font-size:12.5px;margin-bottom:6px' }, (series.length === 1 ? 'Last build' : `Last ${series.length} builds`)), timeline(series, () => nav('history'))) : null,
-      h('p', { style: 'margin:12px 0 0' }, h('a', { href: s.id === 'bdd' ? '#/experiments' : '#/frontend' }, s.id === 'bdd' ? 'Experiment results →' : 'Frontend results →')));
+function suites(b) {
+  const x = D.buildOf(b);
+  const defs = (b.latest.config && b.latest.config.suites) || [];
+  return h('div', { class: 'grid cols-2' }, Object.entries(x.suites || {}).map(([id, s]) => {
+    const name = (defs.find((d) => d.id === id) || {}).name || SUITE_NAMES[id] || id;
+    const c = s.counts || {};
+    const rate = D.passRate(c);
+    const rateEl = h('b', { class: 'mono big' }, '–');
+    const o = s.optionalCounts;
+    const card = h('article', { class: 'glass panel reveal', 'data-state': s.status === 'failed' ? 'fail' : s.status === 'passed' ? 'pass' : 'warn' },
+      h('div', { class: 'row between' }, h('h3', {}, name), badge(s.status)),
+      h('p', { class: 'num-line' }, rateEl, rate != null ? h('small', {}, '%') : null, h('span', { class: 'muted' }, rate != null ? ' pass rate' : ' nothing executed')),
+      stackedBar(c, name),
+      h('p', { class: 'legend' }, h('span', { class: 'ok-ink' }, `${c.passed || 0} passed`), h('span', { class: 'bad-ink' }, `${(c.failed || 0) + (c.error || 0)} failed`), h('span', { class: 'warn-ink' }, `${c.skipped || 0} skipped`)),
+      o && D.total(o) ? h('p', { class: 'note' }, `Not part of the status: ${D.total(o)} optional cloud checks (${o.passed || 0} passed).`) : null);
+    countUp(rateEl, rate, (v) => (Math.round(v * 10) / 10).toFixed(1).replace(/\.0$/, ''));
+    return card;
+  }));
+}
+
+function workflows(b) {
+  const x = D.buildOf(b);
+  const req = x.workflows.filter((w) => w.required);
+  const opt = x.workflows.filter((w) => !w.required);
+  const row = (w) => {
+    const c = w.counts || {};
+    return h('tr', {}, h('th', { scope: 'row' }, w.name), h('td', {}, badge(w.status)),
+      h('td', { class: 'mono' }, w.status === 'not_run' ? '–' : `${c.passed || 0}/${D.executed(c)}`),
+      h('td', { class: 'mono' }, D.fmtDuration(w.durationSec)),
+      h('td', {}, w.runUrl && D.safeUrl(w.runUrl) ? link(D.safeUrl(w.runUrl), 'Run') : '–'));
   };
-  const suites = h('section', { class: 'grid cols-2', 'aria-label': 'Suites' }, latest.config.suites.map(suiteCard));
-
-  const row = (w) => h('tr', {},
-    h('td', {}, h('b', {}, w.name), w.note ? h('div', { class: 'muted', style: 'font-size:12.5px' }, w.note) : null),
-    h('td', {}, w.suite === 'bdd' ? 'Experiment BDD' : 'Frontend E2E'),
-    h('td', {}, badge(w.status)),
-    h('td', {}, w.failureKind === 'infrastructure' ? tip('The run failed while preparing the environment (cluster, install, credentials), before its tests ran.', 'infrastructure') : w.failureKind === 'tests' ? 'tests' : h('span', { class: 'muted' }, '–')),
-    h('td', {}, firstFailure(w)),
-    h('td', { class: 'num' }, D.fmtDuration(w.durationSec)),
-    h('td', {}, w.runUrl && D.safeUrl(w.runUrl) ? link(D.safeUrl(w.runUrl), 'Run', { 'aria-label': 'Open the run of ' + w.name }) : h('span', { class: 'muted' }, '–')));
-  const table = (list, caption) => h('div', { class: 'table-wrap' }, h('table', {}, h('caption', {}, caption),
-    h('thead', {}, h('tr', {}, ['Workflow', 'Suite', 'Status', 'Failure', 'First failed step', 'Duration', 'Logs'].map((t, i) => h('th', { scope: 'col', class: i === 5 ? 'num' : '' }, t)))),
-    h('tbody', {}, list.map(row))));
-  const cloudRan = optional.filter((w) => w.status !== 'not_run');
-  const cloud = h('p', { class: 'muted', style: 'margin:16px 0 0;font-size:13px' },
-    h('b', {}, 'Cloud experiments'), ` (${optional.map((w) => w.name).join(', ')}) are supported but not part of the nightly build, they need cloud credentials. `,
-    cloudRan.length ? ['Results of the ones that ran: ', cloudRan.map((w) => h('span', { style: 'margin-right:6px' }, w.name, ' ', badge(w.status))), ' They do not decide the status of the build.'] : 'None of them ran in this build.');
-  const workflows = h('section', { class: 'card rise', style: '--i:4', 'aria-labelledby': 'wf-title' },
-    h('div', { class: 'card-head' }, h('h2', { id: 'wf-title' }, 'Workflows')),
-    table(required, 'Required workflows, they decide the status of the build'),
-    optional.length ? cloud : null);
-
-  return h('div', { class: 'stack' }, hero, kpis, suites, insights(latest, history), workflows);
+  const table = (rows) => h('div', { class: 'table-wrap' }, h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, ['Workflow', 'Status', 'Passed', 'Duration', 'Log'].map((t) => h('th', { scope: 'col' }, t)))), h('tbody', {}, rows.map(row))));
+  return h('section', { class: 'glass panel reveal', 'aria-labelledby': 'wf' },
+    h('h2', { id: 'wf' }, 'Workflows'), table(req),
+    opt.length ? h('details', { class: 'opt' }, h('summary', {}, `${opt.length} cloud workflows (AWS, Azure, GCP, VMware …) are supported but not run in this build`), table(opt)) : null);
 }
 
-function firstFailure(w) {
-  const bad = (w.jobs || []).filter((j) => j.firstFailedStep);
-  if (!bad.length) return h('span', { class: 'muted' }, '–');
-  const j = bad[0];
-  return h('span', {}, h('span', { class: 'mono' }, j.firstFailedStep), bad.length > 1 ? h('span', { class: 'muted' }, ` (+${bad.length - 1} more job${bad.length > 2 ? 's' : ''})`) : null);
+function failures(b) {
+  const bad = (b.latest.tests || []).filter((t) => (t.kind === 'test' || !t.kind) && (t.status === 'failed' || t.status === 'error'));
+  if (!bad.length) return null;
+  return h('section', { class: 'glass panel reveal', 'aria-labelledby': 'fl' },
+    h('h2', { id: 'fl' }, `Failing tests (${bad.length})`),
+    h('ul', { class: 'plain fails' }, bad.slice(0, 10).map((t) => h('li', {}, h('i', { class: 'dotmark bad', 'aria-hidden': 'true' }), idLink(t.id), h('span', { class: 'sub' }, D.shortName(t.name)), t.message ? h('code', { class: 'msg' }, t.message.slice(0, 160)) : null))),
+    bad.length > 10 ? h('p', { class: 'note' }, `${bad.length - 10} more in `, h('a', { href: '#/experiments?status=failed&b=' + b.key }, 'Experiments'), '.') : null);
 }
 
-function insights(latest, history) {
-  const m = latest.metrics || {};
-  const cov = latest.coverage || {};
-  const n = D.builds(history).length;
-  const nameOf = (id) => { const d = D.describeId(id); return d.group + (d.name ? ' · ' + D.shortName(d.name.replace(/^job:/, 'job ')) : ''); };
-  const list = (ids, max = 5) => ids.length ? h('ul', {}, ids.slice(0, max).map((i) => h('li', {}, nameOf(i.id || i), i.consecutiveBuilds ? ` (${i.consecutiveBuilds} builds in a row)` : '')), ids.length > max ? h('li', { class: 'muted' }, `and ${ids.length - max} more, see History`) : null) : h('p', { class: 'muted', style: 'margin:0' }, 'None.');
-  const block = (title, body, why) => h('div', { class: 'insight' }, h('h3', {}, title, why ? tip(why, 'ⓘ') : null), body);
-  const dc = m.durationChange;
-  return h('section', { class: 'card rise', style: '--i:3', 'aria-labelledby': 'ins-title' },
-    h('div', { class: 'card-head' }, h('h2', { id: 'ins-title' }, 'Insights'), h('span', { class: 'muted', style: 'font-size:13px' }, `Computed from ${n} build${n === 1 ? '' : 's'} of history`)),
-    h('div', { class: 'grid cols-2 insights' },
-      block('Newly failing', list(m.newlyFailing || []), 'Failing in the latest build and passing in the previous one. Needs two builds.'),
-      block('Recovered', list(m.recovered || []), 'Failing in the previous build and passing in the latest one.'),
-      block('Failing repeatedly', list(m.recurringFailures || []), 'Failing in two or more consecutive builds.'),
-      block('Flaky', n < 4 ? h('p', { class: 'muted', style: 'margin:0' }, 'Not enough history yet. A test is reported as flaky after at least 4 results with passes and failures alternating.') : list((m.flakyTests || []).map((f) => ({ id: f.id, consecutiveBuilds: 0 }))), 'At least 4 results in the last 14 builds, passes and failures, and at least 2 changes between them.'),
-      block('Duration', dc ? h('p', { style: 'margin:0' }, `${D.fmtDuration(dc.latestSec)} against ${D.fmtDuration(dc.previousSec)} in the previous build, `, h('b', {}, (dc.percent > 0 ? '+' : '') + dc.percent + '%')) : h('p', { class: 'muted', style: 'margin:0' }, 'Needs two builds with a duration.')),
-      block('Experiment coverage', cov.scheduled && cov.scheduled.length ? h('p', { style: 'margin:0' }, h('b', {}, cov.executed.length), ` of ${cov.scheduled.length} scheduled experiments ran in this build`, cov.notScheduled.length ? ` · ${cov.notScheduled.length} defined but not scheduled (${cov.notScheduled.join(', ')})` : '') : h('p', { class: 'muted', style: 'margin:0' }, 'Not available.'), 'Experiments with a test in tests/, components/ or platform/ against those a nightly workflow runs and those that produced a result.')));
+function trend(b) {
+  const pts = D.rateSeries(b.history).slice(-30).map((p) => ({ id: p.id, rate: p.rate, version: null }));
+  if (!pts.length) return null;
+  return h('section', { class: 'glass panel reveal', 'aria-labelledby': 'tr' },
+    h('h2', { id: 'tr' }, 'Pass rate over time'),
+    pts.length < 2 ? h('p', { class: 'note' }, 'One run is on record. The line appears with the second run; history builds up with every run that is published.') : null,
+    h('div', { class: 'chart-box' }, trendChart([{ key: b.key, label: D.buildInfo(b.key).label, points: pts }])),
+    srTable('Pass rate per build', ['Build', 'Pass rate'], pts.map((p) => [p.id, D.fmtRate(p.rate)])));
+}
+
+export function overview(ctx) {
+  const b = ctx.current;
+  const root = h('div', { class: 'stack' });
+  root.append(
+    h('div', { class: 'strip-grid reveal', role: 'group', 'aria-label': 'Builds' }, ctx.builds.map((x) => stripCard(x, ctx, x.key === b.key))),
+    hero(b, ctx));
+  if (b.state !== 'ready' || !D.buildOf(b)) {
+    root.prepend(h('h1', { class: 'sr-only' }, 'Overview of ' + D.buildInfo(b.key).long));
+    if (b.state === 'ready') root.append(h('p', { class: 'note' }, 'This build has history but no latest result.'));
+    return root;
+  }
+  const x = D.buildOf(b);
+  if (x.stale) root.append(h('div', { class: 'banner warn', role: 'status' }, icon('clock'), `The newest ${D.buildInfo(b.key).label} run started ${Math.round(x.ageHours)} hours ago. Nothing newer has been published, so this may not be the current state.`));
+  root.append(changed(b, ctx), suites(b), h('div', { class: 'grid cols-2 wide-left' }, failures(b) || h('div', { class: 'glass panel reveal' }, h('h2', {}, 'No failing tests'), h('p', { class: 'muted' }, 'Every executed test passed in this build.')), trend(b)), workflows(b));
+  return root;
 }

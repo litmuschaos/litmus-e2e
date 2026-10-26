@@ -1,29 +1,30 @@
-import { h, icon } from '../dom.js';
+import { h, icon, badge, link } from '../dom.js';
 import * as D from '../data.js';
+import { pageHead, buildDot } from './common.js';
 
-export function about({ latest, history, problems }) {
-  const b = latest && latest.build;
-  const fresh = [
-    ['Report generated', latest ? D.fmtDate(latest.generatedAt) + ' (' + D.fmtAgo(latest.generatedAt) + ')' : 'not available'],
-    ['Latest build', b ? `${b.id}, started ${D.fmtAgo(b.startedAt)}${b.stale ? ', stale' : ''}` : 'none'],
-    ['Builds in the history', String(D.builds(history).length)],
-    ['Repository', latest ? latest.repository : 'unknown'],
-  ];
-  const cfg = (latest && latest.config) || { workflows: [] };
-  return h('div', { class: 'stack' },
-    h('div', {}, h('h1', {}, 'Data'), h('p', { class: 'lede' }, 'Where the numbers come from and how they are calculated. Nothing on this site is typed in, every value is read from the two files below.')),
-    problems && problems.length ? h('div', { class: 'banner bad', role: 'alert' }, icon('error'), h('div', {}, h('b', {}, 'Problems loading the data'), h('ul', {}, problems.map((p) => h('li', {}, p))))) : null,
-    h('section', { class: 'card' }, h('h2', {}, 'Freshness'), h('dl', { style: 'display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0' }, fresh.flatMap(([k, v]) => [h('dt', { class: 'muted' }, k), h('dd', { style: 'margin:0' }, v)])),
-      h('p', { style: 'margin-bottom:0' }, h('a', { href: 'data/latest.json' }, 'latest.json'), ' · ', h('a', { href: 'data/history.json' }, 'history.json'))),
-    h('section', { class: 'card' }, h('h2', {}, 'Definitions'), h('dl', { class: 'defs' }, ...[
-      ['Build', 'A nightly cycle: the 24 hour window starting at 12:00 UTC. The newest run of each nightly workflow on the default branch represents it.'],
-      ['Build status', 'Passed when every required workflow passed. Failed when a required workflow failed. Incomplete when a required workflow did not run, was cancelled or is still running. A partial result is never shown as passed.'],
-      ['Passed, failed, error, skipped', 'Failed is a test that ran and did not pass. Error is a job that failed before its tests could run, for example the cluster did not start. Skipped did not run. Skipped and error are never counted as passed.'],
-      ['Pass rate', 'passed / (passed + failed + error). Shown per suite, the experiment BDD and frontend E2E suites are never merged into one rate. Setup tests (install, deploy, cleanup) are not counted as tests.'],
-      ['Required and optional', 'Optional workflows (the cloud experiments) need credentials. Their results are shown, but they do not decide the status of the build.'],
-      ['Newly failing, recovered, failing repeatedly', 'Compared with the previous build, and over consecutive builds. Computed from the results kept in history.json.'],
-      ['Flaky', 'Reported only with evidence: at least 4 results in the last 14 builds, both passes and failures, and at least 2 changes between them.'],
-      ['Coverage', 'Experiments with a test file in tests/, components/ or platform/ against those run by a nightly workflow and those that produced a result in the latest build.'],
-      ['Infrastructure failure', 'The run failed at a step that prepares the environment (cluster, install, credentials), before its tests ran.']].flatMap(([k, v]) => [h('dt', {}, k), h('dd', {}, v)]))),
-    h('section', { class: 'card' }, h('h2', {}, 'Workflows'), h('div', { class: 'table-wrap' }, h('table', {}, h('caption', { class: 'sr-only' }, 'Configured workflows'), h('thead', {}, h('tr', {}, ['Workflow', 'Suite', 'Required'].map((t) => h('th', { scope: 'col' }, t)))), h('tbody', {}, cfg.workflows.map((w) => h('tr', {}, h('td', {}, w.name, w.note ? h('span', { class: 'muted' }, ' · ' + w.note) : null), h('td', {}, w.suite), h('td', {}, w.required ? 'yes' : 'no'))))))));
+export function about(ctx) {
+  const root = h('div', { class: 'stack' }, pageHead('Data', 'Where the numbers come from', 'Nothing on this site is estimated. Every figure is read from the files below, which the report workflow writes from the GitHub Actions runs and their JUnit artifacts.'));
+  const rows = ctx.builds.map((b) => {
+    const info = D.buildInfo(b.key);
+    const x = D.buildOf(b);
+    const files = ['latest.json', 'history.json'].map((f) => h('a', { href: `data/${info.dir}${f}` }, `data/${info.dir}${f}`));
+    return h('tr', {}, h('th', { scope: 'row' }, buildDot(b.key, info.long)),
+      h('td', {}, b.state === 'ready' ? h('span', { class: 'badge passed' }, icon('passed'), 'Published') : b.state === 'error' ? h('span', { class: 'badge failed' }, icon('failed'), 'Unreadable') : h('span', { class: 'badge none' }, 'No run yet')),
+      h('td', {}, x ? D.fmtDate(b.latest.generatedAt) : '–'),
+      h('td', { class: 'mono' }, b.history ? D.builds(b.history).length : '–'),
+      h('td', { class: 'files' }, files));
+  });
+  root.append(h('section', { class: 'glass panel reveal' }, h('h2', {}, 'Published data'),
+    h('div', { class: 'table-wrap' }, h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, ['Build', 'State', 'Generated', 'Runs on record', 'Files'].map((t) => h('th', { scope: 'col' }, t)))), h('tbody', {}, rows))),
+    ctx.builds.some((b) => b.problems.length) ? h('ul', { class: 'plain' }, ctx.builds.flatMap((b) => b.problems.map((p) => h('li', {}, h('i', { class: 'dotmark warn', 'aria-hidden': 'true' }), p)))) : null));
+  root.append(h('section', { class: 'glass panel reveal prose' },
+    h('h2', {}, 'How to read it'),
+    h('ul', {},
+      h('li', {}, h('b', {}, 'Status. '), 'A build is passed only when every required workflow ran and passed. One failing test turns it red; a missing or cancelled workflow makes it incomplete, never green.'),
+      h('li', {}, h('b', {}, 'Pass rate. '), 'passed ÷ (passed + failed + error). Skipped tests and tests that never ran are not counted as passing.'),
+      h('li', {}, h('b', {}, 'Builds. '), 'Nightly is built from the default branch every day. RC and GA are published the same way into data/rc/ and data/ga/. A build that has not produced data shows "no run yet".'),
+      h('li', {}, h('b', {}, 'Release readiness. '), 'Compares the latest run of each stage that exists. A test that passed in an earlier stage and fails in a later one is a regression; a stage without a run is never counted as failing.'),
+      h('li', {}, h('b', {}, 'Cloud experiments. '), 'AWS, Azure, GCP and VMware are supported but need credentials, so they are optional workflows and not part of the status.'),
+      h('li', {}, h('b', {}, 'Flaky. '), 'At least two changes between passing and failing in the recent runs on record.'))));
+  return root;
 }

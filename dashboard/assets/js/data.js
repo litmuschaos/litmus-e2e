@@ -173,3 +173,213 @@ export function workflowName(latest, id) {
 export function shortName(name) {
   return (name || '').replace(/^BDD of [^]*? experiment (?:Check for [^]*? experiment )?/, '').replace(/^BDD of /, '') || name;
 }
+
+// ---- builds: Nightly, Release Candidate and General Availability share one data contract.
+// Nightly lives in data/, the release builds in data/rc/ and data/ga/. A missing file is "no run yet", not an error.
+
+export const BUILDS = [
+  { key: 'nightly', label: 'Nightly', long: 'Daily Nightly', dir: '', blurb: 'Built from the default branch every day.' },
+  { key: 'rc', label: 'RC', long: 'Release Candidate', dir: 'rc/', blurb: 'Built for the release candidate of the next version.' },
+  { key: 'ga', label: 'GA', long: 'General Availability', dir: 'ga/', blurb: 'Built for the version that is generally available.' },
+];
+export const BUILD_KEYS = BUILDS.map((b) => b.key);
+export function buildInfo(key) { return BUILDS.find((b) => b.key === key) || BUILDS[0]; }
+
+async function getJson(base, dir, name, fetcher) {
+  let res;
+  const pre = typeof window !== 'undefined' && window.__pre && window.__pre[dir + name];
+  if (pre) delete window.__pre[dir + name];
+  try { res = (pre && (await pre)) || (await fetcher(base + 'data/' + dir + name, { cache: 'no-cache' })); } catch (e) { return { error: 'the network request for ' + dir + name + ' failed' }; }
+  if (res.status === 404) return { missing: true };
+  if (!res.ok) return { error: dir + name + ' answered ' + res.status };
+  try { return { value: await res.json() }; } catch (e) { return { error: dir + name + ' is not valid JSON' }; }
+}
+
+/** Loads one build. state is 'ready' (latest and/or history usable), 'empty' (nothing published yet) or 'error'. */
+export async function loadBuild(base, key, fetcher = fetch) {
+  const dir = buildInfo(key).dir;
+  const out = { key, state: 'empty', latest: null, history: null, problems: [] };
+  const [l, h] = await Promise.all([getJson(base, dir, 'latest.json', fetcher), getJson(base, dir, 'history.json', fetcher)]);
+  for (const [name, r, field] of [['latest.json', l, 'latest'], ['history.json', h, 'history']]) {
+    if (r.error) out.problems.push(r.error);
+    else if (r.value) out[field] = check(r.value, dir + name, out.problems);
+  }
+  if (out.latest || out.history) out.state = 'ready';
+  else if (out.problems.length) out.state = 'error';
+  return out;
+}
+
+export async function loadAll(base = '', fetcher = fetch) { return Promise.all(BUILD_KEYS.map((k) => loadBuild(base, k, fetcher))); }
+
+export function buildOf(b) { return (b && b.latest && b.latest.build) || null; }
+
+/** Version of a build: an explicit version or tag of the run, else the short commit, else null. */
+export function versionOf(b) {
+  const x = buildOf(b);
+  if (!x) return null;
+  return x.version || x.tag || (x.sha ? x.sha.slice(0, 7) : null);
+}
+
+/** Counts of the required suites of a build, merged for the headline. The suites keep their own numbers elsewhere. */
+export function headline(b) {
+  const x = buildOf(b);
+  if (!x) return null;
+  const counts = addCounts(Object.values(x.suites || {}).map((s) => s.counts));
+  return { status: x.status, counts, rate: passRate(counts), total: total(counts), executed: executed(counts) };
+}
+
+/** Pass rate per build of the history, over the suites together. */
+export function rateSeries(history) {
+  return builds(history).map((b) => {
+    const c = addCounts(Object.values(b.suites || {}).map((s) => s.counts));
+    return { id: b.id, status: b.status, rate: passRate(c), startedAt: b.startedAt };
+  });
+}
+
+const CATEGORY_RULES = [
+  ['network', /network|dns|http|latency|loss|corruption|duplication|partition/i],
+  ['IO', /io-stress|disk|fill|ebs|volume|storage/i],
+  ['node', /^node|node-|kubelet|taint|drain|restart|vm-|vmware|ec2|azure|gcp|instance/i],
+  ['pod', /^pod|container|cpu|memory|autoscaler|multiple|affected|stress/i],
+];
+
+/** pod, node, network, IO, frontend, or component/other for the platform and engine checks. */
+export function categoryOf(suite, group) {
+  if (suite === 'frontend') return 'frontend';
+  for (const [name, re] of CATEGORY_RULES) if (re.test(group)) return name;
+  return 'other';
+}
+export const CATEGORIES = ['pod', 'node', 'network', 'IO', 'frontend', 'other'];
+
+/** Subsequence match with a score, higher is better, null when the needle does not match. */
+export function fuzzy(needle, hay) {
+  needle = needle.toLowerCase().trim();
+  hay = hay.toLowerCase();
+  if (!needle) return 0;
+  const direct = hay.indexOf(needle);
+  if (direct >= 0) return 1000 - direct - hay.length * 0.01;
+  let score = 0, last = -1, run = 0, i = 0;
+  for (const ch of needle) {
+    if (ch === ' ') continue;
+    const at = hay.indexOf(ch, last + 1);
+    if (at < 0) return null;
+    run = at === last + 1 ? run + 1 : 0;
+    score += 10 + run * 5 - Math.min(at - last, 10);
+    last = at;
+    i += 1;
+  }
+  return i ? score : 0;
+}
+
+/** Experiment (suite/group) of a test id such as bdd/pod-delete/name@job. */
+export function groupOfId(id) {
+  const d = describeId(id);
+  return d.suite + '/' + d.group;
+}
+
+/** Worst result letter of the tests of a group in one history build: f, e, s, p, or null. */
+export function groupResult(results, prefix) {
+  let seen = null;
+  for (const [id, st] of Object.entries(results || {})) {
+    if (!id.startsWith(prefix + '/')) continue;
+    if (st === 'f') return 'f';
+    if (st === 'e') seen = 'e';
+    else if (st === 's' && seen !== 'e') seen = 's';
+    else if (st === 'p' && !seen) seen = 'p';
+  }
+  return seen;
+}
+
+/** Experiments across all builds, one entry per suite/group, with the status of each build. */
+export function experimentIndex(all) {
+  const map = new Map();
+  for (const b of all) {
+    if (!b.latest) continue;
+    for (const suite of ['bdd', 'frontend']) {
+      const { groups } = groupTests(b.latest.tests, suite);
+      for (const g of groups) {
+        const key = suite + '/' + g.id;
+        let e = map.get(key);
+        if (!e) { e = { key, suite, id: g.id, category: categoryOf(suite, g.id), builds: {} }; map.set(key, e); }
+        e.builds[b.key] = g;
+      }
+    }
+  }
+  return [...map.values()].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+/** Last n results of a group, oldest first, null where the build has no result. */
+export function groupStrip(history, key, n = 30) {
+  return builds(history).slice(-n).map((b) => groupResult(b.results, key));
+}
+
+/** Number of changes between passing and failing in a strip, used to mark flaky rows. */
+export function flips(strip) {
+  let prev = null, n = 0;
+  for (const s of strip) {
+    if (s !== 'p' && s !== 'f' && s !== 'e') continue;
+    const bad = s !== 'p';
+    if (prev !== null && prev !== bad) n += 1;
+    prev = bad;
+  }
+  return n;
+}
+
+const STAGE_ORDER = ['nightly', 'rc', 'ga'];
+
+/**
+ * Release readiness: how the tests of the latest build of each stage compare to the stage before it.
+ * A regression is a test that passed in an earlier stage and fails or errors in a later one.
+ * Only stages that ran are compared, a missing stage is never counted as failing.
+ */
+export function readiness(all) {
+  const ran = STAGE_ORDER.map((k) => all.find((b) => b.key === k)).filter((b) => b && b.latest && b.latest.build);
+  const statusOf = new Map();
+  for (const b of ran) {
+    const m = new Map();
+    for (const t of b.latest.tests || []) if (t.kind === 'test' || !t.kind) m.set(t.id, t);
+    statusOf.set(b.key, m);
+  }
+  const regressions = [];
+  const onlyIn = [];
+  for (let i = 1; i < ran.length; i++) {
+    const from = ran[i - 1].key, to = ran[i].key;
+    const a = statusOf.get(from), z = statusOf.get(to);
+    for (const [id, t] of z) {
+      const before = a.get(id);
+      if (!before) { onlyIn.push({ id, stage: to, missingIn: from, status: t.status }); continue; }
+      if (before.status === 'passed' && (t.status === 'failed' || t.status === 'error')) regressions.push({ id, from, to, name: t.name, group: t.group, suite: t.suite, message: t.message || '' });
+    }
+  }
+  const rows = new Map();
+  for (const b of ran) {
+    for (const [id, t] of statusOf.get(b.key)) {
+      const gk = t.suite + '/' + t.group;
+      let r = rows.get(gk);
+      if (!r) { r = { key: gk, suite: t.suite, group: t.group, status: {} }; rows.set(gk, r); }
+      const cur = r.status[b.key] || { passed: 0, failed: 0, skipped: 0, error: 0 };
+      cur[t.status] += 1;
+      r.status[b.key] = cur;
+    }
+  }
+  const diverging = [...rows.values()].map((r) => {
+    const st = {};
+    for (const [k, c] of Object.entries(r.status)) st[k] = worst(c);
+    return { ...r, st, differs: new Set(Object.values(st)).size > 1 };
+  }).filter((r) => r.differs).sort((a, b) => a.key.localeCompare(b.key));
+  return { stages: ran.map((b) => b.key), regressions, onlyIn, diverging };
+}
+
+/** The "what changed since the last run" lists of a build, from metrics. Items are test ids. */
+export function whatChanged(b) {
+  const m = (b && b.latest && b.latest.metrics) || {};
+  const idOf = (x) => (typeof x === 'string' ? x : x.id);
+  return {
+    newlyFailing: (m.newlyFailing || []).map(idOf),
+    recovered: (m.recovered || []).map(idOf),
+    slowest: (m.longestTests || []).slice(0, 5),
+    flaky: m.flakyTests || [],
+    durationChange: m.durationChange || null,
+    buildsConsidered: m.buildsConsidered || 0,
+  };
+}

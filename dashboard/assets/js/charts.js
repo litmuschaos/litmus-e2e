@@ -1,97 +1,111 @@
-import { h, svg, withTip, reducedMotion } from './dom.js';
-import { fmtRate, fmtDuration } from './data.js';
+// Inline SVG charts. Draw-in animations use stroke-dashoffset on pathLength-normalised paths (see .draw in the
+// stylesheet), colours come from custom properties so every chart follows the build accent and the theme.
+import { h, svg, withTip } from './dom.js';
+import { fmtRate } from './data.js';
 
-/** Pass rate ring. The value is also written as text in the center. */
-export function ring(rate, color, label) {
-  const r = 40, c = 2 * Math.PI * r;
-  const arc = svg('circle', { class: 'arc', cx: 50, cy: 50, r, fill: 'none', stroke: color, 'stroke-width': 10, 'stroke-linecap': 'round', 'stroke-dasharray': c, 'stroke-dashoffset': c });
-  const el = h('div', { class: 'ring', role: 'img', 'aria-label': label + ': ' + (rate == null ? 'no result' : fmtRate(rate) + ' passed') },
-    svg('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true' }, svg('circle', { class: 'track', cx: 50, cy: 50, r, fill: 'none', 'stroke-width': 10 }), arc),
-    h('div', { class: 'center' }, h('span', {}, fmtRate(rate), h('small', {}, 'passed'))));
-  const target = rate == null ? c : c * (1 - rate / 100);
-  if (reducedMotion()) arc.setAttribute('stroke-dashoffset', target);
-  else requestAnimationFrame(() => requestAnimationFrame(() => arc.setAttribute('stroke-dashoffset', target)));
+const STATUS_CLASS = { passed: 'ok', failed: 'bad', error: 'bad', skipped: 'warn', incomplete: 'warn', in_progress: 'warn', cancelled: 'warn', not_run: 'warn' };
+export function tone(status) { return STATUS_CLASS[status] || 'warn'; }
+
+/** Health ring. The arc is drawn from 0 to the pass rate; a null rate is drawn as a dashed empty ring. */
+export function ring({ rate, status, size = 160, stroke = 10, build }) {
+  const r = (size - stroke) / 2, c = size / 2;
+  const has = rate != null;
+  const arc = svg('circle', { class: 'ring-arc', cx: c, cy: c, r, 'stroke-width': stroke, pathLength: 100, 'stroke-dasharray': '100', 'stroke-dashoffset': has ? '100' : '100', 'stroke-linecap': 'round', transform: `rotate(-90 ${c} ${c})` });
+  const el = svg('svg', { class: 'ring ' + (has ? tone(status) : 'none'), viewBox: `0 0 ${size} ${size}`, width: size, height: size, 'aria-hidden': 'true', focusable: 'false', 'data-build': build || null },
+    svg('circle', { class: 'ring-track', cx: c, cy: c, r, 'stroke-width': stroke, 'stroke-dasharray': has ? null : '2 7', 'stroke-linecap': 'round' }),
+    arc);
+  if (has) {
+    const to = 100 - Math.max(0.5, Math.min(100, rate));
+    requestAnimationFrame(() => requestAnimationFrame(() => arc.setAttribute('stroke-dashoffset', String(to))));
+  }
   return el;
 }
 
-/** Stacked bar of passed/failed/error/skipped with a 2px gap between the segments. */
-export function stackedBar(counts) {
-  const sum = counts.passed + counts.failed + counts.error + counts.skipped;
-  const el = h('div', { class: 'sbar', role: 'img', 'aria-label': `${counts.passed} passed, ${counts.failed} failed, ${counts.error} error, ${counts.skipped} skipped` });
-  if (!sum) return el;
-  for (const k of ['passed', 'failed', 'error', 'skipped']) if (counts[k]) el.append(h('i', { class: k, style: `width:${(100 * counts[k]) / sum}%` }));
-  return el;
+function pathOf(points) {
+  let d = '', pen = false;
+  for (const p of points) {
+    if (!p) { pen = false; continue; }
+    d += (pen ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+    pen = true;
+  }
+  return d;
 }
 
-/** One column per build, colored by the status of the build. Click opens the build in the history. */
-export function timeline(items, onPick) {
-  const wrap = h('div', { class: 'timeline', role: 'group', 'aria-label': 'Status of the latest builds, oldest first' });
-  items.forEach((b, i) => {
-    const cls = b.status === 'passed' || b.status === 'failed' || b.status === 'incomplete' ? b.status : 'none';
-    // the height is the pass rate: a failed build with 1 failing test stays red but is nearly full, a broken one is short
-    const height = b.rate != null ? Math.max(18, Math.round(b.rate)) : 100;
-    const btn = h('button', { type: 'button', class: cls, style: `--i:${i};height:${height}%`, 'aria-label': `${b.id}: ${b.status}${b.rate != null ? ', ' + fmtRate(b.rate) + ' passed' : ''}` });
-    withTip(btn, () => [b.id, b.status[0].toUpperCase() + b.status.slice(1) + (b.rate != null ? ' · ' + fmtRate(b.rate) + ' passed' : '')]);
-    if (onPick) btn.addEventListener('click', () => onPick(b));
-    wrap.append(btn);
-  });
-  return wrap;
+/** Tiny trend line of pass rates (0-100). null values leave a gap, one value is drawn as a dot. */
+export function sparkline(values, { w = 120, h: ht = 36, label = 'Pass rate trend' } = {}) {
+  const real = values.filter((v) => v != null);
+  const root = svg('svg', { class: 'spark', viewBox: `0 0 ${w} ${ht}`, width: w, height: ht, role: 'img', 'aria-label': real.length ? `${label}: ${real.length} builds, latest ${fmtRate(real[real.length - 1])}` : label + ': no data' });
+  if (!real.length) { root.append(svg('line', { class: 'spark-none', x1: 2, y1: ht / 2, x2: w - 2, y2: ht / 2 })); return root; }
+  const lo = real.length === 1 ? 0 : Math.max(0, Math.min(...real) - 5);
+  const hi = 100;
+  const n = values.length;
+  const pts = values.map((v, i) => (v == null ? null : [n === 1 ? w / 2 : 3 + (i * (w - 6)) / (n - 1), 3 + (ht - 6) * (1 - (v - lo) / (hi - lo || 1))]));
+  if (real.length > 1) {
+    const d = pathOf(pts);
+    const last = pts.filter(Boolean);
+    root.append(
+      svg('path', { class: 'spark-area', d: d + `L${last[last.length - 1][0].toFixed(1)} ${ht}L${last[0][0].toFixed(1)} ${ht}Z` }),
+      svg('path', { class: 'spark-line draw', d, pathLength: 1 }));
+  }
+  const lp = pts.filter(Boolean).pop();
+  root.append(svg('circle', { class: 'spark-dot', cx: lp[0], cy: lp[1], r: 3 }));
+  return root;
+}
+
+/** Visually hidden table that carries the numbers of a chart. */
+export function srTable(caption, head, rows) {
+  return h('table', { class: 'sr-only' }, h('caption', {}, caption),
+    h('thead', {}, h('tr', {}, head.map((x) => h('th', { scope: 'col' }, x)))),
+    h('tbody', {}, rows.map((r) => h('tr', {}, r.map((c, i) => h(i ? 'td' : 'th', i ? {} : { scope: 'row' }, c))))));
 }
 
 /**
- * Line chart over builds. series: [{name, color, points:[{x:id, y:number|null}]}]. A gap is drawn where a build has no value.
- * Each point has a larger hit target with a tooltip, the last point of every series is labeled directly.
+ * Pass rate of the builds over time, one line per series ({key, label, points:[{id, rate}]}). Series are aligned on
+ * the right, the newest build is the last point.
  */
-export function lineChart({ series, yMin = 0, yMax = 100, format = fmtRate, ariaLabel, height = 200 }) {
-  const W = 640, H = height, m = { l: 40, r: 70, t: 12, b: 26 };
-  const xs = series[0] ? series[0].points.map((p) => p.x) : [];
-  const n = xs.length;
-  const x = (i) => m.l + (n <= 1 ? (W - m.l - m.r) / 2 : (i * (W - m.l - m.r)) / (n - 1));
-  const y = (v) => m.t + (1 - (v - yMin) / (yMax - yMin || 1)) * (H - m.t - m.b);
-  const root = svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': ariaLabel });
-  const ticks = 4;
-  for (let i = 0; i <= ticks; i++) {
-    const v = yMin + ((yMax - yMin) * i) / ticks;
-    root.append(svg('line', { class: 'grid-line', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }), svg('text', { x: m.l - 6, y: y(v) + 4, 'text-anchor': 'end' }, format(v)));
+export function trendChart(series, { w = 720, h: ht = 220 } = {}) {
+  const pad = { l: 36, r: 12, t: 12, b: 24 };
+  const iw = w - pad.l - pad.r, ih = ht - pad.t - pad.b;
+  const longest = Math.max(1, ...series.map((s) => s.points.length));
+  const all = series.flatMap((s) => s.points.map((p) => p.rate)).filter((v) => v != null);
+  const lo = all.length ? Math.max(0, Math.floor((Math.min(...all) - 5) / 10) * 10) : 0;
+  const x = (i, n) => pad.l + (longest === 1 ? iw / 2 : ((longest - n + i) * iw) / (longest - 1));
+  const y = (v) => pad.t + ih * (1 - (v - lo) / (100 - lo || 1));
+  const root = svg('svg', { class: 'trend', viewBox: `0 0 ${w} ${ht}`, role: 'img', 'aria-label': 'Pass rate per build over time' });
+  for (let v = lo; v <= 100; v += (100 - lo) / 4 || 25) {
+    root.append(svg('line', { class: 'grid-line', x1: pad.l, x2: w - pad.r, y1: y(v), y2: y(v) }), svg('text', { class: 'axis', x: pad.l - 6, y: y(v) + 4, 'text-anchor': 'end' }, Math.round(v) + '%'));
   }
-  const labelEvery = Math.max(1, Math.ceil(n / 7));
-  xs.forEach((id, i) => { if (i % labelEvery === 0 || i === n - 1) root.append(svg('text', { x: x(i), y: H - 6, 'text-anchor': 'middle' }, id.slice(5))); });
-  const labelYs = [];
+  const dots = [];
   for (const s of series) {
-    let d = '', pen = false;
+    const n = s.points.length;
+    const pts = s.points.map((p, i) => (p.rate == null ? null : [x(i, n), y(p.rate)]));
+    if (pts.filter(Boolean).length > 1) root.append(svg('path', { class: 'trend-line draw', d: pathOf(pts), pathLength: 1, 'data-build': s.key }));
     s.points.forEach((p, i) => {
-      if (p.y == null) { pen = false; return; }
-      d += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.y).toFixed(1);
-      pen = true;
+      if (!pts[i]) return;
+      const dot = svg('circle', { class: 'trend-dot', cx: pts[i][0], cy: pts[i][1], r: 4.5, tabindex: 0, role: 'img', 'data-build': s.key, 'aria-label': `${s.label}, build ${p.id}, pass rate ${fmtRate(p.rate)}` });
+      withTip(dot, () => [`${s.label} · ${p.id}`, 'Pass rate ' + fmtRate(p.rate), p.version ? 'Version ' + p.version : '']);
+      dots.push(dot);
     });
-    const path = svg('path', { d, fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
-    root.append(path);
-    if (!reducedMotion() && path.getTotalLength) {
-      try { const len = path.getTotalLength(); path.style.strokeDasharray = len; path.style.strokeDashoffset = len; path.getBoundingClientRect(); path.style.transition = 'stroke-dashoffset 1s ease'; requestAnimationFrame(() => { path.style.strokeDashoffset = 0; }); } catch (e) { /* drawing without animation */ }
-    }
-    let last = -1;
-    s.points.forEach((p, i) => { if (p.y != null) last = i; });
-    s.points.forEach((p, i) => {
-      if (p.y == null) return;
-      const dot = svg('circle', { class: 'dotmark', cx: x(i), cy: y(p.y), r: i === last ? 4.5 : 3.5, fill: s.color });
-      root.append(dot);
-    });
-    if (last >= 0) {
-      // direct label at the end of the line, pushed down when it would overlap the label of another series
-      let ly = y(s.points[last].y) + 4;
-      while (labelYs.some((o) => Math.abs(o - ly) < 13)) ly += 13;
-      labelYs.push(ly);
-      root.append(svg('text', { class: 'series-label', x: x(last) + 9, y: ly }, s.name));
-    }
   }
-  // hit targets, one per build, above the marks
-  for (let i = 0; i < n; i++) {
-    const hit = svg('rect', { class: 'hit', x: x(i) - Math.max(8, (W - m.l - m.r) / Math.max(n - 1, 1) / 2), y: m.t, width: Math.max(16, (W - m.l - m.r) / Math.max(n - 1, 1)), height: H - m.t - m.b });
-    withTip(hit, () => [xs[i], ...series.map((s) => s.name + ': ' + (s.points[i].y == null ? 'no result' : format(s.points[i].y)))]);
-    root.append(hit);
-  }
-  const legend = h('div', { class: 'legend' }, series.map((s) => h('span', {}, h('i', { style: `background:${s.color}` }), s.name)));
-  return { root, legend };
+  root.append(...dots);
+  return root;
 }
 
-export const durationFormat = (v) => fmtDuration(v);
+/** Stacked bar of the counts of a suite. */
+export function stackedBar(counts, label) {
+  const total = (counts.passed || 0) + (counts.failed || 0) + (counts.error || 0) + (counts.skipped || 0);
+  const seg = (cls, n) => (n ? h('span', { class: 'seg ' + cls, style: `flex:${n}` }) : null);
+  return h('div', { class: 'stack-bar', role: 'img', 'aria-label': `${label}: ${counts.passed || 0} passed, ${counts.failed || 0} failed, ${counts.error || 0} errors, ${counts.skipped || 0} skipped of ${total}` },
+    total ? [seg('ok', counts.passed), seg('bad', (counts.failed || 0) + (counts.error || 0)), seg('warn', counts.skipped)] : h('span', { class: 'seg none', style: 'flex:1' }));
+}
+
+const LETTER = { p: 'ok', f: 'bad', e: 'bad', s: 'warn' };
+const LETTER_TEXT = { p: 'passed', f: 'failed', e: 'error', s: 'skipped' };
+export function letterText(l) { return LETTER_TEXT[l] || 'no result'; }
+export function letterTone(l) { return LETTER[l] || 'none'; }
+
+/** A row of small cells, one per build, for the recent results of an experiment. */
+export function strip(letters, label) {
+  return h('span', { class: 'strip', role: 'img', 'aria-label': label + ': ' + (letters.length ? letters.map(letterText).join(', ') : 'no history') },
+    letters.map((l) => h('i', { class: letterTone(l) })));
+}

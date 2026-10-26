@@ -1,0 +1,2123 @@
+{
+ "build": {
+  "ageHours": 10.5,
+  "durationSec": 15840,
+  "finishedAt": "2026-10-26T01:24:00Z",
+  "id": "2026-10-25",
+  "sha": "c3d4e5f6a7b8",
+  "stale": false,
+  "startedAt": "2026-10-25T21:00:00Z",
+  "status": "passed",
+  "suites": {
+   "bdd": {
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": 100.0,
+     "passed": 54,
+     "skipped": 0,
+     "total": 54
+    },
+    "optionalCounts": {
+     "error": 1,
+     "failed": 0,
+     "passRate": 0.0,
+     "passed": 0,
+     "skipped": 1,
+     "total": 2
+    },
+    "status": "passed"
+   },
+   "frontend": {
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": 100.0,
+     "passed": 16,
+     "skipped": 0,
+     "total": 16
+    },
+    "optionalCounts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
+     "passed": 0,
+     "skipped": 0,
+     "total": 0
+    },
+    "status": "passed"
+   }
+  },
+  "version": "v3.9.0",
+  "workflows": [
+   {
+    "category": "pod-level",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 24,
+     "skipped": 0
+    },
+    "durationSec": 5280,
+    "failureKind": null,
+    "id": "pod-level",
+    "jobs": [
+     {
+      "conclusion": "success",
+      "durationSec": 1680,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Stress_Chaos_Test",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/Stress_Chaos_Test"
+     }
+    ],
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "resultsSource": "junit",
+    "runId": 202610251,
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+    "startedAt": "2026-10-25T22:00:00Z",
+    "status": "passed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "node-level",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 16,
+     "skipped": 0
+    },
+    "durationSec": 2160,
+    "failureKind": null,
+    "id": "node-level",
+    "jobs": [
+     {
+      "conclusion": "success",
+      "durationSec": 2220,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Node_Level_Test",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/Node_Level_Test"
+     }
+    ],
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "resultsSource": "junit",
+    "runId": 202610253,
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+    "startedAt": "2026-10-25T21:00:00Z",
+    "status": "passed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "component",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 14,
+     "skipped": 0
+    },
+    "durationSec": 4380,
+    "failureKind": null,
+    "id": "component",
+    "jobs": [
+     {
+      "conclusion": "success",
+      "durationSec": 600,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Chaos_Engine_Component_Test",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/Chaos_Engine_Component_Test"
+     }
+    ],
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "resultsSource": "junit",
+    "runId": 202610252,
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+    "startedAt": "2026-10-25T22:00:00Z",
+    "status": "passed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "chaoscenter",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 16,
+     "skipped": 0
+    },
+    "durationSec": 5160,
+    "failureKind": null,
+    "id": "chaoscenter",
+    "jobs": [
+     {
+      "conclusion": "success",
+      "durationSec": 300,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "frontend / run-litmus",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/frontend / run-litmus"
+     }
+    ],
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "resultsSource": "junit",
+    "runId": 202610254,
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+    "startedAt": "2026-10-25T21:00:00Z",
+    "status": "passed",
+    "suite": "frontend",
+    "trigger": "schedule"
+   },
+   {
+    "category": "aws",
+    "counts": {
+     "error": 1,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": 5040,
+    "failureKind": "infrastructure",
+    "id": "aws",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 1020,
+      "failedSteps": [
+       "Configure AWS Credentials"
+      ],
+      "firstFailedStep": "Configure AWS Credentials",
+      "name": "AWS_EC2_Test",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/AWS_EC2_Test"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 420,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EBS_Loss",
+      "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/AWS_EBS_Loss"
+     }
+    ],
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 202610255,
+    "runUrl": "https://github.com/example/litmus-e2e/actions/runs/202610255",
+    "startedAt": "2026-10-26T00:00:00Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "azure",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "azure",
+    "jobs": [],
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "gcp",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "gcp",
+    "jobs": [],
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "vmware",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "vmware",
+    "jobs": [],
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "m-agent",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "m-agent",
+    "jobs": [],
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   }
+  ]
+ },
+ "config": {
+  "staleAfterHours": 36,
+  "suites": [
+   {
+    "id": "bdd",
+    "name": "Experiment BDD"
+   },
+   {
+    "id": "frontend",
+    "name": "Frontend E2E"
+   }
+  ],
+  "workflows": [
+   {
+    "category": "pod-level",
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "node-level",
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "component",
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "chaoscenter",
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "suite": "frontend"
+   },
+   {
+    "category": "aws",
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "azure",
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "gcp",
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "vmware",
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "m-agent",
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   }
+  ]
+ },
+ "coverage": {
+  "byCategory": {
+   "aws": [
+    "ebs-loss-by-id",
+    "ebs-loss-by-tag",
+    "ec2-terminate-by-id",
+    "ec2-terminate-by-tag"
+   ],
+   "azure": [
+    "disk-loss",
+    "instance-stop"
+   ],
+   "component": [
+    "admin-mode",
+    "appinfo",
+    "engine-state",
+    "env-from-secret-and-cm",
+    "experiment-image",
+    "job-cleanup-policy",
+    "reconcile-resiliency",
+    "run-history",
+    "service-account",
+    "target-pod"
+   ],
+   "gcp": [
+    "gcp-vm-disk-loss",
+    "gcp-vm-instance-stop"
+   ],
+   "m-agent": [
+    "process-kill-parallel",
+    "process-kill-serial"
+   ],
+   "node-level": [
+    "kubelet-service-kill",
+    "node-cpu-hog",
+    "node-drain",
+    "node-io-stress",
+    "node-memory-hog",
+    "node-selector",
+    "node-taint",
+    "pod-autoscaler",
+    "with-appinfo"
+   ],
+   "pod-level": [
+    "container-kill",
+    "disk-fill",
+    "multiple-app-deploy",
+    "pod-affected-perc-ton-parallel",
+    "pod-affected-perc-ton-series",
+    "pod-cpu-hog",
+    "pod-cpu-hog-exec",
+    "pod-delete",
+    "pod-io-stress",
+    "pod-memory-hog",
+    "pod-memory-hog-exec",
+    "pod-network-corruption",
+    "pod-network-duplication",
+    "pod-network-latency",
+    "pod-network-loss"
+   ],
+   "vmware": [
+    "vm-poweroff"
+   ]
+  },
+  "catalog": {
+   "admin-mode": {
+    "kind": "experiment",
+    "path": "components/operator/admin-mode_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "annotation-check": {
+    "kind": "experiment",
+    "path": "components/engine/annotation-check_test.go",
+    "workflows": []
+   },
+   "app-cleanup": {
+    "kind": "setup",
+    "path": "tests/app-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-deploy": {
+    "kind": "setup",
+    "path": "tests/app-deploy_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-liveness": {
+    "kind": "setup",
+    "path": "tests/app-liveness_test.go",
+    "workflows": []
+   },
+   "appinfo": {
+    "kind": "experiment",
+    "path": "components/engine/appinfo_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "auxiliary-app": {
+    "kind": "experiment",
+    "path": "tests/auxiliary-app_test.go",
+    "workflows": []
+   },
+   "container-kill": {
+    "kind": "experiment",
+    "path": "tests/container-kill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-fill": {
+    "kind": "experiment",
+    "path": "tests/disk-fill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-loss": {
+    "kind": "experiment",
+    "path": "platform/azure/disk-loss_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "ebs-loss-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ebs-loss-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "engine-state": {
+    "kind": "experiment",
+    "path": "components/engine/engine-state_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "env-from-secret-and-cm": {
+    "kind": "experiment",
+    "path": "tests/env-from-secret-and-cm_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "experiment-404": {
+    "kind": "experiment",
+    "path": "components/engine/experiment-404_test.go",
+    "workflows": []
+   },
+   "experiment-image": {
+    "kind": "experiment",
+    "path": "components/experiment/experiment-image_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "gcp-vm-disk-loss": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-disk-loss_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "gcp-vm-instance-stop": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-instance-stop_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "install-litmus": {
+    "kind": "setup",
+    "path": "tests/install-litmus_test.go",
+    "workflows": [
+     "node-level",
+     "aws",
+     "azure",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "instance-stop": {
+    "kind": "experiment",
+    "path": "platform/azure/instance-stop_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "job-cleanup-policy": {
+    "kind": "experiment",
+    "path": "components/engine/job-cleanup-policy_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "kubelet-service-kill": {
+    "kind": "experiment",
+    "path": "tests/kubelet-service-kill_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "litmus-cleanup": {
+    "kind": "setup",
+    "path": "tests/litmus-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component",
+     "aws",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "multiple-app-deploy": {
+    "kind": "experiment",
+    "path": "tests/multiple-app-deploy_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "node-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/node-cpu-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-drain": {
+    "kind": "experiment",
+    "path": "tests/node-drain_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-io-stress": {
+    "kind": "experiment",
+    "path": "tests/node-io-stress_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/node-memory-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-selector": {
+    "kind": "experiment",
+    "path": "tests/node-selector_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-taint": {
+    "kind": "experiment",
+    "path": "tests/node-taint_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pipeline-update": {
+    "kind": "setup",
+    "path": "tests/pipeline-update_test.go",
+    "workflows": []
+   },
+   "pod-affected-perc-ton-parallel": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-parallel_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-affected-perc-ton-series": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-series_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-autoscaler": {
+    "kind": "experiment",
+    "path": "tests/pod-autoscaler_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pod-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-cpu-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-delete": {
+    "kind": "experiment",
+    "path": "tests/pod-delete_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-io-stress": {
+    "kind": "experiment",
+    "path": "tests/pod-io-stress_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-corruption": {
+    "kind": "experiment",
+    "path": "tests/pod-network-corruption_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-duplication": {
+    "kind": "experiment",
+    "path": "tests/pod-network-duplication_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-latency": {
+    "kind": "experiment",
+    "path": "tests/pod-network-latency_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-loss": {
+    "kind": "experiment",
+    "path": "tests/pod-network-loss_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "process-kill-parallel": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-parallel_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "process-kill-serial": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-serial_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "reconcile-resiliency": {
+    "kind": "experiment",
+    "path": "components/operator/reconcile-resiliency_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "run-history": {
+    "kind": "experiment",
+    "path": "components/result/run-history_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "service-account": {
+    "kind": "experiment",
+    "path": "components/engine/service-account_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "target-pod": {
+    "kind": "experiment",
+    "path": "components/experiment/target-pod_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "vm-poweroff": {
+    "kind": "experiment",
+    "path": "platform/vmware/vm-poweroff_test.go",
+    "workflows": [
+     "vmware"
+    ]
+   },
+   "with-appinfo": {
+    "kind": "experiment",
+    "path": "tests/with-appinfo_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   }
+  },
+  "cloud": [
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "vm-poweroff"
+  ],
+  "defined": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "auxiliary-app",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-404",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "executed": [
+   "annotation-check",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "engine-state",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "run-history",
+   "service-account",
+   "target-pod"
+  ],
+  "executedPercent": 76.5,
+  "notScheduled": [
+   "annotation-check",
+   "auxiliary-app",
+   "experiment-404"
+  ],
+  "scheduled": [
+   "admin-mode",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "with-appinfo"
+  ],
+  "scheduledNotExecuted": [
+   "admin-mode",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "multiple-app-deploy",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "reconcile-resiliency",
+   "with-appinfo"
+  ]
+ },
+ "generatedAt": "2026-10-26T07:30:00Z",
+ "metrics": {
+  "buildsConsidered": 5,
+  "durationChange": {
+   "latestSec": 15840,
+   "percent": 17.9,
+   "previousSec": 13440
+  },
+  "flakyTests": [],
+  "longestTests": [
+   {
+    "durationSec": 1020,
+    "id": "bdd/aws/job:AWS_EC2_Test",
+    "name": "job: AWS_EC2_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 420,
+    "id": "bdd/aws/job:AWS_EBS_Loss",
+    "name": "job: AWS_EBS_Loss",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 188.8,
+    "id": "bdd/node-drain/BDD of node-drain experiment Check for node-drain experiment Should check the verdict",
+    "name": "BDD of node-drain experiment Check for node-drain experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 178.8,
+    "id": "bdd/pod-network-latency/BDD of pod-network-latency experiment Check for pod-network-latency experiment Should check the verdict",
+    "name": "BDD of pod-network-latency experiment Check for pod-network-latency experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 175.7,
+    "id": "bdd/node-selector/BDD of node-selector experiment Check for node-selector experiment Should check the verdict",
+    "name": "BDD of node-selector experiment Check for node-selector experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 174.2,
+    "id": "bdd/job-cleanup-policy/BDD of job-cleanup-policy experiment Check for job-cleanup-policy experiment Should check the verdict",
+    "name": "BDD of job-cleanup-policy experiment Check for job-cleanup-policy experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 170.6,
+    "id": "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Check for pod-memory-hog-exec experiment Should check the verdict",
+    "name": "BDD of pod-memory-hog-exec experiment Check for pod-memory-hog-exec experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 170.0,
+    "id": "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment Should check the verdict",
+    "name": "BDD of pod-delete experiment Check for pod-delete experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 146.4,
+    "id": "bdd/pod-autoscaler/BDD of pod-autoscaler experiment Check for pod-autoscaler experiment Should check the verdict",
+    "name": "BDD of pod-autoscaler experiment Check for pod-autoscaler experiment Should check the verdict",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 146.0,
+    "id": "bdd/run-history/BDD of run-history experiment Check for run-history experiment Should check the verdict",
+    "name": "BDD of run-history experiment Check for run-history experiment Should check the verdict",
+    "suite": "bdd"
+   }
+  ],
+  "newlyFailing": [],
+  "recovered": [],
+  "recurringFailures": [
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   }
+  ]
+ },
+ "repository": "example/litmus-e2e",
+ "schemaVersion": 1,
+ "tests": [
+  {
+   "durationSec": 4.2,
+   "group": "app-deploy",
+   "id": "bdd/app-deploy/BDD of Application Deployment Should check for creation of application@Stress_Chaos_Test",
+   "job": "Stress_Chaos_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Application Deployment Should check for creation of application",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 109.5,
+   "group": "container-kill",
+   "id": "bdd/container-kill/BDD of container-kill experiment Check for container-kill experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of container-kill experiment Check for container-kill experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 37.4,
+   "group": "container-kill",
+   "id": "bdd/container-kill/BDD of container-kill experiment Abort-Chaos check for container-kill experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of container-kill experiment Abort-Chaos check for container-kill experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 90.8,
+   "group": "disk-fill",
+   "id": "bdd/disk-fill/BDD of disk-fill experiment Check for disk-fill experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of disk-fill experiment Check for disk-fill experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 119.5,
+   "group": "disk-fill",
+   "id": "bdd/disk-fill/BDD of disk-fill experiment Abort-Chaos check for disk-fill experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of disk-fill experiment Abort-Chaos check for disk-fill experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 82.1,
+   "group": "pod-cpu-hog-exec",
+   "id": "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check for pod-cpu-hog-exec experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-cpu-hog-exec experiment Check for pod-cpu-hog-exec experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 84.6,
+   "group": "pod-cpu-hog-exec",
+   "id": "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Abort-Chaos check for pod-cpu-hog-exec experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-cpu-hog-exec experiment Abort-Chaos check for pod-cpu-hog-exec experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 87.4,
+   "group": "pod-cpu-hog",
+   "id": "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Check for pod-cpu-hog experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-cpu-hog experiment Check for pod-cpu-hog experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 32.7,
+   "group": "pod-cpu-hog",
+   "id": "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Abort-Chaos check for pod-cpu-hog experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-cpu-hog experiment Abort-Chaos check for pod-cpu-hog experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 170.0,
+   "group": "pod-delete",
+   "id": "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-delete experiment Check for pod-delete experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 63.5,
+   "group": "pod-delete",
+   "id": "bdd/pod-delete/BDD of pod-delete experiment Abort-Chaos check for pod-delete experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-delete experiment Abort-Chaos check for pod-delete experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 128.0,
+   "group": "pod-io-stress",
+   "id": "bdd/pod-io-stress/BDD of pod-io-stress experiment Check for pod-io-stress experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-io-stress experiment Check for pod-io-stress experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 49.2,
+   "group": "pod-io-stress",
+   "id": "bdd/pod-io-stress/BDD of pod-io-stress experiment Abort-Chaos check for pod-io-stress experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-io-stress experiment Abort-Chaos check for pod-io-stress experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 170.6,
+   "group": "pod-memory-hog-exec",
+   "id": "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Check for pod-memory-hog-exec experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-memory-hog-exec experiment Check for pod-memory-hog-exec experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 80.9,
+   "group": "pod-memory-hog-exec",
+   "id": "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Abort-Chaos check for pod-memory-hog-exec experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-memory-hog-exec experiment Abort-Chaos check for pod-memory-hog-exec experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 54.1,
+   "group": "pod-memory-hog",
+   "id": "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Check for pod-memory-hog experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-memory-hog experiment Check for pod-memory-hog experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 48.4,
+   "group": "pod-memory-hog",
+   "id": "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Abort-Chaos check for pod-memory-hog experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-memory-hog experiment Abort-Chaos check for pod-memory-hog experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 129.0,
+   "group": "pod-network-corruption",
+   "id": "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Check for pod-network-corruption experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-corruption experiment Check for pod-network-corruption experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 84.8,
+   "group": "pod-network-corruption",
+   "id": "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Abort-Chaos check for pod-network-corruption experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-corruption experiment Abort-Chaos check for pod-network-corruption experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 59.6,
+   "group": "pod-network-duplication",
+   "id": "bdd/pod-network-duplication/BDD of pod-network-duplication experiment Check for pod-network-duplication experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-duplication experiment Check for pod-network-duplication experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 105.9,
+   "group": "pod-network-duplication",
+   "id": "bdd/pod-network-duplication/BDD of pod-network-duplication experiment Abort-Chaos check for pod-network-duplication experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-duplication experiment Abort-Chaos check for pod-network-duplication experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 178.8,
+   "group": "pod-network-latency",
+   "id": "bdd/pod-network-latency/BDD of pod-network-latency experiment Check for pod-network-latency experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-latency experiment Check for pod-network-latency experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 55.2,
+   "group": "pod-network-latency",
+   "id": "bdd/pod-network-latency/BDD of pod-network-latency experiment Abort-Chaos check for pod-network-latency experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-latency experiment Abort-Chaos check for pod-network-latency experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 54.6,
+   "group": "pod-network-loss",
+   "id": "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pod-network-loss experiment Should check the verdict",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-loss experiment Check for pod-network-loss experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 70.2,
+   "group": "pod-network-loss",
+   "id": "bdd/pod-network-loss/BDD of pod-network-loss experiment Abort-Chaos check for pod-network-loss experiment",
+   "job": "Stress_Chaos_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-network-loss experiment Abort-Chaos check for pod-network-loss experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610251",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 4.2,
+   "group": "app-deploy",
+   "id": "bdd/app-deploy/BDD of Application Deployment Should check for creation of application@Node_Level_Test",
+   "job": "Node_Level_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Application Deployment Should check for creation of application",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 47.1,
+   "group": "kubelet-service-kill",
+   "id": "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet-service-kill experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of kubelet-service-kill experiment Check for kubelet-service-kill experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 100.8,
+   "group": "kubelet-service-kill",
+   "id": "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Abort-Chaos check for kubelet-service-kill experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of kubelet-service-kill experiment Abort-Chaos check for kubelet-service-kill experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 99.0,
+   "group": "node-cpu-hog",
+   "id": "bdd/node-cpu-hog/BDD of node-cpu-hog experiment Check for node-cpu-hog experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-cpu-hog experiment Check for node-cpu-hog experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 70.4,
+   "group": "node-cpu-hog",
+   "id": "bdd/node-cpu-hog/BDD of node-cpu-hog experiment Abort-Chaos check for node-cpu-hog experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-cpu-hog experiment Abort-Chaos check for node-cpu-hog experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 188.8,
+   "group": "node-drain",
+   "id": "bdd/node-drain/BDD of node-drain experiment Check for node-drain experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-drain experiment Check for node-drain experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 50.0,
+   "group": "node-drain",
+   "id": "bdd/node-drain/BDD of node-drain experiment Abort-Chaos check for node-drain experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-drain experiment Abort-Chaos check for node-drain experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 92.8,
+   "group": "node-io-stress",
+   "id": "bdd/node-io-stress/BDD of node-io-stress experiment Check for node-io-stress experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-io-stress experiment Check for node-io-stress experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 111.2,
+   "group": "node-io-stress",
+   "id": "bdd/node-io-stress/BDD of node-io-stress experiment Abort-Chaos check for node-io-stress experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-io-stress experiment Abort-Chaos check for node-io-stress experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 64.0,
+   "group": "node-memory-hog",
+   "id": "bdd/node-memory-hog/BDD of node-memory-hog experiment Check for node-memory-hog experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-memory-hog experiment Check for node-memory-hog experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 116.9,
+   "group": "node-memory-hog",
+   "id": "bdd/node-memory-hog/BDD of node-memory-hog experiment Abort-Chaos check for node-memory-hog experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-memory-hog experiment Abort-Chaos check for node-memory-hog experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 175.7,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of node-selector experiment Check for node-selector experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-selector experiment Check for node-selector experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 105.3,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of node-selector experiment Abort-Chaos check for node-selector experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-selector experiment Abort-Chaos check for node-selector experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 45.8,
+   "group": "node-taint",
+   "id": "bdd/node-taint/BDD of node-taint experiment Check for node-taint experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-taint experiment Check for node-taint experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 53.0,
+   "group": "node-taint",
+   "id": "bdd/node-taint/BDD of node-taint experiment Abort-Chaos check for node-taint experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-taint experiment Abort-Chaos check for node-taint experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 146.4,
+   "group": "pod-autoscaler",
+   "id": "bdd/pod-autoscaler/BDD of pod-autoscaler experiment Check for pod-autoscaler experiment Should check the verdict",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-autoscaler experiment Check for pod-autoscaler experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 88.2,
+   "group": "pod-autoscaler",
+   "id": "bdd/pod-autoscaler/BDD of pod-autoscaler experiment Abort-Chaos check for pod-autoscaler experiment",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-autoscaler experiment Abort-Chaos check for pod-autoscaler experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610253",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 95.4,
+   "group": "annotation-check",
+   "id": "bdd/annotation-check/BDD of annotation-check experiment Check for annotation-check experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of annotation-check experiment Check for annotation-check experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 93.5,
+   "group": "annotation-check",
+   "id": "bdd/annotation-check/BDD of annotation-check experiment Abort-Chaos check for annotation-check experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of annotation-check experiment Abort-Chaos check for annotation-check experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 4.2,
+   "group": "app-deploy",
+   "id": "bdd/app-deploy/BDD of Application Deployment Should check for creation of application@Chaos_Engine_Component_Test",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Application Deployment Should check for creation of application",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 44.1,
+   "group": "appinfo",
+   "id": "bdd/appinfo/BDD of appinfo experiment Check for appinfo experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of appinfo experiment Check for appinfo experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 33.1,
+   "group": "appinfo",
+   "id": "bdd/appinfo/BDD of appinfo experiment Abort-Chaos check for appinfo experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of appinfo experiment Abort-Chaos check for appinfo experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 113.0,
+   "group": "engine-state",
+   "id": "bdd/engine-state/BDD of engine-state experiment Check for engine-state experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of engine-state experiment Check for engine-state experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 106.1,
+   "group": "engine-state",
+   "id": "bdd/engine-state/BDD of engine-state experiment Abort-Chaos check for engine-state experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of engine-state experiment Abort-Chaos check for engine-state experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 174.2,
+   "group": "job-cleanup-policy",
+   "id": "bdd/job-cleanup-policy/BDD of job-cleanup-policy experiment Check for job-cleanup-policy experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of job-cleanup-policy experiment Check for job-cleanup-policy experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 107.7,
+   "group": "job-cleanup-policy",
+   "id": "bdd/job-cleanup-policy/BDD of job-cleanup-policy experiment Abort-Chaos check for job-cleanup-policy experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of job-cleanup-policy experiment Abort-Chaos check for job-cleanup-policy experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 146.0,
+   "group": "run-history",
+   "id": "bdd/run-history/BDD of run-history experiment Check for run-history experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of run-history experiment Check for run-history experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 38.1,
+   "group": "run-history",
+   "id": "bdd/run-history/BDD of run-history experiment Abort-Chaos check for run-history experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of run-history experiment Abort-Chaos check for run-history experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 136.0,
+   "group": "service-account",
+   "id": "bdd/service-account/BDD of service-account experiment Check for service-account experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of service-account experiment Check for service-account experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 113.0,
+   "group": "service-account",
+   "id": "bdd/service-account/BDD of service-account experiment Abort-Chaos check for service-account experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of service-account experiment Abort-Chaos check for service-account experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 87.8,
+   "group": "target-pod",
+   "id": "bdd/target-pod/BDD of target-pod experiment Check for target-pod experiment Should check the verdict",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of target-pod experiment Check for target-pod experiment Should check the verdict",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 51.0,
+   "group": "target-pod",
+   "id": "bdd/target-pod/BDD of target-pod experiment Abort-Chaos check for target-pod experiment",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of target-pod experiment Abort-Chaos check for target-pod experiment",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610252",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 1.4,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/chaoshub Create new ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Create new ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.2,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/chaoshub negative test case for chaoshub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub negative test case for chaoshub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 7.0,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/chaoshub Edit ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Edit ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 8.5,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/chaoshub Delete ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Delete ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 6.4,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/chaosprobes create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaosprobes create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 3.4,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/chaosprobes negative test case for chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaosprobes negative test case for chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 5.7,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/chaosprobes update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaosprobes update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 7.1,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/chaosprobes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaosprobes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 1.8,
+   "group": "UI/login",
+   "id": "frontend/UI/login/login Login with correct username and password",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "login Login with correct username and password",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 3.6,
+   "group": "UI/login",
+   "id": "frontend/UI/login/login Negative test case[Login with incorrect username and password]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "login Negative test case[Login with incorrect username and password]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 3.1,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/chaoshub Add ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Add ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.0,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/chaoshub Add duplicate ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Add duplicate ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.9,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/chaoshub Update ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Update ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.3,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/chaoshub Delete ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "chaoshub Delete ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.9,
+   "group": "REST APIs/login",
+   "id": "frontend/REST APIs/login/login testing login via REST API",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "login testing login via REST API",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.1,
+   "group": "REST APIs/login",
+   "id": "frontend/REST APIs/login/login Negative test case",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "login Negative test case",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/202610254",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 1020,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Configure AWS Credentials'",
+   "name": "job: AWS_EC2_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/AWS_EC2_Test",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 420,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EBS_Loss",
+   "job": "AWS_EBS_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: AWS_EBS_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/example/litmus-e2e/actions/runs/1/job/AWS_EBS_Loss",
+   "workflow": "aws"
+  }
+ ]
+}

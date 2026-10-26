@@ -100,3 +100,90 @@ test('unsupported documents are rejected', () => {
   assert.equal(D.check(null, 'y.json', problems), null);
   assert.equal(problems.length, 2);
 });
+
+// ---- Nightly, RC and GA
+
+const loadScenario = async (scn) => {
+  const fetcher = async (url) => {
+    const m = /^data\/(.*)$/.exec(url);
+    try {
+      const body = (await import('node:fs')).readFileSync(new URL(`./fixtures/${scn}/${m[1]}`, import.meta.url), 'utf8');
+      return { ok: true, status: 200, json: async () => JSON.parse(body) };
+    } catch (e) { return { ok: false, status: 404, json: async () => { throw e; } }; }
+  };
+  return D.loadAll('', fetcher);
+};
+
+test('a build without published files is "empty", a damaged one is "error", never a guess', async () => {
+  const [n, rc, ga] = await loadScenario('rc-regress');
+  assert.equal(n.state, 'ready');
+  assert.equal(rc.state, 'ready');
+  assert.equal(ga.state, 'empty');
+  assert.equal(ga.latest, null);
+  const broken = await loadScenario('ga-broken');
+  assert.equal(broken[2].state, 'ready'); // history is readable, latest is not
+  assert.ok(broken[2].problems.some((p) => /not valid JSON/.test(p)));
+  assert.equal(broken[2].latest, null);
+  const none = await loadScenario('empty');
+  assert.deepEqual(none.map((b) => b.state), ['ready', 'empty', 'empty']); // a first deployment publishes an empty nightly
+  assert.equal(D.buildOf(none[0]), null);
+});
+
+test('the headline merges the suites and the version falls back to the commit', async () => {
+  const [n, rc, ga] = await loadScenario('three-builds');
+  assert.equal(D.versionOf(n), 'a1b2c3d');
+  assert.equal(D.versionOf(rc), 'v3.10.0-rc.1');
+  assert.equal(D.versionOf(ga), 'v3.9.0');
+  const hd = D.headline(n);
+  assert.equal(hd.status, 'failed');
+  assert.equal(hd.counts.failed, 3);
+  assert.equal(D.headline({ latest: null }), null);
+});
+
+test('readiness reports tests that pass in an earlier stage and fail in a later one, and never counts a missing stage', async () => {
+  const r = D.readiness(await loadScenario('rc-regress'));
+  assert.deepEqual(r.stages, ['nightly', 'rc']);
+  assert.equal(r.regressions.length, 3);
+  assert.ok(r.regressions.every((x) => x.from === 'nightly' && x.to === 'rc'));
+  assert.ok(r.diverging.length >= 3);
+  const ok = D.readiness(await loadScenario('three-builds'));
+  assert.deepEqual(ok.stages, ['nightly', 'rc', 'ga']);
+  assert.equal(ok.regressions.length, 0, 'improvements are not regressions');
+  assert.deepEqual(D.readiness(await loadScenario('empty')).stages, []);
+});
+
+test('experiments are indexed across builds and carry a category', async () => {
+  const all = await loadScenario('three-builds');
+  const idx = D.experimentIndex(all);
+  const disk = idx.find((e) => e.key === 'bdd/disk-fill');
+  assert.equal(disk.category, 'IO');
+  assert.deepEqual(Object.keys(disk.builds).sort(), ['ga', 'nightly', 'rc']);
+  assert.equal(disk.builds.nightly.status, 'failed');
+  assert.equal(disk.builds.rc.status, 'passed');
+  assert.equal(D.categoryOf('frontend', 'UI/login'), 'frontend');
+  assert.equal(D.categoryOf('bdd', 'pod-network-loss'), 'network');
+  assert.equal(D.categoryOf('bdd', 'node-drain'), 'node');
+  assert.equal(D.categoryOf('bdd', 'pod-delete'), 'pod');
+});
+
+test('fuzzy search ranks substrings first and skips non matches', () => {
+  assert.ok(D.fuzzy('pod del', 'pod-delete') != null);
+  assert.ok(D.fuzzy('pdl', 'pod-delete') != null);
+  assert.equal(D.fuzzy('zzz', 'pod-delete'), null);
+  assert.ok(D.fuzzy('delete', 'pod-delete') > D.fuzzy('pdlt', 'pod-delete'));
+  assert.equal(D.fuzzy('', 'x'), 0);
+});
+
+test('flips count changes between passing and failing, skipped results are ignored', () => {
+  assert.equal(D.flips(['p', 'p', 'f', 'p', 'f']), 3);
+  assert.equal(D.flips(['p', 's', 'p', null, 'p']), 0);
+  assert.equal(D.flips([]), 0);
+});
+
+test('what changed comes from the metrics of the build', async () => {
+  const [n] = await loadScenario('three-builds');
+  const w = D.whatChanged(n);
+  assert.equal(w.newlyFailing.length, 2);
+  assert.ok(w.slowest.length <= 5);
+  assert.deepEqual(D.whatChanged({ latest: null }).newlyFailing, []);
+});
