@@ -24,6 +24,22 @@ on:
         description: Branch whose nightly runs are reported (default branch when empty)
         required: false
         default: ""
+      rc_branch:
+        description: Branch or tag whose runs are the release candidate build (repository variable RC_BRANCH when empty)
+        required: false
+        default: ""
+      rc_version:
+        description: Version shown for the release candidate (repository variable RC_VERSION when empty)
+        required: false
+        default: ""
+      ga_branch:
+        description: Branch or tag whose runs are the GA build (repository variable GA_BRANCH when empty)
+        required: false
+        default: ""
+      ga_version:
+        description: Version shown for the GA build (repository variable GA_VERSION when empty)
+        required: false
+        default: ""
       publish:
         description: Publish although the run is not on the default branch
         type: boolean
@@ -59,14 +75,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          RC_BRANCH: ${{ inputs.rc_branch || vars.RC_BRANCH }}
+          RC_VERSION: ${{ inputs.rc_version || vars.RC_VERSION }}
+          GA_BRANCH: ${{ inputs.ga_branch || vars.GA_BRANCH }}
+          GA_VERSION: ${{ inputs.ga_version || vars.GA_VERSION }}
         run: |
           owner="${GITHUB_REPOSITORY%%/*}"
           name="${GITHUB_REPOSITORY#*/}"
+          site="https://${owner}.github.io/${name}/nightly/data"
           # the history published earlier, a missing file starts a new history
           python scripts/report/build_report.py \
             --out dashboard/data \
             --branch "${{ inputs.branch }}" \
-            --previous "https://${owner}.github.io/${name}/nightly/data/history.json"
+            --previous "${site}/history.json"
+          # the release candidate and the GA build are reported the same way from the runs of their branch or tag,
+          # a stream without a branch is not published and the dashboard shows it as "no run yet"
+          if [ -n "$RC_BRANCH" ]; then
+            python scripts/report/build_report.py --out dashboard/data/rc --branch "$RC_BRANCH" \
+              ${RC_VERSION:+--version "$RC_VERSION"} --previous "${site}/rc/history.json"
+          fi
+          if [ -n "$GA_BRANCH" ]; then
+            python scripts/report/build_report.py --out dashboard/data/ga --branch "$GA_BRANCH" \
+              ${GA_VERSION:+--version "$GA_VERSION"} --previous "${site}/ga/history.json"
+          fi
 
       - name: Upload the site
         uses: actions/upload-artifact@v4

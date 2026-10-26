@@ -74,3 +74,19 @@ Scheduled workflows only run on the default branch and GitHub disables them afte
 * `utils/result_update.py`, `utils/pipeline_status_update.py` and `pkg/update.go` push results to the `gh-pages` branch of the
   upstream repository and link to a GitLab instance that does not exist anymore. Nothing calls them from the nightly
   workflows, they can be removed.
+
+## Release candidate and GA builds
+
+The dashboard shows three builds: Nightly, Release Candidate (RC) and General Availability (GA). The nightly build is
+the scheduled run of the default branch. The RC and GA builds are the runs of the same workflows (start them with
+*Run workflow* on the release branch or tag) and are reported by the `Nightly-Report` workflow from the runs of that
+branch or tag:
+
+| Setting | Meaning |
+|---------|---------|
+| repository variable `RC_BRANCH`, `RC_VERSION` | Branch or tag of the release candidate and the version shown for it, for example `release-3.10` and `v3.10.0-rc.1` |
+| repository variable `GA_BRANCH`, `GA_VERSION` | The same for the GA build |
+| inputs `rc_branch`, `rc_version`, `ga_branch`, `ga_version` of a manual run | Override the variables for one run |
+
+A build without a branch is not published and the dashboard shows it as "no run yet", it never shows invented numbers.
+Each build keeps its own history (`data/rc/history.json`, `data/ga/history.json`).
