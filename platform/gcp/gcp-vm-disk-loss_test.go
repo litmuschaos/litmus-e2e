@@ -42,9 +42,7 @@ var _ = Describe("BDD of gcp-vm-disk-loss experiment", func() {
 			environment.GetENV(&testsDetails, "gcp-vm-disk-loss", "gcp-disk-engine-par")
 			log.Infof("[Info]: The target disk volumes are: %v", testsDetails.DiskVolumeNames)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "gcp", "gcp-vm-disk-loss")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -107,9 +105,7 @@ var _ = Describe("BDD of gcp-vm-disk-loss experiment", func() {
 			environment.GetENV(&testsDetails, "gcp-vm-disk-loss", "gcp-disk-engine-ser")
 			log.Infof("[Info]: The target disk volumes are: %v", testsDetails.DiskVolumeNames)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "gcp", "gcp-vm-disk-loss")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

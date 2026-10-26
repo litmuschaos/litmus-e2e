@@ -43,9 +43,7 @@ var _ = Describe("BDD of ebs-loss-by-id experiment", func() {
 			environment.GetENV(&testsDetails, "ebs-loss-by-id", "ebs-engine-by-id-par")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.InstanceID)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ebs-loss-by-id")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -108,9 +106,7 @@ var _ = Describe("BDD of ebs-loss-by-id experiment", func() {
 			environment.GetENV(&testsDetails, "ebs-loss-by-id", "ebs-engine-by-id-ser")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.InstanceID)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ebs-loss-by-id")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

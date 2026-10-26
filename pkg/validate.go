@@ -65,16 +65,22 @@ func ValidateNetworkChaos(testsDetails *types.TestDetails, TargetPodIP, HelperPo
 //ValidateNodeName validates a given target node name with the target node name present in the chaos result
 func ValidateNodeName(nodeName string, clients environment.ClientSets, testsDetails *types.TestDetails) error {
 
-	chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
-	if err != nil {
-		return errors.Errorf("Failed to get the chaosresult due to %v", err)
-	}
-
-	for _, target := range chaosResult.Status.History.Targets {
-		if target.Name == nodeName {
-			return nil
+	// the targets are written to the chaosresult by the experiment pod, give a late patch a moment to land
+	var seen []string
+	for i := 0; i < 6; i++ {
+		chaosResult, err := clients.LitmusClient.ChaosResults(testsDetails.ChaosNamespace).Get(testsDetails.EngineName+"-"+testsDetails.ExperimentName, metav1.GetOptions{})
+		if err != nil {
+			return errors.Errorf("Failed to get the chaosresult due to %v", err)
 		}
+		seen = seen[:0]
+		for _, target := range chaosResult.Status.History.Targets {
+			if target.Name == nodeName {
+				return nil
+			}
+			seen = append(seen, target.Kind+"/"+target.Name+"="+target.ChaosStatus)
+		}
+		time.Sleep(5 * time.Second)
 	}
 
-	return errors.Errorf("failed to inject chaos in the target node")
+	return errors.Errorf("failed to inject chaos in the target node %v, the chaosresult lists the targets %v", nodeName, seen)
 }

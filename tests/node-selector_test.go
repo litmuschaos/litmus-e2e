@@ -134,13 +134,13 @@ var _ = Describe("BDD of Node selector", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
-			Expect(chaosResult).To(Equal("Fail"), "ChaosResult verdict is not set to Fail due to {%v}", err)
+			Expect(chaosResult).To(Equal("Error"), "ChaosResult verdict is not set to Error due to {%v}", err)
 
 			// Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not set to Fail due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("Error"), "ChaosEngine Verdict is not set to Error due to {%v}", err)
 		})
 	})
 
@@ -255,13 +255,13 @@ var _ = Describe("BDD of Node selector", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChasoResult Verdict check failed due to {%v}", err)
-			Expect(chaosResult).To(Equal("Fail"), "ChaosResult verdict is not set to Fail due to {%v}", err)
+			Expect(chaosResult).To(Equal("Error"), "ChaosResult verdict is not set to Error due to {%v}", err)
 
 			// Checking chaosengine verdict
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "ChaosEngine Verdict check failed due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not set to Fail due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("Error"), "ChaosEngine Verdict is not set to Error due to {%v}", err)
 		})
 	})
 

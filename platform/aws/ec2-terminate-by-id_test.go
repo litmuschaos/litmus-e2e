@@ -40,12 +40,10 @@ var _ = Describe("BDD of ec2-terminate-by-id experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "ec2-terminate-by-id", "ec2-engine-by-id-par")
+			environment.GetENV(&testsDetails, "ec2-stop-by-id", "ec2-engine-by-id-par")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.InstanceID)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ec2-stop-by-id")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -105,12 +103,10 @@ var _ = Describe("BDD of ec2-terminate-by-id experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "ec2-terminate-by-id", "ec2-engine-by-id-ser")
+			environment.GetENV(&testsDetails, "ec2-stop-by-id", "ec2-engine-by-id-ser")
 			log.Infof("[Info]: The target instances are: %v", testsDetails.InstanceID)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ec2-stop-by-id")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
