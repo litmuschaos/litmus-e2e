@@ -119,7 +119,7 @@ var _ = Describe("BDD of disk-fill experiment", func() {
 				//Installing Chaos Engine for disk-fill
 				By("[Install]: Installing chaos engine")
 				testsDetails.AnnotationCheck = "true"
-				err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfNotEmpty, clients)
+				err = pkg.InstallGoChaosEngine(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, types.SetupAppInfoIfEmpty, clients)
 				Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 				//Checking runner pod running state
