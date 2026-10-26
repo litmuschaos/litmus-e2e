@@ -1,0 +1,1755 @@
+{
+ "build": {
+  "ageHours": 17.8,
+  "durationSec": 6784,
+  "finishedAt": "2026-10-26T00:35:40Z",
+  "id": "2026-10-25",
+  "stale": false,
+  "startedAt": "2026-10-25T22:42:36Z",
+  "status": "failed",
+  "suites": {
+   "bdd": {
+    "counts": {
+     "error": 11,
+     "failed": 0,
+     "passRate": 0.0,
+     "passed": 0,
+     "skipped": 1,
+     "total": 12
+    },
+    "optionalCounts": {
+     "error": 7,
+     "failed": 0,
+     "passRate": 0.0,
+     "passed": 0,
+     "skipped": 4,
+     "total": 11
+    },
+    "status": "failed"
+   },
+   "frontend": {
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
+     "passed": 0,
+     "skipped": 0,
+     "total": 0
+    },
+    "optionalCounts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
+     "passed": 0,
+     "skipped": 0,
+     "total": 0
+    },
+    "status": "incomplete"
+   }
+  },
+  "workflows": [
+   {
+    "category": "pod-level",
+    "counts": {
+     "error": 7,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": 768,
+    "failureKind": "infrastructure",
+    "id": "pod-level",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 68,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Experiment Tunables Cleanup",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "PAP_100_Mode_Parallel",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965402"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 71,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "TCID-K3S-GENERIC-APP-POD-AFFECTED-PERCENTAGE-TON-SERIES",
+       "Experiment Tunables Cleanup",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "PAP_100_Mode_Serial",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965419"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 70,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "TCID-K3S-GENERIC-APP-MULTIPLE-APP-DEPLOY",
+       "Experiment Tunables Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Multiple_App_Deploy",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965445"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 765,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Litmus Infra Setup In Cluster-1",
+       "Deploy App In Cluster-1",
+       "TCID-K3S-GENERIC-APP-POD-CPU-HOG",
+       "TCID-K3S-GENERIC-APP-POD-MEMORY-HOG",
+       "TCID-K3S-GENERIC-APP-POD-CPU-HOG-EXEC",
+       "TCID-K3S-GENERIC-APP-POD-MEMORY-HOG-EXEC",
+       "TCID-K3S-GENERIC-APP-POD-IO-STRESS",
+       "TCID-K3S-GENERIC-APP-DISK-FILL",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Stress_Chaos_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965451"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 521,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Deploy App In Cluster-1",
+       "TCID-K3S-GENERIC-APP-POD-NETWORK-CORRUPTION",
+       "TCID-K3S-GENERIC-APP-POD-NETWORK-LATENCY",
+       "TCID-K3S-GENERIC-APP-POD-NETWORK-LOSS",
+       "TCID-K3S-GENERIC-APP-POD-NETWORK-DUPLICATION",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Network_Chaos_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965458"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 544,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Deploy App In Cluster-1",
+       "TCID-K3S-GENERIC-APP-POD-DELETE",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Pod_Delete_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965501"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 76,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Litmus Infra Setup In Cluster-1",
+       "Deploy App In Cluster-1",
+       "TCID-K3S-GENERIC-APP-CONTAINER-KILL",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Container_Kill_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965587"
+     }
+    ],
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "resultsSource": "jobs",
+    "runId": 40241465680,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680",
+    "startedAt": "2026-10-25T22:42:36Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "node-level",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "node-level",
+    "jobs": [
+     {
+      "conclusion": "queued",
+      "durationSec": null,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Setup_Litmus_Infra",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343/job/121314423472"
+     }
+    ],
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "resultsSource": "jobs",
+    "runId": 40241615343,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343",
+    "startedAt": "2026-10-25T22:44:39Z",
+    "status": "in_progress",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "component",
+    "counts": {
+     "error": 4,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": 1477,
+    "failureKind": "infrastructure",
+    "id": "component",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 400,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Litmus Infra Setup",
+       "Deploy App",
+       "GENERIC-OPERATOR-RECONCILE-RESILIENCY",
+       "TCID-K3S-GENERIC-EXPERIMENT-EXPERIMENT-IMAGE-NAME",
+       "TCID-K3S-GENERIC-EXPERIMENT-TARGET-POD",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Chaos_Experiment_Component_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363493"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 56,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Deploy App",
+       "TCID-K3S-GENERIC-RUN-HISTORY",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Chaos_Result_Component_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363605"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 677,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Deploy App",
+       "GENERIC-OPERATOR-RECONCILE-RESILIENCY",
+       "GENERIC-OPERATOR-ADMIN-MODE-CHECK",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Chaos_Operator_Component_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363650"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 1474,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Deploy App",
+       "TCID-K3S-GENERIC-ENGINE-APP-INFO",
+       "TCID-K3S-GENERIC-ENGINE-ANNOTATION-CHECK",
+       "TCID-K3S-GENERIC-ENGINE-ENGINE-STATE",
+       "TCID-K3S-GENERIC-ENGINE-JOB-CLEANUP-POLICY",
+       "TCID-K3S-GENERIC-ENGINE-SERVICE-ACCOUNT",
+       "TCID-K3S-GENERIC-ENV-FROM-SECRET-AND-CONFIGMAP",
+       "Application Cleanup",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Chaos_Engine_Component_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363708"
+     }
+    ],
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "resultsSource": "jobs",
+    "runId": 40241594586,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586",
+    "startedAt": "2026-10-25T22:44:23Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "chaoscenter",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "chaoscenter",
+    "jobs": [],
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "frontend",
+    "trigger": null
+   },
+   {
+    "category": "aws",
+    "counts": {
+     "error": 1,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": 23,
+    "failureKind": "infrastructure",
+    "id": "aws",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 21,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for aws experiment",
+       "Configure AWS Credentials",
+       "Creating target EC2 instances",
+       "Get the target instance name",
+       "Litmus Infra Setup",
+       "Run EC2 Terminate By ID experiment in serial & parallel mode",
+       "Run EC2 Terminate By Tag experiment in serial & parallel mode",
+       "Terminate target EC2 instances",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "AWS_EC2_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338527016"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EBS_Loss",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338626858"
+     }
+    ],
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40249644106,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106",
+    "startedAt": "2026-10-26T00:29:53Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "azure",
+    "counts": {
+     "error": 2,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": 30,
+    "failureKind": "infrastructure",
+    "id": "azure",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 27,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for azure experiment",
+       "Create a Azure VM Instance with target Disk Volumes",
+       "Litmus Infra Setup",
+       "Run Azure VM Disk Loss experiment in serial & parallel mode",
+       "Delete the VM Instance and target Disk Volumes"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Azure_VM_Disk_Loss",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338559940"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 26,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for azure experiment",
+       "Create target Azure VM Instances",
+       "Litmus Infra Setup",
+       "Run Azure VM Instance Stop experiment in serial & parallel mode",
+       "Delete target Azure VM Instances"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Azure_VM_Instance_Stop",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338560056"
+     }
+    ],
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40249654618,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618",
+    "startedAt": "2026-10-26T00:30:01Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "gcp",
+    "counts": {
+     "error": 1,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": 56,
+    "failureKind": "infrastructure",
+    "id": "gcp",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 53,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for gcp experiment",
+       "Authenticate Google Cloud SDK",
+       "Create target GCP VM Instances",
+       "Litmus Infra Setup",
+       "Run GCP VM Instance Stop experiment in serial & parallel mode",
+       "Delete target GCP VM Instances",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "GCP_VM_Instance_Stop",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339721907"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "GCP_VM_Disk_Loss",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339943319"
+     }
+    ],
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40250035278,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278",
+    "startedAt": "2026-10-26T00:34:44Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "vmware",
+    "counts": {
+     "error": 1,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": 22,
+    "failureKind": "infrastructure",
+    "id": "vmware",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 19,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for VMWare experiment",
+       "Litmus Infra Setup",
+       "Run VM Poweroff experiment in serial & parallel mode",
+       "Litmus Cleanup"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "VM_Poweroff",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476/job/121338814402"
+     }
+    ],
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40249742476,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476",
+    "startedAt": "2026-10-26T00:30:59Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "m-agent",
+    "counts": {
+     "error": 2,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 2
+    },
+    "durationSec": 34,
+    "failureKind": "infrastructure",
+    "id": "m-agent",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 2,
+      "failedSteps": [
+       "Set up job"
+      ],
+      "firstFailedStep": "Set up job",
+      "name": "Setup_m-agent",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338760424"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 26,
+      "failedSteps": [
+       "Authenticate Google Cloud SDK",
+       "Delete GCP VM Instance"
+      ],
+      "firstFailedStep": "Authenticate Google Cloud SDK",
+      "name": "Delete_VM",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338780407"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": -1,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Parallel_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781290"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": -1,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Serial_Test",
+      "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781777"
+     }
+    ],
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40249725124,
+    "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124",
+    "startedAt": "2026-10-26T00:30:46Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   }
+  ]
+ },
+ "config": {
+  "staleAfterHours": 36,
+  "suites": [
+   {
+    "id": "bdd",
+    "name": "Experiment BDD"
+   },
+   {
+    "id": "frontend",
+    "name": "Frontend E2E"
+   }
+  ],
+  "workflows": [
+   {
+    "category": "pod-level",
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "node-level",
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "component",
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "category": "chaoscenter",
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "suite": "frontend"
+   },
+   {
+    "category": "aws",
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "azure",
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "gcp",
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "vmware",
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "category": "m-agent",
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   }
+  ]
+ },
+ "coverage": {
+  "byCategory": {
+   "aws": [
+    "ebs-loss-by-id",
+    "ebs-loss-by-tag",
+    "ec2-terminate-by-id",
+    "ec2-terminate-by-tag",
+    "install-litmus",
+    "litmus-cleanup"
+   ],
+   "azure": [
+    "disk-loss",
+    "install-litmus",
+    "instance-stop"
+   ],
+   "component": [
+    "admin-mode",
+    "annotation-check",
+    "app-cleanup",
+    "app-deploy",
+    "appinfo",
+    "engine-state",
+    "env-from-secret-and-cm",
+    "experiment-image",
+    "job-cleanup-policy",
+    "litmus-cleanup",
+    "reconcile-resiliency",
+    "run-history",
+    "service-account",
+    "target-pod"
+   ],
+   "gcp": [
+    "gcp-vm-disk-loss",
+    "gcp-vm-instance-stop",
+    "install-litmus",
+    "litmus-cleanup"
+   ],
+   "m-agent": [
+    "install-litmus",
+    "litmus-cleanup",
+    "process-kill-parallel",
+    "process-kill-serial"
+   ],
+   "node-level": [
+    "app-cleanup",
+    "app-deploy",
+    "install-litmus",
+    "kubelet-service-kill",
+    "litmus-cleanup",
+    "node-cpu-hog",
+    "node-drain",
+    "node-io-stress",
+    "node-memory-hog",
+    "node-selector",
+    "node-taint",
+    "pod-autoscaler",
+    "with-appinfo"
+   ],
+   "pod-level": [
+    "app-cleanup",
+    "app-deploy",
+    "container-kill",
+    "disk-fill",
+    "litmus-cleanup",
+    "multiple-app-deploy",
+    "pod-affected-perc-ton-parallel",
+    "pod-affected-perc-ton-series",
+    "pod-cpu-hog",
+    "pod-cpu-hog-exec",
+    "pod-delete",
+    "pod-io-stress",
+    "pod-memory-hog",
+    "pod-memory-hog-exec",
+    "pod-network-corruption",
+    "pod-network-duplication",
+    "pod-network-latency",
+    "pod-network-loss"
+   ],
+   "vmware": [
+    "install-litmus",
+    "litmus-cleanup",
+    "vm-poweroff"
+   ]
+  },
+  "catalog": {
+   "admin-mode": {
+    "kind": "experiment",
+    "path": "components/operator/admin-mode_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "annotation-check": {
+    "kind": "experiment",
+    "path": "components/engine/annotation-check_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "app-cleanup": {
+    "kind": "setup",
+    "path": "tests/app-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-deploy": {
+    "kind": "setup",
+    "path": "tests/app-deploy_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-liveness": {
+    "kind": "setup",
+    "path": "tests/app-liveness_test.go",
+    "workflows": []
+   },
+   "appinfo": {
+    "kind": "experiment",
+    "path": "components/engine/appinfo_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "auxiliary-app": {
+    "kind": "experiment",
+    "path": "tests/auxiliary-app_test.go",
+    "workflows": []
+   },
+   "container-kill": {
+    "kind": "experiment",
+    "path": "tests/container-kill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-fill": {
+    "kind": "experiment",
+    "path": "tests/disk-fill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-loss": {
+    "kind": "experiment",
+    "path": "platform/azure/disk-loss_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "ebs-loss-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ebs-loss-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "engine-state": {
+    "kind": "experiment",
+    "path": "components/engine/engine-state_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "env-from-secret-and-cm": {
+    "kind": "experiment",
+    "path": "tests/env-from-secret-and-cm_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "experiment-404": {
+    "kind": "experiment",
+    "path": "components/engine/experiment-404_test.go",
+    "workflows": []
+   },
+   "experiment-image": {
+    "kind": "experiment",
+    "path": "components/experiment/experiment-image_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "gcp-vm-disk-loss": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-disk-loss_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "gcp-vm-instance-stop": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-instance-stop_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "install-litmus": {
+    "kind": "setup",
+    "path": "tests/install-litmus_test.go",
+    "workflows": [
+     "node-level",
+     "aws",
+     "azure",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "instance-stop": {
+    "kind": "experiment",
+    "path": "platform/azure/instance-stop_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "job-cleanup-policy": {
+    "kind": "experiment",
+    "path": "components/engine/job-cleanup-policy_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "kubelet-service-kill": {
+    "kind": "experiment",
+    "path": "tests/kubelet-service-kill_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "litmus-cleanup": {
+    "kind": "setup",
+    "path": "tests/litmus-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component",
+     "aws",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "multiple-app-deploy": {
+    "kind": "experiment",
+    "path": "tests/multiple-app-deploy_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "node-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/node-cpu-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-drain": {
+    "kind": "experiment",
+    "path": "tests/node-drain_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-io-stress": {
+    "kind": "experiment",
+    "path": "tests/node-io-stress_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/node-memory-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-selector": {
+    "kind": "experiment",
+    "path": "tests/node-selector_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-taint": {
+    "kind": "experiment",
+    "path": "tests/node-taint_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pipeline-update": {
+    "kind": "setup",
+    "path": "tests/pipeline-update_test.go",
+    "workflows": []
+   },
+   "pod-affected-perc-ton-parallel": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-parallel_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-affected-perc-ton-series": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-series_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-autoscaler": {
+    "kind": "experiment",
+    "path": "tests/pod-autoscaler_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pod-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-cpu-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-delete": {
+    "kind": "experiment",
+    "path": "tests/pod-delete_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-io-stress": {
+    "kind": "experiment",
+    "path": "tests/pod-io-stress_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-corruption": {
+    "kind": "experiment",
+    "path": "tests/pod-network-corruption_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-duplication": {
+    "kind": "experiment",
+    "path": "tests/pod-network-duplication_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-latency": {
+    "kind": "experiment",
+    "path": "tests/pod-network-latency_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-loss": {
+    "kind": "experiment",
+    "path": "tests/pod-network-loss_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "process-kill-parallel": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-parallel_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "process-kill-serial": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-serial_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "reconcile-resiliency": {
+    "kind": "experiment",
+    "path": "components/operator/reconcile-resiliency_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "run-history": {
+    "kind": "experiment",
+    "path": "components/result/run-history_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "service-account": {
+    "kind": "experiment",
+    "path": "components/engine/service-account_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "target-pod": {
+    "kind": "experiment",
+    "path": "components/experiment/target-pod_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "vm-poweroff": {
+    "kind": "experiment",
+    "path": "platform/vmware/vm-poweroff_test.go",
+    "workflows": [
+     "vmware"
+    ]
+   },
+   "with-appinfo": {
+    "kind": "experiment",
+    "path": "tests/with-appinfo_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   }
+  },
+  "defined": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "auxiliary-app",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-404",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "executed": [],
+  "executedPercent": 0.0,
+  "notScheduled": [
+   "auxiliary-app",
+   "experiment-404"
+  ],
+  "scheduled": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "scheduledNotExecuted": [
+   "admin-mode",
+   "annotation-check",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ]
+ },
+ "generatedAt": "2026-10-26T16:30:00Z",
+ "metrics": {
+  "buildsConsidered": 9,
+  "durationChange": {
+   "latestSec": 6784,
+   "percent": 1.7,
+   "previousSec": 6668
+  },
+  "flakyTests": [],
+  "longestTests": [
+   {
+    "durationSec": 1474,
+    "id": "bdd/component/job:Chaos_Engine_Component_Test",
+    "name": "job: Chaos_Engine_Component_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 765,
+    "id": "bdd/pod-level/job:Stress_Chaos_Test",
+    "name": "job: Stress_Chaos_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 677,
+    "id": "bdd/component/job:Chaos_Operator_Component_Test",
+    "name": "job: Chaos_Operator_Component_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 544,
+    "id": "bdd/pod-level/job:Pod_Delete_Test",
+    "name": "job: Pod_Delete_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 521,
+    "id": "bdd/pod-level/job:Network_Chaos_Test",
+    "name": "job: Network_Chaos_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 400,
+    "id": "bdd/component/job:Chaos_Experiment_Component_Test",
+    "name": "job: Chaos_Experiment_Component_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 76,
+    "id": "bdd/pod-level/job:Container_Kill_Test",
+    "name": "job: Container_Kill_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 71,
+    "id": "bdd/pod-level/job:PAP_100_Mode_Serial",
+    "name": "job: PAP_100_Mode_Serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 70,
+    "id": "bdd/pod-level/job:Multiple_App_Deploy",
+    "name": "job: Multiple_App_Deploy",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 68,
+    "id": "bdd/pod-level/job:PAP_100_Mode_Parallel",
+    "name": "job: PAP_100_Mode_Parallel",
+    "suite": "bdd"
+   }
+  ],
+  "newlyFailing": [],
+  "recovered": [],
+  "recurringFailures": [
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/azure/job:Azure_VM_Disk_Loss"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/azure/job:Azure_VM_Instance_Stop"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/vmware/job:VM_Poweroff"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/m-agent/job:Setup_m-agent"
+   },
+   {
+    "consecutiveBuilds": 9,
+    "id": "bdd/m-agent/job:Delete_VM"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:Pod_Delete_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:Stress_Chaos_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:PAP_100_Mode_Parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:PAP_100_Mode_Serial"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:Container_Kill_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:Network_Chaos_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/pod-level/job:Multiple_App_Deploy"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/component/job:Chaos_Operator_Component_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/component/job:Chaos_Result_Component_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/component/job:Chaos_Engine_Component_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/component/job:Chaos_Experiment_Component_Test"
+   }
+  ]
+ },
+ "repository": "uditgaurav/litmus-e2e",
+ "schemaVersion": 1,
+ "tests": [
+  {
+   "durationSec": 68,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:PAP_100_Mode_Parallel",
+   "job": "PAP_100_Mode_Parallel",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: PAP_100_Mode_Parallel",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965402",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 71,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:PAP_100_Mode_Serial",
+   "job": "PAP_100_Mode_Serial",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: PAP_100_Mode_Serial",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965419",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 70,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:Multiple_App_Deploy",
+   "job": "Multiple_App_Deploy",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Multiple_App_Deploy",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965445",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 765,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:Stress_Chaos_Test",
+   "job": "Stress_Chaos_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Stress_Chaos_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965451",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 521,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:Network_Chaos_Test",
+   "job": "Network_Chaos_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Network_Chaos_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965458",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 544,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:Pod_Delete_Test",
+   "job": "Pod_Delete_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Pod_Delete_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965501",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 76,
+   "group": "pod-level",
+   "id": "bdd/pod-level/job:Container_Kill_Test",
+   "job": "Container_Kill_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Container_Kill_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680/job/121313965587",
+   "workflow": "pod-level"
+  },
+  {
+   "durationSec": 0,
+   "group": "node-level",
+   "id": "bdd/node-level/job:Setup_Litmus_Infra",
+   "job": "Setup_Litmus_Infra",
+   "kind": "job",
+   "message": "Job queued, its tests did not run",
+   "name": "job: Setup_Litmus_Infra",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343/job/121314423472",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 400,
+   "group": "component",
+   "id": "bdd/component/job:Chaos_Experiment_Component_Test",
+   "job": "Chaos_Experiment_Component_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Chaos_Experiment_Component_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363493",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 56,
+   "group": "component",
+   "id": "bdd/component/job:Chaos_Result_Component_Test",
+   "job": "Chaos_Result_Component_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Chaos_Result_Component_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363605",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 677,
+   "group": "component",
+   "id": "bdd/component/job:Chaos_Operator_Component_Test",
+   "job": "Chaos_Operator_Component_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Chaos_Operator_Component_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363650",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 1474,
+   "group": "component",
+   "id": "bdd/component/job:Chaos_Engine_Component_Test",
+   "job": "Chaos_Engine_Component_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Chaos_Engine_Component_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586/job/121314363708",
+   "workflow": "component"
+  },
+  {
+   "durationSec": 21,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: AWS_EC2_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338527016",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EBS_Loss",
+   "job": "AWS_EBS_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: AWS_EBS_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106/job/121338626858",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 27,
+   "group": "azure",
+   "id": "bdd/azure/job:Azure_VM_Disk_Loss",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Azure_VM_Disk_Loss",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338559940",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 26,
+   "group": "azure",
+   "id": "bdd/azure/job:Azure_VM_Instance_Stop",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Azure_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618/job/121338560056",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 53,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: GCP_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339721907",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Disk_Loss",
+   "job": "GCP_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: GCP_VM_Disk_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278/job/121339943319",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 19,
+   "group": "vmware",
+   "id": "bdd/vmware/job:VM_Poweroff",
+   "job": "VM_Poweroff",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: VM_Poweroff",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476/job/121338814402",
+   "workflow": "vmware"
+  },
+  {
+   "durationSec": 2,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Setup_m-agent",
+   "job": "Setup_m-agent",
+   "kind": "job",
+   "message": "Job failed at step 'Set up job'",
+   "name": "job: Setup_m-agent",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338760424",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 26,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Delete_VM",
+   "job": "Delete_VM",
+   "kind": "job",
+   "message": "Job failed at step 'Authenticate Google Cloud SDK'",
+   "name": "job: Delete_VM",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338780407",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": -1,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
+   "job": "Process_Kill_Parallel_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Parallel_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781290",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": -1,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
+   "job": "Process_Kill_Serial_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Serial_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124/job/121338781777",
+   "workflow": "m-agent"
+  }
+ ]
+}

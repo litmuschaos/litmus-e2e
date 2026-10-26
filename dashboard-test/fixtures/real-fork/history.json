@@ -1,0 +1,1734 @@
+{
+ "builds": [
+  {
+   "durationSec": 263,
+   "id": "2026-10-17",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-18T00:06:40Z",
+   "status": "incomplete",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "incomplete"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 24,
+     "failureKind": "infrastructure",
+     "runId": 39081548276,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081548276",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 30,
+     "failureKind": "infrastructure",
+     "runId": 39081548634,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081548634",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 36,
+     "failureKind": "infrastructure",
+     "runId": 39081782131,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081782131",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 39081603777,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081603777",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 22,
+     "failureKind": "infrastructure",
+     "runId": 39081617676,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39081617676",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 432142,
+   "id": "2026-10-18",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:App_Cleanup": "s",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Litmus_Cleanup": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-18T22:30:03Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 6,
+      "total": 17
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 20,
+     "failureKind": "infrastructure",
+     "runId": 39180027561,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180027561",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 31,
+     "failureKind": "infrastructure",
+     "runId": 39180028933,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180028933",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1354,
+     "failureKind": "infrastructure",
+     "runId": 39172629437,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172629437",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 45,
+     "failureKind": "infrastructure",
+     "runId": 39180457707,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180457707",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 39180268848,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180268848",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 6
+     },
+     "durationSec": 432004,
+     "failureKind": null,
+     "runId": 39172667672,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172667672",
+     "status": "cancelled"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 717,
+     "failureKind": "infrastructure",
+     "runId": 39172490372,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39172490372",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 18,
+     "failureKind": "infrastructure",
+     "runId": 39180249587,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39180249587",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 432211,
+   "id": "2026-10-19",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:App_Cleanup": "s",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Litmus_Cleanup": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-19T23:50:05Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 6,
+      "total": 17
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 22,
+     "failureKind": "infrastructure",
+     "runId": 39351644783,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351644783",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 37,
+     "failureKind": "infrastructure",
+     "runId": 39351645904,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351645904",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1346,
+     "failureKind": "infrastructure",
+     "runId": 39344263819,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39344263819",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 39,
+     "failureKind": "infrastructure",
+     "runId": 39351832766,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351832766",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 39351719298,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351719298",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 6
+     },
+     "durationSec": 432004,
+     "failureKind": null,
+     "runId": 39344335213,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39344335213",
+     "status": "cancelled"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 822,
+     "failureKind": "infrastructure",
+     "runId": 39343990419,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39343990419",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 24,
+     "failureKind": "infrastructure",
+     "runId": 39351736591,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39351736591",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 432128,
+   "id": "2026-10-20",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:App_Cleanup": "s",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Litmus_Cleanup": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-20T23:16:09Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 6,
+      "total": 17
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 39522867568,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39522867568",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 39522899873,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39522899873",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1083,
+     "failureKind": "infrastructure",
+     "runId": 39514091837,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39514091837",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 40,
+     "failureKind": "infrastructure",
+     "runId": 39523373161,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523373161",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 37,
+     "failureKind": "infrastructure",
+     "runId": 39523000389,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523000389",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 6
+     },
+     "durationSec": 432004,
+     "failureKind": null,
+     "runId": 39514109441,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39514109441",
+     "status": "cancelled"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 678,
+     "failureKind": "infrastructure",
+     "runId": 39513879116,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39513879116",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 19,
+     "failureKind": "infrastructure",
+     "runId": 39523049266,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39523049266",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 4863,
+   "id": "2026-10-21",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:App_Cleanup": "s",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Litmus_Cleanup": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-21T23:29:09Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 6,
+      "total": 17
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 26,
+     "failureKind": "infrastructure",
+     "runId": 39701597826,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701597826",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 39701622910,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701622910",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1440,
+     "failureKind": "infrastructure",
+     "runId": 39694056265,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39694056265",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 46,
+     "failureKind": "infrastructure",
+     "runId": 39702000964,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39702000964",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 27,
+     "failureKind": "infrastructure",
+     "runId": 39701698839,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701698839",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 6
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": 39694090633,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39694090633",
+     "status": "in_progress"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 834,
+     "failureKind": "infrastructure",
+     "runId": 39693714557,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39693714557",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 18,
+     "failureKind": "infrastructure",
+     "runId": 39701705652,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39701705652",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 4891,
+   "id": "2026-10-22",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:App_Cleanup": "s",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-22T23:28:55Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 5,
+      "total": 16
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 31,
+     "failureKind": "infrastructure",
+     "runId": 39879960170,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39879960170",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 34,
+     "failureKind": "infrastructure",
+     "runId": 39879983433,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39879983433",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1415,
+     "failureKind": "infrastructure",
+     "runId": 39872229319,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872229319",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 45,
+     "failureKind": "infrastructure",
+     "runId": 39880416303,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880416303",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 39880096120,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880096120",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 5
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": 39872225358,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872225358",
+     "status": "in_progress"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 797,
+     "failureKind": "infrastructure",
+     "runId": 39872062193,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39872062193",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 20,
+     "failureKind": "infrastructure",
+     "runId": 39880128524,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/39880128524",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 6059,
+   "id": "2026-10-23",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:Engine_Test": "s",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-23T23:16:43Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 15
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 35,
+     "failureKind": "infrastructure",
+     "runId": 40046975367,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40046975367",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 36,
+     "failureKind": "infrastructure",
+     "runId": 40046993256,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40046993256",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1474,
+     "failureKind": "infrastructure",
+     "runId": 40039175060,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40039175060",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 40,
+     "failureKind": "infrastructure",
+     "runId": 40047483210,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047483210",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 40047184461,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047184461",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 4
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": 40039293046,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40039293046",
+     "status": "in_progress"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 767,
+     "failureKind": "infrastructure",
+     "runId": 40038750117,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40038750117",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 19,
+     "failureKind": "infrastructure",
+     "runId": 40047206719,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40047206719",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 6668,
+   "id": "2026-10-24",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:Node_Level_Test": "s",
+    "bdd/node-level/job:Setup_App_Deployment": "s",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-24T22:36:31Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 3,
+      "total": 14
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 26,
+     "failureKind": "infrastructure",
+     "runId": 40146513426,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146513426",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 40146511663,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146511663",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1997,
+     "failureKind": "infrastructure",
+     "runId": 40139541815,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139541815",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 40,
+     "failureKind": "infrastructure",
+     "runId": 40146730570,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146730570",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 32,
+     "failureKind": "infrastructure",
+     "runId": 40146652780,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146652780",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 3
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": 40139553867,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139553867",
+     "status": "in_progress"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 766,
+     "failureKind": "infrastructure",
+     "runId": 40139288452,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40139288452",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 20,
+     "failureKind": "infrastructure",
+     "runId": 40146657136,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40146657136",
+     "status": "failed"
+    }
+   }
+  },
+  {
+   "durationSec": 6784,
+   "id": "2026-10-25",
+   "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/component/job:Chaos_Engine_Component_Test": "e",
+    "bdd/component/job:Chaos_Experiment_Component_Test": "e",
+    "bdd/component/job:Chaos_Operator_Component_Test": "e",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "bdd/node-level/job:Setup_Litmus_Infra": "s",
+    "bdd/pod-level/job:Container_Kill_Test": "e",
+    "bdd/pod-level/job:Multiple_App_Deploy": "e",
+    "bdd/pod-level/job:Network_Chaos_Test": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-level/job:PAP_100_Mode_Serial": "e",
+    "bdd/pod-level/job:Pod_Delete_Test": "e",
+    "bdd/pod-level/job:Stress_Chaos_Test": "e",
+    "bdd/vmware/job:VM_Poweroff": "e"
+   },
+   "startedAt": "2026-10-25T22:42:36Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 11,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 1,
+      "total": 12
+     },
+     "optionalCounts": {
+      "error": 7,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 4,
+      "total": 11
+     },
+     "status": "failed"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 23,
+     "failureKind": "infrastructure",
+     "runId": 40249644106,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249644106",
+     "status": "failed"
+    },
+    "azure": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 30,
+     "failureKind": "infrastructure",
+     "runId": 40249654618,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249654618",
+     "status": "failed"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "component": {
+     "counts": {
+      "error": 4,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 1477,
+     "failureKind": "infrastructure",
+     "runId": 40241594586,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241594586",
+     "status": "failed"
+    },
+    "gcp": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": 56,
+     "failureKind": "infrastructure",
+     "runId": 40250035278,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40250035278",
+     "status": "failed"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 34,
+     "failureKind": "infrastructure",
+     "runId": 40249725124,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249725124",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 1
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": 40241615343,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241615343",
+     "status": "in_progress"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 7,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 768,
+     "failureKind": "infrastructure",
+     "runId": 40241465680,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40241465680",
+     "status": "failed"
+    },
+    "vmware": {
+     "counts": {
+      "error": 1,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 22,
+     "failureKind": "infrastructure",
+     "runId": 40249742476,
+     "runUrl": "https://github.com/uditgaurav/litmus-e2e/actions/runs/40249742476",
+     "status": "failed"
+    }
+   }
+  }
+ ],
+ "generatedAt": "2026-10-26T16:30:00Z",
+ "repository": "uditgaurav/litmus-e2e",
+ "schemaVersion": 1
+}
