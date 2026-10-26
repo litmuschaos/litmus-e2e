@@ -1,6 +1,6 @@
 // Command palette: Ctrl/Cmd+K jumps to a page, a build, an experiment or a run.
-import { h, icon } from './dom.js?v=c8e7261a28';
-import * as D from './data.js?v=c8e7261a28';
+import { h, icon } from './dom.js?v=2bc8c8a764';
+import * as D from './data.js?v=2bc8c8a764';
 
 let el = null, prevFocus = null;
 
