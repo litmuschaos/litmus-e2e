@@ -90,3 +90,9 @@ branch or tag:
 
 A build without a branch is not published and the dashboard shows it as "no run yet", it never shows invented numbers.
 Each build keeps its own history (`data/rc/history.json`, `data/ga/history.json`).
+
+## Address
+
+The dashboard is served from `https://<owner>.github.io/<repo>/nightly/`. The home of the site
+(`https://<owner>.github.io/<repo>/`) is a small page written by the same workflow that redirects there, so the
+existing link of the E2E website lands on the dashboard.

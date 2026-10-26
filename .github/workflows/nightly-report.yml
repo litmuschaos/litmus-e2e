@@ -2,6 +2,7 @@
 name: Nightly-Report
 # Builds the data of the nightly dashboard from the runs of the nightly workflows and publishes it to the nightly/ folder
 # of the gh-pages branch, so it is served at https://<owner>.github.io/<repo>/nightly/ by the Pages setup of the repository.
+# The home of the site (https://<owner>.github.io/<repo>/) redirects to it.
 on:
   workflow_run:
     workflows:
@@ -149,6 +150,8 @@ jobs:
             rm -rf pages/nightly
             mkdir -p pages/nightly
             cp -r site/. pages/nightly/
+            # the home of the site sends visitors to the dashboard, it used to serve a default Create React App page
+            printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LitmusChaos E2E Dashboard</title><meta http-equiv="refresh" content="0; url=nightly/"><link rel="canonical" href="nightly/"><script>location.replace("nightly/" + location.hash);</script></head><body><p>Opening the <a href="nightly/">LitmusChaos E2E Dashboard</a>.</p></body></html>' > pages/index.html
             cd pages
             git add -A
             if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
