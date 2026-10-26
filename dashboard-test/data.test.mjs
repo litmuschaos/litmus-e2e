@@ -187,3 +187,39 @@ test('what changed comes from the metrics of the build', async () => {
   assert.ok(w.slowest.length <= 5);
   assert.deepEqual(D.whatChanged({ latest: null }).newlyFailing, []);
 });
+
+// ---- live view
+
+test('the live view only follows the workflows of the configuration and shows what is running or just finished', () => {
+  const latest = { repository: 'o/r', config: { workflows: [{ file: 'nightly-pod-level-pipeline.yml', name: 'Pod level', category: 'pod-level', required: true }, { file: 'nightly-chaoscenter-pipeline.yml', alsoFiles: ['E2E-chaoscenter-pipeline.yml'], name: 'ChaosCenter', category: 'chaoscenter', required: true }] } };
+  assert.equal(D.repoOf(latest), 'o/r');
+  assert.equal(D.repoOf({ repository: 'not a repo' }), null);
+  const files = D.workflowFiles(latest);
+  assert.equal(files.get('E2E-chaoscenter-pipeline.yml').name, 'ChaosCenter');
+  const now = Date.parse('2026-10-26T12:00:00Z');
+  const run = (id, path, status, conclusion, updated) => ({ id, path, status, conclusion, updated_at: updated, run_started_at: '2026-10-26T11:00:00Z', head_branch: 'master', head_sha: 'abcdef123456', html_url: 'https://github.com/o/r/actions/runs/' + id });
+  const out = D.liveRuns([
+    run(1, '.github/workflows/nightly-pod-level-pipeline.yml', 'in_progress', null, '2026-10-26T11:50:00Z'),
+    run(2, '.github/workflows/other.yml', 'in_progress', null, '2026-10-26T11:50:00Z'),
+    run(3, '.github/workflows/E2E-chaoscenter-pipeline.yml', 'completed', 'failure', '2026-10-26T11:50:00Z'),
+    run(4, '.github/workflows/E2E-chaoscenter-pipeline.yml', 'completed', 'success', '2026-10-26T09:00:00Z'),
+  ], files, now);
+  assert.deepEqual(out.map((r) => r.id), [1, 3], 'unknown workflows and old finished runs are left out, running first');
+  assert.equal(out[0].active, true);
+  assert.equal(out[1].conclusion, 'failure');
+});
+
+test('progress of a run comes from its jobs and never exceeds 100', () => {
+  assert.equal(D.jobProgress([]), null);
+  const p = D.jobProgress([
+    { name: 'a', status: 'completed', conclusion: 'success' },
+    { name: 'b', status: 'completed', conclusion: 'failure' },
+    { name: 'c', status: 'in_progress', steps: [{ name: 's1', status: 'completed' }, { name: 's2', status: 'in_progress' }] },
+    { name: 'd', status: 'queued' },
+  ]);
+  assert.equal(p.total, 4);
+  assert.equal(p.done, 2);
+  assert.equal(p.failed, 1);
+  assert.deepEqual(p.running, [{ job: 'c', step: 's2' }]);
+  assert.equal(p.percent, Math.round(((2 + 0.5) / 4) * 100));
+});
