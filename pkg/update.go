@@ -40,7 +40,7 @@ func UpdateResultTable(experimentDetails, testVerdict string, testsDetails *type
 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
 		return err
 	}
-	log.Infof("Result: " + out.String())
+	log.Infof("Result: %v", out.String())
 	log.Info("[Table]: Pipeline Result table updated successfully !!!")
 
 	return nil
@@ -55,7 +55,7 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 	imageTag := GetImageTag(testsDetails.ExperimentImage)
 
 	//Updating the result table
-	log.Infof("The pipeline id is:", os.Getenv("CI_PIPELINE_ID"))
+	log.Infof("The pipeline id is: %v", os.Getenv("CI_PIPELINE_ID"))
 
 	if os.Getenv("POD_LEVEL") == "true" {
 		pipelineName = "pod-level"
@@ -85,9 +85,12 @@ func UpdatePipelineStatus(testsDetails *types.TestDetails, coverageData string) 
 // GetImageTag returns the Go experiment image tag
 func GetImageTag(experimentImage string) string {
 
-	tag := strings.Split((experimentImage), ":")
-
-	return tag[1]
+	// the tag follows the last colon of the image name, unless that colon belongs to a registry port
+	idx := strings.LastIndex(experimentImage, ":")
+	if idx < 0 || strings.Contains(experimentImage[idx:], "/") {
+		return "latest"
+	}
+	return experimentImage[idx+1:]
 }
 
 // AddAnnotation will add or update annotation on an application

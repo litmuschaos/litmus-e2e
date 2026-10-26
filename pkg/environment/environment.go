@@ -45,6 +45,9 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.UpdateWebsite = Getenv("UPDATE_WEBSITE", "false")
 	testDetails.TargetNodes = Getenv("TARGET_NODES", "")
 	testDetails.NodeLabel = Getenv("NODE_LABEL", "")
+	// the runtime and the socket of the nodes, the chaos-charts default to containerd at /run/containerd/containerd.sock
+	testDetails.ContainerRuntime = Getenv("CONTAINER_RUNTIME", "")
+	testDetails.SocketPath = Getenv("SOCKET_PATH", "")
 	testDetails.AzureResourceGroup = Getenv("AZURE_RESOURCE_GROUP", "")
 	testDetails.AzureInstanceName = Getenv("AZURE_INSTANCE_NAME", "")
 	testDetails.AzureDiskName = Getenv("AZURE_DISK_NAME", "")
@@ -72,6 +75,22 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 
 	// Portal Envs
 	testDetails.Version = Getenv("RUN_VERSION", "ci")
+}
+
+const (
+	// chaosChartsFaultsAPI serves the fault definitions of the ChaosHub
+	chaosChartsFaultsAPI = "https://hub.litmuschaos.io/api/chaos/master?file=faults/"
+	// chaosChartsFaultsRaw serves the engine manifests of the ChaosHub
+	chaosChartsFaultsRaw = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/faults/"
+)
+
+// SetFaultPaths points the experiment and engine manifests to the given fault of the chaos-charts
+// (faults/<category>/<fault>), for faults which are not under the default faults/kubernetes category.
+// The paths can still be overridden with the EXPERIMENT_PATH and ENGINE_PATH envs.
+// The rbac is not published per fault anymore, so the default admin rbac is used.
+func SetFaultPaths(testDetails *types.TestDetails, category, fault string) {
+	testDetails.ExperimentPath = Getenv("EXPERIMENT_PATH", chaosChartsFaultsAPI+category+"/"+fault+"/fault.yaml")
+	testDetails.EnginePath = Getenv("ENGINE_PATH", chaosChartsFaultsRaw+category+"/"+fault+"/engine.yaml")
 }
 
 // Getenv fetch the env and set the default value, if any

@@ -3,8 +3,7 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -105,7 +104,9 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 	engine.Spec.EngineState = v1alpha1.EngineStateActive
 
 	// Set all environments
-	setEngineVar(engine, testsDetails, types.SetupAppInfoIfNotEmpty)
+	if err = setEngineVar(engine, testsDetails, types.SetupAppInfoIfEmpty); err != nil {
+		return err
+	}
 
 	_, err = clients.LitmusClient.ChaosEngines(testsDetails.ChaosNamespace).Update(engine)
 	if err != nil {
@@ -222,21 +223,17 @@ func setExperimentVar(chaosExperiment *v1alpha1.ChaosExperiment, testsDetails *t
 func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *v1alpha1.ChaosExperiment, experimentNamespace string, clients environment.ClientSets) error {
 
 	//Fetch Experiment file
-	res, err := http.Get(testsDetails.ExperimentPath)
+	fileInput, err := FetchManifest(testsDetails.ExperimentPath)
 	if err != nil {
 		return errors.Errorf("Failed to fetch the experiment file due to %v", err)
 	}
 
-	// ReadAll reads from response until an error or EOF and returns the data it read.
-	fileInput, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Errorf("Failed to read data from response: %v", err)
-	}
-
 	// Unmarshal decodes the fileInput into chaosExperiment
-	err = yamlChe.Unmarshal([]byte(fileInput), &chaosExperiment)
-	if err != nil {
-		log.Errorf("error when unmarshalling: %v", err)
+	if err = yamlChe.Unmarshal(fileInput, &chaosExperiment); err != nil {
+		return errors.Errorf("Failed to unmarshal the experiment file from %v due to %v", testsDetails.ExperimentPath, err)
+	}
+	if chaosExperiment.Kind != "ChaosExperiment" {
+		return errors.Errorf("The file at %v is not a ChaosExperiment, got kind %q", testsDetails.ExperimentPath, chaosExperiment.Kind)
 	}
 
 	// Initialise experiment
@@ -261,7 +258,9 @@ func InstallGoChaosExperiment(testsDetails *types.TestDetails, chaosExperiment *
 }
 
 // setEngineVar setting up variables of engine
-func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails, setAppInfo bool) {
+// It returns an error when an experiment specific input has no matching env in the engine,
+// as the experiment would otherwise run silently without the target the test asked for.
+func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDetails, setAppInfo bool) error {
 
 	// contains all the envs
 	envDetails := ENVDetails{
@@ -293,11 +292,11 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	chaosEngine.Spec.AnnotationCheck = testsDetails.AnnotationCheck
 
 	switch testsDetails.ExperimentName {
-	case "ec2-terminate-by-id":
+	case "ec2-stop-by-id":
 		envDetails.SetEnv("EC2_INSTANCE_ID", testsDetails.InstanceID).
 			SetEnv("REGION", testsDetails.Region)
-	case "ec2-terminate-by-tag":
-		envDetails.SetEnv("INSTANCE_TAG", testsDetails.InstanceTag).
+	case "ec2-stop-by-tag":
+		envDetails.SetEnv("EC2_INSTANCE_TAG", testsDetails.InstanceTag).
 			SetEnv("REGION", testsDetails.Region)
 	case "ebs-loss-by-id":
 		envDetails.SetEnv("EBS_VOLUME_ID", testsDetails.EBSVolumeID).
@@ -326,29 +325,38 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 		})
 	case "azure-instance-stop":
 		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
-			SetEnv("AZURE_INSTANCE_NAME", testsDetails.AzureInstanceName).
-			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet)
+			SetEnv("AZURE_INSTANCE_NAMES", testsDetails.AzureInstanceName).
+			SetEnv("SCALE_SET", testsDetails.AzureScaleSet)
 	case "azure-disk-loss":
 		envDetails.SetEnv("RESOURCE_GROUP", testsDetails.AzureResourceGroup).
-			SetEnv("AZURE_SCALE_SET", testsDetails.AzureScaleSet).
+			SetEnv("SCALE_SET", testsDetails.AzureScaleSet).
 			SetEnv("VIRTUAL_DISK_NAMES", testsDetails.AzureDiskName)
 	case "gcp-vm-instance-stop":
 		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
 			SetEnv("VM_INSTANCE_NAMES", testsDetails.VMInstanceNames).
-			SetEnv("INSTANCE_ZONES", testsDetails.InstanceZones)
+			SetEnv("ZONES", testsDetails.InstanceZones)
 	case "gcp-vm-disk-loss":
 		envDetails.SetEnv("GCP_PROJECT_ID", testsDetails.GCPProjectID).
 			SetEnv("DISK_VOLUME_NAMES", testsDetails.DiskVolumeNames).
-			SetEnv("DISK_ZONES", testsDetails.DiskZones).
-			SetEnv("DEVICE_NAMES", testsDetails.DeviceNames)
-	case "vm-poweroff":
+			SetEnv("ZONES", testsDetails.DiskZones)
+	case "vmware-vm-poweroff":
 		envDetails.SetEnv("APP_VM_MOIDS", testsDetails.VMIds)
 	case "process-kill":
 		envDetails.SetEnv("PROCESS_IDS", testsDetails.ProcessIds)
 	}
 
+	// inputs set so far are specific to the experiment and must be present in the engine
+	requiredEnv := map[string]bool{}
+	for key := range envDetails.ENV {
+		requiredEnv[key] = true
+	}
+
 	// for experiments like pod network latency
 	envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
+
+	// experiments that talk to the container runtime of the node
+	envDetails.SetEnv("CONTAINER_RUNTIME", testsDetails.ContainerRuntime).
+		SetEnv("SOCKET_PATH", testsDetails.SocketPath)
 
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
@@ -374,42 +382,107 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	}
 
 	// update all the value corresponding to keys from the ENV's in Engine
+	applied := map[string]bool{}
 	for key, value := range chaosEngine.Spec.Experiments[0].Spec.Components.ENV {
 		_, ok := envDetails.ENV[value.Name]
 		if ok {
 			chaosEngine.Spec.Experiments[0].Spec.Components.ENV[key].Value = envDetails.ENV[value.Name]
+			applied[value.Name] = true
 		}
 	}
+
+	var missing []string
+	for key := range envDetails.ENV {
+		if applied[key] {
+			continue
+		}
+		if requiredEnv[key] {
+			missing = append(missing, key)
+		} else {
+			log.Infof("[Warning]: env %v is not defined in the engine of %v, it is not applied", key, testsDetails.NewExperimentName)
+		}
+	}
+	if len(missing) > 0 {
+		sort.Strings(missing)
+		return errors.Errorf("env %v not defined in the engine of %v, the engine manifest and the e2e inputs are out of sync", missing, testsDetails.NewExperimentName)
+	}
+	return nil
 }
 
 // InstallGoChaosEngine installs the given go based chaos engine
 func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets) error {
+	return installGoChaosEngine(testsDetails, chaosEngine, engineNamespace, setAppInfo, clients, nil)
+}
+
+// InstallGoChaosEngineWithFailingProbe installs the engine with a cmdProbe that can never succeed, so that the
+// experiment ends with the Fail verdict while the target is found and the chaos is injected. The probe is added to the
+// json document, the typed ChaosEngine of the pinned operator library does not know the current run properties.
+func InstallGoChaosEngineWithFailingProbe(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+	failing := map[string]interface{}{
+		"name": "always-failing-probe",
+		"type": "cmdProbe",
+		"mode": "EOT",
+		"cmdProbe/inputs": map[string]interface{}{
+			"command":    "echo present",
+			"comparator": map[string]interface{}{"type": "string", "criteria": "contains", "value": "absent"},
+		},
+		"runProperties": map[string]interface{}{"probeTimeout": "5s", "interval": "2s", "retry": 1},
+	}
+	addProbe := func(doc map[string]interface{}) error {
+		spec, _ := doc["spec"].(map[string]interface{})
+		exps, _ := spec["experiments"].([]interface{})
+		if len(exps) == 0 {
+			return errors.Errorf("the ChaosEngine has no experiment to add a probe to")
+		}
+		exp, _ := exps[0].(map[string]interface{})
+		expSpec, _ := exp["spec"].(map[string]interface{})
+		if expSpec == nil {
+			expSpec = map[string]interface{}{}
+			exp["spec"] = expSpec
+		}
+		expSpec["probe"] = []interface{}{failing}
+		return nil
+	}
+	return installGoChaosEngine(testsDetails, chaosEngine, engineNamespace, types.SetupAppInfoIfEmpty, clients, addProbe)
+}
+
+func installGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets, mutate func(map[string]interface{}) error) error {
 
 	//Fetch Engine file
-	res, err := http.Get(testsDetails.EnginePath)
+	fileInput, err := FetchManifest(testsDetails.EnginePath)
 	if err != nil {
-		return errors.Errorf("Failed to fetch the rbac file due to %v", err)
-	}
-
-	// ReadAll reads from response until an error or EOF and returns the data it read.
-	fileInput, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Errorf("Failed to read data from response: %v", err)
+		return errors.Errorf("Failed to fetch the engine file due to %v", err)
 	}
 
 	// Unmarshal decodes the fileInput into chaosEngine
-	err = yamlChe.Unmarshal([]byte(fileInput), &chaosEngine)
-	if err != nil {
-		log.Errorf("error when unmarshalling: %v", err)
+	if err = yamlChe.Unmarshal(fileInput, &chaosEngine); err != nil {
+		return errors.Errorf("Failed to unmarshal the engine file from %v due to %v", testsDetails.EnginePath, err)
+	}
+	if chaosEngine.Kind != "ChaosEngine" || len(chaosEngine.Spec.Experiments) == 0 {
+		return errors.Errorf("The file at %v is not a ChaosEngine with an experiment", testsDetails.EnginePath)
 	}
 
 	// Initialise engine
-	setEngineVar(chaosEngine, testsDetails, setAppInfo)
+	if err = setEngineVar(chaosEngine, testsDetails, setAppInfo); err != nil {
+		return err
+	}
 
 	// Marshal serializes the values provided into a YAML document.
 	fileData, err := json.Marshal(chaosEngine)
 	if err != nil {
 		return errors.Errorf("Failed to marshal ChaosEngine %v", err)
+	}
+	if mutate != nil {
+		doc := map[string]interface{}{}
+		if err = json.Unmarshal(fileData, &doc); err != nil {
+			return errors.Errorf("Failed to read back the ChaosEngine %v", err)
+		}
+		if err = mutate(doc); err != nil {
+			return err
+		}
+		if fileData, err = json.Marshal(doc); err != nil {
+			return errors.Errorf("Failed to marshal ChaosEngine %v", err)
+		}
 	}
 
 	//Creating chaos engine
@@ -433,7 +506,7 @@ func InstallLitmus(testsDetails *types.TestDetails) error {
 		return errors.Errorf("Unable to update operator image due to %v", err)
 
 	}
-	if err = EditKeyValue("install-litmus.yaml", "  - chaos-operator", "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ImagePullPolicy); err != nil {
+	if err = EditNextMatch("install-litmus.yaml", "image: "+testsDetails.OperatorImage, "imagePullPolicy: Always", "imagePullPolicy: "+testsDetails.ImagePullPolicy); err != nil {
 		return errors.Errorf("Unable to update image pull policy due to %v", err)
 	}
 	log.Info("Updating Chaos Runner Image ...")
