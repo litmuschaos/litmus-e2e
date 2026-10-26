@@ -35,5 +35,9 @@ runs:
           journalctl -u k3s.service --no-pager | tail -n 100 || true
           exit 1
         fi
+        # the runtime socket of k3s is not the /run/containerd/containerd.sock the chaos-charts default to,
+        # which on a runner with docker is another containerd. The e2e suites hand this to the experiments.
+        echo "CONTAINER_RUNTIME=containerd" >> "$GITHUB_ENV"
+        echo "SOCKET_PATH=/run/k3s/containerd/containerd.sock" >> "$GITHUB_ENV"
         mkdir -p "$HOME/.kube" && cp "$KUBECONFIG" "$HOME/.kube/config"
         kubectl get nodes -o wide
