@@ -3,6 +3,7 @@ name: Scheduled-Azure-Experiment-Pipeline
 on:
   schedule:
     - cron: "30 22 * * *" # Daily 02:30 AM in midnight
+  workflow_dispatch:
 
 jobs:
   Azure_VM_Instance_Stop:
