@@ -39,11 +39,9 @@ var _ = Describe("BDD of ec2-terminate-by-tag experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "ec2-terminate-by-tag", "ec2-engine-by-tag-par")
+			environment.GetENV(&testsDetails, "ec2-stop-by-tag", "ec2-engine-by-tag-par")
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ec2-stop-by-tag")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -103,11 +101,9 @@ var _ = Describe("BDD of ec2-terminate-by-tag experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "ec2-terminate-by-tag", "ec2-engine-by-tag-ser")
+			environment.GetENV(&testsDetails, "ec2-stop-by-tag", "ec2-engine-by-tag-ser")
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "aws", "ec2-stop-by-tag")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

@@ -37,7 +37,7 @@ func RunnerPodStatus(testsDetails *types.TestDetails, runnerNamespace string, cl
 	}
 
 	if runner.Status.Phase != "Running" {
-		return errors.Errorf("Runner pod Failed to come in running state due to %v", err)
+		return errors.Errorf("Runner pod Failed to come in running state, last observed phase: %v", runner.Status.Phase)
 	}
 	log.Info("[Status]: Runner pod is in Running state")
 
@@ -67,40 +67,37 @@ func CheckRunnerPodCreation(engineName, runnerNS string, clients environment.Cli
 
 // DeploymentStatusCheck checks running status of deployment with deployment name and namespace
 func DeploymentStatusCheck(testsDetails *types.TestDetails, deploymentName, deploymentNS string, clients environment.ClientSets) error {
+	return waitForDeploymentReady(deploymentName, deploymentNS, clients)
+}
 
-	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
+// waitForDeploymentReady waits until all the desired replicas of the deployment are ready.
+// A deployment which does not exist, or has no ready replica, is not treated as running.
+func waitForDeploymentReady(deploymentName, deploymentNS string, clients environment.ClientSets) error {
+	var lastErr error
 	for count := 0; count < 20; count++ {
-		if sampleApp.Status.UnavailableReplicas != 0 {
-			log.Infof("Application is Creating, Currently Unavaliable Count is: %v ", sampleApp.Status.UnavailableReplicas)
-			sampleApp, _ = clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
-			time.Sleep(5 * time.Second)
-
+		deployment, err := clients.KubeClient.AppsV1().Deployments(deploymentNS).Get(deploymentName, metav1.GetOptions{})
+		if err != nil {
+			lastErr = errors.Errorf("failed to get the deployment %v/%v due to %v", deploymentNS, deploymentName, err)
 		} else {
-			break
+			desired := int32(1)
+			if deployment.Spec.Replicas != nil {
+				desired = *deployment.Spec.Replicas
+			}
+			if desired > 0 && deployment.Status.ReadyReplicas >= desired && deployment.Status.UnavailableReplicas == 0 {
+				return nil
+			}
+			lastErr = errors.Errorf("%v/%v has %v/%v ready replicas", deploymentNS, deploymentName, deployment.Status.ReadyReplicas, desired)
+			log.Infof("%v is not ready yet, ready replicas: %v/%v, unavailable: %v", deploymentName, deployment.Status.ReadyReplicas, desired, deployment.Status.UnavailableReplicas)
 		}
-		if count == 19 {
-			return errors.Errorf("%v fails to get in Running state", deploymentName)
-		}
+		time.Sleep(5 * time.Second)
 	}
-	return nil
+	return errors.Errorf("%v fails to get in Running state, last observed state: %v", deploymentName, lastErr)
 }
 
 // OperatorStatusCheck checks the running status of chaos operator
 func OperatorStatusCheck(testsDetails *types.TestDetails, clients environment.ClientSets) error {
-	sampleApp, _ := clients.KubeClient.AppsV1().Deployments(testsDetails.ChaosNamespace).Get(testsDetails.OperatorName, metav1.GetOptions{})
-
-	for count := 0; count < 20; count++ {
-		if sampleApp.Status.UnavailableReplicas != 0 {
-			log.Infof("Operator's Unavaliable Count is: %v", sampleApp.Status.UnavailableReplicas)
-			sampleApp, _ = clients.KubeClient.AppsV1().Deployments(testsDetails.ChaosNamespace).Get(testsDetails.OperatorName, metav1.GetOptions{})
-			time.Sleep(5 * time.Second)
-			count++
-		} else {
-			break
-		}
-		if count == 19 {
-			return errors.Errorf("%v fails to get in Running state", testsDetails.OperatorName)
-		}
+	if err := waitForDeploymentReady(testsDetails.OperatorName, testsDetails.ChaosNamespace, clients); err != nil {
+		return err
 	}
 	log.Info("[Status]: Operator is in Running state")
 	return nil
@@ -257,13 +254,16 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 				return errors.Errorf("Failed to get the chaosresult due to %v", err)
 			}
 
-			if string(chaosResult.Status.ExperimentStatus.Phase) != "Completed" {
-				klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
-				return errors.Errorf("ChaosResult is not yet completed")
-			}
+			// an errored experiment will never complete, fail without waiting for the retries to exhaust
 			if string(chaosResult.Status.ExperimentStatus.Phase) == "Error" {
 				isError = true
 				return nil
+			}
+			// the phases litmus-go ends an experiment in: an aborted run is Stopped and a run with failed probes is
+			// CompletedWithProbeFailure, only Running and Awaited mean that the experiment is not over
+			if !isFinalResultPhase(string(chaosResult.Status.ExperimentStatus.Phase)) {
+				klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
+				return errors.Errorf("ChaosResult is not yet completed")
 			}
 			klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 
@@ -275,4 +275,13 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 	}
 
 	return err
+}
+
+// isFinalResultPhase tells whether the phase of a chaosresult is one the experiment does not leave anymore
+func isFinalResultPhase(phase string) bool {
+	switch phase {
+	case "Completed", "CompletedWithProbeFailure", "Stopped":
+		return true
+	}
+	return false
 }

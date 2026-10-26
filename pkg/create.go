@@ -49,7 +49,7 @@ func CreateDeployment(clients environment.ClientSets, deploymentName, image, nam
 	}
 	_, err := clients.KubeClient.AppsV1().Deployments(namespace).Create(deployment)
 	if err != nil {
-		log.Infof(""+deploymentName+" deployment is not created and error is ", err)
+		log.Infof("%v deployment is not created and error is %v", deploymentName, err)
 		return errors.Errorf("Failed to create "+deploymentName+" deployment due to %v", err)
 	}
 	log.Info("" + deploymentName + " deployment is created successfully !!!")
