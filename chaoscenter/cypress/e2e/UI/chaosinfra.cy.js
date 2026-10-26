@@ -11,10 +11,10 @@ describe('testing chaosinfra via UI', () => {
         cy.get('.bp3-form-content').type('exp11');
         cy.contains('Next').click();
         cy.contains('Next').click();
+        // the infrastructure is registered when the manifest is downloaded
+        cy.interceptGraphQL('registerInfra', 'registerInfra');
         cy.contains('Download').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Chaos infrastructure successfully created');
-        });
+        cy.expectGraphQLSuccess('registerInfra');
         cy.contains('Done').click();   
     });
 
@@ -22,24 +22,19 @@ describe('testing chaosinfra via UI', () => {
         cy.contains('Environments').click();
         cy.contains('New Environment').click();
         cy.get('input[name="name"]').type('exp99');
+        cy.interceptGraphQL('createEnvironment', 'createEnvironment');
         cy.contains('Save').click();
-        cy.on('alert message', () => {
-            expect(message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
-        });
+        cy.expectGraphQLError('createEnvironment', 'write exception: write errors: [E11000 duplicate key error collection:');
     });
 
     it('Editing chaosinfra', () => {
         cy.contains('Environments').click();
         cy.get('.TableV2--row').eq(0).click();
-        cy.contains('Update').eq(0).click();
+        cy.contains('Update').first().click();
+        cy.interceptGraphQL('getInfraManifest', 'getInfraManifest');
         cy.get('button[aria-label= "Download"]').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Download request successfully sent');
-        });
+        cy.expectGraphQLSuccess('getInfraManifest');
         cy.contains('Done').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Upgrade manifest downloaded successfully');
-        });
     });
 
     it('Disable chaosinfra', () => {
@@ -47,9 +42,8 @@ describe('testing chaosinfra via UI', () => {
         cy.get('.TableV2--row').eq(0).click();
         cy.get('.Card--dots').eq(0).click();
         cy.contains('Disable').click();
+        cy.interceptGraphQL('deleteInfra', 'deleteInfra');
         cy.contains('Confirm').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Chaos Infrastructure Successfully Disabled');
-        });
+        cy.expectGraphQLSuccess('deleteInfra');
     });
 });

@@ -21,7 +21,9 @@ describe('testing of HTTP chaos probes', () => {
         cy.get('input[name="kubernetesHTTPProperties.method.get.criteria"]').type('==');
         cy.contains('==').click();
         cy.get('input[name="kubernetesHTTPProperties.method.get.responseCode"]').type('200');
+        cy.interceptGraphQL('addKubernetesHTTPProbe', 'addProbe');
         cy.contains('Setup Probe').click();
+        cy.expectGraphQLSuccess('addProbe');
     });
     
     it('negative test case for chaos probe [Get error when creating chaos Probe with same name]', () => {
@@ -42,10 +44,9 @@ describe('testing of HTTP chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="kubernetesHTTPProperties.probeTimeout"]').clear().type('3s');
         cy.contains('Configure Details').click();
+        cy.interceptGraphQL('updateProbe', 'updateProbe');
         cy.contains('Setup Probe').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Updated successfully');
-        });
+        cy.expectGraphQLSuccess('updateProbe');
     });
 
     it('delete chaos probe', () => {
@@ -54,9 +55,9 @@ describe('testing of HTTP chaos probes', () => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Delete Probe').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('deleteProbe', 'deleteProbe');
         cy.contains('Confirm').click();
-        cy.wait('@Query');
+        cy.expectGraphQLSuccess('deleteProbe');
     });     
 });
 
@@ -83,7 +84,9 @@ describe('testing of CMD chaos probes', () => {
         cy.get('input[name="kubernetesCMDProperties.comparator.criteria"]').type('==');
         cy.contains('==').click();
         cy.get('input[name="kubernetesCMDProperties.comparator.value"]').type('1');
+        cy.interceptGraphQL('addKubernetesCMDProbe', 'addProbe');
         cy.contains('Setup Probe').click();
+        cy.expectGraphQLSuccess('addProbe');
     });
 
     it('negative test case for chaos probe [Get error when creating chaos Probe with same name]', () => {
@@ -104,10 +107,9 @@ describe('testing of CMD chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="kubernetesCMDProperties.probeTimeout"]').clear().type('3s');
         cy.contains('Configure Details').click();
+        cy.interceptGraphQL('updateProbe', 'updateProbe');
         cy.contains('Setup Probe').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Updated successfully');
-        });
+        cy.expectGraphQLSuccess('updateProbe');
     });
 
     it('delete chaos probe', () => {
@@ -116,9 +118,9 @@ describe('testing of CMD chaos probes', () => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Delete Probe').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('deleteProbe', 'deleteProbe');
         cy.contains('Confirm').click();
-        cy.wait('@Query');
+        cy.expectGraphQLSuccess('deleteProbe');
     });
 });
 
@@ -146,7 +148,9 @@ describe('testing of Prometheus chaos probes', () => {
         cy.get('input[name="promProperties.comparator.criteria"]').type('==');
         cy.contains('==').click();
         cy.get('input[name="promProperties.comparator.value"]').type('1');
+        cy.interceptGraphQL('addPROMProbe', 'addProbe');
         cy.contains('Setup Probe').click();
+        cy.expectGraphQLSuccess('addProbe');
     });
 
     it('negative test case for chaos probe [Get error when creating chaos Probe with same name]', () => {
@@ -167,10 +171,9 @@ describe('testing of Prometheus chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="promProperties.probeTimeout"]').clear().type('3s');
         cy.contains('Configure Details').click();
+        cy.interceptGraphQL('updateProbe', 'updateProbe');
         cy.contains('Setup Probe').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Updated successfully');
-        });
+        cy.expectGraphQLSuccess('updateProbe');
     });
 
     it('delete chaos probe', () => {
@@ -179,9 +182,9 @@ describe('testing of Prometheus chaos probes', () => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Delete Probe').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('deleteProbe', 'deleteProbe');
         cy.contains('Confirm').click();
-        cy.wait('@Query');
+        cy.expectGraphQLSuccess('deleteProbe');
     });
 });
 
@@ -208,7 +211,9 @@ describe('testing of kubernetes chaos probes', () => {
         cy.get('input[name="k8sProperties.namespace"]').type('alpha');
         cy.get('input[name="k8sProperties.operation"]').type('delete');
         cy.contains('Delete').click();
+        cy.interceptGraphQL('addK8SProbe', 'addProbe');
         cy.contains('Setup Probe').click();
+        cy.expectGraphQLSuccess('addProbe');
     });
 
     it('negative test case for chaos probe [Get error when creating chaos Probe with same name]', () => {
@@ -229,10 +234,9 @@ describe('testing of kubernetes chaos probes', () => {
         cy.contains('Configure Properties').click();
         cy.get('input[name="k8sProperties.probeTimeout"]').clear().type('3s');
         cy.contains('Configure Details').click();
+        cy.interceptGraphQL('updateProbe', 'updateProbe');
         cy.contains('Setup Probe').click();
-        cy.on('window alert', () => {
-            expect(message).to.equal('Updated successfully');
-        });
+        cy.expectGraphQLSuccess('updateProbe');
     });
 
     it('delete chaos probe', () => {
@@ -241,8 +245,8 @@ describe('testing of kubernetes chaos probes', () => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Delete Probe').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('deleteProbe', 'deleteProbe');
         cy.contains('Confirm').click();
-        cy.wait('@Query');
+        cy.expectGraphQLSuccess('deleteProbe');
     });
 });
