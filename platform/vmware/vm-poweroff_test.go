@@ -15,7 +15,7 @@ import (
 
 func TestGoVMPoweroff(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 var _ = Describe("BDD of vm-poweroff experiment", func() {

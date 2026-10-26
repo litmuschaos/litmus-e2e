@@ -1,0 +1,31 @@
+name: Setup k3s
+description: Installs a single node k3s cluster and fails when the cluster does not become ready
+
+inputs:
+  channel:
+    description: k3s release channel, a minor version such as v1.31 or stable
+    default: v1.31
+
+runs:
+  using: composite
+  steps:
+    - name: Installing Prerequisites (K3S Cluster)
+      shell: bash
+      env:
+        K3S_CHANNEL: ${{ inputs.channel }}
+      run: |
+        set -euo pipefail
+        curl -sfL https://get.k3s.io | \
+          INSTALL_K3S_CHANNEL="${K3S_CHANNEL}" \
+          INSTALL_K3S_EXEC="server --disable traefik --disable metrics-server --write-kubeconfig-mode 664" \
+          sh -s -
+        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+        if ! kubectl wait node --all --for condition=Ready --timeout=180s \
+          || ! kubectl -n kube-system rollout status deployment/coredns --timeout=180s; then
+          echo "::error::the k3s cluster did not become ready"
+          systemctl status k3s.service --no-pager || true
+          journalctl -u k3s.service --no-pager | tail -n 100 || true
+          exit 1
+        fi
+        mkdir -p "$HOME/.kube" && cp "$KUBECONFIG" "$HOME/.kube/config"
+        kubectl get nodes -o wide

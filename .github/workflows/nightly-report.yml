@@ -1,0 +1,84 @@
+---
+name: Nightly-Report
+# Builds the data of the nightly dashboard from the runs of the nightly workflows and publishes it to GitHub Pages.
+# The Pages source of the repository has to be set to "GitHub Actions".
+on:
+  workflow_run:
+    workflows:
+      - Nightly-Pod-Level-Pipeline
+      - Nightly-Node-Level-Pipeline
+      - Nightly-Component-Pipeline
+      - Nightly-ChaosCenter-E2E-Pipeline
+      - Nightly-AWS-Experiment-Pipeline
+      - Scheduled-Azure-Experiment-Pipeline
+      - Nightly-GCP-Experiment-Pipeline
+      - Nightly-VMWare-Experiment-Pipeline
+      - Nightly-m-agent-Experiment-Pipeline
+    types: [completed]
+  schedule:
+    # safety net, runs once all the nightly pipelines had time to finish
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch whose nightly runs are reported (default branch when empty)
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# one publication at a time, the newest run has the most complete data
+concurrency:
+  group: nightly-report
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test the report generator
+        run: python -m unittest discover -s scripts/report/tests
+
+      - name: Build the report data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          # the history published earlier, a missing file starts a new history
+          python scripts/report/build_report.py \
+            --out dashboard/data \
+            --branch "${{ inputs.branch }}" \
+            --previous "https://${owner}.github.io/${name}/data/history.json"
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: build
+    # only the default branch publishes, so a manual run of another branch can not replace the site
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

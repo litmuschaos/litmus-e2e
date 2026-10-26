@@ -1,0 +1,13 @@
+---
+name: Nightly-ChaosCenter-E2E-Pipeline
+on:
+  schedule:
+    - cron: "30 21 * * *" # Daily 03:00 AM
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    uses: ./.github/workflows/E2E-chaoscenter-pipeline.yml

@@ -15,7 +15,7 @@ import (
 
 func TestEngineName(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for job-cleanup-policy in engine

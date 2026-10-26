@@ -16,7 +16,7 @@ import (
 
 func TestGoEC2TerminateByID(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD for testing experiment

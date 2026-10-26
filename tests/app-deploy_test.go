@@ -15,7 +15,7 @@ import (
 func TestAppDeploy(t *testing.T) {
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests to check application deployment

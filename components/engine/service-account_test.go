@@ -17,7 +17,7 @@ import (
 
 func TestSeriveAccount(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for serviceaccount in engine

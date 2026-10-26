@@ -1,0 +1,25 @@
+{
+  "cycleStartHourUtc": 12,
+  "staleAfterHours": 36,
+  "backfillDays": 7,
+  "maxBuildsKept": 90,
+  "refetchLastCycles": 2,
+  "suites": [
+    { "id": "bdd", "name": "Experiment BDD" },
+    { "id": "frontend", "name": "Frontend E2E" }
+  ],
+  "workflows": [
+    { "file": "nightly-pod-level-pipeline.yml", "name": "Pod level", "suite": "bdd", "category": "pod-level", "required": true },
+    { "file": "nightly-node-level-pipeline.yml", "name": "Node level", "suite": "bdd", "category": "node-level", "required": true },
+    { "file": "nightly-component-pipeline.yml", "name": "Components", "suite": "bdd", "category": "component", "required": true },
+    { "file": "nightly-chaoscenter-pipeline.yml", "name": "ChaosCenter", "suite": "frontend", "category": "chaoscenter", "required": true },
+    { "file": "nightly-aws-experiment-pipeline.yml", "name": "AWS", "suite": "bdd", "category": "aws", "required": false, "note": "Needs AWS credentials" },
+    { "file": "nightly-azure-experiment-pipeline.yml", "name": "Azure", "suite": "bdd", "category": "azure", "required": false, "note": "Needs Azure credentials" },
+    { "file": "nightly-gcp-experiment-pipeline.yml", "name": "GCP", "suite": "bdd", "category": "gcp", "required": false, "note": "Needs GCP credentials" },
+    { "file": "nightly-vmware-experiment-pipeline.yml", "name": "VMware", "suite": "bdd", "category": "vmware", "required": false, "note": "Needs a vCenter" },
+    { "file": "nightly-m-agent-experiment-pipeline.yaml", "name": "m-agent", "suite": "bdd", "category": "m-agent", "required": false, "note": "Needs GCP credentials" }
+  ],
+  "setupTests": ["install-litmus", "app-deploy", "app-cleanup", "litmus-cleanup", "deploy-aux-app", "app-liveness", "pipeline-update"],
+  "junitArtifactPrefixes": ["bdd-junit-", "chaoscenter-e2e-junit"],
+  "messageMaxLength": 600
+}

@@ -16,7 +16,7 @@ import (
 func TestWithAppInfo(t *testing.T) {
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "BDD test")
+	pkg.RunSpecs(t, "BDD test")
 }
 
 //BDD Tests for node-cpu-hog with appinfo
