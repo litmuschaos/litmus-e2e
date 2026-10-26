@@ -92,6 +92,11 @@ class RecordTest(unittest.TestCase):
         self.assertEqual({t["group"] for t in tests}, {"UI/chaoshub"})
         self.assertEqual(rec["failureKind"], "tests")
 
+    def test_unfinished_run_does_not_count_its_jobs_as_skipped(self):
+        r = run("2026-10-25T22:00:00Z", None, "in_progress")
+        rec, tests = br.build_workflow_record(self.wf("pod-level"), r, [dict(job("a", None), status="in_progress", conclusion=None)], [], CATALOG, CONFIG)
+        self.assertEqual((tests, rec["counts"]["skipped"]), ([], 0))
+
     def test_missing_run(self):
         rec, tests = br.build_workflow_record(self.wf("chaoscenter"), None, [], [], CATALOG, CONFIG)
         self.assertEqual((rec["status"], tests), ("not_run", []))
@@ -171,6 +176,18 @@ class CollectTest(unittest.TestCase):
         cfg = dict(CONFIG, workflows=[w for w in CONFIG["workflows"] if w["category"] == "pod-level"])
         cycles = br.collect_cycles(FakeClient(runs, {}), cfg, dt.datetime(2026, 10, 1, tzinfo=dt.timezone.utc), "master")
         self.assertEqual(cycles["2026-10-25"]["pod-level"][0]["id"], 4)
+
+    def test_a_rerun_in_progress_does_not_hide_the_finished_run(self):
+        runs = {"nightly-pod-level-pipeline.yml": [run("2026-10-25T22:10:00Z", "failure", rid=1), run("2026-10-25T23:10:00Z", None, "in_progress", rid=2)]}
+        cfg = dict(CONFIG, workflows=[w for w in CONFIG["workflows"] if w["category"] == "pod-level"])
+        cycles = br.collect_cycles(FakeClient(runs, {}), cfg, dt.datetime(2026, 10, 1, tzinfo=dt.timezone.utc), "master")
+        self.assertEqual(cycles["2026-10-25"]["pod-level"][0]["id"], 1)
+
+    def test_runs_of_the_reusable_workflow_count(self):
+        runs = {"E2E-chaoscenter-pipeline.yml": [run("2026-10-25T21:10:00Z", rid=9, event="workflow_dispatch")]}
+        cfg = dict(CONFIG, workflows=[dict(w, alsoFiles=["E2E-chaoscenter-pipeline.yml"]) for w in CONFIG["workflows"] if w["category"] == "chaoscenter"])
+        cycles = br.collect_cycles(FakeClient(runs, {}), cfg, dt.datetime(2026, 10, 1, tzinfo=dt.timezone.utc), "master")
+        self.assertEqual(cycles["2026-10-25"]["chaoscenter"][0]["id"], 9)
 
     def test_artifacts_are_read_only_for_finished_runs(self):
         runs = {"nightly-pod-level-pipeline.yml": [run("2026-10-25T22:10:00Z", "failure", rid=7)]}

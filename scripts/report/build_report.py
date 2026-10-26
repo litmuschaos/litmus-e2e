@@ -273,7 +273,7 @@ def build_workflow_record(wf, run, jobs, junit_cases, catalog, config):
     # jobs which did not produce any result are reported as one result of their own, a job that failed before the tests
     # started must not look like a run without failures
     covered = bool(junit_cases)
-    for job in record["jobs"]:
+    for job in (record["jobs"] if status != "in_progress" else []):
         conclusion = job["conclusion"]
         if conclusion == "success" and covered:
             continue
@@ -337,11 +337,13 @@ def collect_cycles(client, config, since, default_branch, only_cycles=None):
     limit = config["messageMaxLength"]
     cycles = {}
     for wf in config["workflows"]:
-        try:
-            runs = client.runs(wf["file"], since)
-        except ReportError as err:
-            print("warning: %s" % err, file=sys.stderr)
-            continue
+        runs = []
+        # the runs of the reusable workflow behind a nightly workflow count as runs of it
+        for name in [wf["file"]] + wf.get("alsoFiles", []):
+            try:
+                runs.extend(client.runs(name, since))
+            except ReportError as err:
+                print("warning: %s" % err, file=sys.stderr)
         by_cycle = {}
         for run in runs:
             if run.get("head_branch") != default_branch or run.get("event") not in ("schedule", "workflow_dispatch"):
@@ -350,8 +352,9 @@ def collect_cycles(client, config, since, default_branch, only_cycles=None):
             if only_cycles is not None and cyc not in only_cycles:
                 continue
             best = by_cycle.get(cyc)
-            # the latest run of the cycle represents it, a finished run wins over one that is still going
-            if best is None or (run["created_at"], run.get("status") == "completed") > (best["created_at"], best.get("status") == "completed"):
+            # the newest finished run represents the cycle. A run that is still going (a rerun, for example)
+            # does not hide the result of the finished one, it only represents the cycle when nothing finished.
+            if best is None or (run.get("status") == "completed", run["created_at"]) > (best.get("status") == "completed", best["created_at"]):
                 by_cycle[cyc] = run
         for cyc, run in by_cycle.items():
             jobs, cases = [], []

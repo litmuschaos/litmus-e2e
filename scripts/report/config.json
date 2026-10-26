@@ -12,7 +12,7 @@
     { "file": "nightly-pod-level-pipeline.yml", "name": "Pod level", "suite": "bdd", "category": "pod-level", "required": true },
     { "file": "nightly-node-level-pipeline.yml", "name": "Node level", "suite": "bdd", "category": "node-level", "required": true },
     { "file": "nightly-component-pipeline.yml", "name": "Components", "suite": "bdd", "category": "component", "required": true },
-    { "file": "nightly-chaoscenter-pipeline.yml", "name": "ChaosCenter", "suite": "frontend", "category": "chaoscenter", "required": true },
+    { "file": "nightly-chaoscenter-pipeline.yml", "alsoFiles": ["E2E-chaoscenter-pipeline.yml"], "name": "ChaosCenter", "suite": "frontend", "category": "chaoscenter", "required": true },
     { "file": "nightly-aws-experiment-pipeline.yml", "name": "AWS", "suite": "bdd", "category": "aws", "required": false, "note": "Needs AWS credentials" },
     { "file": "nightly-azure-experiment-pipeline.yml", "name": "Azure", "suite": "bdd", "category": "azure", "required": false, "note": "Needs Azure credentials" },
     { "file": "nightly-gcp-experiment-pipeline.yml", "name": "GCP", "suite": "bdd", "category": "gcp", "required": false, "note": "Needs GCP credentials" },
