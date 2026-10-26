@@ -11,8 +11,9 @@ npm ci
 CYPRESS_baseUrl=http://<chaoscenter-frontend> npx cypress run
 ```
 
-`username` and `password` default to the ChaosCenter defaults and can be overridden with
-`CYPRESS_username` / `CYPRESS_password`. JUnit results are written to `results/`.
+ChaosCenter requires a new password at the first login. Before each spec the suite changes the initial password
+(`initialPassword`, `litmus`) to `password`, once. Both, and `username`, can be overridden with `CYPRESS_username`,
+`CYPRESS_initialPassword` and `CYPRESS_password`. JUnit results are written to `results/`.
 
 ## Asserting on the UI
 
