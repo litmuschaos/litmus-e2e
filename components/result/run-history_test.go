@@ -138,7 +138,8 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Failed to get the ChaosEngine Verdict due to {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not Stopped due to {%v}", err)
+			// an application that cannot be found is reported as Error by current litmus-go, not as Fail
+			Expect(chaosEngineVerdict).To(Equal("Error"), "ChaosEngine Verdict is not Error due to {%v}", err)
 
 			// Checking the chaosresult run history verdict
 			By("[Verdict]: Checking the chaosresult run history verdict")
