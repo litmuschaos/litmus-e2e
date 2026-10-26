@@ -74,6 +74,22 @@ func GetENV(testDetails *types.TestDetails, expName, engineName string) {
 	testDetails.Version = Getenv("RUN_VERSION", "ci")
 }
 
+const (
+	// chaosChartsFaultsAPI serves the fault definitions of the ChaosHub
+	chaosChartsFaultsAPI = "https://hub.litmuschaos.io/api/chaos/master?file=faults/"
+	// chaosChartsFaultsRaw serves the engine manifests of the ChaosHub
+	chaosChartsFaultsRaw = "https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/faults/"
+)
+
+// SetFaultPaths points the experiment and engine manifests to the given fault of the chaos-charts
+// (faults/<category>/<fault>), for faults which are not under the default faults/kubernetes category.
+// The paths can still be overridden with the EXPERIMENT_PATH and ENGINE_PATH envs.
+// The rbac is not published per fault anymore, so the default admin rbac is used.
+func SetFaultPaths(testDetails *types.TestDetails, category, fault string) {
+	testDetails.ExperimentPath = Getenv("EXPERIMENT_PATH", chaosChartsFaultsAPI+category+"/"+fault+"/fault.yaml")
+	testDetails.EnginePath = Getenv("ENGINE_PATH", chaosChartsFaultsRaw+category+"/"+fault+"/engine.yaml")
+}
+
 // Getenv fetch the env and set the default value, if any
 func Getenv(key string, defaultValue string) string {
 	value := os.Getenv(key)

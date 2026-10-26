@@ -40,6 +40,9 @@ func ChaosEngineVerdict(testsDetails *types.TestDetails, clients environment.Cli
 	if err != nil {
 		return errors.Errorf("Failed to get the chaosengine due to %v", err)
 	}
+	if len(chaosEngine.Status.Experiments) == 0 {
+		return errors.Errorf("ChaosEngine %v has no experiment status", testsDetails.EngineName)
+	}
 	log.Infof("Chaos Engine Verdict is: %v", chaosEngine.Status.Experiments[0].Verdict)
 
 	if string(chaosEngine.Status.Experiments[0].Verdict) != "Pass" {

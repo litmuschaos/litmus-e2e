@@ -39,9 +39,7 @@ var _ = Describe("BDD of azure-disk-loss experiment", func() {
 			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-par")
 			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "azure", "azure-disk-loss")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -103,9 +101,7 @@ var _ = Describe("BDD of azure-disk-loss experiment", func() {
 			environment.GetENV(&testsDetails, "azure-disk-loss", "az-en-ser")
 			log.Infof("[Info]: The target disks are: %v", testsDetails.AzureDiskName)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/azure/azure-disk-loss/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "azure", "azure-disk-loss")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
