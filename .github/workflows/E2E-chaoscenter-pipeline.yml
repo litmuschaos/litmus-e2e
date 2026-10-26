@@ -36,7 +36,9 @@ jobs:
         run: |
           # fail when the control plane does not come up instead of waiting forever
           kubectl wait --for=condition=Available deployment --all -n litmus --timeout=600s
-          kubectl rollout status statefulset --all -n litmus --timeout=600s
+          for sts in $(kubectl get statefulset -n litmus -o name); do
+            kubectl rollout status "$sts" -n litmus --timeout=600s
+          done
           kubectl get pods -n litmus
 
       - name: Extract Minikube IP and NodePort
