@@ -354,6 +354,10 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 	// for experiments like pod network latency
 	envDetails.SetEnv("NETWORK_LATENCY", testsDetails.NetworkLatency)
 
+	// experiments that talk to the container runtime of the node
+	envDetails.SetEnv("CONTAINER_RUNTIME", testsDetails.ContainerRuntime).
+		SetEnv("SOCKET_PATH", testsDetails.SocketPath)
+
 	// update App Node Details
 	if testsDetails.ApplicationNodeName != "" {
 		envDetails.SetEnv("TARGET_NODE", testsDetails.ApplicationNodeName)
