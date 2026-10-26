@@ -1,4 +1,4 @@
-# Litmus E2E Mission Control
+# LitmusChaos E2E Dashboard
 
 A static site, plain HTML, CSS and ES modules without a build step or dependencies, so it can be published as it is to
 GitHub Pages. All URLs are relative and the routes use the URL hash, it works from any path (`/litmus-e2e/`).

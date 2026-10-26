@@ -1,4 +1,4 @@
-/* Chaos Mission Control. One design system for the Nightly, RC and GA builds.
+/* LitmusChaos E2E Dashboard. One design system for the Nightly, RC and GA builds.
    Dark first. Colour tokens first, then layout, components, motion. Only transform and opacity are animated. */
 
 @font-face { font-family: "Space Grotesk"; src: url("fonts/space-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; font-display: optional; }

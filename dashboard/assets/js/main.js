@@ -113,7 +113,7 @@ async function render(force) {
   syncLinks();
   const ctx = makeCtx(route, params, b);
   const info = D.buildInfo(b);
-  document.title = (route === 'overview' ? '' : TITLES[route] + ' · ') + info.label + ' · Litmus E2E Mission Control';
+  document.title = (route === 'overview' ? '' : TITLES[route] + ' · ') + info.label + ' · LitmusChaos E2E Dashboard';
   let view;
   try {
     view = (await ROUTES[route]())(ctx);
