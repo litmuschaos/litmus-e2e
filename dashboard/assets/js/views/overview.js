@@ -58,7 +58,7 @@ export function overview({ latest, history }, nav) {
             h('span', {}, h('b', {}, sb.counts.error), ' errors'), h('span', {}, h('b', {}, sb.counts.skipped), ' skipped')),
           h('div', { style: 'margin-top:10px' }, D.executed(sb.counts) || sb.counts.skipped ? stackedBar(sb.counts) : h('p', { class: 'muted', style: 'margin:0' }, 'No result in this build.')),
           h('p', { class: 'muted', style: 'margin:8px 0 0;font-size:13px' }, failed ? `${failed} workflow${failed > 1 ? 's' : ''} failed.` : (sb.status === 'incomplete' ? 'Required workflow missing or unfinished.' : 'No failing workflow.')))),
-      series.length ? h('div', { style: 'margin-top:14px' }, h('div', { class: 'muted', style: 'font-size:12.5px;margin-bottom:6px' }, `Last ${series.length} builds`), timeline(series, () => nav('history'))) : null,
+      series.length ? h('div', { style: 'margin-top:14px' }, h('div', { class: 'muted', style: 'font-size:12.5px;margin-bottom:6px' }, (series.length === 1 ? 'Last build' : `Last ${series.length} builds`)), timeline(series, () => nav('history'))) : null,
       h('p', { style: 'margin:12px 0 0' }, h('a', { href: s.id === 'bdd' ? '#/experiments' : '#/frontend' }, s.id === 'bdd' ? 'Experiment results →' : 'Frontend results →')));
   };
   const suites = h('section', { class: 'grid cols-2', 'aria-label': 'Suites' }, latest.config.suites.map(suiteCard));
