@@ -7,9 +7,12 @@ describe('Testing login page of chaoscenter via UI', () => {
       cy.visit('/login');
       cy.get('input[name="username"]').type('invalid_user');
       cy.get('input[name="password"]').type('invalid_password');
+      cy.intercept('POST','auth/login').as('login');
       cy.get('button[type="submit"]').click();
-      cy.on('window:alert', (message) => {
-          expect(message).to.equal('invalid_credentials');
+      cy.wait('@login').then(({ response }) => {
+          expect(response.statusCode).to.equal(401);
+          expect(response.body.error).to.equal('invalid_credentials');
       });
+      cy.url().should('include','/login');
   });
 });

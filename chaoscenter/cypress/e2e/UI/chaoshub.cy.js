@@ -17,15 +17,12 @@ describe('testing chaoshub via UI', () => {
         cy.get('input[name="repoBranch"]').type('master');
         cy.get('div[data-testid = "dropdown-button"]').click();
         cy.contains('GitHub').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('addChaosHub', 'addChaosHub');
         cy.get('button[aria-label = "Connect Hub"]').click();
-        cy.wait('@Query');
-        cy.on('window:alert', () => {
-            expect(message).to.equal('Chaoshub added successfully');
-        });
-        
+        cy.expectGraphQLSuccess('addChaosHub');
+
         //Checks if chaoshub is connected
-        cy.get('[class="chaos_ChaosHubs-module_connectionStatus_PWHgAA"]').eq(1).contains('Connected').should('exist');
+        cy.get('[class*="ChaosHubs-module_connectionStatus"]').eq(1).contains('Connected').should('exist');
         cy.get('.bp3-card').eq(1).click();
         cy.contains('ChaosHubs').click();
         
@@ -40,10 +37,9 @@ describe('testing chaoshub via UI', () => {
         cy.get('input[name="repoBranch"]').type('1');
         cy.get('div[data-testid = "dropdown-button"]').click();
         cy.contains('GitHub').click();
+        cy.interceptGraphQL('addChaosHub', 'addDuplicateChaosHub');
         cy.get('button[aria-label = "Connect Hub"]').click();
-        cy.on('window:alert', () => {
-            expect(message).to.equal('name already exists');
-        });
+        cy.expectGraphQLError('addDuplicateChaosHub', 'name already exists');
     });
 
     it('Edit ChaosHub [Change chaoshub name]', () => {
@@ -53,22 +49,19 @@ describe('testing chaoshub via UI', () => {
         cy.contains('Edit Hub').click();
         cy.get('input[name="name"]').clear().type('sample1');
         cy.contains('Continue').click();
-        cy.intercept('POST','/api/query').as('Query');
+        cy.interceptGraphQL('updateChaosHub', 'updateChaosHub');
         cy.get('button[aria-label = "Edit ChaosHub"]').click();
-        cy.wait('@Query');
+        cy.expectGraphQLSuccess('updateChaosHub');
         cy.reload();
-        cy.on('window:alert', () => {
-            expect(message).to.equal('Chaoshub updated successfully');
-        });
+        cy.contains('sample1').should('exist');
     });
 
     it('Delete ChaosHub', () => {
         cy.visit('/login');
         cy.contains('ChaosHubs').click();
         cy.get('.Card--cardMenu .bp3-button').eq(1).click();
+        cy.interceptGraphQL('deleteChaosHub', 'deleteChaosHub');
         cy.contains('Delete Hub').click();
-        cy.on('window:alert', () => {
-            expect(message).to.equal('Hub Deleted Successfully');
-        });
+        cy.expectGraphQLSuccess('deleteChaosHub');
     });
 });
