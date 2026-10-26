@@ -9,11 +9,12 @@ describe('testing chaosinfra via UI', () => {
         cy.get('.TableV2--row').eq(0).click();
         cy.contains('Enable Chaos').click();
         cy.get('.bp3-form-content').type('exp11');
+        cy.contains('Next').click();
+        cy.contains('Next').click();
+        // the infrastructure is registered when the manifest is downloaded
         cy.interceptGraphQL('registerInfra', 'registerInfra');
-        cy.contains('Next').click();
-        cy.contains('Next').click();
-        cy.expectGraphQLSuccess('registerInfra');
         cy.contains('Download').click();
+        cy.expectGraphQLSuccess('registerInfra');
         cy.contains('Done').click();   
     });
 

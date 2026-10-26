@@ -4,7 +4,6 @@ describe('testing chaoshub via UI', () => {
     });
 
     it('Create new ChaosHub', () => {
-        cy.visit('/dashboard');
         cy.contains('ChaosHubs').click();
         cy.contains('Litmus ChaosHub').should('exist');
         //cy.contains('Connected').should('exist');
@@ -43,7 +42,7 @@ describe('testing chaoshub via UI', () => {
     });
 
     it('Edit ChaosHub [Change chaoshub name]', () => {
-        cy.visit('/login');
+        cy.openDashboard();
         cy.contains('ChaosHubs').click();
         cy.get('.Card--cardMenu .bp3-button').eq(1).click();
         cy.contains('Edit Hub').click();
@@ -57,7 +56,7 @@ describe('testing chaoshub via UI', () => {
     });
 
     it('Delete ChaosHub', () => {
-        cy.visit('/login');
+        cy.openDashboard();
         cy.contains('ChaosHubs').click();
         cy.get('.Card--cardMenu .bp3-button').eq(1).click();
         cy.interceptGraphQL('deleteChaosHub', 'deleteChaosHub');
