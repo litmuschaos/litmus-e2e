@@ -213,6 +213,15 @@ class AssembleTest(unittest.TestCase):
             items["chaoscenter"] = (run(day + "T21:10:00Z", cypress, rid=12), [job("frontend / run-litmus", cypress)], [])
         return {day: items}
 
+    def test_build_records_the_commit_of_its_runs(self):
+        cycles = self.cycles("success")
+        for run_, _, _ in cycles["2026-10-25"].values():
+            run_["head_sha"] = "0123456789abcdef0123456789abcdef01234567"
+        latest, _ = br.assemble("o/r", CONFIG, cycles, {"builds": []}, CATALOG, self.NOW)
+        self.assertEqual(latest["build"]["sha"], "0123456789abcdef0123456789abcdef01234567")
+        latest, _ = br.assemble("o/r", CONFIG, self.cycles("success"), {"builds": []}, CATALOG, self.NOW)
+        self.assertIsNone(latest["build"]["sha"])
+
     def test_build_is_incomplete_when_a_required_suite_did_not_run(self):
         latest, history = br.assemble("o/r", CONFIG, self.cycles("success", cypress=None), {"builds": []}, CATALOG, self.NOW)
         self.assertEqual(latest["build"]["status"], "incomplete")

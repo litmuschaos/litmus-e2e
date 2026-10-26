@@ -431,8 +431,10 @@ def build_entry(cycle, items, config, catalog):
         tests.extend(tst)
     started = [parse_time(r["startedAt"]) for r in records if r["startedAt"]]
     ended = [parse_time(r["startedAt"]) + dt.timedelta(seconds=r["durationSec"]) for r in records if r["startedAt"] and r["durationSec"] is not None]
+    shas = [run["head_sha"] for run, _, _ in items.values() if run and run.get("head_sha")]
     build = {
         "id": cycle,
+        "sha": max(set(shas), key=shas.count) if shas else None,
         "status": overall_status(records, config),
         "startedAt": iso(min(started)) if started else None,
         "finishedAt": iso(max(ended)) if ended else None,
@@ -650,6 +652,7 @@ def main(argv=None):
     parser.add_argument("--previous", default=None, help="url or path of the history.json published earlier")
     parser.add_argument("--repo-root", default=os.path.abspath(os.path.join(HERE, "..", "..")))
     parser.add_argument("--branch", default=None, help="branch whose runs are reported, the default branch when omitted (use it to try the report on a branch)")
+    parser.add_argument("--version", default=None, help="version or tag shown for the newest build (for a release candidate or a GA build)")
     parser.add_argument("--now", default=None, help="override of the current time, for reproducible runs (2006-01-02T15:04:05Z)")
     args = parser.parse_args(argv)
     if not args.repo:
@@ -675,6 +678,8 @@ def main(argv=None):
     cycles = {c: v for c, v in cycles.items() if c not in known or c in recent}
     catalog = load_catalog(args.repo_root, config)
     latest, history = assemble(args.repo, config, cycles, previous, catalog, now)
+    if args.version and latest["build"]:
+        latest["build"]["version"] = args.version
     validate(latest, history)
     write_json(os.path.join(args.out, "latest.json"), latest)
     write_json(os.path.join(args.out, "history.json"), history)

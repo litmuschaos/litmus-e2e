@@ -10,6 +10,8 @@ publishing broken data.
 |-------|---------|
 | `build` | The newest nightly build, `null` when no nightly workflow ran in the history window. |
 | `build.id` | Name of the cycle (see below), `YYYY-MM-DD`. |
+| `build.sha` | Commit of the runs of the build, `null` when the Actions API did not return one. |
+| `build.version` | Optional. Version or tag of a release candidate or GA build, written by `build_report.py --version`. The dashboard shows the short `sha` when it is absent. |
 | `build.status` | `passed`, `failed` or `incomplete`. Passed only when every **required** workflow ran and passed. Failed when a required workflow failed. Incomplete when a required workflow did not run, was cancelled, skipped or is still running. |
 | `build.stale` / `build.ageHours` | `true` when the build started more than `staleAfterHours` ago, so an old result is never shown as the latest one. |
 | `build.suites.<id>` | `status` and `counts` of the required workflows of the suite (`bdd`, `frontend`), and `optionalCounts` of its optional workflows (cloud). Suites are never merged into one pass rate. |
@@ -53,3 +55,15 @@ still returns. A missing or unreadable file starts a new history.
   set (`pkg.RunSpecs`) and `chaoscenter-e2e-junit` written by Cypress. Runs without these artifacts are reported at job
   level.
 * The experiment catalogue: the test files, the `Makefile` targets and the `make` steps of the nightly workflows.
+
+## Release candidate and GA builds
+
+The files above describe one stream of builds. The dashboard shows three: the nightly build in `data/`, the release
+candidate in `data/rc/` and the GA build in `data/ga/`, each with its own `latest.json` and `history.json`. The RC and
+GA streams are produced by the same generator from the runs of the release branch or tag of that stream:
+
+```bash
+python3 scripts/report/build_report.py --repo OWNER/REPO --branch release-3.10 --version v3.10.0-rc.1 --out dashboard/data/rc
+```
+
+A stream that was never published has no files and is shown as "no run yet".
