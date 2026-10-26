@@ -296,11 +296,18 @@ def build_workflow_record(wf, run, jobs, junit_cases, catalog, config):
                       "message": msg, "source": "job", "job": job["name"], "url": job["url"]})
     if not junit_cases and record["jobs"]:
         record["resultsSource"] = "jobs"
+    # a spec repeated with the same text in one job is numbered, in the order of the report
+    within = {}
+    for t in tests:
+        key = (t["id"], t.get("job"))
+        within[key] = within.get(key, 0) + 1
+        if within[key] > 1:
+            t["id"] += "#%d" % within[key]
+    # the same test in several jobs of a workflow is told apart by the job
     seen = {}
     for t in tests:
         seen[t["id"]] = seen.get(t["id"], 0) + 1
     for t in tests:
-        # the same test in several jobs of a workflow is told apart by the job
         if seen[t["id"]] > 1 and t.get("job"):
             t["id"] += "@" + t["job"]
     for t in tests:

@@ -118,6 +118,12 @@ class RecordTest(unittest.TestCase):
         br.validate(report, {"schemaVersion": 1, "generatedAt": "x", "repository": "o/r", "builds": []})
 
 
+    def test_a_repeated_spec_gets_a_number(self):
+        case = {"name": "same", "classname": "pod-delete", "suiteName": "pod-delete", "status": "passed", "durationSec": 1, "message": "", "job": "Job_A"}
+        _, tests = br.build_workflow_record(self.wf("pod-level"), run("2026-10-25T22:00:00Z"), [job("Job_A", "success")], [case, dict(case, status="failed")], CATALOG, CONFIG)
+        self.assertEqual([t["id"] for t in tests], ["bdd/pod-delete/same", "bdd/pod-delete/same#2"])
+
+
 class StatusTest(unittest.TestCase):
     def records(self, **states):
         return [{"suite": "bdd" if k != "chaoscenter" else "frontend", "required": CONFIG_REQ[k], "status": v} for k, v in states.items()]
