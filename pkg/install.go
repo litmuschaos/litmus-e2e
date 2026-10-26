@@ -411,6 +411,42 @@ func setEngineVar(chaosEngine *v1alpha1.ChaosEngine, testsDetails *types.TestDet
 
 // InstallGoChaosEngine installs the given go based chaos engine
 func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets) error {
+	return installGoChaosEngine(testsDetails, chaosEngine, engineNamespace, setAppInfo, clients, nil)
+}
+
+// InstallGoChaosEngineWithFailingProbe installs the engine with a cmdProbe that can never succeed, so that the
+// experiment ends with the Fail verdict while the target is found and the chaos is injected. The probe is added to the
+// json document, the typed ChaosEngine of the pinned operator library does not know the current run properties.
+func InstallGoChaosEngineWithFailingProbe(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, clients environment.ClientSets) error {
+	failing := map[string]interface{}{
+		"name": "always-failing-probe",
+		"type": "cmdProbe",
+		"mode": "EOT",
+		"cmdProbe/inputs": map[string]interface{}{
+			"command":    "echo present",
+			"comparator": map[string]interface{}{"type": "string", "criteria": "contains", "value": "absent"},
+		},
+		"runProperties": map[string]interface{}{"probeTimeout": "5s", "interval": "2s", "retry": 1},
+	}
+	addProbe := func(doc map[string]interface{}) error {
+		spec, _ := doc["spec"].(map[string]interface{})
+		exps, _ := spec["experiments"].([]interface{})
+		if len(exps) == 0 {
+			return errors.Errorf("the ChaosEngine has no experiment to add a probe to")
+		}
+		exp, _ := exps[0].(map[string]interface{})
+		expSpec, _ := exp["spec"].(map[string]interface{})
+		if expSpec == nil {
+			expSpec = map[string]interface{}{}
+			exp["spec"] = expSpec
+		}
+		expSpec["probe"] = []interface{}{failing}
+		return nil
+	}
+	return installGoChaosEngine(testsDetails, chaosEngine, engineNamespace, types.SetupAppInfoIfEmpty, clients, addProbe)
+}
+
+func installGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1.ChaosEngine, engineNamespace string, setAppInfo bool, clients environment.ClientSets, mutate func(map[string]interface{}) error) error {
 
 	//Fetch Engine file
 	fileInput, err := FetchManifest(testsDetails.EnginePath)
@@ -435,6 +471,18 @@ func InstallGoChaosEngine(testsDetails *types.TestDetails, chaosEngine *v1alpha1
 	fileData, err := json.Marshal(chaosEngine)
 	if err != nil {
 		return errors.Errorf("Failed to marshal ChaosEngine %v", err)
+	}
+	if mutate != nil {
+		doc := map[string]interface{}{}
+		if err = json.Unmarshal(fileData, &doc); err != nil {
+			return errors.Errorf("Failed to read back the ChaosEngine %v", err)
+		}
+		if err = mutate(doc); err != nil {
+			return err
+		}
+		if fileData, err = json.Marshal(doc); err != nil {
+			return errors.Errorf("Failed to marshal ChaosEngine %v", err)
+		}
 	}
 
 	//Creating chaos engine
