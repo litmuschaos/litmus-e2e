@@ -61,6 +61,8 @@ type TestDetails struct {
 	Sequence                  string
 	Version                   string
 	TargetNodes               string
+	ContainerRuntime          string
+	SocketPath                string
 	NodeLabel                 string
 	AzureResourceGroup        string
 	AzureInstanceName         string
