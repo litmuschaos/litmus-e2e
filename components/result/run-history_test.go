@@ -103,9 +103,6 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
 			environment.GetENV(&testsDetails, "pod-delete", "run-history")
 
-			// Changing app name in testDetails to get a failed verdict
-			testsDetails.AppLabel = "abcXYZ"
-
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
 			err = pkg.OperatorStatusCheck(&testsDetails, clients)
@@ -114,10 +111,15 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			// Get Run History
 			runHistory := pkg.GetRunHistoryStatus(&testsDetails, clients)
 
-			// Prepare Chaos Execution
-			By("[Prepare]: Prepare Chaos Execution")
-			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
-			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)
+			// Prepare Chaos Execution with a probe that cannot succeed: the chaos is injected into the
+			// application, the experiment ends with the Fail verdict
+			By("[Prepare]: Prepare Chaos Execution with a failing probe")
+			err = pkg.InstallGoRbac(&testsDetails, testsDetails.ChaosNamespace)
+			Expect(err).To(BeNil(), "Failed to install rbac due to {%v}", err)
+			err = pkg.InstallGoChaosExperiment(&testsDetails, &chaosExperiment, testsDetails.ChaosNamespace, clients)
+			Expect(err).To(BeNil(), "Failed to install chaos experiment due to {%v}", err)
+			err = pkg.InstallGoChaosEngineWithFailingProbe(&testsDetails, &chaosEngine, testsDetails.ChaosNamespace, clients)
+			Expect(err).To(BeNil(), "Failed to install chaosengine due to {%v}", err)
 
 			//Checking runner pod running state
 			By("[Status]: Runner pod running status check")
@@ -138,8 +140,7 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Failed to get the ChaosEngine Verdict due to {%v}", err)
-			// an application that cannot be found is reported as Error by current litmus-go, not as Fail
-			Expect(chaosEngineVerdict).To(Equal("Error"), "ChaosEngine Verdict is not Error due to {%v}", err)
+			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not Fail due to {%v}", err)
 
 			// Checking the chaosresult run history verdict
 			By("[Verdict]: Checking the chaosresult run history verdict")
