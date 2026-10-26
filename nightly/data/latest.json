@@ -1,8 +1,8 @@
 {
  "build": {
   "ageHours": 0.5,
-  "durationSec": 1745,
-  "finishedAt": "2026-10-26T20:04:32Z",
+  "durationSec": 1779,
+  "finishedAt": "2026-10-26T20:05:06Z",
   "id": "2026-10-26",
   "sha": "c8e7261a287a954fbf1df56074b2d27da553f94d",
   "stale": false,
@@ -12,11 +12,11 @@
    "bdd": {
     "counts": {
      "error": 2,
-     "failed": 5,
-     "passRate": 91.9,
-     "passed": 79,
+     "failed": 6,
+     "passRate": 92.3,
+     "passed": 96,
      "skipped": 0,
-     "total": 86
+     "total": 104
     },
     "optionalCounts": {
      "error": 0,
@@ -138,17 +138,17 @@
     "category": "node-level",
     "counts": {
      "error": 0,
-     "failed": 0,
-     "passed": 0,
+     "failed": 1,
+     "passed": 17,
      "skipped": 0
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 1776,
+    "failureKind": "tests",
     "id": "node-level",
     "jobs": [
      {
-      "conclusion": "in_progress",
-      "durationSec": null,
+      "conclusion": "failure",
+      "durationSec": 1771,
       "failedSteps": [
        "TCID-KIND-GENERIC-INFRA-NODE-SELECTOR"
       ],
@@ -160,11 +160,11 @@
     "name": "Node level",
     "note": null,
     "required": true,
-    "resultsSource": "jobs",
+    "resultsSource": "junit",
     "runId": 40388103057,
     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
     "startedAt": "2026-10-26T19:35:30Z",
-    "status": "in_progress",
+    "status": "failed",
     "suite": "bdd",
     "trigger": "workflow_dispatch"
    },
@@ -988,8 +988,16 @@
    "env-from-secret-and-cm",
    "experiment-image",
    "job-cleanup-policy",
+   "kubelet-service-kill",
    "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
    "pod-affected-perc-ton-series",
+   "pod-autoscaler",
    "pod-cpu-hog",
    "pod-cpu-hog-exec",
    "pod-delete",
@@ -1002,9 +1010,10 @@
    "pod-network-loss",
    "reconcile-resiliency",
    "service-account",
-   "target-pod"
+   "target-pod",
+   "with-appinfo"
   ],
-  "executedPercent": 67.6,
+  "executedPercent": 94.1,
   "notScheduled": [
    "auxiliary-app",
    "experiment-404"
@@ -1046,20 +1055,11 @@
    "with-appinfo"
   ],
   "scheduledNotExecuted": [
-   "kubelet-service-kill",
-   "node-cpu-hog",
-   "node-drain",
-   "node-io-stress",
-   "node-memory-hog",
-   "node-selector",
-   "node-taint",
    "pod-affected-perc-ton-parallel",
-   "pod-autoscaler",
-   "run-history",
-   "with-appinfo"
+   "run-history"
   ]
  },
- "generatedAt": "2026-10-26T20:04:41Z",
+ "generatedAt": "2026-10-26T20:05:15Z",
  "metrics": {
   "buildsConsidered": 1,
   "durationChange": null,
@@ -1078,6 +1078,18 @@
     "suite": "bdd"
    },
    {
+    "durationSec": 210.85,
+    "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using an invalid TARGET_NODES value",
+    "name": "BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using an invalid TARGET_NODES value",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 177.046,
+    "id": "bdd/node-io-stress/BDD of node-io-stress experiment Check for node io stress experiment Should check for creation of runner pod",
+    "name": "BDD of node-io-stress experiment Check for node io stress experiment Should check for creation of runner pod",
+    "suite": "bdd"
+   },
+   {
     "durationSec": 174.713,
     "id": "bdd/pod-io-stress/BDD of pod-io-stress experiment Check for pod-io-stress experiment Should check for creation of runner pod",
     "name": "BDD of pod-io-stress experiment Check for pod-io-stress experiment Should check for creation of runner pod",
@@ -1090,39 +1102,27 @@
     "suite": "bdd"
    },
    {
+    "durationSec": 164.946,
+    "id": "bdd/node-memory-hog/BDD of node-memory-hog experiment Check for node memory hog experiment Should check for creation of runner pod",
+    "name": "BDD of node-memory-hog experiment Check for node memory hog experiment Should check for creation of runner pod",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 129.826,
+    "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using a valid TARGET_NODES value",
+    "name": "BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using a valid TARGET_NODES value",
+    "suite": "bdd"
+   },
+   {
     "durationSec": 120.889,
     "id": "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Check for pod network corruption Should check for creation of runner pod",
     "name": "BDD of pod-network-corruption experiment Check for pod network corruption Should check for creation of runner pod",
     "suite": "bdd"
    },
    {
-    "durationSec": 114.636,
-    "id": "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Check disk fill experiment with annotation true Should check the disk fill experiment when app is annotated",
-    "name": "BDD of disk-fill experiment Check for disk fill chaos experiment Check disk fill experiment with annotation true Should check the disk fill experiment when app is annotated",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 114.617,
-    "id": "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Should check for creation of runner pod for disk fill",
-    "name": "BDD of disk-fill experiment Check for disk fill chaos experiment Should check for creation of runner pod for disk fill",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 114.526,
-    "id": "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for disk fill experiment with 50% affected in parallel Should check the disk fill experiment when pod affected percentage is 50 and mode is parallel",
-    "name": "BDDs of pod level experiments to check the multiple deploy feature Check for disk fill experiment with 50% affected in parallel Should check the disk fill experiment when pod affected percentage is 50 and mode is parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 110.623,
-    "id": "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check pod memory hog with 50% affected in parallel Should check the experiment when pod affected percentage is 50 and mode is parallel",
-    "name": "BDDs of pod level experiments to check the multiple deploy feature Check pod memory hog with 50% affected in parallel Should check the experiment when pod affected percentage is 50 and mode is parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 109.565,
-    "id": "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Check for pod-memory-hog Should check for creation of runner pod",
-    "name": "BDD of pod-memory-hog experiment Check for pod-memory-hog Should check for creation of runner pod",
+    "durationSec": 120.601,
+    "id": "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod",
+    "name": "BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod",
     "suite": "bdd"
    }
   ],
@@ -2266,6 +2266,314 @@
    "suite": "bdd",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388094769/job/121801606001",
    "workflow": "pod-level"
+  },
+  {
+   "durationSec": 0.095,
+   "group": "app-cleanup",
+   "id": "bdd/app-cleanup/BDD of Application Cleanup Checking for the application Should check for deletion of application@Node_Level_Test",
+   "job": "Node_Level_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Application Cleanup Checking for the application Should check for deletion of application",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 5.163,
+   "group": "app-deploy",
+   "id": "bdd/app-deploy/BDD of Application Deployment Check for the application Should check for creation of application@Node_Level_Test",
+   "job": "Node_Level_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Application Deployment Check for the application Should check for creation of application",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 5.704,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Node_Level_Test",
+   "job": "Node_Level_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 120.601,
+   "group": "kubelet-service-kill",
+   "id": "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 0.06,
+   "group": "kubelet-service-kill",
+   "id": "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should uncordon the app node",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should uncordon the app node",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 12.739,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@Node_Level_Test",
+   "job": "Node_Level_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 109.674,
+   "group": "node-cpu-hog",
+   "id": "bdd/node-cpu-hog/BDD of node-cpu-hog experiment Check for node cpu hog experiment Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-cpu-hog experiment Check for node cpu hog experiment Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 110.178,
+   "group": "node-drain",
+   "id": "bdd/node-drain/BDD of node-drain experiment Check for node drain experiment Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-drain experiment Check for node drain experiment Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 0.056,
+   "group": "node-drain",
+   "id": "bdd/node-drain/BDD of node-drain experiment Check for node drain experiment Should uncordon the app node for node drain",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-drain experiment Check for node drain experiment Should uncordon the app node for node drain",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 177.046,
+   "group": "node-io-stress",
+   "id": "bdd/node-io-stress/BDD of node-io-stress experiment Check for node io stress experiment Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-io-stress experiment Check for node io stress experiment Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 164.946,
+   "group": "node-memory-hog",
+   "id": "bdd/node-memory-hog/BDD of node-memory-hog experiment Check for node memory hog experiment Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-memory-hog experiment Check for node memory hog experiment Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 129.826,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using a valid TARGET_NODES value",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/node-selector_test.go:26\nChaosResult Verdict check failed due to {failed to inject chaos in the target node litmus-e2e-worker, the chaosresult lists the targets []}\nExpected\n    <*errors.fundamental | 0xc0004dc3f0>: {\n        msg: \"failed to inject chaos in the target node litmus-e2e-worker, the chaosresult lists the targets []\",\n        stack: [0x1216cda, 0x125c4a7, 0x11f9e23, 0x11f9a3c, 0x11f9007, 0x11fcd8f, 0x11fc432, 0x12026d1, 0x12021e7, 0x12019d7, 0x1203fc6, 0x1205718, 0x120546d, 0x1214485, 0x125b6ec, 0x51dcc5, 0x474081],\n    }\nto be nil\n/ho…",
+   "name": "BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using a valid TARGET_NODES value",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 210.85,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using an invalid TARGET_NODES value",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using an invalid TARGET_NODES value",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 105.128,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node label Executes the node-cpu-hog experiment using a valid NODE_LABEL value",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of Node selector Test for target node selection by node label Executes the node-cpu-hog experiment using a valid NODE_LABEL value",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 29.673,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of Node selector Test for target node selection by node label Should execute the node-cpu-hog experiment using an invalid NODE_LABEL value",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of Node selector Test for target node selection by node label Should execute the node-cpu-hog experiment using an invalid NODE_LABEL value",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 114.453,
+   "group": "node-selector",
+   "id": "bdd/node-selector/BDD of Node selector Test for target node selection when neither NODE_LABEL nor TARGET_NODES is provided Executes the node-cpu-hog experiment without TARGET_NODES and NODE_LABEL",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of Node selector Test for target node selection when neither NODE_LABEL nor TARGET_NODES is provided Executes the node-cpu-hog experiment without TARGET_NODES and NODE_LABEL",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 110.008,
+   "group": "node-taint",
+   "id": "bdd/node-taint/BDD of node-taint experiment Check for litmus components Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-taint experiment Check for litmus components Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 0.057,
+   "group": "node-taint",
+   "id": "bdd/node-taint/BDD of node-taint experiment Check for litmus components Should uncordon the app node",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of node-taint experiment Check for litmus components Should uncordon the app node",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 115.978,
+   "group": "pod-autoscaler",
+   "id": "bdd/pod-autoscaler/BDD of pod-autoscaler experiment Check for litmus components Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDD of pod-autoscaler experiment Check for litmus components Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 15.667,
+   "group": "with-appinfo",
+   "id": "bdd/with-appinfo/BDDs to check the node level experiments with appinfo cleanup for litmus components Should delete all the litmus CRs",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDDs to check the node level experiments with appinfo cleanup for litmus components Should delete all the litmus CRs",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 104.549,
+   "group": "with-appinfo",
+   "id": "bdd/with-appinfo/BDDs to check the node level experiments with appinfo Check for kubelet service kill experiment with appinfo Should check for creation of runner pod",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDDs to check the node level experiments with appinfo Check for kubelet service kill experiment with appinfo Should check for creation of runner pod",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
+  },
+  {
+   "durationSec": 0.056,
+   "group": "with-appinfo",
+   "id": "bdd/with-appinfo/BDDs to check the node level experiments with appinfo Check to uncordon the target node Should uncordon the app node",
+   "job": "Node_Level_Test",
+   "kind": "test",
+   "message": "",
+   "name": "BDDs to check the node level experiments with appinfo Check to uncordon the target node Should uncordon the app node",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
+   "workflow": "node-level"
   },
   {
    "durationSec": 0.102,

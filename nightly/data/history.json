@@ -1,7 +1,7 @@
 {
  "builds": [
   {
-   "durationSec": 1745,
+   "durationSec": 1779,
    "id": "2026-10-26",
    "results": {
     "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
@@ -30,6 +30,8 @@
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod#2": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs#2": "p",
+    "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should check for creation of runner pod": "p",
+    "bdd/kubelet-service-kill/BDD of kubelet-service-kill experiment Check for kubelet service kill experiment Should uncordon the app node": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for container kill experiment with 50% affected in parallel Should check the container kill with pod affected percentage 50 and mode is parallel": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for disk fill experiment with 50% affected in parallel Should check the disk fill experiment when pod affected percentage is 50 and mode is parallel": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for pod-delete experiment with 50% affected in parallel Should check for the pod delete experiment": "p",
@@ -39,12 +41,25 @@
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Setup Multi deploy application Should create multiple application deployment": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Should delete multiple application deployment": "p",
     "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature cleanup for litmus components Should delete all the litmus CRs": "p",
+    "bdd/node-cpu-hog/BDD of node-cpu-hog experiment Check for node cpu hog experiment Should check for creation of runner pod": "p",
+    "bdd/node-drain/BDD of node-drain experiment Check for node drain experiment Should check for creation of runner pod": "p",
+    "bdd/node-drain/BDD of node-drain experiment Check for node drain experiment Should uncordon the app node for node drain": "p",
+    "bdd/node-io-stress/BDD of node-io-stress experiment Check for node io stress experiment Should check for creation of runner pod": "p",
+    "bdd/node-memory-hog/BDD of node-memory-hog experiment Check for node memory hog experiment Should check for creation of runner pod": "p",
+    "bdd/node-selector/BDD of Node selector Test for target node selection by node label Executes the node-cpu-hog experiment using a valid NODE_LABEL value": "p",
+    "bdd/node-selector/BDD of Node selector Test for target node selection by node label Should execute the node-cpu-hog experiment using an invalid NODE_LABEL value": "p",
+    "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using a valid TARGET_NODES value": "f",
+    "bdd/node-selector/BDD of Node selector Test for target node selection by node name Execute the node-cpu-hog experiment using an invalid TARGET_NODES value": "p",
+    "bdd/node-selector/BDD of Node selector Test for target node selection when neither NODE_LABEL nor TARGET_NODES is provided Executes the node-cpu-hog experiment without TARGET_NODES and NODE_LABEL": "p",
+    "bdd/node-taint/BDD of node-taint experiment Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/node-taint/BDD of node-taint experiment Check for litmus components Should uncordon the app node": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check for container kill experiment with pod affected percentage 100 and sequence serial Should check the container kill with pod affected percentage 100 and mode is parallel": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check for pod-delete experiment with pod affected percentage 100 and sequence serial Should check for the pod delete experiment": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod cpu hog experiment with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod memory hog experiment with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod netowork corruption with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
     "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series cleanup for litmus components Should delete all the litmus CRs": "p",
+    "bdd/pod-autoscaler/BDD of pod-autoscaler experiment Check for litmus components Should check for creation of runner pod": "p",
     "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Abort-Chaos check for pod cpu hog experiment Should check the abort of pod-cpu-hog-exec experiment": "p",
     "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check pod cpu hog experiment with annotation true Should check the experiment when app is annotated": "f",
     "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check pod-cpu-hog-exec experiment Should check for creation of runner pod": "f",
@@ -90,6 +105,9 @@
     "bdd/service-account/BDD of serviceaccount test Cleanup litmus components Should delete all the litmus CRs": "p",
     "bdd/target-pod/BDD of pod-delete experiment Check for chaos engine verdict Should check for the verdict of experiment": "p",
     "bdd/target-pod/BDD of pod-delete experiment Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/with-appinfo/BDDs to check the node level experiments with appinfo Check for kubelet service kill experiment with appinfo Should check for creation of runner pod": "p",
+    "bdd/with-appinfo/BDDs to check the node level experiments with appinfo Check to uncordon the target node Should uncordon the app node": "p",
+    "bdd/with-appinfo/BDDs to check the node level experiments with appinfo cleanup for litmus components Should delete all the litmus CRs": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Create New User": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Disable user": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Edit user password": "p",
@@ -156,11 +174,11 @@
     "bdd": {
      "counts": {
       "error": 2,
-      "failed": 5,
-      "passRate": 91.9,
-      "passed": 79,
+      "failed": 6,
+      "passRate": 92.3,
+      "passed": 96,
       "skipped": 0,
-      "total": 86
+      "total": 104
      },
      "optionalCounts": {
       "error": 0,
@@ -274,15 +292,15 @@
     "node-level": {
      "counts": {
       "error": 0,
-      "failed": 0,
-      "passed": 0,
+      "failed": 1,
+      "passed": 17,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
+     "durationSec": 1776,
+     "failureKind": "tests",
      "runId": 40388103057,
      "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388103057",
-     "status": "in_progress"
+     "status": "failed"
     },
     "pod-level": {
      "counts": {
@@ -313,7 +331,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T20:04:41Z",
+ "generatedAt": "2026-10-26T20:05:15Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
