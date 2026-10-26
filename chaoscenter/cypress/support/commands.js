@@ -51,3 +51,25 @@ Cypress.Commands.add('expectGraphQLError', (alias, message) => {
     expect(response.body.errors[0].message).to.contain(message);
   });
 });
+
+
+// ChaosCenter forces a password change at the first login: the UI redirects to the password reset page and the
+// API answers "Unauthorized" until it is done. Changes the initial password of the admin to the one of the suite,
+// it does nothing when that was already done.
+Cypress.Commands.add('ensureAdminPassword', () => {
+  const { username, password, initialPassword } = Cypress.env();
+  cy.request({ method: 'POST', url: 'auth/login', failOnStatusCode: false, body: { username, password: initialPassword } }).then((initial) => {
+    if (initial.status === 200 && initialPassword !== password) {
+      cy.request({
+        method: 'POST',
+        url: 'auth/update/password',
+        headers: { Authorization: `Bearer ${initial.body.accessToken}` },
+        body: { username, oldPassword: initialPassword, newPassword: password },
+      }).its('status').should('eq', 200);
+    }
+  });
+  // the password of the suite has to work, whatever state the installation was in
+  cy.request({ method: 'POST', url: 'auth/login', failOnStatusCode: false, body: { username, password } }).then((res) => {
+    expect(res.status, 'login of ' + username + ' with the password of the suite').to.equal(200);
+  });
+});
