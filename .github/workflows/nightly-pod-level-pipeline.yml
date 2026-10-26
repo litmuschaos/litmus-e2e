@@ -71,11 +71,11 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup 
         
       - name: Upload test results
@@ -163,11 +163,11 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup         
         
       - name: Upload test results
@@ -235,11 +235,11 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup      
         
       - name: Upload test results
@@ -307,11 +307,11 @@ jobs:
           cat logs.txt        
         
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup      
         
       - name: Upload test results
@@ -386,16 +386,16 @@ jobs:
           cat logs.txt      
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
           
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup   
         
       - name: Upload test results
@@ -470,16 +470,16 @@ jobs:
           cat logs.txt   
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}       
           
       - name: Application Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make app-cleanup 
 
       - name: Litmus Cleanup
-        if: ${{ always() }}      
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: make litmus-cleanup             
         
       - name: Upload test results
@@ -555,7 +555,7 @@ jobs:
           cat logs.txt        
 
       - name: Experiment Tunables Cleanup
-        if: ${{ always() }}
+        if: ${{ always() && steps.cluster.outcome == 'success' }}
         run: |
           kubectl delete chaosengines --all -n ${CHAOS_NAMESPACE}
           kubectl delete ns ${CHAOS_NAMESPACE}
