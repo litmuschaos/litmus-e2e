@@ -1,7 +1,7 @@
 {
  "builds": [
   {
-   "durationSec": 721,
+   "durationSec": 1745,
    "id": "2026-10-26",
    "results": {
     "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
@@ -13,6 +13,11 @@
     "bdd/appinfo/BDD of appinfo test Check for litmus components Should delete all the litmus CRs@Chaos_Engine_Component_Test": "p",
     "bdd/appinfo/BDD of appinfo test Check for litmus components Should delete all the litmus CRs@Chaos_Experiment_Component_Test": "p",
     "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/container-kill/BDD of container-kill experiment Check for container-kill experiment Abort-Chaos check for container kill chaos Should check the abort of container-kill experiment": "p",
+    "bdd/container-kill/BDD of container-kill experiment Check for container-kill experiment Check with annotation true for container kill experiment Should check the container kill experiment when app is annotated": "p",
+    "bdd/container-kill/BDD of container-kill experiment Check for container-kill experiment Should check for creation of runner pod": "p",
+    "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Check disk fill experiment with annotation true Should check the disk fill experiment when app is annotated": "p",
+    "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Should check for creation of runner pod for disk fill": "p",
     "bdd/engine-state/BDD of engine-state test Check for chaos engine verdict Should check for the verdict of engine": "p",
     "bdd/engine-state/BDD of engine-state test Check for litmus components Should check for creation of runner pod": "p",
     "bdd/engine-state/BDD of engine-state test Cleanup litmus components Should delete all the litmus CRs": "p",
@@ -25,6 +30,60 @@
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod#2": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs#2": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for container kill experiment with 50% affected in parallel Should check the container kill with pod affected percentage 50 and mode is parallel": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for disk fill experiment with 50% affected in parallel Should check the disk fill experiment when pod affected percentage is 50 and mode is parallel": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check for pod-delete experiment with 50% affected in parallel Should check for the pod delete experiment": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check pod cpu hog experiment with 50% affected in parallel Should check the experiment when pod affected percentage is 50 and mode is parallel": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check pod memory hog with 50% affected in parallel Should check the experiment when pod affected percentage is 50 and mode is parallel": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Check pod netowork corruption experiment with 50% affected in parallel Should check the experiment when pod affected percentage is 50 and mode is parallel": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Setup Multi deploy application Should create multiple application deployment": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature Should delete multiple application deployment": "p",
+    "bdd/multiple-app-deploy/BDDs of pod level experiments to check the multiple deploy feature cleanup for litmus components Should delete all the litmus CRs": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check for container kill experiment with pod affected percentage 100 and sequence serial Should check the container kill with pod affected percentage 100 and mode is parallel": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check for pod-delete experiment with pod affected percentage 100 and sequence serial Should check for the pod delete experiment": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod cpu hog experiment with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod memory hog experiment with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series Check pod netowork corruption with pod affected percentage 100 and sequence serial Should check the experiment when pod affected percentage is 100 and mode is parallel": "p",
+    "bdd/pod-affected-perc-ton-series/BDDs to check pod level experiment with affected percentage 100 and sequence in series cleanup for litmus components Should delete all the litmus CRs": "p",
+    "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Abort-Chaos check for pod cpu hog experiment Should check the abort of pod-cpu-hog-exec experiment": "p",
+    "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check pod cpu hog experiment with annotation true Should check the experiment when app is annotated": "f",
+    "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check pod-cpu-hog-exec experiment Should check for creation of runner pod": "f",
+    "bdd/pod-cpu-hog-exec/BDD of pod-cpu-hog-exec experiment Check pod-cpu-hog-exec experiment Should check for the verdict of experiment": "f",
+    "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Abort-Chaos check for pod cpu hog experiment Should check the abort of pod-cpu-hog experiment": "p",
+    "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Check pod cpu hog experiment with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Check pod-cpu-hog experiment Should check for creation of runner pod": "p",
+    "bdd/pod-cpu-hog/BDD of pod-cpu-hog experiment Check pod-cpu-hog experiment Should check for the verdict of experiment": "p",
+    "bdd/pod-delete/BDD of pod-delete experiment Abort-Chaos check for pod delete experiment Should check the abort of pod-delete experiment": "p",
+    "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment Should check for the pod delete experiment": "p",
+    "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment Should check for the verdict of pod-delete experiment": "p",
+    "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment with annotation true Should check for the verdict of pod-delete experiment with annotation set to true": "p",
+    "bdd/pod-delete/BDD of pod-delete experiment Check for pod-delete experiment with annotation true Should check the pod delete experiment when app is annotated": "p",
+    "bdd/pod-io-stress/BDD of pod-io-stress experiment Abort-Chaos check for pod io stress experiment Should check the abort of pod-io-stress experiment": "p",
+    "bdd/pod-io-stress/BDD of pod-io-stress experiment Check for pod-io-stress experiment Should check for creation of runner pod": "p",
+    "bdd/pod-io-stress/BDD of pod-io-stress experiment Check pod io stress experiment with annotation true Should check for the verdict of experiment": "p",
+    "bdd/pod-io-stress/BDD of pod-io-stress experiment Check pod io stress experiment with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-level/job:PAP_100_Mode_Parallel": "e",
+    "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Abort-Chaos for pod memory hog experiment Should check the abort of pod-memory-hog-exec experiment": "p",
+    "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Check for pod-memory-hog-exec Should check for creation of runner pod": "f",
+    "bdd/pod-memory-hog-exec/BDD of pod-memory-hog-exec experiment Check pod memory hog experiment with annotation true Should check the experiment when app is annotated": "f",
+    "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Abort-Chaos for pod memory hog experiment Should check the abort of pod-memory-hog experiment": "p",
+    "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Check for pod-memory-hog Should check for creation of runner pod": "p",
+    "bdd/pod-memory-hog/BDD of pod-memory-hog experiment Check pod memory hog experiment with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Abort-Chaos check for pod network corruption Should check the abort of pod-network-corruption experiment": "p",
+    "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Check for pod network corruption Should check for creation of runner pod": "p",
+    "bdd/pod-network-corruption/BDD of pod-network-corruption experiment Check for pod network corruption with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-network-duplication/BDD of pod-network-duplication experiment Abort-Chaos check for pod network duplication experiment Should check the abort of pod-network-duplication experiment": "p",
+    "bdd/pod-network-duplication/BDD of pod-network-duplication experiment Check for pod network duplication experiment Should check for creation of runner pod": "p",
+    "bdd/pod-network-duplication/BDD of pod-network-duplication experiment Check for pod network duplication with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-network-latency/BDD of pod-network-latency experiment Abort-Chaos check for pod netowork latency experiment Should check the abort of pod-network-latency experiment": "p",
+    "bdd/pod-network-latency/BDD of pod-network-latency experiment Check for pod network experiment with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-network-latency/BDD of pod-network-latency experiment Check for pod network latency experiment Should check for creation of runner pod": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Abort-Chaos check for pod network loss experiment Should check the abort of pod-network-loss experiment": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pod network loss Should check for creation of runner pod": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pod network loss Should check for the verdict of experiment": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pod network loss experiment with annotation true Should check for the verdict of experiment": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pod network loss experiment with annotation true Should check the experiment when app is annotated": "p",
+    "bdd/pod-network-loss/BDD of pod-network-loss experiment Check for pumba lib of pod network loss experiment Should check the pod-network-loss experiment when lib is set to pumba": "p",
     "bdd/reconcile-resiliency/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
     "bdd/service-account/BDD of serviceaccount test Check for chaos engine verdict Should check for the verdict of engine": "p",
     "bdd/service-account/BDD of serviceaccount test Check for litmus components Should check for creation of runner pod": "p",
@@ -96,12 +155,12 @@
    "suites": {
     "bdd": {
      "counts": {
-      "error": 1,
-      "failed": 0,
-      "passRate": 96.3,
-      "passed": 26,
+      "error": 2,
+      "failed": 5,
+      "passRate": 91.9,
+      "passed": 79,
       "skipped": 0,
-      "total": 27
+      "total": 86
      },
      "optionalCounts": {
       "error": 0,
@@ -227,16 +286,16 @@
     },
     "pod-level": {
      "counts": {
-      "error": 0,
-      "failed": 0,
-      "passed": 0,
+      "error": 1,
+      "failed": 5,
+      "passed": 53,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
+     "durationSec": 1745,
+     "failureKind": "tests",
      "runId": 40388094769,
      "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388094769",
-     "status": "in_progress"
+     "status": "failed"
     },
     "vmware": {
      "counts": {
@@ -254,7 +313,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T19:47:37Z",
+ "generatedAt": "2026-10-26T20:04:41Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
