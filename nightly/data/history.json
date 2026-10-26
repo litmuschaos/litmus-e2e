@@ -1,7 +1,7 @@
 {
  "builds": [
   {
-   "durationSec": 1779,
+   "durationSec": 7576,
    "id": "2026-10-26",
    "results": {
     "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
@@ -141,8 +141,8 @@
     "frontend/UI/Usermanagment/testing for User management Create User": "p",
     "frontend/UI/Usermanagment/testing for User management Disable User": "p",
     "frontend/UI/Usermanagment/testing for User management Edit User": "p",
+    "frontend/UI/chaoshub/testing chaoshub via UI \"before each\" hook for \"Delete ChaosHub\"": "f",
     "frontend/UI/chaoshub/testing chaoshub via UI Create new ChaosHub": "p",
-    "frontend/UI/chaoshub/testing chaoshub via UI Delete ChaosHub": "p",
     "frontend/UI/chaoshub/testing chaoshub via UI Edit ChaosHub [Change chaoshub name]": "p",
     "frontend/UI/chaoshub/testing chaoshub via UI negative test case for chaoshub [Get error when creating chaoshub with same name]": "p",
     "frontend/UI/chaosinfra/testing chaosinfra via UI Creating chaosinfra": "p",
@@ -193,9 +193,9 @@
     "frontend": {
      "counts": {
       "error": 0,
-      "failed": 0,
-      "passRate": 100.0,
-      "passed": 59,
+      "failed": 1,
+      "passRate": 98.3,
+      "passed": 58,
       "skipped": 0,
       "total": 59
      },
@@ -207,7 +207,7 @@
       "skipped": 0,
       "total": 0
      },
-     "status": "passed"
+     "status": "failed"
     }
    },
    "workflows": {
@@ -240,15 +240,15 @@
     "chaoscenter": {
      "counts": {
       "error": 0,
-      "failed": 0,
-      "passed": 59,
+      "failed": 1,
+      "passed": 58,
       "skipped": 0
      },
-     "durationSec": 380,
-     "failureKind": null,
-     "runId": 40388119795,
-     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388119795",
-     "status": "passed"
+     "durationSec": 312,
+     "failureKind": "tests",
+     "runId": 40405785747,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40405785747",
+     "status": "failed"
     },
     "component": {
      "counts": {
@@ -331,7 +331,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T20:06:44Z",
+ "generatedAt": "2026-10-26T21:41:51Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
