@@ -32,15 +32,25 @@ export function liveView(ctx) {
   const files = D.workflowFiles(latest);
   if (!repo || !files.size) return null;
 
-  const title = h('b', {}, 'Live');
+  // collapsed by default, the choice is remembered in this browser
+  let open = false;
+  try { open = localStorage.getItem('e2e-live-open') === '1'; } catch (e) { /* storage may be blocked */ }
   const status = h('span', { class: 'live-status' }, 'Checking the runs…');
   const stamp = h('span', { class: 'live-stamp muted' });
-  const list = h('ul', { class: 'live-list plain' });
-  const root = h('section', { class: 'glass live reveal', 'data-live': 'idle', 'aria-labelledby': 'live-h' },
-    h('div', { class: 'row between' },
-      h('h2', { id: 'live-h', class: 'live-h' }, h('i', { class: 'live-dot', 'aria-hidden': 'true' }), title, status),
-      stamp),
-    list);
+  const mini = h('span', { class: 'live-mini', 'aria-hidden': 'true' }, h('i', { style: '--w:0%' }));
+  const list = h('ul', { class: 'live-list plain', id: 'live-list' });
+  const toggle = h('button', { class: 'live-toggle', type: 'button', 'aria-controls': 'live-list', 'aria-expanded': String(open) },
+    h('i', { class: 'live-dot', 'aria-hidden': 'true' }), h('b', {}, 'Live'), status, mini, h('span', { class: 'live-chev', 'aria-hidden': 'true' }, icon('chevron')));
+  const root = h('section', { class: 'glass live reveal', 'data-live': 'idle', 'data-open': String(open), 'aria-label': 'Live view of the workflows' },
+    h('h2', { class: 'live-h' }, toggle), stamp, list);
+  list.hidden = !open;
+  toggle.addEventListener('click', () => {
+    open = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    root.dataset.open = String(open);
+    list.hidden = !open;
+    try { localStorage.setItem('e2e-live-open', open ? '1' : '0'); } catch (e) { /* storage may be blocked */ }
+  });
 
   let timer = 0, stopped = false, runs = [], progress = new Map(), tick = 0;
 
@@ -48,6 +58,9 @@ export function liveView(ctx) {
     const now = Date.now();
     const active = runs.filter((r) => r.active);
     root.dataset.live = active.length ? 'running' : 'idle';
+    const pcts = active.map((r) => (progress.get(r.id) ? progress.get(r.id).percent : 4));
+    mini.firstChild.style.setProperty('--w', (pcts.length ? Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length) : 0) + '%');
+    mini.hidden = !active.length;
     status.textContent = active.length ? `${active.length} ${active.length === 1 ? 'workflow is' : 'workflows are'} running` : runs.length ? 'Nothing is running, the latest finished runs' : 'Nothing is running right now';
     list.replaceChildren(...runs.map((r) => {
       const p = progress.get(r.id);
@@ -67,7 +80,7 @@ export function liveView(ctx) {
     stamp.textContent = 'Updated ' + new Intl.DateTimeFormat(undefined, { timeStyle: 'medium' }).format(new Date()) + (active.length ? ', refreshes every minute' : '');
   };
 
-  const pause = (why) => { root.dataset.live = 'paused'; status.textContent = why; stamp.textContent = ''; list.replaceChildren(); };
+  const pause = (why) => { root.dataset.live = 'paused'; status.textContent = why; stamp.textContent = ''; mini.hidden = true; list.replaceChildren(); };
 
   const poll = async () => {
     if (stopped) return;

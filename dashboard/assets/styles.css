@@ -236,16 +236,26 @@ details.opt { margin-top: 16px; } details.opt summary { cursor: pointer; color: 
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
 /* ---- live view */
-.live { padding: 18px 22px; display: grid; gap: 12px; }
-.live-h { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.live { padding: 6px 10px; display: grid; gap: 4px; }
+.live[data-open="true"] { padding: 6px 10px 18px; gap: 10px; }
+.live-h { font-size: 1rem; margin: 0; }
+.live-toggle { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; font: inherit; font-size: 1rem; }
+.live-toggle:hover { background: var(--glass2); }
+.live-toggle:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.live-mini { flex: 0 1 140px; height: 6px; border-radius: 999px; background: var(--glass2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; display: block; margin-left: auto; }
+.live-mini[hidden] { display: none; }
+.live-mini i { display: block; height: 100%; width: var(--w); background: var(--ok); border-radius: 999px; transition: width .8s var(--ease); }
+.live-chev { margin-left: auto; color: var(--muted); display: grid; } .live-mini:not([hidden]) ~ .live-chev { margin-left: 0; }
+.live-chev svg { width: 18px; height: 18px; transition: transform .3s var(--ease); }
+.live[data-open="true"] .live-chev svg { transform: rotate(90deg); }
 .live-status { color: var(--muted); font-weight: 500; font-size: .92rem; }
-.live-stamp { font-size: .8rem; }
+.live-stamp { font-size: .8rem; padding: 0 12px; } .live[data-open="false"] .live-stamp { display: none; }
 .live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--faint); position: relative; flex: none; }
 .live[data-live="running"] .live-dot { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
 .live[data-live="running"] .live-dot::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--ok); animation: ping 1.6s ease-out infinite; }
 .live[data-live="paused"] .live-dot { background: var(--warn); }
 @keyframes ping { from { transform: scale(.5); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
-.live[data-live="idle"] .live-list:empty, .live-list:empty { display: none; }
+.live[data-live="idle"] .live-list:empty, .live-list:empty { display: none; } .live-list { padding: 0 12px; }
 .live-list .live-row { display: grid; grid-template-columns: minmax(150px, 220px) minmax(120px, 1fr) minmax(0, 2fr) 70px auto; gap: 8px 16px; align-items: center; font-size: .88rem; }
 .live-name { display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
 .live-bar { height: 8px; border-radius: 999px; background: var(--glass2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; display: block; }
@@ -392,3 +402,4 @@ noscript .notice { max-width: 640px; margin: 40px auto; padding: 16px; }
   .cmp-track i { animation: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
+.live-list[hidden] { display: none; }
