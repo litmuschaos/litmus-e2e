@@ -115,7 +115,7 @@ func GetSelectorNode(testsDetails *types.TestDetails, clients environment.Client
 	}
 
 	for _, node := range nodes.Items {
-		if node.Name != testsDetails.ApplicationNodeName {
+		if node.Name != testsDetails.ApplicationNodeName && isSchedulable(&node) {
 			return string(node.Name), nil
 		}
 	}
@@ -167,7 +167,29 @@ func GetRandomNode(clients environment.ClientSets) (*v1.Node, error) {
 		return nil, errors.Errorf("Failed to get nodes due to %v", err)
 	}
 
-	index := rand.Intn(len(nodes.Items))
+	var candidates []v1.Node
+	for _, node := range nodes.Items {
+		if isSchedulable(&node) {
+			candidates = append(candidates, node)
+		}
+	}
+	if len(candidates) == 0 {
+		return nil, errors.Errorf("Failed to find a schedulable node")
+	}
 
-	return &nodes.Items[index], nil
+	return &candidates[rand.Intn(len(candidates))], nil
+}
+
+// isSchedulable tells whether pods of the experiments can run on the node: it is not cordoned and it has no
+// taint that keeps pods away (a control plane node has one, the experiment pod of a node level fault stays pending there)
+func isSchedulable(node *v1.Node) bool {
+	if node.Spec.Unschedulable {
+		return false
+	}
+	for _, taint := range node.Spec.Taints {
+		if taint.Effect == v1.TaintEffectNoSchedule || taint.Effect == v1.TaintEffectNoExecute {
+			return false
+		}
+	}
+	return true
 }
