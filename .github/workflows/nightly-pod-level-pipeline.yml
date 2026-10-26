@@ -363,7 +363,7 @@ jobs:
 
       - name: Create Namespace and deploy Application
         if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
-        id: app
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
@@ -447,7 +447,7 @@ jobs:
 
       - name: Create Namespace and deploy Application
         if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
-        id: app
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
@@ -532,7 +532,7 @@ jobs:
 
       - name: Create Namespace and deploy Application
         if: ${{ !cancelled() && steps.cluster.outcome == 'success' }}
-        id: app
+        id: annotate
         run: |
           kubectl annotate deploy/nginx litmuschaos.io/chaos="true" -n ${CHAOS_NAMESPACE} --overwrite
 
