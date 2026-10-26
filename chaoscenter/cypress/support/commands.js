@@ -4,9 +4,19 @@ Cypress.Commands.add('login', (Username,Password) => {
     cy.get('input[name="username"]').type(Username);
     cy.get('input[name="password"]').type(Password);
     cy.intercept('POST','auth/login').as('login');
+    cy.interceptGraphQL('getInfraStats', 'infraStats');
     cy.get('button[type="submit"]').click({ });
     cy.wait('@login').its('response.statusCode').should('eq', 200);
     cy.url().should('include','/dashboard');
+    // a installation without chaos infrastructure opens a welcome dialog ("Enable chaos infrastructure to run
+    // your first chaos experiment") on the overview, its backdrop covers the whole page until it is closed
+    cy.wait('@infraStats').then(({ response }) => {
+      if (response.body.data.getInfraStats.totalInfrastructures === 0) {
+        cy.get('.bp3-dialog').should('be.visible');
+        cy.get('body').type('{esc}');
+        cy.get('.bp3-dialog').should('not.exist');
+      }
+    });
   });
 
 // Custom function for login through APIs for setting accessToken and projectID
