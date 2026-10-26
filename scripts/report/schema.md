@@ -15,7 +15,7 @@ publishing broken data.
 | `build.suites.<id>` | `status` and `counts` of the required workflows of the suite (`bdd`, `frontend`), and `optionalCounts` of its optional workflows (cloud). Suites are never merged into one pass rate. |
 | `build.workflows[]` | One entry per configured workflow: `status` (`passed`, `failed`, `cancelled`, `skipped`, `in_progress`, `not_run`), `required`, `runUrl`, `durationSec`, `jobs[]` (conclusion, first failed step), `counts`, `resultsSource` (`junit`, `jobs` or `none`) and `failureKind` (`tests` or `infrastructure`). |
 | `tests[]` | The results of the build. `status` is `passed`, `failed`, `skipped` or `error`. `kind` is `test`, `setup` (install, deploy, cleanup) or `job`. `source` is `junit` or `job`. |
-| `coverage` | The experiments defined in the repository (`tests/`, `components/`, `platform/`), those scheduled by a nightly workflow, those executed by the build and the ones that are not scheduled. |
+| `coverage` | The experiments defined in the repository (`tests/`, `components/`, `platform/`), those scheduled by a required nightly workflow, those executed by the build and the ones that are not scheduled. The cloud experiments of the optional workflows are listed apart (`cloud`), they are supported but not part of the nightly build. |
 | `metrics` | Values derived from `history.json`, see below. |
 
 `error` is a job that failed before its tests could run (for example the cluster did not start). `skipped` is a job or

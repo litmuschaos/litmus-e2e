@@ -511,15 +511,21 @@ def derive_metrics(builds, latest_tests, config):
 
 
 def coverage(catalog, latest_tests, config):
+    """Coverage of the experiments of the required workflows. The cloud experiments (optional workflows) are listed
+    apart: they are supported, but they are not part of the nightly build and are not counted as not run."""
+    required = {w["category"] for w in config["workflows"] if w["required"]}
+    experiments = {k: v for k, v in catalog.items() if v["kind"] == "experiment"}
     executed = sorted({t["group"] for t in latest_tests if t["suite"] == "bdd" and t["kind"] == "test" and t["group"] in catalog})
-    defined = sorted(k for k, v in catalog.items() if v["kind"] == "experiment")
-    scheduled = sorted(k for k, v in catalog.items() if v["kind"] == "experiment" and v["workflows"])
+    defined = sorted(experiments)
+    scheduled = sorted(k for k, v in experiments.items() if required & set(v["workflows"]))
+    cloud = sorted(k for k, v in experiments.items() if v["workflows"] and not required & set(v["workflows"]))
+    ran = sorted(set(executed) & set(scheduled))
     return {
-        "defined": defined, "scheduled": scheduled, "executed": executed,
-        "notScheduled": sorted(set(defined) - set(scheduled)),
+        "defined": defined, "scheduled": scheduled, "cloud": cloud, "executed": executed,
+        "notScheduled": sorted(set(defined) - set(scheduled) - set(cloud)),
         "scheduledNotExecuted": sorted(set(scheduled) - set(executed)),
-        "executedPercent": round(100.0 * len(executed) / len(scheduled), 1) if scheduled else None,
-        "byCategory": {cat: sorted(k for k, v in catalog.items() if v["kind"] == "experiment" and cat in v["workflows"]) for cat in sorted({c for v in catalog.values() if v["kind"] == "experiment" for c in v["workflows"]})},
+        "executedPercent": round(100.0 * len(ran) / len(scheduled), 1) if scheduled else None,
+        "byCategory": {cat: sorted(k for k, v in experiments.items() if cat in v["workflows"]) for cat in sorted({c for v in experiments.values() for c in v["workflows"]})},
         "catalog": {k: {"path": v["path"], "kind": v["kind"], "workflows": v["workflows"]} for k, v in sorted(catalog.items())},
     }
 

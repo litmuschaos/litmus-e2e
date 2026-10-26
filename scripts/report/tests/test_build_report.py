@@ -306,6 +306,14 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(cov["executed"], ["pod-delete"])
         self.assertEqual(cov["executedPercent"], 100.0)
 
+    def test_cloud_experiments_are_not_counted_as_not_run(self):
+        catalog = dict(CATALOG, **{"ec2-stop-by-id": {"id": "ec2-stop-by-id", "path": "platform/aws/x_test.go", "kind": "experiment", "workflows": ["aws"]}})
+        cov = br.coverage(catalog, [{"suite": "bdd", "kind": "test", "group": "pod-delete"}], CONFIG)
+        self.assertEqual(cov["cloud"], ["ec2-stop-by-id"])
+        self.assertEqual(cov["scheduled"], ["pod-delete"])
+        self.assertEqual(cov["notScheduled"], ["node-drain"])
+        self.assertEqual(cov["executedPercent"], 100.0)
+
 
 if __name__ == "__main__":
     unittest.main()
