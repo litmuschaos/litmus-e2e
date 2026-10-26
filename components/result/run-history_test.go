@@ -101,7 +101,8 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "pod-delete", "run-history")
+			// a new engine: an existing engine is only re-activated, its spec (and so the probe) is not applied again
+			environment.GetENV(&testsDetails, "pod-delete", "run-history-failed")
 
 			// Checking the chaos operator running status
 			By("[Status]: Checking chaos operator status")
