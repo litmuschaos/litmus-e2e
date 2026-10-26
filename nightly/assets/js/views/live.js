@@ -1,8 +1,8 @@
 // Live view of the runs in progress. The data of the dashboard is static, so this panel asks the public GitHub Actions
 // API from the browser. It refreshes about once a minute (responses are cached for a minute by GitHub, repeated
 // requests do not use up the rate limit), pauses in a hidden tab and stops quietly when the API is not reachable.
-import { h, icon } from '../dom.js?v=2bc8c8a764';
-import * as D from '../data.js?v=2bc8c8a764';
+import { h, icon } from '../dom.js?v=9f4f0daccf';
+import * as D from '../data.js?v=9f4f0daccf';
 
 const API = 'https://api.github.com';
 

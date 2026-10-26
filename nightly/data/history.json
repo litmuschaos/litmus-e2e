@@ -1,9 +1,36 @@
 {
  "builds": [
   {
-   "durationSec": 390,
+   "durationSec": 721,
    "id": "2026-10-26",
    "results": {
+    "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod#2": "p",
+    "bdd/appinfo/BDD of appinfo test Check for chaos engine verdict Should check for the verdict of engine@Chaos_Engine_Component_Test": "p",
+    "bdd/appinfo/BDD of appinfo test Check for chaos engine verdict Should check for the verdict of engine@Chaos_Experiment_Component_Test": "p",
+    "bdd/appinfo/BDD of appinfo test Check for litmus components Should check for creation of runner pod@Chaos_Engine_Component_Test": "p",
+    "bdd/appinfo/BDD of appinfo test Check for litmus components Should check for creation of runner pod@Chaos_Experiment_Component_Test": "p",
+    "bdd/appinfo/BDD of appinfo test Check for litmus components Should delete all the litmus CRs@Chaos_Engine_Component_Test": "p",
+    "bdd/appinfo/BDD of appinfo test Check for litmus components Should delete all the litmus CRs@Chaos_Experiment_Component_Test": "p",
+    "bdd/component/job:Chaos_Result_Component_Test": "e",
+    "bdd/engine-state/BDD of engine-state test Check for chaos engine verdict Should check for the verdict of engine": "p",
+    "bdd/engine-state/BDD of engine-state test Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/engine-state/BDD of engine-state test Cleanup litmus components Should delete all the litmus CRs": "p",
+    "bdd/env-from-secret-and-cm/BDD of pod-delete experiment Check for pod-delete experiment Should check for the pod delete experiment": "p",
+    "bdd/env-from-secret-and-cm/BDD of pod-delete experiment Check for pod-delete experiment Should check for the verdict of pod-delete experiment": "p",
+    "bdd/experiment-image/BDD of experiment image test Check for chaos engine verdict Should check for the verdict of engine": "p",
+    "bdd/experiment-image/BDD of experiment image test Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/experiment-image/BDD of experiment image test Check for litmus components Should delete all the litmus CRs": "p",
+    "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod#2": "p",
+    "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs": "p",
+    "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs#2": "p",
+    "bdd/reconcile-resiliency/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/service-account/BDD of serviceaccount test Check for chaos engine verdict Should check for the verdict of engine": "p",
+    "bdd/service-account/BDD of serviceaccount test Check for litmus components Should check for creation of runner pod": "p",
+    "bdd/service-account/BDD of serviceaccount test Cleanup litmus components Should delete all the litmus CRs": "p",
+    "bdd/target-pod/BDD of pod-delete experiment Check for chaos engine verdict Should check for the verdict of experiment": "p",
+    "bdd/target-pod/BDD of pod-delete experiment Check for litmus components Should check for creation of runner pod": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Create New User": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Disable user": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Edit user password": "p",
@@ -65,16 +92,16 @@
     "frontend/UI/login/Testing login page of chaoscenter via UI Negative test case[Login with incorrect username and password]": "p"
    },
    "startedAt": "2026-10-26T19:35:27Z",
-   "status": "incomplete",
+   "status": "failed",
    "suites": {
     "bdd": {
      "counts": {
-      "error": 0,
+      "error": 1,
       "failed": 0,
-      "passRate": null,
-      "passed": 0,
+      "passRate": 96.3,
+      "passed": 26,
       "skipped": 0,
-      "total": 0
+      "total": 27
      },
      "optionalCounts": {
       "error": 0,
@@ -84,7 +111,7 @@
       "skipped": 0,
       "total": 0
      },
-     "status": "incomplete"
+     "status": "failed"
     },
     "frontend": {
      "counts": {
@@ -148,16 +175,16 @@
     },
     "component": {
      "counts": {
-      "error": 0,
+      "error": 1,
       "failed": 0,
-      "passed": 0,
+      "passed": 26,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
+     "durationSec": 715,
+     "failureKind": "infrastructure",
      "runId": 40388111191,
      "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40388111191",
-     "status": "in_progress"
+     "status": "failed"
     },
     "gcp": {
      "counts": {
@@ -227,7 +254,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T19:42:08Z",
+ "generatedAt": "2026-10-26T19:47:37Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
