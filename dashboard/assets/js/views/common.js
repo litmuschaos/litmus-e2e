@@ -74,7 +74,7 @@ function testCase(t, history) {
     h('div', { class: 'name' }, t.name, h('div', { class: 'muted', style: 'font-size:12.5px' }, D.fmtDuration(t.durationSec), t.job ? ' · ' + t.job : '', t.source === 'job' ? ' · job level result' : '')),
     h('div', {}, hasHistory ? h('span', { class: 'strip', role: 'img', 'aria-label': 'Last results, oldest first: ' + strip.map((s) => ({ p: 'passed', f: 'failed', e: 'error', s: 'skipped' }[s] || 'no result')).join(', ') }, strip.map((s) => h('i', { class: s || 'none', title: { p: 'passed', f: 'failed', e: 'error', s: 'skipped' }[s] || 'no result' }))) : null,
       t.url && D.safeUrl(t.url) ? h('div', { style: 'text-align:right;margin-top:4px' }, link(D.safeUrl(t.url), 'Logs')) : null),
-    t.message ? h('pre', {}, t.message) : null);
+    t.message ? h('pre', { tabindex: '0', 'aria-label': 'Failure message of ' + t.name }, t.message) : null);
 }
 
 function jobsBlock(jobs) {
