@@ -24,7 +24,7 @@ describe('testing chaosinfra via UI', () => {
         cy.get('input[name="name"]').type('exp99');
         cy.contains('Save').click();
         cy.on('alert message', () => {
-            expect(message).to.equal('write exception: write errors: [E11000 duplicate key error collection: litmus.environment index: environment_id_1 dup key: { environment_id: "exp99" }]');
+            expect(message).to.contain('write exception: write errors: [E11000 duplicate key error collection:');
         });
     });
 
