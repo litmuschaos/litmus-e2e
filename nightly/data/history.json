@@ -1,7 +1,7 @@
 {
  "builds": [
   {
-   "durationSec": 10895,
+   "durationSec": 11308,
    "id": "2026-10-26",
    "results": {
     "bdd/admin-mode/BDD of operator reconcile resiliency check Check for litmus components Should check for creation of runner pod": "p",
@@ -18,6 +18,8 @@
     "bdd/container-kill/BDD of container-kill experiment Check for container-kill experiment Should check for creation of runner pod": "p",
     "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Check disk fill experiment with annotation true Should check the disk fill experiment when app is annotated": "p",
     "bdd/disk-fill/BDD of disk-fill experiment Check for disk fill chaos experiment Should check for creation of runner pod for disk fill": "p",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial": "f",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel": "f",
     "bdd/engine-state/BDD of engine-state test Check for chaos engine verdict Should check for the verdict of engine": "p",
     "bdd/engine-state/BDD of engine-state test Check for litmus components Should check for creation of runner pod": "p",
     "bdd/engine-state/BDD of engine-state test Cleanup litmus components Should delete all the litmus CRs": "p",
@@ -26,6 +28,12 @@
     "bdd/experiment-image/BDD of experiment image test Check for chaos engine verdict Should check for the verdict of engine": "p",
     "bdd/experiment-image/BDD of experiment image test Check for litmus components Should check for creation of runner pod": "p",
     "bdd/experiment-image/BDD of experiment image test Check for litmus components Should delete all the litmus CRs": "p",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel": "f",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial": "f",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel": "f",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Check for litmus components Should check for creation of runner pod#2": "p",
     "bdd/job-cleanup-policy/BDD of job cleanup policy test Cleanup litmus components Should delete all the litmus CRs": "p",
@@ -185,12 +193,12 @@
       "total": 104
      },
      "optionalCounts": {
-      "error": 2,
-      "failed": 0,
+      "error": 3,
+      "failed": 6,
       "passRate": 0.0,
       "passed": 0,
-      "skipped": 2,
-      "total": 4
+      "skipped": 3,
+      "total": 12
      },
      "status": "failed"
     },
@@ -224,22 +232,22 @@
      },
      "durationSec": null,
      "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "runId": 40414492057,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40414492057",
+     "status": "in_progress"
     },
     "azure": {
      "counts": {
       "error": 0,
-      "failed": 0,
+      "failed": 4,
       "passed": 0,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 315,
+     "failureKind": "tests",
+     "runId": 40413990300,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40413990300",
+     "status": "failed"
     },
     "chaoscenter": {
      "counts": {
@@ -269,16 +277,16 @@
     },
     "gcp": {
      "counts": {
-      "error": 0,
-      "failed": 0,
+      "error": 1,
+      "failed": 2,
       "passed": 0,
-      "skipped": 0
+      "skipped": 1
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 302,
+     "failureKind": "tests",
+     "runId": 40414036061,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40414036061",
+     "status": "failed"
     },
     "m-agent": {
      "counts": {
@@ -335,7 +343,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-26T22:37:11Z",
+ "generatedAt": "2026-10-26T22:43:52Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
