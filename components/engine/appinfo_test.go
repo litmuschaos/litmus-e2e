@@ -88,7 +88,8 @@ var _ = Describe("BDD of appinfo test", func() {
 			By("[Verdict]: Checking the chaosresult verdict")
 			chaosResult, err := pkg.GetChaosResultVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Failed to get the chaosresult due to {%v}", err)
-			Expect(chaosResult).To(Equal("Fail"), "ChaosResult verdict is not set to Fail due to {%v}", err)
+			// no target is found for the wrong label, litmus-go reports it as Error ("could not get target pods")
+			Expect(chaosResult).To(Equal("Error"), "ChaosResult verdict is not set to Error due to {%v}", err)
 
 		})
 	})
@@ -114,7 +115,7 @@ var _ = Describe("BDD of appinfo test", func() {
 			By("Checking the Verdict of Chaos Engine")
 			chaosEngineVerdict, err := pkg.GetChaosEngineVerdict(&testsDetails, clients)
 			Expect(err).To(BeNil(), "Failed to get ChaosEngine Verdict due to, {%v}", err)
-			Expect(chaosEngineVerdict).To(Equal("Fail"), "ChaosEngine Verdict is not set to Fail,")
+			Expect(chaosEngineVerdict).To(Equal("Error"), "ChaosEngine Verdict is not set to Error,")
 
 		})
 	})

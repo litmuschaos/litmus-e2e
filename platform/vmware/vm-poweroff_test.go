@@ -37,12 +37,10 @@ var _ = Describe("BDD of vm-poweroff experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "vm-poweroff", "vmware-vm-engine-par")
+			environment.GetENV(&testsDetails, "vmware-vm-poweroff", "vmware-vm-engine-par")
 			log.Infof("[Info]: The target VMs are: %v", testsDetails.VMIds)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "vmware", "vm-poweroff")
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"
 
@@ -101,12 +99,10 @@ var _ = Describe("BDD of vm-poweroff experiment", func() {
 			//Fetching all the default ENV
 			By("[PreChaos]: Fetching all default ENVs")
 			klog.Infof("[PreReq]: Getting the ENVs for the %v test", testsDetails.ExperimentName)
-			environment.GetENV(&testsDetails, "vm-poweroff", "vmware-vm-engine-ser")
+			environment.GetENV(&testsDetails, "vmware-vm-poweroff", "vmware-vm-engine-ser")
 			log.Infof("[Info]: The target VMs are: %v", testsDetails.VMIds)
 
-			testsDetails.RbacPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/rbac.yaml"
-			testsDetails.ExperimentPath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/experiment.yaml"
-			testsDetails.EnginePath = "https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/engine.yaml"
+			environment.SetFaultPaths(&testsDetails, "vmware", "vm-poweroff")
 			testsDetails.Sequence = "serial"
 			testsDetails.ChaosNamespace = "default"
 			testsDetails.AppNS = "default"

@@ -2,7 +2,6 @@ package tests
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 	"testing"
 	"time"
@@ -60,10 +59,10 @@ var _ = Describe("BDD of pod-delete experiment", func() {
 			cmd.Stderr = &stderr
 			err = cmd.Run()
 			if err != nil {
-				klog.Infof(fmt.Sprint(err) + ": " + stderr.String())
+				klog.Infof("%v: %v", err, stderr.String())
 				Expect(err).To(BeNil(), "Failed to create the experiment file due to {%v}", err)
 			}
-			klog.Infof("[PodDeleteChaos]: " + out.String())
+			klog.Infof("[PodDeleteChaos]: %v", out.String())
 
 			// TODO: Wait dynamically for runner pod
 			time.Sleep(3 * time.Second)

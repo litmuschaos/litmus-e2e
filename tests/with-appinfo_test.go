@@ -79,7 +79,7 @@ var _ = Describe("BDDs to check the node level experiments with appinfo", func()
 			// Prepare Chaos Execution
 			By("[Prepare]: Prepare Chaos Execution")
 			testsDetails.AppLabel = "run=nginx"
-			testsDetails.EnginePath = "https://raw.githubusercontent.com/litmuschaos/litmus-e2e/generic/manifest/with_appinfo/node-taint.yml"
+			testsDetails.EnginePath = "../manifest/with_appinfo/node-taint.yml"
 			testsDetails.JobCleanUpPolicy = "retain"
 			err = pkg.PrepareChaos(&testsDetails, &chaosExperiment, &chaosEngine, clients, false)
 			Expect(err).To(BeNil(), "Failed to prepare chaos due to {%v}", err)

@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 
 	"github.com/litmuschaos/litmus-e2e/pkg/environment"
@@ -32,7 +31,7 @@ func ChaosAbort(testsDetails *types.TestDetails, clients environment.ClientSets)
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		log.Infof(fmt.Sprint(err) + ": " + stderr.String())
+		log.Infof("%v: %v", err, stderr.String())
 		log.Infof("Error: %v", err)
 		return errors.Wrapf(err, "Failed to abort the Chaos due to:%v", err)
 
