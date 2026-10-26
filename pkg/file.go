@@ -123,6 +123,14 @@ const hubErrorPrefix = "file content parsing error"
 // The ChaosHub API answers missing files with HTTP 200 and an error message as the body,
 // so the status code alone cannot be trusted.
 func FetchManifest(url string) ([]byte, error) {
+	// a path without a scheme is a manifest of this repository
+	if !strings.Contains(url, "://") {
+		data, err := ioutil.ReadFile(url)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to read the manifest %v: %w", url, err)
+		}
+		return data, nil
+	}
 	client := http.Client{Timeout: 60 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {

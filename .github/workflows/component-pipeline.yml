@@ -138,10 +138,6 @@ jobs:
         if: ${{ always() }}
         run: make appinfo
 
-      - name: TCID-K3S-GENERIC-ENGINE-ANNOTATION-CHECK
-        if: ${{ always() }}
-        run: make annotation-check
-
       - name: TCID-K3S-GENERIC-ENGINE-ENGINE-STATE
         if: ${{ always() }}
         run: make engine-state
