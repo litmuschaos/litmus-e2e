@@ -18,10 +18,14 @@ export function overview({ latest, history }, nav) {
   const notRunReq = required.filter((w) => !['passed', 'failed'].includes(w.status));
   const counts = D.addCounts(Object.values(b.suites).map((s) => s.counts));
 
+  const suiteLine = latest.config.suites.map((su) => {
+    const c = b.suites[su.id].counts;
+    return `${su.name} ${D.fmtRate(D.passRate(c))} passed` + (c.failed + c.error ? ` (${c.failed + c.error} of ${D.total(c)} failed)` : '');
+  }).join(' · ');
   let summary;
-  if (b.status === 'passed') summary = `All ${required.length} required workflows passed.`;
-  else if (b.status === 'failed') summary = `${failedReq.length} of ${required.length} required workflows failed` + (notRunReq.length ? `, ${notRunReq.length} did not finish or run.` : '.');
-  else summary = `${notRunReq.length} of ${required.length} required workflows did not run or finish, the result is partial.`;
+  if (b.status === 'passed') summary = `All ${required.length} required workflows passed. ${suiteLine}.`;
+  else if (b.status === 'failed') summary = `${failedReq.length} of ${required.length} required workflows failed` + (notRunReq.length ? `, ${notRunReq.length} did not finish or run` : '') + `. ${suiteLine}.`;
+  else summary = `${notRunReq.length} of ${required.length} required workflows did not run or finish, the result is partial. ${suiteLine}.`;
 
   const hero = h('section', { class: 'card hero rise', 'aria-labelledby': 'hero-title' },
     h('div', { class: 'hero-mark ' + b.status }, icon(b.status === 'passed' ? 'passed' : b.status === 'failed' ? 'failed' : 'incomplete')),
@@ -74,10 +78,14 @@ export function overview({ latest, history }, nav) {
   const table = (list, caption) => h('div', { class: 'table-wrap' }, h('table', {}, h('caption', {}, caption),
     h('thead', {}, h('tr', {}, ['Workflow', 'Suite', 'Status', 'Failure', 'First failed step', 'Duration', 'Logs'].map((t, i) => h('th', { scope: 'col', class: i === 5 ? 'num' : '' }, t)))),
     h('tbody', {}, list.map(row))));
+  const cloudRan = optional.filter((w) => w.status !== 'not_run');
+  const cloud = h('p', { class: 'muted', style: 'margin:16px 0 0;font-size:13px' },
+    h('b', {}, 'Cloud experiments'), ` (${optional.map((w) => w.name).join(', ')}) are supported but not part of the nightly build, they need cloud credentials. `,
+    cloudRan.length ? ['Results of the ones that ran: ', cloudRan.map((w) => h('span', { style: 'margin-right:6px' }, w.name, ' ', badge(w.status))), ' They do not decide the status of the build.'] : 'None of them ran in this build.');
   const workflows = h('section', { class: 'card rise', style: '--i:4', 'aria-labelledby': 'wf-title' },
     h('div', { class: 'card-head' }, h('h2', { id: 'wf-title' }, 'Workflows')),
     table(required, 'Required workflows, they decide the status of the build'),
-    optional.length ? h('div', { style: 'margin-top:18px' }, table(optional, 'Optional workflows, they need cloud credentials. Their failures are reported but do not fail the build, and they are never counted as passing.')) : null);
+    optional.length ? cloud : null);
 
   return h('div', { class: 'stack' }, hero, kpis, suites, insights(latest, history), workflows);
 }

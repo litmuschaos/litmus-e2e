@@ -42,7 +42,9 @@ export function historyView({ latest, history }) {
 
   return h('div', { class: 'stack' },
     h('div', {}, h('h1', {}, 'History'), h('p', { class: 'lede' }, `${bs.length} nightly build${bs.length === 1 ? '' : 's'}, from ${bs[0].id} to ${bs[bs.length - 1].id}. Older builds are kept in the published history file, the newest build is the current result.`)),
-    h('section', { class: 'card rise', 'aria-labelledby': 'tl' }, h('h2', { id: 'tl' }, 'Build status'), timeline(bdd.map((s, i) => ({ id: s.id, status: bs[i].status, rate: null }))),
+    h('section', { class: 'card rise', 'aria-labelledby': 'tl' }, h('h2', { id: 'tl' }, 'Builds'),
+      h('p', { class: 'muted', style: 'margin:-6px 0 10px;font-size:13px' }, 'Color is the status of the build, height is the lowest pass rate of its suites. A red bar that is nearly full is a build with a few failing tests, a short one is a build where most of the tests failed.'),
+      timeline(bs.map((b) => { const r = ['bdd', 'frontend'].map((k) => D.passRate(b.suites[k].counts)).filter((v) => v != null); return { id: b.id, status: b.status, rate: r.length ? Math.min(...r) : null }; })),
       h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--good);height:10px' }), 'passed'), h('span', {}, h('i', { style: 'background:var(--bad);height:10px' }), 'failed'), h('span', {}, h('i', { style: 'background:var(--warn);height:10px' }), 'incomplete'))),
     h('div', { class: 'grid cols-2' },
       h('section', { class: 'card rise', style: '--i:1', 'aria-labelledby': 'rt' }, h('h2', { id: 'rt' }, 'Pass rate'), h('p', { class: 'muted', style: 'margin:-6px 0 10px;font-size:13px' }, `Per suite, required workflows only. The axis starts at ${floor}%. A build without a result for a suite leaves a gap, it is not drawn as 0%.`), withTable('Pass rate', rateChart, { head: ['Build', 'BDD', 'Frontend'], body: bs.map((b, i) => [b.id, D.fmtRate(bdd[i].rate), D.fmtRate(fe[i].rate)]) })),

@@ -28,7 +28,9 @@ export function timeline(items, onPick) {
   const wrap = h('div', { class: 'timeline', role: 'group', 'aria-label': 'Status of the latest builds, oldest first' });
   items.forEach((b, i) => {
     const cls = b.status === 'passed' || b.status === 'failed' || b.status === 'incomplete' ? b.status : 'none';
-    const btn = h('button', { type: 'button', class: cls, style: `--i:${i}`, 'aria-label': `${b.id}: ${b.status}${b.rate != null ? ', ' + fmtRate(b.rate) + ' passed' : ''}` });
+    // the height is the pass rate: a failed build with 1 failing test stays red but is nearly full, a broken one is short
+    const height = b.rate != null ? Math.max(18, Math.round(b.rate)) : 100;
+    const btn = h('button', { type: 'button', class: cls, style: `--i:${i};height:${height}%`, 'aria-label': `${b.id}: ${b.status}${b.rate != null ? ', ' + fmtRate(b.rate) + ' passed' : ''}` });
     withTip(btn, () => [b.id, b.status[0].toUpperCase() + b.status.slice(1) + (b.rate != null ? ' · ' + fmtRate(b.rate) + ' passed' : '')]);
     if (onPick) btn.addEventListener('click', () => onPick(b));
     wrap.append(btn);

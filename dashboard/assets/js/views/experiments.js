@@ -23,16 +23,18 @@ export function experiments({ latest, history }, nav, params) {
     tile('Pass rate', D.fmtRate(D.passRate(bdd.counts)), 'passed / (passed + failed + error) of the required BDD workflows. Skipped tests are not counted as passed.'));
   tiles.querySelectorAll('.card').forEach((c, i) => c.style.setProperty('--i', i));
 
+  const cloudCats = new Set(b.workflows.filter((w) => !w.required).map((w) => w.id));
+  const cloudCount = [...cloudCats].reduce((n, c) => n + ((cov.byCategory || {})[c] || []).length, 0);
   const coverage = h('section', { class: 'card rise', style: '--i:2', 'aria-labelledby': 'cov' },
     h('div', { class: 'card-head' }, h('h2', { id: 'cov' }, 'Coverage'), cov.executedPercent != null ? h('span', { class: 'muted' }, `${D.fmtRate(cov.executedPercent)} of scheduled experiments ran`) : null),
     h('div', { class: 'grid cols-2' },
       h('div', {}, h('h3', {}, 'By workflow'), h('div', { class: 'table-wrap' }, h('table', {}, h('caption', { class: 'sr-only' }, 'Experiments per workflow'), h('thead', {}, h('tr', {}, [h('th', { scope: 'col' }, 'Workflow'), h('th', { scope: 'col', class: 'num' }, 'Scheduled'), h('th', { scope: 'col', class: 'num' }, 'Ran'), h('th', { scope: 'col' }, 'Not run')])),
-        h('tbody', {}, Object.entries(cov.byCategory || {}).map(([cat, list]) => {
+        h('tbody', {}, Object.entries(cov.byCategory || {}).filter(([cat]) => !cloudCats.has(cat)).map(([cat, list]) => {
           const ran = list.filter((x) => cov.executed.includes(x));
           const miss = list.filter((x) => !cov.executed.includes(x));
           return h('tr', {}, h('td', {}, D.workflowName(latest, cat)), h('td', { class: 'num' }, list.length), h('td', { class: 'num' }, ran.length), h('td', { class: miss.length ? 'mono' : 'muted' }, miss.length ? miss.join(', ') : '–'));
         }))))),
-      h('div', {}, h('h3', {}, 'Defined but not scheduled'),
+      h('div', {}, cloudCount ? h('p', { class: 'muted', style: 'margin:0 0 14px;font-size:13px' }, `${cloudCount} cloud experiments (${[...cloudCats].map((c) => D.workflowName(latest, c)).join(', ')}) are supported but not run in the nightly build, they need credentials.`) : null, h('h3', {}, 'Defined but not scheduled'),
         cov.notScheduled && cov.notScheduled.length ? h('div', {}, h('p', { class: 'muted', style: 'margin:6px 0' }, 'These tests exist in the repository but no nightly workflow runs them.'), h('div', { class: 'chips' }, cov.notScheduled.map((x) => h('span', { class: 'tag' }, x)))) : h('p', { class: 'muted' }, 'Every defined experiment is scheduled.'))));
 
   const note = h('p', { class: 'muted', style: 'margin:0 0 12px;font-size:13px' }, `${setup.length} setup and cleanup test${setup.length === 1 ? '' : 's'} (install, deploy, cleanup) are not listed as experiments. `, 'Optional cloud workflows are included in the list and marked by their workflow.');

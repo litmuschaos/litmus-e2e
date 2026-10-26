@@ -410,7 +410,6 @@
    ],
    "component": [
     "admin-mode",
-    "annotation-check",
     "appinfo",
     "engine-state",
     "env-from-secret-and-cm",
@@ -472,9 +471,7 @@
    "annotation-check": {
     "kind": "experiment",
     "path": "components/engine/annotation-check_test.go",
-    "workflows": [
-     "component"
-    ]
+    "workflows": []
    },
    "app-cleanup": {
     "kind": "setup",
@@ -848,6 +845,19 @@
     ]
    }
   },
+  "cloud": [
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "vm-poweroff"
+  ],
   "defined": [
    "admin-mode",
    "annotation-check",
@@ -927,28 +937,20 @@
    "service-account",
    "target-pod"
   ],
-  "executedPercent": 58.7,
+  "executedPercent": 76.5,
   "notScheduled": [
+   "annotation-check",
    "auxiliary-app",
    "experiment-404"
   ],
   "scheduled": [
    "admin-mode",
-   "annotation-check",
    "appinfo",
    "container-kill",
    "disk-fill",
-   "disk-loss",
-   "ebs-loss-by-id",
-   "ebs-loss-by-tag",
-   "ec2-terminate-by-id",
-   "ec2-terminate-by-tag",
    "engine-state",
    "env-from-secret-and-cm",
    "experiment-image",
-   "gcp-vm-disk-loss",
-   "gcp-vm-instance-stop",
-   "instance-stop",
    "job-cleanup-policy",
    "kubelet-service-kill",
    "multiple-app-deploy",
@@ -971,34 +973,20 @@
    "pod-network-duplication",
    "pod-network-latency",
    "pod-network-loss",
-   "process-kill-parallel",
-   "process-kill-serial",
    "reconcile-resiliency",
    "run-history",
    "service-account",
    "target-pod",
-   "vm-poweroff",
    "with-appinfo"
   ],
   "scheduledNotExecuted": [
    "admin-mode",
-   "disk-loss",
-   "ebs-loss-by-id",
-   "ebs-loss-by-tag",
-   "ec2-terminate-by-id",
-   "ec2-terminate-by-tag",
    "env-from-secret-and-cm",
    "experiment-image",
-   "gcp-vm-disk-loss",
-   "gcp-vm-instance-stop",
-   "instance-stop",
    "multiple-app-deploy",
    "pod-affected-perc-ton-parallel",
    "pod-affected-perc-ton-series",
-   "process-kill-parallel",
-   "process-kill-serial",
    "reconcile-resiliency",
-   "vm-poweroff",
    "with-appinfo"
   ]
  },
