@@ -1,7 +1,7 @@
 # Nightly build
 
 ```
-nightly workflows ──► JUnit artifacts + job results ──► Nightly-Report workflow ──► GitHub Pages
+nightly workflows ──► JUnit artifacts + job results ──► Nightly-Report workflow ──► gh-pages: nightly/
  (schedule, 20:30 - 22:30 UTC)                          scripts/report/build_report.py   dashboard/ + data/*.json
 ```
 
@@ -43,11 +43,14 @@ step of every job:
 * `nightly-chaoscenter-pipeline.yml` runs the ChaosCenter Cypress suite every night.
 * `nightly-node-level-pipeline.yml` runs on a 3 node kind cluster on GitHub hosted runners.
 * `nightly-portal-pipeline.yml` is removed: it installed manifests that no longer exist and is replaced by the ChaosCenter workflow.
-* `Nightly-Report` builds the report data and publishes it to GitHub Pages.
+* `Nightly-Report` builds the report data and commits the dashboard to the `nightly/` folder of the `gh-pages` branch.
 
 ## Set up in a repository
 
-1. Settings > Pages > Source: **GitHub Actions**. This replaces the content served from the `gh-pages` branch.
+1. Settings > Pages: the source is the `gh-pages` branch (as before). The dashboard is served at
+   `https://<owner>.github.io/<repo>/nightly/`, next to the pages that already live on that branch.
+   To serve it from GitHub Actions instead, replace the `publish` job with `actions/upload-pages-artifact` and
+   `actions/deploy-pages`, which makes the site replace the content of the branch.
 2. Run `Nightly-Report` once with *Run workflow*. Without earlier history it backfills the last 7 days from the Actions API.
 3. Cloud workflows need their secrets (`AWS_*`, `AZURE_*`, `GCP_SA_KEY`, ...). Without them they fail at the
    authentication step and are reported as infrastructure failures of an optional suite.

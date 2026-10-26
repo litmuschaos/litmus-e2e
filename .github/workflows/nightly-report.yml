@@ -1,7 +1,7 @@
 ---
 name: Nightly-Report
-# Builds the data of the nightly dashboard from the runs of the nightly workflows and publishes it to GitHub Pages.
-# The Pages source of the repository has to be set to "GitHub Actions".
+# Builds the data of the nightly dashboard from the runs of the nightly workflows and publishes it to the nightly/ folder
+# of the gh-pages branch, so it is served at https://<owner>.github.io/<repo>/nightly/ by the Pages setup of the repository.
 on:
   workflow_run:
     workflows:
@@ -24,6 +24,11 @@ on:
         description: Branch whose nightly runs are reported (default branch when empty)
         required: false
         default: ""
+      publish:
+        description: Publish although the run is not on the default branch
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -61,24 +66,60 @@ jobs:
           python scripts/report/build_report.py \
             --out dashboard/data \
             --branch "${{ inputs.branch }}" \
-            --previous "https://${owner}.github.io/${name}/data/history.json"
+            --previous "https://${owner}.github.io/${name}/nightly/data/history.json"
 
       - name: Upload the site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: nightly-dashboard
           path: dashboard
+          if-no-files-found: error
 
-  deploy:
+  publish:
     needs: build
-    # only the default branch publishes, so a manual run of another branch can not replace the site
-    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    # only the default branch publishes, a run of another branch has to ask for it
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || inputs.publish }}
     runs-on: ubuntu-latest
     permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: nightly-dashboard
+          path: site
+
+      # The site is committed to the nightly/ folder of the gh-pages branch, which keeps the pages already
+      # served from that branch and needs no change of the Pages settings.
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          echo "::add-mask::$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          url="https://github.com/${GITHUB_REPOSITORY}.git"
+          git() { command git -c http.extraheader="$auth" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" "$@"; }
+          for attempt in 1 2 3; do
+            rm -rf pages
+            if git ls-remote --exit-code --heads "$url" gh-pages >/dev/null 2>&1; then
+              git clone --quiet --depth 1 --branch gh-pages "$url" pages
+            else
+              mkdir pages && git -C pages init --quiet --initial-branch gh-pages && git -C pages remote add origin "$url"
+            fi
+            rm -rf pages/nightly
+            mkdir -p pages/nightly
+            cp -r site/. pages/nightly/
+            cd pages
+            git add -A
+            if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+            git commit --quiet -m "Update the nightly dashboard (run ${GITHUB_RUN_ID})"
+            if git push --quiet origin HEAD:gh-pages; then
+              echo "published to https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/nightly/"
+              exit 0
+            fi
+            cd ..
+            echo "push rejected, trying again"
+            sleep $((attempt * 5))
+          done
+          echo "::error::could not publish to gh-pages"
+          exit 1
