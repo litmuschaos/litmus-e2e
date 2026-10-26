@@ -11,7 +11,7 @@ describe('testing for User management', () => {
     });
 
     it('Create User', () => {
-        cy.get('.chaos_MainNav-module_navItem_MxEeXl').eq(1).click();
+        cy.get('[class*="MainNav-module_navItem"]').eq(1).click();
         cy.contains('User Management').click();
         cy.contains('New User').click();
         cy.get('input[name="name"]').type(user.name);
@@ -21,11 +21,14 @@ describe('testing for User management', () => {
         cy.get('input[name="reEnterPassword"]').type(user.password);
         cy.intercept('POST','/auth/create_user').as('user');
         cy.get('button[aria-label="Confirm"]').click();
-        cy.wait('@user');
+        cy.wait('@user').then(({ response }) => {
+            expect(response.statusCode).to.equal(200);
+            expect(response.body.username).to.equal(user.username);
+        });
     });
 
     it('Edit User', () => {
-        cy.get('.chaos_MainNav-module_navItem_MxEeXl').eq(1).click();
+        cy.get('[class*="MainNav-module_navItem"]').eq(1).click();
         cy.contains('User Management').click();
         cy.get('.bp3-popover-wrapper .bp3-button').then((buttons) => {
             cy.wrap(buttons[buttons.length - 1]).click();
@@ -35,16 +38,24 @@ describe('testing for User management', () => {
         cy.get('input[name="reEnterPassword"]').type(user.resetpassword);
         cy.intercept('POST','/auth/reset/password').as('reset');
         cy.contains('Confirm').click();
-        cy.wait('@reset');
+        cy.wait('@reset').then(({ response }) => {
+            expect(response.statusCode).to.equal(200);
+            expect(response.body.message).to.equal('password has been reset successfully');
+        });
     });
 
     it('Disable User', () => {
-        cy.get('.chaos_MainNav-module_navItem_MxEeXl').eq(1).click();
+        cy.get('[class*="MainNav-module_navItem"]').eq(1).click();
         cy.contains('User Management').click();
         cy.get('.bp3-popover-wrapper .bp3-button').then((buttons) => {
             cy.wrap(buttons[buttons.length - 1]).click();
         });
         cy.contains('Disable User').click();
+        cy.intercept('POST','/auth/update/state').as('state');
         cy.contains('Confirm').click();
+        cy.wait('@state').then(({ response }) => {
+            expect(response.statusCode).to.equal(200);
+            expect(response.body.message).to.equal("user's state updated successfully");
+        });
     });
 });
