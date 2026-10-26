@@ -550,7 +550,7 @@ def assemble(repo, config, cycles, previous, catalog, now):
     else:
         build, tests = None, []
     result = {"schemaVersion": SCHEMA_VERSION, "generatedAt": iso(now), "repository": repo,
-              "config": {"suites": config["suites"], "workflows": [{k: w.get(k) for k in ("category", "name", "suite", "required", "note")} for w in config["workflows"]],
+              "config": {"suites": config["suites"], "workflows": [{k: w.get(k) for k in ("category", "name", "suite", "required", "note", "file", "alsoFiles")} for w in config["workflows"]],
                          "staleAfterHours": config["staleAfterHours"]}}
     if build:
         started = parse_time(build["startedAt"]) if build["startedAt"] else None

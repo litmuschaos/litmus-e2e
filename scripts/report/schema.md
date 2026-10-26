@@ -10,6 +10,7 @@ publishing broken data.
 |-------|---------|
 | `build` | The newest nightly build, `null` when no nightly workflow ran in the history window. |
 | `build.id` | Name of the cycle (see below), `YYYY-MM-DD`. |
+| `config.workflows[].file`, `alsoFiles` | Workflow files of each workflow, the dashboard uses them to recognise the runs that are in progress (live view). |
 | `build.sha` | Commit of the runs of the build, `null` when the Actions API did not return one. |
 | `build.version` | Optional. Version or tag of a release candidate or GA build, written by `build_report.py --version`. The dashboard shows the short `sha` when it is absent. |
 | `build.status` | `passed`, `failed` or `incomplete`. Passed only when every **required** workflow ran and passed. Failed when a required workflow failed. Incomplete when a required workflow did not run, was cancelled, skipped or is still running. |
