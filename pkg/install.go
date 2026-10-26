@@ -104,7 +104,7 @@ func UpdateEngine(testsDetails *types.TestDetails, clients environment.ClientSet
 	engine.Spec.EngineState = v1alpha1.EngineStateActive
 
 	// Set all environments
-	if err = setEngineVar(engine, testsDetails, types.SetupAppInfoIfNotEmpty); err != nil {
+	if err = setEngineVar(engine, testsDetails, types.SetupAppInfoIfEmpty); err != nil {
 		return err
 	}
 

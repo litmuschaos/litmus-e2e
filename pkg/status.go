@@ -259,7 +259,9 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 				isError = true
 				return nil
 			}
-			if string(chaosResult.Status.ExperimentStatus.Phase) != "Completed" {
+			// the phases litmus-go ends an experiment in: an aborted run is Stopped and a run with failed probes is
+			// CompletedWithProbeFailure, only Running and Awaited mean that the experiment is not over
+			if !isFinalResultPhase(string(chaosResult.Status.ExperimentStatus.Phase)) {
 				klog.Infof("ChaosResult status is %v", chaosResult.Status.ExperimentStatus.Phase)
 				return errors.Errorf("ChaosResult is not yet completed")
 			}
@@ -273,4 +275,13 @@ func WaitForChaosResultCompletion(testsDetails *types.TestDetails, clients envir
 	}
 
 	return err
+}
+
+// isFinalResultPhase tells whether the phase of a chaosresult is one the experiment does not leave anymore
+func isFinalResultPhase(phase string) bool {
+	switch phase {
+	case "Completed", "CompletedWithProbeFailure", "Stopped":
+		return true
+	}
+	return false
 }
