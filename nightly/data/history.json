@@ -347,9 +347,239 @@
      "status": "not_run"
     }
    }
+  },
+  {
+   "durationSec": 3598,
+   "id": "2026-10-27",
+   "results": {
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
+    "frontend/REST APIs/UserManagment/Test Cases for User-Management Create New User": "p",
+    "frontend/REST APIs/UserManagment/Test Cases for User-Management Disable user": "p",
+    "frontend/REST APIs/UserManagment/Test Cases for User-Management Edit user password": "p",
+    "frontend/REST APIs/UserManagment/Test Cases for User-Management Negative test case for User management [Get error when creating User with same name]": "p",
+    "frontend/REST APIs/chaosProbes/Testing http chaos Probes Create chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/Testing http chaos Probes Delete chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/Testing http chaos Probes Update chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/Testing http chaos Probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/REST APIs/chaosProbes/testing CMD chaos probes Create chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing CMD chaos probes delete chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing CMD chaos probes edit chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes Create chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes delete chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes edit chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/REST APIs/chaosProbes/testing prometheus chaos probes Create chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing prometheus chaos probes delete chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing prometheus chaos probes edit chaos probe": "p",
+    "frontend/REST APIs/chaosProbes/testing prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/REST APIs/chaoshub/testing chaoshub delete chaoshub": "p",
+    "frontend/REST APIs/chaoshub/testing chaoshub edit chaoshub": "p",
+    "frontend/REST APIs/chaoshub/testing chaoshub negative test case for chaoshub": "p",
+    "frontend/REST APIs/chaoshub/testing chaoshub testing ChaosHub functionality via REST APIs": "p",
+    "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Create Environment and Chaos infra": "p",
+    "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Disable chaos infra": "p",
+    "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Negative test case [Get error for creating environment with existing environment name": "p",
+    "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Update chaos infra": "p",
+    "frontend/REST APIs/login/Testing login page of chaoscenter via REST APIs Negative test case[Login with incorrect username and password]": "p",
+    "frontend/REST APIs/login/Testing login page of chaoscenter via REST APIs testing login via REST API": "p",
+    "frontend/UI/Usermanagment/testing for User management Create User": "p",
+    "frontend/UI/Usermanagment/testing for User management Disable User": "p",
+    "frontend/UI/Usermanagment/testing for User management Edit User": "p",
+    "frontend/UI/chaoshub/testing chaoshub via UI Create new ChaosHub": "p",
+    "frontend/UI/chaoshub/testing chaoshub via UI Delete ChaosHub": "p",
+    "frontend/UI/chaoshub/testing chaoshub via UI Edit ChaosHub [Change chaoshub name]": "p",
+    "frontend/UI/chaoshub/testing chaoshub via UI negative test case for chaoshub [Get error when creating chaoshub with same name]": "p",
+    "frontend/UI/chaosinfra/testing chaosinfra via UI Creating chaosinfra": "p",
+    "frontend/UI/chaosinfra/testing chaosinfra via UI Disable chaosinfra": "p",
+    "frontend/UI/chaosinfra/testing chaosinfra via UI Editing chaosinfra": "p",
+    "frontend/UI/chaosinfra/testing chaosinfra via UI negative test case for environment [Get error when creating environment with same name]": "p",
+    "frontend/UI/chaosprobes/testing of CMD chaos probes create chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of CMD chaos probes delete chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/UI/chaosprobes/testing of CMD chaos probes update chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of HTTP chaos probes create chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of HTTP chaos probes delete chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of HTTP chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/UI/chaosprobes/testing of HTTP chaos probes update chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of Prometheus chaos probes create chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of Prometheus chaos probes delete chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of Prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/UI/chaosprobes/testing of Prometheus chaos probes update chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of kubernetes chaos probes create chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of kubernetes chaos probes delete chaos probe": "p",
+    "frontend/UI/chaosprobes/testing of kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]": "p",
+    "frontend/UI/chaosprobes/testing of kubernetes chaos probes update chaos probe": "p",
+    "frontend/UI/login/Testing login page of chaoscenter via UI Login with correct username and password": "p",
+    "frontend/UI/login/Testing login page of chaoscenter via UI Negative test case[Login with incorrect username and password]": "p"
+   },
+   "startedAt": "2026-10-27T21:31:46Z",
+   "status": "incomplete",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 2,
+      "failed": 0,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 2,
+      "total": 4
+     },
+     "status": "incomplete"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": 100.0,
+      "passed": 59,
+      "skipped": 0,
+      "total": 59
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "passed"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "azure": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 59,
+      "skipped": 0
+     },
+     "durationSec": 328,
+     "failureKind": null,
+     "runId": 40587543992,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40587543992",
+     "status": "passed"
+    },
+    "component": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "gcp": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 2,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 2
+     },
+     "durationSec": 38,
+     "failureKind": "infrastructure",
+     "runId": 40595422117,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40595422117",
+     "status": "failed"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "vmware": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    }
+   }
   }
  ],
- "generatedAt": "2026-10-27T08:47:32Z",
+ "generatedAt": "2026-10-27T22:31:52Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
