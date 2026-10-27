@@ -1,6 +1,6 @@
 {
  "build": {
-  "ageHours": 3.3,
+  "ageHours": 13.2,
   "durationSec": 11748,
   "finishedAt": "2026-10-26T22:51:15Z",
   "id": "2026-10-26",
@@ -1176,7 +1176,7 @@
    "run-history"
   ]
  },
- "generatedAt": "2026-10-26T22:51:26Z",
+ "generatedAt": "2026-10-27T08:47:32Z",
  "metrics": {
   "buildsConsidered": 1,
   "durationChange": null,
