@@ -593,9 +593,13 @@
    }
   },
   {
-   "durationSec": 320,
+   "durationSec": 3587,
    "id": "2026-10-28",
    "results": {
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Create New User": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Disable user": "p",
     "frontend/REST APIs/UserManagment/Test Cases for User-Management Edit user password": "p",
@@ -669,12 +673,12 @@
       "total": 0
      },
      "optionalCounts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
-      "passRate": null,
+      "passRate": 0.0,
       "passed": 0,
-      "skipped": 0,
-      "total": 0
+      "skipped": 2,
+      "total": 4
      },
      "status": "incomplete"
     },
@@ -766,16 +770,16 @@
     },
     "m-agent": {
      "counts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
       "passed": 0,
-      "skipped": 0
+      "skipped": 2
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 36,
+     "failureKind": "infrastructure",
+     "runId": 40780505164,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164",
+     "status": "failed"
     },
     "node-level": {
      "counts": {
@@ -819,7 +823,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-28T21:36:56Z",
+ "generatedAt": "2026-10-28T22:31:23Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }

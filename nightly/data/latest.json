@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 0.1,
-  "durationSec": 320,
-  "finishedAt": "2026-10-28T21:36:47Z",
+  "ageHours": 1.0,
+  "durationSec": 3587,
+  "finishedAt": "2026-10-28T22:31:14Z",
   "id": "2026-10-28",
   "sha": "9f4f0daccfade763527cf5ce057d52f532b37235",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
-     "passRate": null,
+     "passRate": 0.0,
      "passed": 0,
-     "skipped": 0,
-     "total": 0
+     "skipped": 2,
+     "total": 4
     },
     "status": "incomplete"
    },
@@ -245,25 +245,63 @@
    {
     "category": "m-agent",
     "counts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
      "passed": 0,
-     "skipped": 0
+     "skipped": 2
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 36,
+    "failureKind": "infrastructure",
     "id": "m-agent",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 16,
+      "failedSteps": [
+       "Create a GCP VM Instance to Setup m-agent and Target Resources",
+       "Get Agent Endpoint and Auth Token"
+      ],
+      "firstFailedStep": "Create a GCP VM Instance to Setup m-agent and Target Resources",
+      "name": "Setup_m-agent",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140705080"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 13,
+      "failedSteps": [
+       "Delete GCP VM Instance"
+      ],
+      "firstFailedStep": "Delete GCP VM Instance",
+      "name": "Delete_VM",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140847931"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Serial_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140849204"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Parallel_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140849953"
+     }
+    ],
     "name": "m-agent",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "jobs",
+    "runId": 40780505164,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164",
+    "startedAt": "2026-10-28T22:30:38Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    }
   ]
  },
@@ -950,16 +988,28 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-10-28T21:36:56Z",
+ "generatedAt": "2026-10-28T22:31:23Z",
  "metrics": {
   "buildsConsidered": 3,
   "durationChange": {
-   "latestSec": 320,
-   "percent": -92.8,
+   "latestSec": 3587,
+   "percent": -19.0,
    "previousSec": 4430
   },
   "flakyTests": [],
   "longestTests": [
+   {
+    "durationSec": 16,
+    "id": "bdd/m-agent/job:Setup_m-agent",
+    "name": "job: Setup_m-agent",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 13,
+    "id": "bdd/m-agent/job:Delete_VM",
+    "name": "job: Delete_VM",
+    "suite": "bdd"
+   },
    {
     "durationSec": 8.61,
     "id": "frontend/UI/chaoshub/testing chaoshub via UI Create new ChaosHub",
@@ -1007,23 +1057,31 @@
     "id": "frontend/UI/chaosprobes/testing of kubernetes chaos probes create chaos probe",
     "name": "testing of kubernetes chaos probes create chaos probe",
     "suite": "frontend"
-   },
-   {
-    "durationSec": 3.747,
-    "id": "frontend/UI/chaosprobes/testing of CMD chaos probes create chaos probe",
-    "name": "testing of CMD chaos probes create chaos probe",
-    "suite": "frontend"
-   },
-   {
-    "durationSec": 3.11,
-    "id": "frontend/UI/chaosinfra/testing chaosinfra via UI Creating chaosinfra",
-    "name": "testing chaosinfra via UI Creating chaosinfra",
-    "suite": "frontend"
    }
   ],
   "newlyFailing": [],
   "recovered": [],
   "recurringFailures": [
+   {
+    "consecutiveBuilds": 3,
+    "id": "bdd/m-agent/job:Delete_VM"
+   },
+   {
+    "consecutiveBuilds": 3,
+    "id": "bdd/m-agent/job:Setup_m-agent"
+   },
+   {
+    "consecutiveBuilds": 2,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   },
+   {
+    "consecutiveBuilds": 2,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
+   },
+   {
+    "consecutiveBuilds": 2,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
    {
     "consecutiveBuilds": 2,
     "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
@@ -1042,26 +1100,6 @@
    },
    {
     "consecutiveBuilds": 2,
-    "id": "bdd/aws/job:AWS_EC2_Test"
-   },
-   {
-    "consecutiveBuilds": 2,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
-   },
-   {
-    "consecutiveBuilds": 2,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
-   },
-   {
-    "consecutiveBuilds": 2,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
-   },
-   {
-    "consecutiveBuilds": 2,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
-   },
-   {
-    "consecutiveBuilds": 2,
     "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
    },
    {
@@ -1074,11 +1112,11 @@
    },
    {
     "consecutiveBuilds": 2,
-    "id": "bdd/m-agent/job:Setup_m-agent"
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
    },
    {
     "consecutiveBuilds": 2,
-    "id": "bdd/m-agent/job:Delete_VM"
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
    }
   ]
  },
@@ -1910,6 +1948,62 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40772648248",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 16,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Setup_m-agent",
+   "job": "Setup_m-agent",
+   "kind": "job",
+   "message": "Job failed at step 'Create a GCP VM Instance to Setup m-agent and Target Resources'",
+   "name": "job: Setup_m-agent",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140705080",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 13,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Delete_VM",
+   "job": "Delete_VM",
+   "kind": "job",
+   "message": "Job failed at step 'Delete GCP VM Instance'",
+   "name": "job: Delete_VM",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140847931",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
+   "job": "Process_Kill_Serial_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Serial_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140849204",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
+   "job": "Process_Kill_Parallel_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Parallel_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780505164/job/123140849953",
+   "workflow": "m-agent"
   }
  ]
 }
