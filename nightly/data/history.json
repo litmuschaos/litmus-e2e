@@ -593,9 +593,13 @@
    }
   },
   {
-   "durationSec": 3587,
+   "durationSec": 3989,
    "id": "2026-10-28",
    "results": {
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial": "f",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel": "f",
     "bdd/m-agent/job:Delete_VM": "e",
     "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
     "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
@@ -674,11 +678,11 @@
      },
      "optionalCounts": {
       "error": 2,
-      "failed": 0,
+      "failed": 4,
       "passRate": 0.0,
       "passed": 0,
       "skipped": 2,
-      "total": 4
+      "total": 8
      },
      "status": "incomplete"
     },
@@ -712,22 +716,22 @@
      },
      "durationSec": null,
      "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "runId": 40781330033,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40781330033",
+     "status": "in_progress"
     },
     "azure": {
      "counts": {
       "error": 0,
-      "failed": 0,
+      "failed": 4,
       "passed": 0,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 292,
+     "failureKind": "tests",
+     "runId": 40780822573,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780822573",
+     "status": "failed"
     },
     "chaoscenter": {
      "counts": {
@@ -764,9 +768,9 @@
      },
      "durationSec": null,
      "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "runId": 40780842674,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40780842674",
+     "status": "in_progress"
     },
     "m-agent": {
      "counts": {
@@ -823,7 +827,7 @@
    }
   }
  ],
- "generatedAt": "2026-10-28T22:31:23Z",
+ "generatedAt": "2026-10-28T22:38:04Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
