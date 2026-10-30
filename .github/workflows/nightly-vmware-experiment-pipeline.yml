@@ -1,8 +1,7 @@
 ---
 name: Nightly-VMWare-Experiment-Pipeline
 on:
-  schedule:
-    - cron: "30 22 * * *" # Daily 02:30 AM in midnight
+  # no cloud account to run against right now, so no nightly schedule until there is one
   workflow_dispatch:
 
 jobs:
