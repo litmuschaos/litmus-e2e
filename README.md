@@ -9,7 +9,7 @@
 - Clone the `gh-pages` branch of `litmus-e2e` repository
 
 ```
-  git clone -b https://github.com/litmuschaos/litmus-e2e.git
+  git clone -b gh-pages https://github.com/litmuschaos/litmus-e2e.git
 ```
 
 - Install all the required dependencies with the below command

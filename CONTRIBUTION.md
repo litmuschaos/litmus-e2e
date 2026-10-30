@@ -21,7 +21,7 @@ To ensure that your PR is of high quality and to maintain the coding standards t
 
 1. While committing the changes please ensure you sign your commits by using -s flag
 ```
-  git commit -s -m “<YOUR COMMIT MESSAGE>”
+  git commit -s -m "<YOUR COMMIT MESSAGE>"
 ```
 
 2. Please fill in the details of the changes that have been made/modified with the respective PR and also check of the necessary checklist in the PR checklist itself.
