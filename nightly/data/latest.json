@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 1.0,
-  "durationSec": 3631,
-  "finishedAt": "2026-10-30T22:32:04Z",
+  "ageHours": 1.1,
+  "durationSec": 4027,
+  "finishedAt": "2026-10-30T22:38:40Z",
   "id": "2026-10-30",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 2,
-     "failed": 0,
+     "error": 3,
+     "failed": 6,
      "passRate": 0.0,
      "passed": 0,
-     "skipped": 2,
-     "total": 4
+     "skipped": 3,
+     "total": 12
     },
     "status": "incomplete"
    },
@@ -163,63 +163,124 @@
     "durationSec": null,
     "failureKind": null,
     "id": "aws",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "in_progress",
+      "durationSec": null,
+      "failedSteps": [
+       "Configure AWS Credentials",
+       "Creating target EC2 instances",
+       "Get the target instance name"
+      ],
+      "firstFailedStep": "Configure AWS Credentials",
+      "name": "AWS_EC2_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41139189056/job/124349005289"
+     }
+    ],
     "name": "AWS",
     "note": "Needs AWS credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "jobs",
+    "runId": 41139189056,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41139189056",
+    "startedAt": "2026-10-30T22:35:57Z",
+    "status": "in_progress",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "azure",
     "counts": {
      "error": 0,
-     "failed": 0,
+     "failed": 4,
      "passed": 0,
      "skipped": 0
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 309,
+    "failureKind": "tests",
     "id": "azure",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 305,
+      "failedSteps": [
+       "Azure Login",
+       "Create target Azure VM Instances",
+       "Run Azure VM Instance Stop experiment in serial & parallel mode",
+       "Delete target Azure VM Instances"
+      ],
+      "firstFailedStep": "Azure Login",
+      "name": "Azure_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591/job/124348102414"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 290,
+      "failedSteps": [
+       "Azure Login",
+       "Create a Azure VM Instance with target Disk Volumes",
+       "Run Azure VM Disk Loss experiment in serial & parallel mode",
+       "Delete the VM Instance and target Disk Volumes"
+      ],
+      "firstFailedStep": "Azure Login",
+      "name": "Azure_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591/job/124348102615"
+     }
+    ],
     "name": "Azure",
     "note": "Needs Azure credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "junit",
+    "runId": 41138912591,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+    "startedAt": "2026-10-30T22:33:29Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "gcp",
     "counts": {
-     "error": 0,
-     "failed": 0,
+     "error": 1,
+     "failed": 2,
      "passed": 0,
-     "skipped": 0
+     "skipped": 1
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 322,
+    "failureKind": "tests",
     "id": "gcp",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 318,
+      "failedSteps": [
+       "Create target GCP VM Instances",
+       "Run GCP VM Instance Stop experiment in serial & parallel mode",
+       "Delete target GCP VM Instances"
+      ],
+      "firstFailedStep": "Create target GCP VM Instances",
+      "name": "GCP_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597/job/124348035978"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "GCP_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597/job/124349958783"
+     }
+    ],
     "name": "GCP",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "junit",
+    "runId": 41138891597,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597",
+    "startedAt": "2026-10-30T22:33:18Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "vmware",
@@ -911,7 +972,11 @@
    "vm-poweroff",
    "with-appinfo"
   ],
-  "executed": [],
+  "executed": [
+   "disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop"
+  ],
   "executedPercent": 0.0,
   "notScheduled": [
    "auxiliary-app",
@@ -990,16 +1055,58 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-10-30T22:32:13Z",
+ "generatedAt": "2026-10-30T22:38:45Z",
  "metrics": {
   "buildsConsidered": 5,
   "durationChange": {
-   "latestSec": 3631,
-   "percent": -18.4,
+   "latestSec": 4027,
+   "percent": -9.5,
    "previousSec": 4449
   },
   "flakyTests": [],
   "longestTests": [
+   {
+    "durationSec": 318,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+    "name": "job: GCP_VM_Instance_Stop",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.069,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.063,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.059,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.058,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.055,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+    "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.047,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+    "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+    "suite": "bdd"
+   },
    {
     "durationSec": 15,
     "id": "bdd/m-agent/job:Setup_m-agent",
@@ -1007,15 +1114,49 @@
     "suite": "bdd"
    },
    {
-    "durationSec": 10,
-    "id": "bdd/m-agent/job:Delete_VM",
-    "name": "job: Delete_VM",
+    "durationSec": 11.195,
+    "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
+    "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 10.664,
+    "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop",
+    "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
     "suite": "bdd"
    }
   ],
   "newlyFailing": [],
   "recovered": [],
   "recurringFailures": [
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
+   },
    {
     "consecutiveBuilds": 5,
     "id": "bdd/m-agent/job:Delete_VM"
@@ -1027,14 +1168,6 @@
    {
     "consecutiveBuilds": 4,
     "id": "bdd/aws/job:AWS_EC2_Test"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
    },
    {
     "consecutiveBuilds": 4,
@@ -1051,26 +1184,6 @@
    {
     "consecutiveBuilds": 4,
     "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
    }
   ]
  },
@@ -1216,6 +1329,174 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41131685834",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 100.055,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0002642a0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x124f0dc, 0x12070…",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.047,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000473e60>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x12505c7, 0x12070…",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 5.793,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Disk_Loss",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 5.695,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Instance_Stop",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.069,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000110b88>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6, 0x1…",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.059,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000392b28>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411, 0x1…",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138912591",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.063,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:25\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0001104c8>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6…",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 100.058,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:87\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00000ea08>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411…",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 10.664,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 11.195,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 318,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Create target GCP VM Instances'",
+   "name": "job: GCP_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597/job/124348035978",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Disk_Loss",
+   "job": "GCP_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: GCP_VM_Disk_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138891597/job/124349958783",
+   "workflow": "gcp"
   },
   {
    "durationSec": 15,
