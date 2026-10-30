@@ -1,0 +1,2367 @@
+{
+ "build": {
+  "ageHours": 11.1,
+  "durationSec": 4449,
+  "finishedAt": "2026-10-29T22:46:10Z",
+  "id": "2026-10-29",
+  "sha": "9f4f0daccfade763527cf5ce057d52f532b37235",
+  "stale": false,
+  "startedAt": "2026-10-29T21:32:01Z",
+  "status": "incomplete",
+  "suites": {
+   "bdd": {
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
+     "passed": 0,
+     "skipped": 0,
+     "total": 0
+    },
+    "optionalCounts": {
+     "error": 4,
+     "failed": 10,
+     "passRate": 0.0,
+     "passed": 0,
+     "skipped": 4,
+     "total": 18
+    },
+    "status": "incomplete"
+   },
+   "frontend": {
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": 100.0,
+     "passed": 59,
+     "skipped": 0,
+     "total": 59
+    },
+    "optionalCounts": {
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
+     "passed": 0,
+     "skipped": 0,
+     "total": 0
+    },
+    "status": "passed"
+   }
+  },
+  "workflows": [
+   {
+    "category": "pod-level",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "pod-level",
+    "jobs": [],
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "node-level",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "node-level",
+    "jobs": [],
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "component",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "component",
+    "jobs": [],
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "chaoscenter",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 59,
+     "skipped": 0
+    },
+    "durationSec": 343,
+    "failureKind": null,
+    "id": "chaoscenter",
+    "jobs": [
+     {
+      "conclusion": "success",
+      "durationSec": 339,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "frontend / run-litmus",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898/job/123745094407"
+     }
+    ],
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "resultsSource": "junit",
+    "runId": 40958584898,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+    "startedAt": "2026-10-29T21:32:01Z",
+    "status": "passed",
+    "suite": "frontend",
+    "trigger": "schedule"
+   },
+   {
+    "category": "aws",
+    "counts": {
+     "error": 1,
+     "failed": 4,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": 546,
+    "failureKind": "tests",
+    "id": "aws",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 544,
+      "failedSteps": [
+       "Configure AWS Credentials",
+       "Creating target EC2 instances",
+       "Get the target instance name",
+       "Run EC2 Terminate By ID experiment in serial & parallel mode",
+       "Run EC2 Terminate By Tag experiment in serial & parallel mode",
+       "Terminate target EC2 instances"
+      ],
+      "firstFailedStep": "Configure AWS Credentials",
+      "name": "AWS_EC2_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075/job/123774678513"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EBS_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075/job/123778469963"
+     }
+    ],
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "resultsSource": "junit",
+    "runId": 40967228075,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+    "startedAt": "2026-10-29T22:37:04Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "azure",
+    "counts": {
+     "error": 0,
+     "failed": 4,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": 296,
+    "failureKind": "tests",
+    "id": "azure",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 293,
+      "failedSteps": [
+       "Azure Login",
+       "Create target Azure VM Instances",
+       "Run Azure VM Instance Stop experiment in serial & parallel mode",
+       "Delete target Azure VM Instances"
+      ],
+      "firstFailedStep": "Azure Login",
+      "name": "Azure_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914/job/123773107938"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 293,
+      "failedSteps": [
+       "Azure Login",
+       "Create a Azure VM Instance with target Disk Volumes",
+       "Run Azure VM Disk Loss experiment in serial & parallel mode",
+       "Delete the VM Instance and target Disk Volumes"
+      ],
+      "firstFailedStep": "Azure Login",
+      "name": "Azure_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914/job/123773108422"
+     }
+    ],
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "resultsSource": "junit",
+    "runId": 40966758914,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+    "startedAt": "2026-10-29T22:33:24Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "gcp",
+    "counts": {
+     "error": 1,
+     "failed": 2,
+     "passed": 0,
+     "skipped": 1
+    },
+    "durationSec": 314,
+    "failureKind": "tests",
+    "id": "gcp",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 311,
+      "failedSteps": [
+       "Create target GCP VM Instances",
+       "Run GCP VM Instance Stop experiment in serial & parallel mode",
+       "Delete target GCP VM Instances"
+      ],
+      "firstFailedStep": "Create target GCP VM Instances",
+      "name": "GCP_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166/job/123773205205"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "GCP_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166/job/123775426259"
+     }
+    ],
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "junit",
+    "runId": 40966788166,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166",
+    "startedAt": "2026-10-29T22:33:37Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   },
+   {
+    "category": "vmware",
+    "counts": {
+     "error": 0,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 0
+    },
+    "durationSec": null,
+    "failureKind": null,
+    "id": "vmware",
+    "jobs": [],
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
+    "suite": "bdd",
+    "trigger": null
+   },
+   {
+    "category": "m-agent",
+    "counts": {
+     "error": 2,
+     "failed": 0,
+     "passed": 0,
+     "skipped": 2
+    },
+    "durationSec": 35,
+    "failureKind": "infrastructure",
+    "id": "m-agent",
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 15,
+      "failedSteps": [
+       "Create a GCP VM Instance to Setup m-agent and Target Resources",
+       "Get Agent Endpoint and Auth Token"
+      ],
+      "firstFailedStep": "Create a GCP VM Instance to Setup m-agent and Target Resources",
+      "name": "Setup_m-agent",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772279979"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 14,
+      "failedSteps": [
+       "Delete GCP VM Instance"
+      ],
+      "firstFailedStep": "Delete GCP VM Instance",
+      "name": "Delete_VM",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772401755"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Serial_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772402581"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Parallel_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772403516"
+     }
+    ],
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "resultsSource": "jobs",
+    "runId": 40966514245,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245",
+    "startedAt": "2026-10-29T22:31:29Z",
+    "status": "failed",
+    "suite": "bdd",
+    "trigger": "schedule"
+   }
+  ]
+ },
+ "config": {
+  "staleAfterHours": 36,
+  "suites": [
+   {
+    "id": "bdd",
+    "name": "Experiment BDD"
+   },
+   {
+    "id": "frontend",
+    "name": "Frontend E2E"
+   }
+  ],
+  "workflows": [
+   {
+    "alsoFiles": null,
+    "category": "pod-level",
+    "file": "nightly-pod-level-pipeline.yml",
+    "name": "Pod level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "node-level",
+    "file": "nightly-node-level-pipeline.yml",
+    "name": "Node level",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "component",
+    "file": "nightly-component-pipeline.yml",
+    "name": "Components",
+    "note": null,
+    "required": true,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": [
+     "E2E-chaoscenter-pipeline.yml"
+    ],
+    "category": "chaoscenter",
+    "file": "nightly-chaoscenter-pipeline.yml",
+    "name": "ChaosCenter",
+    "note": null,
+    "required": true,
+    "suite": "frontend"
+   },
+   {
+    "alsoFiles": null,
+    "category": "aws",
+    "file": "nightly-aws-experiment-pipeline.yml",
+    "name": "AWS",
+    "note": "Needs AWS credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "azure",
+    "file": "nightly-azure-experiment-pipeline.yml",
+    "name": "Azure",
+    "note": "Needs Azure credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "gcp",
+    "file": "nightly-gcp-experiment-pipeline.yml",
+    "name": "GCP",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "vmware",
+    "file": "nightly-vmware-experiment-pipeline.yml",
+    "name": "VMware",
+    "note": "Needs a vCenter",
+    "required": false,
+    "suite": "bdd"
+   },
+   {
+    "alsoFiles": null,
+    "category": "m-agent",
+    "file": "nightly-m-agent-experiment-pipeline.yaml",
+    "name": "m-agent",
+    "note": "Needs GCP credentials",
+    "required": false,
+    "suite": "bdd"
+   }
+  ]
+ },
+ "coverage": {
+  "byCategory": {
+   "aws": [
+    "ebs-loss-by-id",
+    "ebs-loss-by-tag",
+    "ec2-terminate-by-id",
+    "ec2-terminate-by-tag"
+   ],
+   "azure": [
+    "disk-loss",
+    "instance-stop"
+   ],
+   "component": [
+    "admin-mode",
+    "appinfo",
+    "engine-state",
+    "env-from-secret-and-cm",
+    "experiment-image",
+    "job-cleanup-policy",
+    "reconcile-resiliency",
+    "run-history",
+    "service-account",
+    "target-pod"
+   ],
+   "gcp": [
+    "gcp-vm-disk-loss",
+    "gcp-vm-instance-stop"
+   ],
+   "m-agent": [
+    "process-kill-parallel",
+    "process-kill-serial"
+   ],
+   "node-level": [
+    "kubelet-service-kill",
+    "node-cpu-hog",
+    "node-drain",
+    "node-io-stress",
+    "node-memory-hog",
+    "node-selector",
+    "node-taint",
+    "pod-autoscaler",
+    "with-appinfo"
+   ],
+   "pod-level": [
+    "container-kill",
+    "disk-fill",
+    "multiple-app-deploy",
+    "pod-affected-perc-ton-parallel",
+    "pod-affected-perc-ton-series",
+    "pod-cpu-hog",
+    "pod-cpu-hog-exec",
+    "pod-delete",
+    "pod-io-stress",
+    "pod-memory-hog",
+    "pod-memory-hog-exec",
+    "pod-network-corruption",
+    "pod-network-duplication",
+    "pod-network-latency",
+    "pod-network-loss"
+   ],
+   "vmware": [
+    "vm-poweroff"
+   ]
+  },
+  "catalog": {
+   "admin-mode": {
+    "kind": "experiment",
+    "path": "components/operator/admin-mode_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "app-cleanup": {
+    "kind": "setup",
+    "path": "tests/app-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-deploy": {
+    "kind": "setup",
+    "path": "tests/app-deploy_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component"
+    ]
+   },
+   "app-liveness": {
+    "kind": "setup",
+    "path": "tests/app-liveness_test.go",
+    "workflows": []
+   },
+   "appinfo": {
+    "kind": "experiment",
+    "path": "components/engine/appinfo_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "auxiliary-app": {
+    "kind": "experiment",
+    "path": "tests/auxiliary-app_test.go",
+    "workflows": []
+   },
+   "container-kill": {
+    "kind": "experiment",
+    "path": "tests/container-kill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-fill": {
+    "kind": "experiment",
+    "path": "tests/disk-fill_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "disk-loss": {
+    "kind": "experiment",
+    "path": "platform/azure/disk-loss_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "ebs-loss-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ebs-loss-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ebs-loss-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-id": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-id_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "ec2-terminate-by-tag": {
+    "kind": "experiment",
+    "path": "platform/aws/ec2-terminate-by-tag_test.go",
+    "workflows": [
+     "aws"
+    ]
+   },
+   "engine-state": {
+    "kind": "experiment",
+    "path": "components/engine/engine-state_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "env-from-secret-and-cm": {
+    "kind": "experiment",
+    "path": "tests/env-from-secret-and-cm_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "experiment-404": {
+    "kind": "experiment",
+    "path": "components/engine/experiment-404_test.go",
+    "workflows": []
+   },
+   "experiment-image": {
+    "kind": "experiment",
+    "path": "components/experiment/experiment-image_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "gcp-vm-disk-loss": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-disk-loss_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "gcp-vm-instance-stop": {
+    "kind": "experiment",
+    "path": "platform/gcp/gcp-vm-instance-stop_test.go",
+    "workflows": [
+     "gcp"
+    ]
+   },
+   "install-litmus": {
+    "kind": "setup",
+    "path": "tests/install-litmus_test.go",
+    "workflows": [
+     "node-level",
+     "aws",
+     "azure",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "instance-stop": {
+    "kind": "experiment",
+    "path": "platform/azure/instance-stop_test.go",
+    "workflows": [
+     "azure"
+    ]
+   },
+   "job-cleanup-policy": {
+    "kind": "experiment",
+    "path": "components/engine/job-cleanup-policy_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "kubelet-service-kill": {
+    "kind": "experiment",
+    "path": "tests/kubelet-service-kill_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "litmus-cleanup": {
+    "kind": "setup",
+    "path": "tests/litmus-cleanup_test.go",
+    "workflows": [
+     "pod-level",
+     "node-level",
+     "component",
+     "aws",
+     "gcp",
+     "vmware",
+     "m-agent"
+    ]
+   },
+   "multiple-app-deploy": {
+    "kind": "experiment",
+    "path": "tests/multiple-app-deploy_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "node-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/node-cpu-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-drain": {
+    "kind": "experiment",
+    "path": "tests/node-drain_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-io-stress": {
+    "kind": "experiment",
+    "path": "tests/node-io-stress_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/node-memory-hog_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-selector": {
+    "kind": "experiment",
+    "path": "tests/node-selector_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "node-taint": {
+    "kind": "experiment",
+    "path": "tests/node-taint_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pipeline-update": {
+    "kind": "setup",
+    "path": "tests/pipeline-update_test.go",
+    "workflows": []
+   },
+   "pod-affected-perc-ton-parallel": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-parallel_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-affected-perc-ton-series": {
+    "kind": "experiment",
+    "path": "tests/pod-affected-perc-ton-series_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-autoscaler": {
+    "kind": "experiment",
+    "path": "tests/pod-autoscaler_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   },
+   "pod-cpu-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-cpu-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-cpu-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-delete": {
+    "kind": "experiment",
+    "path": "tests/pod-delete_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-io-stress": {
+    "kind": "experiment",
+    "path": "tests/pod-io-stress_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-memory-hog-exec": {
+    "kind": "experiment",
+    "path": "tests/pod-memory-hog-exec_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-corruption": {
+    "kind": "experiment",
+    "path": "tests/pod-network-corruption_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-duplication": {
+    "kind": "experiment",
+    "path": "tests/pod-network-duplication_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-latency": {
+    "kind": "experiment",
+    "path": "tests/pod-network-latency_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "pod-network-loss": {
+    "kind": "experiment",
+    "path": "tests/pod-network-loss_test.go",
+    "workflows": [
+     "pod-level"
+    ]
+   },
+   "process-kill-parallel": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-parallel_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "process-kill-serial": {
+    "kind": "experiment",
+    "path": "platform/os/process-kill-serial_test.go",
+    "workflows": [
+     "m-agent"
+    ]
+   },
+   "reconcile-resiliency": {
+    "kind": "experiment",
+    "path": "components/operator/reconcile-resiliency_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "run-history": {
+    "kind": "experiment",
+    "path": "components/result/run-history_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "service-account": {
+    "kind": "experiment",
+    "path": "components/engine/service-account_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "target-pod": {
+    "kind": "experiment",
+    "path": "components/experiment/target-pod_test.go",
+    "workflows": [
+     "component"
+    ]
+   },
+   "vm-poweroff": {
+    "kind": "experiment",
+    "path": "platform/vmware/vm-poweroff_test.go",
+    "workflows": [
+     "vmware"
+    ]
+   },
+   "with-appinfo": {
+    "kind": "experiment",
+    "path": "tests/with-appinfo_test.go",
+    "workflows": [
+     "node-level"
+    ]
+   }
+  },
+  "cloud": [
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "vm-poweroff"
+  ],
+  "defined": [
+   "admin-mode",
+   "appinfo",
+   "auxiliary-app",
+   "container-kill",
+   "disk-fill",
+   "disk-loss",
+   "ebs-loss-by-id",
+   "ebs-loss-by-tag",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-404",
+   "experiment-image",
+   "gcp-vm-disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "process-kill-parallel",
+   "process-kill-serial",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "vm-poweroff",
+   "with-appinfo"
+  ],
+  "executed": [
+   "disk-loss",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
+   "gcp-vm-instance-stop",
+   "instance-stop"
+  ],
+  "executedPercent": 0.0,
+  "notScheduled": [
+   "auxiliary-app",
+   "experiment-404"
+  ],
+  "scheduled": [
+   "admin-mode",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "with-appinfo"
+  ],
+  "scheduledNotExecuted": [
+   "admin-mode",
+   "appinfo",
+   "container-kill",
+   "disk-fill",
+   "engine-state",
+   "env-from-secret-and-cm",
+   "experiment-image",
+   "job-cleanup-policy",
+   "kubelet-service-kill",
+   "multiple-app-deploy",
+   "node-cpu-hog",
+   "node-drain",
+   "node-io-stress",
+   "node-memory-hog",
+   "node-selector",
+   "node-taint",
+   "pod-affected-perc-ton-parallel",
+   "pod-affected-perc-ton-series",
+   "pod-autoscaler",
+   "pod-cpu-hog",
+   "pod-cpu-hog-exec",
+   "pod-delete",
+   "pod-io-stress",
+   "pod-memory-hog",
+   "pod-memory-hog-exec",
+   "pod-network-corruption",
+   "pod-network-duplication",
+   "pod-network-latency",
+   "pod-network-loss",
+   "reconcile-resiliency",
+   "run-history",
+   "service-account",
+   "target-pod",
+   "with-appinfo"
+  ]
+ },
+ "generatedAt": "2026-10-30T08:36:54Z",
+ "metrics": {
+  "buildsConsidered": 4,
+  "durationChange": {
+   "latestSec": 4449,
+   "percent": -1.2,
+   "previousSec": 4503
+  },
+  "flakyTests": [],
+  "longestTests": [
+   {
+    "durationSec": 544,
+    "id": "bdd/aws/job:AWS_EC2_Test",
+    "name": "job: AWS_EC2_Test",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 311,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+    "name": "job: GCP_VM_Instance_Stop",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.07,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.069,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.065,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.065,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.062,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.059,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.058,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.057,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+    "suite": "bdd"
+   }
+  ],
+  "newlyFailing": [],
+  "recovered": [],
+  "recurringFailures": [
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/m-agent/job:Delete_VM"
+   },
+   {
+    "consecutiveBuilds": 4,
+    "id": "bdd/m-agent/job:Setup_m-agent"
+   }
+  ]
+ },
+ "repository": "litmuschaos/litmus-e2e",
+ "schemaVersion": 1,
+ "tests": [
+  {
+   "durationSec": 2.628,
+   "group": "UI/login",
+   "id": "frontend/UI/login/Testing login page of chaoscenter via UI Login with correct username and password",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing login page of chaoscenter via UI Login with correct username and password",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.939,
+   "group": "UI/login",
+   "id": "frontend/UI/login/Testing login page of chaoscenter via UI Negative test case[Login with incorrect username and password]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing login page of chaoscenter via UI Negative test case[Login with incorrect username and password]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 5.39,
+   "group": "UI/Usermanagment",
+   "id": "frontend/UI/Usermanagment/testing for User management Create User",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing for User management Create User",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.918,
+   "group": "UI/Usermanagment",
+   "id": "frontend/UI/Usermanagment/testing for User management Edit User",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing for User management Edit User",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.343,
+   "group": "UI/Usermanagment",
+   "id": "frontend/UI/Usermanagment/testing for User management Disable User",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing for User management Disable User",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 10.435,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/testing chaoshub via UI Create new ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub via UI Create new ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.941,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/testing chaoshub via UI negative test case for chaoshub [Get error when creating chaoshub with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub via UI negative test case for chaoshub [Get error when creating chaoshub with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 8.771,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/testing chaoshub via UI Edit ChaosHub [Change chaoshub name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub via UI Edit ChaosHub [Change chaoshub name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.928,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/testing chaoshub via UI Delete ChaosHub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub via UI Delete ChaosHub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.167,
+   "group": "REST APIs/chaosinfra",
+   "id": "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Create Environment and Chaos infra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via REST APIs Create Environment and Chaos infra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.046,
+   "group": "REST APIs/chaosinfra",
+   "id": "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Negative test case [Get error for creating environment with existing environment name",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via REST APIs Negative test case [Get error for creating environment with existing environment name",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.063,
+   "group": "REST APIs/chaosinfra",
+   "id": "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Update chaos infra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via REST APIs Update chaos infra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.062,
+   "group": "REST APIs/chaosinfra",
+   "id": "frontend/REST APIs/chaosinfra/testing chaosinfra via REST APIs Disable chaos infra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via REST APIs Disable chaos infra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.326,
+   "group": "UI/chaosinfra",
+   "id": "frontend/UI/chaosinfra/testing chaosinfra via UI Creating chaosinfra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via UI Creating chaosinfra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 1.779,
+   "group": "UI/chaosinfra",
+   "id": "frontend/UI/chaosinfra/testing chaosinfra via UI negative test case for environment [Get error when creating environment with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via UI negative test case for environment [Get error when creating environment with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 1.707,
+   "group": "UI/chaosinfra",
+   "id": "frontend/UI/chaosinfra/testing chaosinfra via UI Editing chaosinfra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via UI Editing chaosinfra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 1.763,
+   "group": "UI/chaosinfra",
+   "id": "frontend/UI/chaosinfra/testing chaosinfra via UI Disable chaosinfra",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaosinfra via UI Disable chaosinfra",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.1,
+   "group": "REST APIs/login",
+   "id": "frontend/REST APIs/login/Testing login page of chaoscenter via REST APIs testing login via REST API",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing login page of chaoscenter via REST APIs testing login via REST API",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.016,
+   "group": "REST APIs/login",
+   "id": "frontend/REST APIs/login/Testing login page of chaoscenter via REST APIs Negative test case[Login with incorrect username and password]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing login page of chaoscenter via REST APIs Negative test case[Login with incorrect username and password]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.257,
+   "group": "REST APIs/UserManagment",
+   "id": "frontend/REST APIs/UserManagment/Test Cases for User-Management Create New User",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Test Cases for User-Management Create New User",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.068,
+   "group": "REST APIs/UserManagment",
+   "id": "frontend/REST APIs/UserManagment/Test Cases for User-Management Negative test case for User management [Get error when creating User with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Test Cases for User-Management Negative test case for User management [Get error when creating User with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.066,
+   "group": "REST APIs/UserManagment",
+   "id": "frontend/REST APIs/UserManagment/Test Cases for User-Management Edit user password",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Test Cases for User-Management Edit user password",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.064,
+   "group": "REST APIs/UserManagment",
+   "id": "frontend/REST APIs/UserManagment/Test Cases for User-Management Disable user",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Test Cases for User-Management Disable user",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 5.349,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/testing chaoshub testing ChaosHub functionality via REST APIs",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub testing ChaosHub functionality via REST APIs",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.058,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/testing chaoshub negative test case for chaoshub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub negative test case for chaoshub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.661,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/testing chaoshub edit chaoshub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub edit chaoshub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.079,
+   "group": "REST APIs/chaoshub",
+   "id": "frontend/REST APIs/chaoshub/testing chaoshub delete chaoshub",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing chaoshub delete chaoshub",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 6.824,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of HTTP chaos probes create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of HTTP chaos probes create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.528,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of HTTP chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of HTTP chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.56,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of HTTP chaos probes update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of HTTP chaos probes update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.004,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of HTTP chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of HTTP chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.351,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of CMD chaos probes create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of CMD chaos probes create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.341,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.746,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of CMD chaos probes update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of CMD chaos probes update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.119,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of CMD chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of CMD chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.862,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of Prometheus chaos probes create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of Prometheus chaos probes create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.278,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of Prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of Prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.528,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of Prometheus chaos probes update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of Prometheus chaos probes update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.013,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of Prometheus chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of Prometheus chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 4.44,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of kubernetes chaos probes create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of kubernetes chaos probes create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.302,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.62,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of kubernetes chaos probes update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of kubernetes chaos probes update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 2.082,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/testing of kubernetes chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing of kubernetes chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.121,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/Testing http chaos Probes Create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing http chaos Probes Create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.051,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/Testing http chaos Probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing http chaos Probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.053,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/Testing http chaos Probes Update chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing http chaos Probes Update chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.065,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/Testing http chaos Probes Delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "Testing http chaos Probes Delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.055,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing CMD chaos probes Create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing CMD chaos probes Create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.051,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing CMD chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.049,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing CMD chaos probes edit chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing CMD chaos probes edit chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.065,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing CMD chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing CMD chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.056,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing prometheus chaos probes Create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing prometheus chaos probes Create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.048,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing prometheus chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.05,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing prometheus chaos probes edit chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing prometheus chaos probes edit chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.073,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing prometheus chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing prometheus chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.058,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes Create chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing kubernetes chaos probes Create chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.053,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing kubernetes chaos probes negative test case for chaos probe [Get error when creating chaos Probe with same name]",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.055,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes edit chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing kubernetes chaos probes edit chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.071,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/testing kubernetes chaos probes delete chaos probe",
+   "job": null,
+   "kind": "test",
+   "message": "",
+   "name": "testing kubernetes chaos probes delete chaos probe",
+   "source": "junit",
+   "status": "passed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40958584898",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 100.065,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:28\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000426ac8>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x1259736,…",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.057,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:91\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0001b9110>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a691,…",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.069,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:27\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000140e28>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x12596b6…",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.059,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:89\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000426690>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a531…",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 5.708,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 11.162,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 544,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Configure AWS Credentials'",
+   "name": "job: AWS_EC2_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075/job/123774678513",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EBS_Loss",
+   "job": "AWS_EBS_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: AWS_EBS_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40967228075/job/123778469963",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 5.663,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Instance_Stop",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.07,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00000f110>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6, 0x1…",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.062,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000422870>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411, 0x1…",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.051,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00028d380>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x124f0dc, 0x12070…",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.04,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003d9a20>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x12505c7, 0x12070…",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 5.511,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Disk_Loss",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966758914",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 100.065,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:25\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000142df8>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6…",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 100.058,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:87\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000142ee8>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411…",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 5.651,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 11.297,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 311,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Create target GCP VM Instances'",
+   "name": "job: GCP_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166/job/123773205205",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Disk_Loss",
+   "job": "GCP_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: GCP_VM_Disk_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966788166/job/123775426259",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 15,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Setup_m-agent",
+   "job": "Setup_m-agent",
+   "kind": "job",
+   "message": "Job failed at step 'Create a GCP VM Instance to Setup m-agent and Target Resources'",
+   "name": "job: Setup_m-agent",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772279979",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 14,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Delete_VM",
+   "job": "Delete_VM",
+   "kind": "job",
+   "message": "Job failed at step 'Delete GCP VM Instance'",
+   "name": "job: Delete_VM",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772401755",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
+   "job": "Process_Kill_Serial_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Serial_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772402581",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
+   "job": "Process_Kill_Parallel_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Parallel_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/40966514245/job/123772403516",
+   "workflow": "m-agent"
+  }
+ ]
+}

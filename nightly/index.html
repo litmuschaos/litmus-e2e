@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-build="nightly">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LitmusChaos E2E Dashboard</title>
+  <meta name="description" content="Results of the Nightly, Release Candidate and GA runs of the LitmusChaos experiment BDD and ChaosCenter frontend E2E tests.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/styles.css?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/main.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/dom.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/data.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/motion.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/charts.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/views/common.js?v=9f4f0daccf">
+  <link rel="modulepreload" href="assets/js/views/overview.js?v=9f4f0daccf">
+  <script>
+    // before the first paint: the stored theme and the build of the link, so the page does not flash
+    try { var t = localStorage.getItem('e2e-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    // start the data requests now instead of after the scripts have run, data.js picks the answers up
+    window.__pre = {}; ['', 'rc/', 'ga/'].forEach(function (d) { ['latest', 'history'].forEach(function (n) { window.__pre[d + n + '.json'] = fetch('data/' + d + n + '.json', { cache: 'no-cache' }).catch(function () { return null; }); }); });
+    (function () { var m = /[?&]b=(rc|ga)\b/.exec(location.hash); if (m) document.documentElement.dataset.build = m[1]; })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><i class="grid"></i><i class="noise"></i></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#/" aria-label="LitmusChaos E2E Dashboard, overview">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 10 4l4 8 2-4 4 10z" fill="currentColor"/></svg>
+        <span>LitmusChaos <b>E2E Dashboard</b></span>
+      </a>
+      <div id="switcher" class="switcher" role="radiogroup" aria-label="Build" style="--idx:0">
+        <span class="pill" aria-hidden="true"></span>
+        <button type="button" role="radio" aria-checked="true" data-b="nightly"><i aria-hidden="true"></i>Nightly</button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-b="rc"><i aria-hidden="true"></i>RC</button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-b="ga"><i aria-hidden="true"></i>GA</button>
+      </div>
+      <nav id="nav" aria-label="Sections">
+        <a href="#/" data-route="overview">Overview</a>
+        <a href="#/readiness" data-route="readiness">Readiness</a>
+        <a href="#/experiments" data-route="experiments">Experiments</a>
+        <a href="#/frontend" data-route="frontend">Frontend</a>
+        <a href="#/history" data-route="history">History</a>
+        <a href="#/about" data-route="about">Data</a>
+      </nav>
+      <div class="tools">
+        <button id="palette-btn" class="btn ghost magnetic" type="button" aria-label="Search, open the command palette" aria-keyshortcuts="Control+K Meta+K"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z"/></svg><span class="t">Search</span><kbd aria-hidden="true">Ctrl K</kbd></button>
+        <button id="theme" class="icon-btn" type="button" aria-label="Theme: system" title="Theme: system"></button>
+      </div>
+    </div>
+  </header>
+  <main id="main" tabindex="-1"></main>
+  <div id="live" class="sr-only" role="status" aria-live="polite"></div>
+  <div id="tooltip" class="tooltip" aria-hidden="true" hidden></div>
+  <noscript><p class="notice">The dashboard needs JavaScript. The data is available as <a href="data/latest.json">latest.json</a> and <a href="data/history.json">history.json</a>.</p></noscript>
+  <script type="module" src="assets/js/main.js?v=9f4f0daccf"></script>
+</body>
+</html>

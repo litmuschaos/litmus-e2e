@@ -109,7 +109,7 @@ const Header = () => {
             </div>
             <div className={classes.slackIcon}>
               <a
-                href="https://slack.litmuschaos.io/"
+                href="https://github.com/litmuschaos/litmus-e2e"
                 target="_blank"
                 rel="noopener noreferrer"
               >
