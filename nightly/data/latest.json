@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 0.1,
-  "durationSec": 250,
-  "finishedAt": "2026-10-30T21:35:43Z",
+  "ageHours": 1.0,
+  "durationSec": 3631,
+  "finishedAt": "2026-10-30T22:32:04Z",
   "id": "2026-10-30",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
-     "passRate": null,
+     "passRate": 0.0,
      "passed": 0,
-     "skipped": 0,
-     "total": 0
+     "skipped": 2,
+     "total": 4
     },
     "status": "incomplete"
    },
@@ -247,25 +247,63 @@
    {
     "category": "m-agent",
     "counts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
      "passed": 0,
-     "skipped": 0
+     "skipped": 2
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 30,
+    "failureKind": "infrastructure",
     "id": "m-agent",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 15,
+      "failedSteps": [
+       "Create a GCP VM Instance to Setup m-agent and Target Resources",
+       "Get Agent Endpoint and Auth Token"
+      ],
+      "firstFailedStep": "Create a GCP VM Instance to Setup m-agent and Target Resources",
+      "name": "Setup_m-agent",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347403379"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 10,
+      "failedSteps": [
+       "Delete GCP VM Instance"
+      ],
+      "firstFailedStep": "Delete GCP VM Instance",
+      "name": "Delete_VM",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347505525"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Serial_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347506858"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Parallel_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347507121"
+     }
+    ],
     "name": "m-agent",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "jobs",
+    "runId": 41138697922,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922",
+    "startedAt": "2026-10-30T22:31:34Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    }
   ]
  },
@@ -952,19 +990,40 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-10-30T21:35:50Z",
+ "generatedAt": "2026-10-30T22:32:13Z",
  "metrics": {
   "buildsConsidered": 5,
   "durationChange": {
-   "latestSec": 250,
-   "percent": -94.4,
+   "latestSec": 3631,
+   "percent": -18.4,
    "previousSec": 4449
   },
   "flakyTests": [],
-  "longestTests": [],
+  "longestTests": [
+   {
+    "durationSec": 15,
+    "id": "bdd/m-agent/job:Setup_m-agent",
+    "name": "job: Setup_m-agent",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 10,
+    "id": "bdd/m-agent/job:Delete_VM",
+    "name": "job: Delete_VM",
+    "suite": "bdd"
+   }
+  ],
   "newlyFailing": [],
   "recovered": [],
   "recurringFailures": [
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/m-agent/job:Delete_VM"
+   },
+   {
+    "consecutiveBuilds": 5,
+    "id": "bdd/m-agent/job:Setup_m-agent"
+   },
    {
     "consecutiveBuilds": 4,
     "id": "bdd/aws/job:AWS_EC2_Test"
@@ -1012,14 +1071,6 @@
    {
     "consecutiveBuilds": 4,
     "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/m-agent/job:Delete_VM"
-   },
-   {
-    "consecutiveBuilds": 4,
-    "id": "bdd/m-agent/job:Setup_m-agent"
    }
   ]
  },
@@ -1165,6 +1216,62 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41131685834",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 15,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Setup_m-agent",
+   "job": "Setup_m-agent",
+   "kind": "job",
+   "message": "Job failed at step 'Create a GCP VM Instance to Setup m-agent and Target Resources'",
+   "name": "job: Setup_m-agent",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347403379",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 10,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Delete_VM",
+   "job": "Delete_VM",
+   "kind": "job",
+   "message": "Job failed at step 'Delete GCP VM Instance'",
+   "name": "job: Delete_VM",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347505525",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
+   "job": "Process_Kill_Serial_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Serial_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347506858",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
+   "job": "Process_Kill_Parallel_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Parallel_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41138697922/job/124347507121",
+   "workflow": "m-agent"
   }
  ]
 }
