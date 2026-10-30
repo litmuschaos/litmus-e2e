@@ -100,7 +100,7 @@ func FetchLogApi(c *gin.Context) {
 	var logsInput LogsInput
 	c.BindJSON(&logsInput)
 	logsInput.JobName = filepath.Clean(logsInput.JobName)
-	log.Infof("received parameters for post request are, pipelineId: %s, jobName: %s, stepNumber: %s", logsInput.PipelineId, logsInput.JobName, logsInput.StepNumber)
+	log.Infof("received parameters for post request are, pipelineId: %d, jobName: %s, stepNumber: %d", logsInput.PipelineId, logsInput.JobName, logsInput.StepNumber)
 	fullURLFile := constants.BaseGitHubUrl + "/repos/litmuschaos/litmus-e2e/actions/runs/" + strconv.Itoa(logsInput.PipelineId) + "/logs"
 	randomString := utils.RandString(8)
 	log.Infof("randomString is %s", randomString)

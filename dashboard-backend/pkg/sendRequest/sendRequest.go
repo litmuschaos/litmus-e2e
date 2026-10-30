@@ -40,11 +40,11 @@ func SendGetRequest(Url string) (interface{}, error) {
 	var objmap map[string]interface{}
 	err = json.Unmarshal(body, &objmap)
 	if err != nil {
-		log.Errorf("unable to unmarshal body into objmap", err)
+		log.Errorf("unable to unmarshal body into objmap: %v", err)
 		var arrmap []interface{}
 		err = json.Unmarshal(body, &arrmap)
 		if err != nil {
-			log.Errorf("unable to unmarshal body into arrmap", err)
+			log.Errorf("unable to unmarshal body into arrmap: %v", err)
 			return nil, err
 		}
 		log.Infof("arrmap is %v", arrmap)
