@@ -1,8 +1,8 @@
 {
  "build": {
   "ageHours": 1.1,
-  "durationSec": 3883,
-  "finishedAt": "2026-11-02T22:36:36Z",
+  "durationSec": 4050,
+  "finishedAt": "2026-11-02T22:39:23Z",
   "id": "2026-11-02",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 5,
-     "failed": 10,
+     "error": 6,
+     "failed": 16,
      "passRate": 0.0,
      "passed": 0,
-     "skipped": 3,
-     "total": 18
+     "skipped": 4,
+     "total": 26
     },
     "status": "incomplete"
    },
@@ -155,38 +155,52 @@
    {
     "category": "aws",
     "counts": {
-     "error": 0,
-     "failed": 0,
+     "error": 1,
+     "failed": 6,
      "passed": 0,
-     "skipped": 0
+     "skipped": 1
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 236,
+    "failureKind": "tests",
     "id": "aws",
     "jobs": [
      {
-      "conclusion": "in_progress",
-      "durationSec": null,
+      "conclusion": "failure",
+      "durationSec": 233,
       "failedSteps": [
        "Installing Prerequisites (K3S Cluster)",
        "Create Kubernetes secret for aws experiment",
        "Configure AWS Credentials",
        "Creating target EC2 instances",
-       "Get the target instance name"
+       "Get the target instance name",
+       "Litmus Infra Setup",
+       "Run EC2 Terminate By ID experiment in serial & parallel mode",
+       "Run EC2 Terminate By Tag experiment in serial & parallel mode",
+       "Terminate target EC2 instances",
+       "Litmus Cleanup",
+       "Deleting K3S cluster"
       ],
       "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "AWS_EC2_Test",
       "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125596524785"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EBS_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125598368674"
      }
     ],
     "name": "AWS",
     "note": "Needs AWS credentials",
     "required": false,
-    "resultsSource": "jobs",
+    "resultsSource": "junit",
     "runId": 41538557893,
     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
     "startedAt": "2026-11-02T22:35:27Z",
-    "status": "in_progress",
+    "status": "failed",
     "suite": "bdd",
     "trigger": "schedule"
    },
@@ -987,6 +1001,8 @@
   ],
   "executed": [
    "disk-loss",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
    "gcp-vm-instance-stop",
    "instance-stop"
   ],
@@ -1068,16 +1084,22 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-02T22:38:11Z",
+ "generatedAt": "2026-11-02T22:39:49Z",
  "metrics": {
   "buildsConsidered": 8,
   "durationChange": {
-   "latestSec": 3883,
-   "percent": -12.4,
+   "latestSec": 4050,
+   "percent": -8.6,
    "previousSec": 4433
   },
   "flakyTests": [],
   "longestTests": [
+   {
+    "durationSec": 233,
+    "id": "bdd/aws/job:AWS_EC2_Test",
+    "name": "job: AWS_EC2_Test",
+    "suite": "bdd"
+   },
    {
     "durationSec": 201,
     "id": "bdd/azure/job:Azure_VM_Instance_Stop",
@@ -1126,11 +1148,31 @@
   "recurringFailures": [
    {
     "consecutiveBuilds": 8,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   },
+   {
+    "consecutiveBuilds": 8,
     "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
    },
    {
     "consecutiveBuilds": 8,
     "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
    },
    {
     "consecutiveBuilds": 8,
@@ -1159,26 +1201,6 @@
    {
     "consecutiveBuilds": 8,
     "id": "bdd/m-agent/job:Setup_m-agent"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/aws/job:AWS_EC2_Test"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
    },
    {
     "consecutiveBuilds": 4,
@@ -1364,6 +1386,118 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41529176916",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:28\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000591410>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:38",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:91\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000591620>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:101",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:27\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0003ac030>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:37",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:89\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0003ac270>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:99",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:27\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0000a2b40>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:35",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/litmus-cleanup_test.go:29\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0002c2270>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/litmus-cleanup_test.go:38",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 233,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: AWS_EC2_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125596524785",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 0,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EBS_Loss",
+   "job": "AWS_EBS_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: AWS_EBS_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125598368674",
+   "workflow": "aws"
   },
   {
    "durationSec": 0.0,
