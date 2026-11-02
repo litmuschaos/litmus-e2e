@@ -1666,9 +1666,13 @@
    }
   },
   {
-   "durationSec": 266,
+   "durationSec": 3621,
    "id": "2026-11-02",
    "results": {
+    "bdd/m-agent/job:Delete_VM": "e",
+    "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
+    "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
+    "bdd/m-agent/job:Setup_m-agent": "e",
     "frontend/REST APIs/UserManagment/An uncaught error was detected outside of a test": "f",
     "frontend/REST APIs/chaosProbes/An uncaught error was detected outside of a test": "f",
     "frontend/REST APIs/chaoshub/An uncaught error was detected outside of a test": "f",
@@ -1693,12 +1697,12 @@
       "total": 0
      },
      "optionalCounts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
-      "passRate": null,
+      "passRate": 0.0,
       "passed": 0,
-      "skipped": 0,
-      "total": 0
+      "skipped": 2,
+      "total": 4
      },
      "status": "incomplete"
     },
@@ -1790,16 +1794,16 @@
     },
     "m-agent": {
      "counts": {
-      "error": 0,
+      "error": 2,
       "failed": 0,
       "passed": 0,
-      "skipped": 0
+      "skipped": 2
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 45,
+     "failureKind": "infrastructure",
+     "runId": 41537988797,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41537988797",
+     "status": "failed"
     },
     "node-level": {
      "counts": {
@@ -1843,7 +1847,7 @@
    }
   }
  ],
- "generatedAt": "2026-11-02T21:36:29Z",
+ "generatedAt": "2026-11-02T22:32:22Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
