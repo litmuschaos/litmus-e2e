@@ -167,8 +167,14 @@
      {
       "conclusion": "in_progress",
       "durationSec": null,
-      "failedSteps": [],
-      "firstFailedStep": null,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for aws experiment",
+       "Configure AWS Credentials",
+       "Creating target EC2 instances",
+       "Get the target instance name"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
       "name": "AWS_EC2_Test",
       "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125596524785"
      }
@@ -1062,7 +1068,7 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-02T22:36:44Z",
+ "generatedAt": "2026-11-02T22:38:11Z",
  "metrics": {
   "buildsConsidered": 8,
   "durationChange": {
