@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 1.0,
-  "durationSec": 3621,
-  "finishedAt": "2026-11-02T22:32:14Z",
+  "ageHours": 1.1,
+  "durationSec": 3883,
+  "finishedAt": "2026-11-02T22:36:36Z",
   "id": "2026-11-02",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 2,
-     "failed": 0,
+     "error": 5,
+     "failed": 10,
      "passRate": 0.0,
      "passed": 0,
-     "skipped": 2,
-     "total": 4
+     "skipped": 3,
+     "total": 18
     },
     "status": "incomplete"
    },
@@ -163,63 +163,131 @@
     "durationSec": null,
     "failureKind": null,
     "id": "aws",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "in_progress",
+      "durationSec": null,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EC2_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893/job/125596524785"
+     }
+    ],
     "name": "AWS",
     "note": "Needs AWS credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "jobs",
+    "runId": 41538557893,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+    "startedAt": "2026-11-02T22:35:27Z",
+    "status": "in_progress",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "azure",
     "counts": {
-     "error": 0,
-     "failed": 0,
+     "error": 2,
+     "failed": 6,
      "passed": 0,
      "skipped": 0
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 204,
+    "failureKind": "tests",
     "id": "azure",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 201,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for azure experiment",
+       "Create target Azure VM Instances",
+       "Litmus Infra Setup",
+       "Run Azure VM Instance Stop experiment in serial & parallel mode",
+       "Delete target Azure VM Instances",
+       "Deleting K3S cluster"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Azure_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139/job/125595448131"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 180,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for azure experiment",
+       "Create a Azure VM Instance with target Disk Volumes",
+       "Litmus Infra Setup",
+       "Run Azure VM Disk Loss experiment in serial & parallel mode",
+       "Delete the VM Instance and target Disk Volumes",
+       "Deleting K3S cluster"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "Azure_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139/job/125595449765"
+     }
+    ],
     "name": "Azure",
     "note": "Needs Azure credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "junit",
+    "runId": 41538231139,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+    "startedAt": "2026-11-02T22:33:12Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "gcp",
     "counts": {
-     "error": 0,
-     "failed": 0,
+     "error": 1,
+     "failed": 4,
      "passed": 0,
-     "skipped": 0
+     "skipped": 1
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 204,
+    "failureKind": "tests",
     "id": "gcp",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 199,
+      "failedSteps": [
+       "Installing Prerequisites (K3S Cluster)",
+       "Create Kubernetes secret for gcp experiment",
+       "Create target GCP VM Instances",
+       "Litmus Infra Setup",
+       "Run GCP VM Instance Stop experiment in serial & parallel mode",
+       "Delete target GCP VM Instances",
+       "Litmus Cleanup",
+       "Deleting K3S cluster"
+      ],
+      "firstFailedStep": "Installing Prerequisites (K3S Cluster)",
+      "name": "GCP_VM_Instance_Stop",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264/job/125595446652"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "GCP_VM_Disk_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264/job/125597055226"
+     }
+    ],
     "name": "GCP",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "junit",
+    "runId": 41538230264,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+    "startedAt": "2026-11-02T22:33:11Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    },
    {
     "category": "vmware",
@@ -911,7 +979,11 @@
    "vm-poweroff",
    "with-appinfo"
   ],
-  "executed": [],
+  "executed": [
+   "disk-loss",
+   "gcp-vm-instance-stop",
+   "instance-stop"
+  ],
   "executedPercent": 0.0,
   "notScheduled": [
    "auxiliary-app",
@@ -990,16 +1062,34 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-02T22:32:22Z",
+ "generatedAt": "2026-11-02T22:36:44Z",
  "metrics": {
   "buildsConsidered": 8,
   "durationChange": {
-   "latestSec": 3621,
-   "percent": -18.3,
+   "latestSec": 3883,
+   "percent": -12.4,
    "previousSec": 4433
   },
   "flakyTests": [],
   "longestTests": [
+   {
+    "durationSec": 201,
+    "id": "bdd/azure/job:Azure_VM_Instance_Stop",
+    "name": "job: Azure_VM_Instance_Stop",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 199,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+    "name": "job: GCP_VM_Instance_Stop",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 180,
+    "id": "bdd/azure/job:Azure_VM_Disk_Loss",
+    "name": "job: Azure_VM_Disk_Loss",
+    "suite": "bdd"
+   },
    {
     "durationSec": 26,
     "id": "bdd/m-agent/job:Delete_VM",
@@ -1010,6 +1100,12 @@
     "durationSec": 14,
     "id": "bdd/m-agent/job:Setup_m-agent",
     "name": "job: Setup_m-agent",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 0.001,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
     "suite": "bdd"
    },
    {
@@ -1024,6 +1120,34 @@
   "recurringFailures": [
    {
     "consecutiveBuilds": 8,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
+   },
+   {
+    "consecutiveBuilds": 8,
+    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
+   },
+   {
+    "consecutiveBuilds": 8,
     "id": "bdd/m-agent/job:Delete_VM"
    },
    {
@@ -1033,14 +1157,6 @@
    {
     "consecutiveBuilds": 7,
     "id": "bdd/aws/job:AWS_EC2_Test"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
    },
    {
     "consecutiveBuilds": 7,
@@ -1057,26 +1173,6 @@
    {
     "consecutiveBuilds": 7,
     "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/gcp/job:GCP_VM_Instance_Stop"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial"
-   },
-   {
-    "consecutiveBuilds": 7,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
    },
    {
     "consecutiveBuilds": 4,
@@ -1262,6 +1358,202 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41529176916",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Instance_Stop",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:27\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000523260>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:35",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:24\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0002f8030>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:34",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "instance-stop",
+   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:86\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc0002f8240>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:96",
+   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:24\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*os.PathError | 0xc000407d40>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:34",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "disk-loss",
+   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:86\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*os.PathError | 0xc000407f50>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:96",
+   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Disk_Loss",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:27\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*os.PathError | 0xc0003d3e60>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:35",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 201,
+   "group": "azure",
+   "id": "bdd/azure/job:Azure_VM_Instance_Stop",
+   "job": "Azure_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Azure_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139/job/125595448131",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 180,
+   "group": "azure",
+   "id": "bdd/azure/job:Azure_VM_Disk_Loss",
+   "job": "Azure_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: Azure_VM_Disk_Loss",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139/job/125595449765",
+   "workflow": "azure"
+  },
+  {
+   "durationSec": 0.001,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:25\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000332030>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:35",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "gcp-vm-instance-stop",
+   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:87\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000332270>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:97",
+   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:27\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc000477140>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/install-litmus_test.go:35",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "setup",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/tests/litmus-cleanup_test.go:29\nUnable to Get the kubeconfig due to {stat /etc/rancher/k3s/k3s.yaml: no such file or directory}\nExpected\n    <*fs.PathError | 0xc00027e060>: {\n        Op: \"stat\",\n        Path: \"/etc/rancher/k3s/k3s.yaml\",\n        Err: 0x2,\n    }\nto be nil\n/home/runner/work/litmus-e2e/litmus-e2e/tests/litmus-cleanup_test.go:38",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 199,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
+   "job": "GCP_VM_Instance_Stop",
+   "kind": "job",
+   "message": "Job failed at step 'Installing Prerequisites (K3S Cluster)'",
+   "name": "job: GCP_VM_Instance_Stop",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264/job/125595446652",
+   "workflow": "gcp"
+  },
+  {
+   "durationSec": 0,
+   "group": "gcp",
+   "id": "bdd/gcp/job:GCP_VM_Disk_Loss",
+   "job": "GCP_VM_Disk_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: GCP_VM_Disk_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264/job/125597055226",
+   "workflow": "gcp"
   },
   {
    "durationSec": 14,

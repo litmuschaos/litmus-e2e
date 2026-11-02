@@ -1666,9 +1666,23 @@
    }
   },
   {
-   "durationSec": 3621,
+   "durationSec": 3883,
    "id": "2026-11-02",
    "results": {
+    "bdd/azure/job:Azure_VM_Disk_Loss": "e",
+    "bdd/azure/job:Azure_VM_Instance_Stop": "e",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial": "f",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel": "f",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel": "f",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial": "f",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Disk_Loss": "f",
+    "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Instance_Stop": "f",
+    "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel": "f",
+    "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop": "f",
     "bdd/m-agent/job:Delete_VM": "e",
     "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
     "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
@@ -1697,12 +1711,12 @@
       "total": 0
      },
      "optionalCounts": {
-      "error": 2,
-      "failed": 0,
+      "error": 5,
+      "failed": 10,
       "passRate": 0.0,
       "passed": 0,
-      "skipped": 2,
-      "total": 4
+      "skipped": 3,
+      "total": 18
      },
      "status": "incomplete"
     },
@@ -1736,22 +1750,22 @@
      },
      "durationSec": null,
      "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "runId": 41538557893,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538557893",
+     "status": "in_progress"
     },
     "azure": {
      "counts": {
-      "error": 0,
-      "failed": 0,
+      "error": 2,
+      "failed": 6,
       "passed": 0,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 204,
+     "failureKind": "tests",
+     "runId": 41538231139,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538231139",
+     "status": "failed"
     },
     "chaoscenter": {
      "counts": {
@@ -1781,16 +1795,16 @@
     },
     "gcp": {
      "counts": {
-      "error": 0,
-      "failed": 0,
+      "error": 1,
+      "failed": 4,
       "passed": 0,
-      "skipped": 0
+      "skipped": 1
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 204,
+     "failureKind": "tests",
+     "runId": 41538230264,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41538230264",
+     "status": "failed"
     },
     "m-agent": {
      "counts": {
@@ -1847,7 +1861,7 @@
    }
   }
  ],
- "generatedAt": "2026-11-02T22:32:22Z",
+ "generatedAt": "2026-11-02T22:36:44Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
