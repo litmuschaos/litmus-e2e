@@ -1869,9 +1869,17 @@
    }
   },
   {
-   "durationSec": 3603,
+   "durationSec": 4007,
    "id": "2026-11-03",
    "results": {
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial": "f",
+    "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel": "f",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel": "f",
+    "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial": "f",
+    "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
+    "bdd/gcp/job:GCP_VM_Instance_Stop": "e",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial": "f",
+    "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel": "f",
     "bdd/m-agent/job:Delete_VM": "e",
     "bdd/m-agent/job:Process_Kill_Parallel_Test": "s",
     "bdd/m-agent/job:Process_Kill_Serial_Test": "s",
@@ -1900,12 +1908,12 @@
       "total": 0
      },
      "optionalCounts": {
-      "error": 2,
-      "failed": 0,
+      "error": 3,
+      "failed": 6,
       "passRate": 0.0,
       "passed": 0,
-      "skipped": 2,
-      "total": 4
+      "skipped": 3,
+      "total": 12
      },
      "status": "incomplete"
     },
@@ -1939,22 +1947,22 @@
      },
      "durationSec": null,
      "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "runId": 41732234680,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41732234680",
+     "status": "in_progress"
     },
     "azure": {
      "counts": {
       "error": 0,
-      "failed": 0,
+      "failed": 4,
       "passed": 0,
       "skipped": 0
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 296,
+     "failureKind": "tests",
+     "runId": 41731780265,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41731780265",
+     "status": "failed"
     },
     "chaoscenter": {
      "counts": {
@@ -1984,16 +1992,16 @@
     },
     "gcp": {
      "counts": {
-      "error": 0,
-      "failed": 0,
+      "error": 1,
+      "failed": 2,
       "passed": 0,
-      "skipped": 0
+      "skipped": 1
      },
-     "durationSec": null,
-     "failureKind": null,
-     "runId": null,
-     "runUrl": null,
-     "status": "not_run"
+     "durationSec": 320,
+     "failureKind": "tests",
+     "runId": 41731797867,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41731797867",
+     "status": "failed"
     },
     "m-agent": {
      "counts": {
@@ -2050,7 +2058,7 @@
    }
   }
  ],
- "generatedAt": "2026-11-03T22:32:02Z",
+ "generatedAt": "2026-11-03T22:38:14Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
