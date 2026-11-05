@@ -1,12 +1,12 @@
 {
  "build": {
-  "ageHours": 11.0,
-  "durationSec": 4386,
-  "finishedAt": "2026-11-04T22:45:05Z",
-  "id": "2026-11-04",
+  "ageHours": 0.1,
+  "durationSec": 235,
+  "finishedAt": "2026-11-05T21:35:47Z",
+  "id": "2026-11-05",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
-  "startedAt": "2026-11-04T21:31:59Z",
+  "startedAt": "2026-11-05T21:31:52Z",
   "status": "failed",
   "suites": {
    "bdd": {
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 4,
-     "failed": 10,
-     "passRate": 0.0,
+     "error": 0,
+     "failed": 0,
+     "passRate": null,
      "passed": 0,
-     "skipped": 4,
-     "total": 18
+     "skipped": 0,
+     "total": 0
     },
     "status": "incomplete"
    },
@@ -126,28 +126,28 @@
      "passed": 0,
      "skipped": 0
     },
-    "durationSec": 241,
+    "durationSec": 235,
     "failureKind": "tests",
     "id": "chaoscenter",
     "jobs": [
      {
       "conclusion": "failure",
-      "durationSec": 237,
+      "durationSec": 231,
       "failedSteps": [
        "Cypress run with env"
       ],
       "firstFailedStep": "Cypress run with env",
       "name": "frontend / run-litmus",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674/job/126879072605"
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584/job/127546846285"
      }
     ],
     "name": "ChaosCenter",
     "note": null,
     "required": true,
     "resultsSource": "junit",
-    "runId": 41916963674,
-    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-    "startedAt": "2026-11-04T21:31:59Z",
+    "runId": 42113476584,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+    "startedAt": "2026-11-05T21:31:52Z",
     "status": "failed",
     "suite": "frontend",
     "trigger": "schedule"
@@ -155,143 +155,71 @@
    {
     "category": "aws",
     "counts": {
-     "error": 1,
-     "failed": 4,
+     "error": 0,
+     "failed": 0,
      "passed": 0,
-     "skipped": 1
+     "skipped": 0
     },
-    "durationSec": 551,
-    "failureKind": "tests",
+    "durationSec": null,
+    "failureKind": null,
     "id": "aws",
-    "jobs": [
-     {
-      "conclusion": "failure",
-      "durationSec": 547,
-      "failedSteps": [
-       "Configure AWS Credentials",
-       "Creating target EC2 instances",
-       "Get the target instance name",
-       "Run EC2 Terminate By ID experiment in serial & parallel mode",
-       "Run EC2 Terminate By Tag experiment in serial & parallel mode",
-       "Terminate target EC2 instances"
-      ],
-      "firstFailedStep": "Configure AWS Credentials",
-      "name": "AWS_EC2_Test",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469/job/126912731076"
-     },
-     {
-      "conclusion": "skipped",
-      "durationSec": -1,
-      "failedSteps": [],
-      "firstFailedStep": null,
-      "name": "AWS_EBS_Loss",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469/job/126917287981"
-     }
-    ],
+    "jobs": [],
     "name": "AWS",
     "note": "Needs AWS credentials",
     "required": false,
-    "resultsSource": "junit",
-    "runId": 41926668469,
-    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-    "startedAt": "2026-11-04T22:35:54Z",
-    "status": "failed",
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
     "suite": "bdd",
-    "trigger": "schedule"
+    "trigger": null
    },
    {
     "category": "azure",
     "counts": {
      "error": 0,
-     "failed": 4,
+     "failed": 0,
      "passed": 0,
      "skipped": 0
     },
-    "durationSec": 285,
-    "failureKind": "tests",
+    "durationSec": null,
+    "failureKind": null,
     "id": "azure",
-    "jobs": [
-     {
-      "conclusion": "failure",
-      "durationSec": 282,
-      "failedSteps": [
-       "Azure Login",
-       "Create target Azure VM Instances",
-       "Run Azure VM Instance Stop experiment in serial & parallel mode",
-       "Delete target Azure VM Instances"
-      ],
-      "firstFailedStep": "Azure Login",
-      "name": "Azure_VM_Instance_Stop",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403/job/126911517507"
-     },
-     {
-      "conclusion": "failure",
-      "durationSec": 275,
-      "failedSteps": [
-       "Azure Login",
-       "Create a Azure VM Instance with target Disk Volumes",
-       "Run Azure VM Disk Loss experiment in serial & parallel mode",
-       "Delete the VM Instance and target Disk Volumes"
-      ],
-      "firstFailedStep": "Azure Login",
-      "name": "Azure_VM_Disk_Loss",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403/job/126911518058"
-     }
-    ],
+    "jobs": [],
     "name": "Azure",
     "note": "Needs Azure credentials",
     "required": false,
-    "resultsSource": "junit",
-    "runId": 41926312403,
-    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-    "startedAt": "2026-11-04T22:33:30Z",
-    "status": "failed",
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
     "suite": "bdd",
-    "trigger": "schedule"
+    "trigger": null
    },
    {
     "category": "gcp",
     "counts": {
-     "error": 1,
-     "failed": 2,
+     "error": 0,
+     "failed": 0,
      "passed": 0,
-     "skipped": 1
+     "skipped": 0
     },
-    "durationSec": 309,
-    "failureKind": "tests",
+    "durationSec": null,
+    "failureKind": null,
     "id": "gcp",
-    "jobs": [
-     {
-      "conclusion": "failure",
-      "durationSec": 305,
-      "failedSteps": [
-       "Create target GCP VM Instances",
-       "Run GCP VM Instance Stop experiment in serial & parallel mode",
-       "Delete target GCP VM Instances"
-      ],
-      "firstFailedStep": "Create target GCP VM Instances",
-      "name": "GCP_VM_Instance_Stop",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987/job/126911604652"
-     },
-     {
-      "conclusion": "skipped",
-      "durationSec": 0,
-      "failedSteps": [],
-      "firstFailedStep": null,
-      "name": "GCP_VM_Disk_Loss",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987/job/126914182215"
-     }
-    ],
+    "jobs": [],
     "name": "GCP",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "junit",
-    "runId": 41926337987,
-    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987",
-    "startedAt": "2026-11-04T22:33:40Z",
-    "status": "failed",
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
     "suite": "bdd",
-    "trigger": "schedule"
+    "trigger": null
    },
    {
     "category": "vmware",
@@ -319,63 +247,25 @@
    {
     "category": "m-agent",
     "counts": {
-     "error": 2,
+     "error": 0,
      "failed": 0,
      "passed": 0,
-     "skipped": 2
+     "skipped": 0
     },
-    "durationSec": 41,
-    "failureKind": "infrastructure",
+    "durationSec": null,
+    "failureKind": null,
     "id": "m-agent",
-    "jobs": [
-     {
-      "conclusion": "failure",
-      "durationSec": 16,
-      "failedSteps": [
-       "Create a GCP VM Instance to Setup m-agent and Target Resources",
-       "Get Agent Endpoint and Auth Token"
-      ],
-      "firstFailedStep": "Create a GCP VM Instance to Setup m-agent and Target Resources",
-      "name": "Setup_m-agent",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910556247"
-     },
-     {
-      "conclusion": "failure",
-      "durationSec": 18,
-      "failedSteps": [
-       "Delete GCP VM Instance"
-      ],
-      "firstFailedStep": "Delete GCP VM Instance",
-      "name": "Delete_VM",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910719650"
-     },
-     {
-      "conclusion": "skipped",
-      "durationSec": -1,
-      "failedSteps": [],
-      "firstFailedStep": null,
-      "name": "Process_Kill_Parallel_Test",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910720142"
-     },
-     {
-      "conclusion": "skipped",
-      "durationSec": -1,
-      "failedSteps": [],
-      "firstFailedStep": null,
-      "name": "Process_Kill_Serial_Test",
-      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910720751"
-     }
-    ],
+    "jobs": [],
     "name": "m-agent",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "jobs",
-    "runId": 41926034214,
-    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214",
-    "startedAt": "2026-11-04T22:31:37Z",
-    "status": "failed",
+    "resultsSource": "none",
+    "runId": null,
+    "runUrl": null,
+    "startedAt": null,
+    "status": "not_run",
     "suite": "bdd",
-    "trigger": "schedule"
+    "trigger": null
    }
   ]
  },
@@ -983,13 +873,7 @@
    "vm-poweroff",
    "with-appinfo"
   ],
-  "executed": [
-   "disk-loss",
-   "ec2-terminate-by-id",
-   "ec2-terminate-by-tag",
-   "gcp-vm-instance-stop",
-   "instance-stop"
-  ],
+  "executed": [],
   "executedPercent": 0.0,
   "notScheduled": [
    "auxiliary-app",
@@ -1068,77 +952,16 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-05T08:34:57Z",
+ "generatedAt": "2026-11-05T21:35:56Z",
  "metrics": {
-  "buildsConsidered": 10,
+  "buildsConsidered": 11,
   "durationChange": {
-   "latestSec": 4386,
-   "percent": -0.9,
-   "previousSec": 4424
+   "latestSec": 235,
+   "percent": -94.6,
+   "previousSec": 4386
   },
   "flakyTests": [],
-  "longestTests": [
-   {
-    "durationSec": 547,
-    "id": "bdd/aws/job:AWS_EC2_Test",
-    "name": "job: AWS_EC2_Test",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 305,
-    "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
-    "name": "job: GCP_VM_Instance_Stop",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.068,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
-    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.068,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
-    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.063,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
-    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.063,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
-    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.062,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
-    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.057,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
-    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.054,
-    "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
-    "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.052,
-    "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
-    "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
-    "suite": "bdd"
-   }
-  ],
+  "longestTests": [],
   "newlyFailing": [],
   "recovered": [],
   "recurringFailures": [
@@ -1199,43 +1022,43 @@
     "id": "bdd/m-agent/job:Setup_m-agent"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/REST APIs/UserManagment/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/REST APIs/chaosProbes/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/REST APIs/chaoshub/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/REST APIs/chaosinfra/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/REST APIs/login/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/UI/Usermanagment/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/UI/chaoshub/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/UI/chaosinfra/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/UI/chaosprobes/An uncaught error was detected outside of a test"
    },
    {
-    "consecutiveBuilds": 6,
+    "consecutiveBuilds": 7,
     "id": "frontend/UI/login/An uncaught error was detected outside of a test"
    }
   ]
@@ -1245,8 +1068,8 @@
  "tests": [
   {
    "durationSec": 0.0,
-   "group": "UI/login",
-   "id": "frontend/UI/login/An uncaught error was detected outside of a test",
+   "group": "REST APIs/login",
+   "id": "frontend/REST APIs/login/An uncaught error was detected outside of a test",
    "job": null,
    "kind": "test",
    "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
@@ -1254,7 +1077,7 @@
    "source": "junit",
    "status": "failed",
    "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
    "workflow": "chaoscenter"
   },
   {
@@ -1268,21 +1091,7 @@
    "source": "junit",
    "status": "failed",
    "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-   "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 0.0,
-   "group": "REST APIs/chaosProbes",
-   "id": "frontend/REST APIs/chaosProbes/An uncaught error was detected outside of a test",
-   "job": null,
-   "kind": "test",
-   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
-   "name": "An uncaught error was detected outside of a test",
-   "source": "junit",
-   "status": "failed",
-   "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
    "workflow": "chaoscenter"
   },
   {
@@ -1296,49 +1105,7 @@
    "source": "junit",
    "status": "failed",
    "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-   "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 0.0,
-   "group": "UI/chaoshub",
-   "id": "frontend/UI/chaoshub/An uncaught error was detected outside of a test",
-   "job": null,
-   "kind": "test",
-   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
-   "name": "An uncaught error was detected outside of a test",
-   "source": "junit",
-   "status": "failed",
-   "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-   "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 0.0,
-   "group": "REST APIs/UserManagment",
-   "id": "frontend/REST APIs/UserManagment/An uncaught error was detected outside of a test",
-   "job": null,
-   "kind": "test",
-   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
-   "name": "An uncaught error was detected outside of a test",
-   "source": "junit",
-   "status": "failed",
-   "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-   "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 0.0,
-   "group": "UI/chaosprobes",
-   "id": "frontend/UI/chaosprobes/An uncaught error was detected outside of a test",
-   "job": null,
-   "kind": "test",
-   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
-   "name": "An uncaught error was detected outside of a test",
-   "source": "junit",
-   "status": "failed",
-   "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
    "workflow": "chaoscenter"
   },
   {
@@ -1352,7 +1119,77 @@
    "source": "junit",
    "status": "failed",
    "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "UI/chaosprobes",
+   "id": "frontend/UI/chaosprobes/An uncaught error was detected outside of a test",
+   "job": null,
+   "kind": "test",
+   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
+   "name": "An uncaught error was detected outside of a test",
+   "source": "junit",
+   "status": "failed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "UI/chaoshub",
+   "id": "frontend/UI/chaoshub/An uncaught error was detected outside of a test",
+   "job": null,
+   "kind": "test",
+   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
+   "name": "An uncaught error was detected outside of a test",
+   "source": "junit",
+   "status": "failed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "REST APIs/chaosProbes",
+   "id": "frontend/REST APIs/chaosProbes/An uncaught error was detected outside of a test",
+   "job": null,
+   "kind": "test",
+   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
+   "name": "An uncaught error was detected outside of a test",
+   "source": "junit",
+   "status": "failed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "UI/login",
+   "id": "frontend/UI/login/An uncaught error was detected outside of a test",
+   "job": null,
+   "kind": "test",
+   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
+   "name": "An uncaught error was detected outside of a test",
+   "source": "junit",
+   "status": "failed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
+   "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 0.0,
+   "group": "REST APIs/UserManagment",
+   "id": "frontend/REST APIs/UserManagment/An uncaught error was detected outside of a test",
+   "job": null,
+   "kind": "test",
+   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
+   "name": "An uncaught error was detected outside of a test",
+   "source": "junit",
+   "status": "failed",
+   "suite": "frontend",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
    "workflow": "chaoscenter"
   },
   {
@@ -1366,358 +1203,8 @@
    "source": "junit",
    "status": "failed",
    "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42113476584",
    "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 0.0,
-   "group": "REST APIs/login",
-   "id": "frontend/REST APIs/login/An uncaught error was detected outside of a test",
-   "job": null,
-   "kind": "test",
-   "message": "CypressError: The following error originated from your test code, not from Cypress.\n  > `Cypress.env()` was removed in Cypress version 16.0.0. Please update to use `Cypress.expose()` for non-sensitive values, or `cy.env()` for sensitive values.\nThe key being accessed was: `LOCALSTORAGE_NODE_EVENTS_INSTALLED`\nThis call may come from a plugin. Update the plugin to a version that supports Cypress 16.\nWhen Cypress detects uncaught errors originating from your test code it will automatically fail the current test.\nCypress could not associate this error to any specific test.\nWe dynamically generate…",
-   "name": "An uncaught error was detected outside of a test",
-   "source": "junit",
-   "status": "failed",
-   "suite": "frontend",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41916963674",
-   "workflow": "chaoscenter"
-  },
-  {
-   "durationSec": 100.068,
-   "group": "ec2-terminate-by-id",
-   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
-   "job": "AWS_EC2_Test",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:28\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00000ea38>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x1259736,…",
-   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 100.057,
-   "group": "ec2-terminate-by-id",
-   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
-   "job": "AWS_EC2_Test",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:91\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00000e8a0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a691,…",
-   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 100.068,
-   "group": "ec2-terminate-by-tag",
-   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
-   "job": "AWS_EC2_Test",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:27\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003909c0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x12596b6…",
-   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 100.062,
-   "group": "ec2-terminate-by-tag",
-   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
-   "job": "AWS_EC2_Test",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:89\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003908d0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a531…",
-   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 5.738,
-   "group": "install-litmus",
-   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@AWS_EC2_Test",
-   "job": "AWS_EC2_Test",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 11.336,
-   "group": "litmus-cleanup",
-   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@AWS_EC2_Test",
-   "job": "AWS_EC2_Test",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 547,
-   "group": "aws",
-   "id": "bdd/aws/job:AWS_EC2_Test",
-   "job": "AWS_EC2_Test",
-   "kind": "job",
-   "message": "Job failed at step 'Configure AWS Credentials'",
-   "name": "job: AWS_EC2_Test",
-   "source": "job",
-   "status": "error",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469/job/126912731076",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": -1,
-   "group": "aws",
-   "id": "bdd/aws/job:AWS_EBS_Loss",
-   "job": "AWS_EBS_Loss",
-   "kind": "job",
-   "message": "Job skipped, its tests did not run",
-   "name": "job: AWS_EBS_Loss",
-   "source": "job",
-   "status": "skipped",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926668469/job/126917287981",
-   "workflow": "aws"
-  },
-  {
-   "durationSec": 5.534,
-   "group": "install-litmus",
-   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Instance_Stop",
-   "job": "Azure_VM_Instance_Stop",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 100.063,
-   "group": "instance-stop",
-   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
-   "job": "Azure_VM_Instance_Stop",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000110d08>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6, 0x1…",
-   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 100.052,
-   "group": "instance-stop",
-   "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
-   "job": "Azure_VM_Instance_Stop",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/instance-stop_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000110258>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411, 0x1…",
-   "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 100.047,
-   "group": "disk-loss",
-   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
-   "job": "Azure_VM_Disk_Loss",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:24\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000264f60>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x124f0dc, 0x12070…",
-   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 100.044,
-   "group": "disk-loss",
-   "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
-   "job": "Azure_VM_Disk_Loss",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/azure/disk-loss_test.go:86\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003aef40>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1225f7d, 0x122602f, 0x12505c7, 0x12070…",
-   "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 5.536,
-   "group": "install-litmus",
-   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@Azure_VM_Disk_Loss",
-   "job": "Azure_VM_Disk_Loss",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926312403",
-   "workflow": "azure"
-  },
-  {
-   "durationSec": 100.063,
-   "group": "gcp-vm-instance-stop",
-   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
-   "job": "GCP_VM_Instance_Stop",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:25\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc00000eab0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122d4b6…",
-   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 100.054,
-   "group": "gcp-vm-instance-stop",
-   "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
-   "job": "GCP_VM_Instance_Stop",
-   "kind": "test",
-   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/gcp/gcp-vm-instance-stop_test.go:87\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000428cc0>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x120f9a7, 0x120fa6f, 0x122e411…",
-   "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
-   "source": "junit",
-   "status": "failed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 5.635,
-   "group": "install-litmus",
-   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@GCP_VM_Instance_Stop",
-   "job": "GCP_VM_Instance_Stop",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 11.179,
-   "group": "litmus-cleanup",
-   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
-   "job": "GCP_VM_Instance_Stop",
-   "kind": "setup",
-   "message": "",
-   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
-   "source": "junit",
-   "status": "passed",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 305,
-   "group": "gcp",
-   "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
-   "job": "GCP_VM_Instance_Stop",
-   "kind": "job",
-   "message": "Job failed at step 'Create target GCP VM Instances'",
-   "name": "job: GCP_VM_Instance_Stop",
-   "source": "job",
-   "status": "error",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987/job/126911604652",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 0,
-   "group": "gcp",
-   "id": "bdd/gcp/job:GCP_VM_Disk_Loss",
-   "job": "GCP_VM_Disk_Loss",
-   "kind": "job",
-   "message": "Job skipped, its tests did not run",
-   "name": "job: GCP_VM_Disk_Loss",
-   "source": "job",
-   "status": "skipped",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926337987/job/126914182215",
-   "workflow": "gcp"
-  },
-  {
-   "durationSec": 16,
-   "group": "m-agent",
-   "id": "bdd/m-agent/job:Setup_m-agent",
-   "job": "Setup_m-agent",
-   "kind": "job",
-   "message": "Job failed at step 'Create a GCP VM Instance to Setup m-agent and Target Resources'",
-   "name": "job: Setup_m-agent",
-   "source": "job",
-   "status": "error",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910556247",
-   "workflow": "m-agent"
-  },
-  {
-   "durationSec": 18,
-   "group": "m-agent",
-   "id": "bdd/m-agent/job:Delete_VM",
-   "job": "Delete_VM",
-   "kind": "job",
-   "message": "Job failed at step 'Delete GCP VM Instance'",
-   "name": "job: Delete_VM",
-   "source": "job",
-   "status": "error",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910719650",
-   "workflow": "m-agent"
-  },
-  {
-   "durationSec": -1,
-   "group": "m-agent",
-   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
-   "job": "Process_Kill_Parallel_Test",
-   "kind": "job",
-   "message": "Job skipped, its tests did not run",
-   "name": "job: Process_Kill_Parallel_Test",
-   "source": "job",
-   "status": "skipped",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910720142",
-   "workflow": "m-agent"
-  },
-  {
-   "durationSec": -1,
-   "group": "m-agent",
-   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
-   "job": "Process_Kill_Serial_Test",
-   "kind": "job",
-   "message": "Job skipped, its tests did not run",
-   "name": "job: Process_Kill_Serial_Test",
-   "source": "job",
-   "status": "skipped",
-   "suite": "bdd",
-   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/41926034214/job/126910720751",
-   "workflow": "m-agent"
   }
  ]
 }
