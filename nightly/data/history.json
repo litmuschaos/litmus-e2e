@@ -2452,9 +2452,186 @@
      "status": "not_run"
     }
    }
+  },
+  {
+   "durationSec": 261,
+   "id": "2026-11-06",
+   "results": {
+    "frontend/REST APIs/UserManagment/An uncaught error was detected outside of a test": "f",
+    "frontend/REST APIs/chaosProbes/An uncaught error was detected outside of a test": "f",
+    "frontend/REST APIs/chaoshub/An uncaught error was detected outside of a test": "f",
+    "frontend/REST APIs/chaosinfra/An uncaught error was detected outside of a test": "f",
+    "frontend/REST APIs/login/An uncaught error was detected outside of a test": "f",
+    "frontend/UI/Usermanagment/An uncaught error was detected outside of a test": "f",
+    "frontend/UI/chaoshub/An uncaught error was detected outside of a test": "f",
+    "frontend/UI/chaosinfra/An uncaught error was detected outside of a test": "f",
+    "frontend/UI/chaosprobes/An uncaught error was detected outside of a test": "f",
+    "frontend/UI/login/An uncaught error was detected outside of a test": "f"
+   },
+   "startedAt": "2026-11-06T21:31:15Z",
+   "status": "failed",
+   "suites": {
+    "bdd": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "incomplete"
+    },
+    "frontend": {
+     "counts": {
+      "error": 0,
+      "failed": 10,
+      "passRate": 0.0,
+      "passed": 0,
+      "skipped": 0,
+      "total": 10
+     },
+     "optionalCounts": {
+      "error": 0,
+      "failed": 0,
+      "passRate": null,
+      "passed": 0,
+      "skipped": 0,
+      "total": 0
+     },
+     "status": "failed"
+    }
+   },
+   "workflows": {
+    "aws": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "azure": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "chaoscenter": {
+     "counts": {
+      "error": 0,
+      "failed": 10,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": 261,
+     "failureKind": "tests",
+     "runId": 42297392642,
+     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42297392642",
+     "status": "failed"
+    },
+    "component": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "gcp": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "m-agent": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "node-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "pod-level": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    },
+    "vmware": {
+     "counts": {
+      "error": 0,
+      "failed": 0,
+      "passed": 0,
+      "skipped": 0
+     },
+     "durationSec": null,
+     "failureKind": null,
+     "runId": null,
+     "runUrl": null,
+     "status": "not_run"
+    }
+   }
   }
  ],
- "generatedAt": "2026-11-06T08:35:05Z",
+ "generatedAt": "2026-11-06T21:35:46Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
