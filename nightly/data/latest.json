@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 0.1,
-  "durationSec": 299,
-  "finishedAt": "2026-11-09T21:36:53Z",
+  "ageHours": 1.0,
+  "durationSec": 3599,
+  "finishedAt": "2026-11-09T22:31:53Z",
   "id": "2026-11-09",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
-     "passRate": null,
+     "passRate": 0.0,
      "passed": 0,
-     "skipped": 0,
-     "total": 0
+     "skipped": 2,
+     "total": 4
     },
     "status": "incomplete"
    },
@@ -247,25 +247,63 @@
    {
     "category": "m-agent",
     "counts": {
-     "error": 0,
+     "error": 2,
      "failed": 0,
      "passed": 0,
-     "skipped": 0
+     "skipped": 2
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 37,
+    "failureKind": "infrastructure",
     "id": "m-agent",
-    "jobs": [],
+    "jobs": [
+     {
+      "conclusion": "failure",
+      "durationSec": 14,
+      "failedSteps": [
+       "Create a GCP VM Instance to Setup m-agent and Target Resources",
+       "Get Agent Endpoint and Auth Token"
+      ],
+      "firstFailedStep": "Create a GCP VM Instance to Setup m-agent and Target Resources",
+      "name": "Setup_m-agent",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485801037"
+     },
+     {
+      "conclusion": "failure",
+      "durationSec": 17,
+      "failedSteps": [
+       "Delete GCP VM Instance"
+      ],
+      "firstFailedStep": "Delete GCP VM Instance",
+      "name": "Delete_VM",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485944161"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Serial_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485945623"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": 0,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "Process_Kill_Parallel_Test",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485946884"
+     }
+    ],
     "name": "m-agent",
     "note": "Needs GCP credentials",
     "required": false,
-    "resultsSource": "none",
-    "runId": null,
-    "runUrl": null,
-    "startedAt": null,
-    "status": "not_run",
+    "resultsSource": "jobs",
+    "runId": 42712607664,
+    "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664",
+    "startedAt": "2026-11-09T22:31:16Z",
+    "status": "failed",
     "suite": "bdd",
-    "trigger": null
+    "trigger": "schedule"
    }
   ]
  },
@@ -952,19 +990,40 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-09T21:37:03Z",
+ "generatedAt": "2026-11-09T22:32:00Z",
  "metrics": {
   "buildsConsidered": 15,
   "durationChange": {
-   "latestSec": 299,
-   "percent": -93.2,
+   "latestSec": 3599,
+   "percent": -18.4,
    "previousSec": 4413
   },
   "flakyTests": [],
-  "longestTests": [],
+  "longestTests": [
+   {
+    "durationSec": 17,
+    "id": "bdd/m-agent/job:Delete_VM",
+    "name": "job: Delete_VM",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 14,
+    "id": "bdd/m-agent/job:Setup_m-agent",
+    "name": "job: Setup_m-agent",
+    "suite": "bdd"
+   }
+  ],
   "newlyFailing": [],
   "recovered": [],
   "recurringFailures": [
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/m-agent/job:Delete_VM"
+   },
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/m-agent/job:Setup_m-agent"
+   },
    {
     "consecutiveBuilds": 13,
     "id": "bdd/aws/job:AWS_EC2_Test"
@@ -1012,14 +1071,6 @@
    {
     "consecutiveBuilds": 13,
     "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop in parallel mode experiment Should check for the azure instance stop in parallel"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/m-agent/job:Delete_VM"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/m-agent/job:Setup_m-agent"
    },
    {
     "consecutiveBuilds": 11,
@@ -1205,6 +1256,62 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42703370782",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 14,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Setup_m-agent",
+   "job": "Setup_m-agent",
+   "kind": "job",
+   "message": "Job failed at step 'Create a GCP VM Instance to Setup m-agent and Target Resources'",
+   "name": "job: Setup_m-agent",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485801037",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 17,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Delete_VM",
+   "job": "Delete_VM",
+   "kind": "job",
+   "message": "Job failed at step 'Delete GCP VM Instance'",
+   "name": "job: Delete_VM",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485944161",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Serial_Test",
+   "job": "Process_Kill_Serial_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Serial_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485945623",
+   "workflow": "m-agent"
+  },
+  {
+   "durationSec": 0,
+   "group": "m-agent",
+   "id": "bdd/m-agent/job:Process_Kill_Parallel_Test",
+   "job": "Process_Kill_Parallel_Test",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: Process_Kill_Parallel_Test",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42712607664/job/129485946884",
+   "workflow": "m-agent"
   }
  ]
 }
