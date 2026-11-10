@@ -3234,11 +3234,17 @@
    }
   },
   {
-   "durationSec": 3992,
+   "durationSec": 4385,
    "id": "2026-11-10",
    "results": {
+    "bdd/aws/job:AWS_EBS_Loss": "s",
+    "bdd/aws/job:AWS_EC2_Test": "e",
     "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial": "f",
     "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel": "f",
+    "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel": "f",
+    "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode": "f",
+    "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel": "f",
+    "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode": "f",
     "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in parallel": "f",
     "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial": "f",
     "bdd/gcp/job:GCP_VM_Disk_Loss": "s",
@@ -3273,12 +3279,12 @@
       "total": 0
      },
      "optionalCounts": {
-      "error": 3,
-      "failed": 6,
+      "error": 4,
+      "failed": 10,
       "passRate": 0.0,
       "passed": 0,
-      "skipped": 3,
-      "total": 12
+      "skipped": 4,
+      "total": 18
      },
      "status": "incomplete"
     },
@@ -3305,16 +3311,16 @@
    "workflows": {
     "aws": {
      "counts": {
-      "error": 0,
-      "failed": 0,
+      "error": 1,
+      "failed": 4,
       "passed": 0,
-      "skipped": 0
+      "skipped": 1
      },
-     "durationSec": null,
-     "failureKind": null,
+     "durationSec": 554,
+     "failureKind": "tests",
      "runId": 42916011637,
      "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/42916011637",
-     "status": "in_progress"
+     "status": "failed"
     },
     "azure": {
      "counts": {
@@ -3423,7 +3429,7 @@
    }
   }
  ],
- "generatedAt": "2026-11-10T22:39:13Z",
+ "generatedAt": "2026-11-10T22:45:07Z",
  "repository": "litmuschaos/litmus-e2e",
  "schemaVersion": 1
 }
