@@ -1,8 +1,8 @@
 {
  "build": {
-  "ageHours": 1.1,
-  "durationSec": 4014,
-  "finishedAt": "2026-11-12T22:38:51Z",
+  "ageHours": 1.2,
+  "durationSec": 4443,
+  "finishedAt": "2026-11-12T22:46:00Z",
   "id": "2026-11-12",
   "sha": "4bda9f31e2a232a0cd455f0407edd600ef1539cf",
   "stale": false,
@@ -19,12 +19,12 @@
      "total": 0
     },
     "optionalCounts": {
-     "error": 3,
-     "failed": 6,
+     "error": 4,
+     "failed": 10,
      "passRate": 0.0,
      "passed": 0,
-     "skipped": 3,
-     "total": 12
+     "skipped": 4,
+     "total": 18
     },
     "status": "incomplete"
    },
@@ -155,36 +155,47 @@
    {
     "category": "aws",
     "counts": {
-     "error": 0,
-     "failed": 0,
+     "error": 1,
+     "failed": 4,
      "passed": 0,
-     "skipped": 0
+     "skipped": 1
     },
-    "durationSec": null,
-    "failureKind": null,
+    "durationSec": 589,
+    "failureKind": "tests",
     "id": "aws",
     "jobs": [
      {
-      "conclusion": "in_progress",
-      "durationSec": null,
+      "conclusion": "failure",
+      "durationSec": 586,
       "failedSteps": [
        "Configure AWS Credentials",
        "Creating target EC2 instances",
-       "Get the target instance name"
+       "Get the target instance name",
+       "Run EC2 Terminate By ID experiment in serial & parallel mode",
+       "Run EC2 Terminate By Tag experiment in serial & parallel mode",
+       "Terminate target EC2 instances"
       ],
       "firstFailedStep": "Configure AWS Credentials",
       "name": "AWS_EC2_Test",
       "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860/job/131542746517"
+     },
+     {
+      "conclusion": "skipped",
+      "durationSec": -1,
+      "failedSteps": [],
+      "firstFailedStep": null,
+      "name": "AWS_EBS_Loss",
+      "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860/job/131547915283"
      }
     ],
     "name": "AWS",
     "note": "Needs AWS credentials",
     "required": false,
-    "resultsSource": "jobs",
+    "resultsSource": "junit",
     "runId": 43321419860,
     "runUrl": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
     "startedAt": "2026-11-12T22:36:11Z",
-    "status": "in_progress",
+    "status": "failed",
     "suite": "bdd",
     "trigger": "schedule"
    },
@@ -974,6 +985,8 @@
   ],
   "executed": [
    "disk-loss",
+   "ec2-terminate-by-id",
+   "ec2-terminate-by-tag",
    "gcp-vm-instance-stop",
    "instance-stop"
   ],
@@ -1055,16 +1068,22 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-12T22:39:56Z",
+ "generatedAt": "2026-11-12T22:46:10Z",
  "metrics": {
   "buildsConsidered": 18,
   "durationChange": {
-   "latestSec": 4014,
-   "percent": -8.7,
+   "latestSec": 4443,
+   "percent": 1.1,
    "previousSec": 4396
   },
   "flakyTests": [],
   "longestTests": [
+   {
+    "durationSec": 586,
+    "id": "bdd/aws/job:AWS_EC2_Test",
+    "name": "job: AWS_EC2_Test",
+    "suite": "bdd"
+   },
    {
     "durationSec": 311,
     "id": "bdd/gcp/job:GCP_VM_Instance_Stop",
@@ -1078,9 +1097,21 @@
     "suite": "bdd"
    },
    {
+    "durationSec": 100.063,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+    "suite": "bdd"
+   },
+   {
     "durationSec": 100.061,
     "id": "bdd/gcp-vm-instance-stop/BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
     "name": "BDD of gcp-vm-instance-stop experiment Check for gcp-vm-instance-stop experiment Should check for the gcp vm instance stop in serial",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.06,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
     "suite": "bdd"
    },
    {
@@ -1090,39 +1121,21 @@
     "suite": "bdd"
    },
    {
+    "durationSec": 100.058,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+    "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+    "suite": "bdd"
+   },
+   {
+    "durationSec": 100.054,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+    "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+    "suite": "bdd"
+   },
+   {
     "durationSec": 100.054,
     "id": "bdd/instance-stop/BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
     "name": "BDD of azure-instance-stop experiment Check for azure-instance-stop experiment Should check for the azure instance stop in serial",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.052,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
-    "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 100.043,
-    "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
-    "name": "BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 15,
-    "id": "bdd/m-agent/job:Setup_m-agent",
-    "name": "job: Setup_m-agent",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 12,
-    "id": "bdd/m-agent/job:Delete_VM",
-    "name": "job: Delete_VM",
-    "suite": "bdd"
-   },
-   {
-    "durationSec": 11.41,
-    "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@GCP_VM_Instance_Stop",
-    "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
     "suite": "bdd"
    }
   ],
@@ -1131,11 +1144,31 @@
   "recurringFailures": [
    {
     "consecutiveBuilds": 14,
+    "id": "bdd/aws/job:AWS_EC2_Test"
+   },
+   {
+    "consecutiveBuilds": 14,
     "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss experiment Should check for the azure disk loss in serial"
    },
    {
     "consecutiveBuilds": 14,
     "id": "bdd/disk-loss/BDD of azure-disk-loss experiment Check for azure-disk-loss in parallel mode experiment Should check for the  azure disk loss in parallel"
+   },
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
+   },
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode"
+   },
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel"
+   },
+   {
+    "consecutiveBuilds": 14,
+    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
    },
    {
     "consecutiveBuilds": 14,
@@ -1204,26 +1237,6 @@
    {
     "consecutiveBuilds": 14,
     "id": "frontend/UI/login/An uncaught error was detected outside of a test"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/aws/job:AWS_EC2_Test"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel"
-   },
-   {
-    "consecutiveBuilds": 13,
-    "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode"
    }
   ]
  },
@@ -1369,6 +1382,118 @@
    "suite": "frontend",
    "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43311161169",
    "workflow": "chaoscenter"
+  },
+  {
+   "durationSec": 100.06,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:28\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc000392588>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x1259736,…",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.058,
+   "group": "ec2-terminate-by-id",
+   "id": "bdd/ec2-terminate-by-id/BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-id_test.go:91\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0001105e8>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a691,…",
+   "name": "BDD of ec2-terminate-by-id experiment Check for ec2-terminate-by-id experiment Should check for the ec2 terminate by id in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.063,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:27\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003aea38>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x12596b6…",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in parallel",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 100.054,
+   "group": "ec2-terminate-by-tag",
+   "id": "bdd/ec2-terminate-by-tag/BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "job": "AWS_EC2_Test",
+   "kind": "test",
+   "message": "/home/runner/work/litmus-e2e/litmus-e2e/platform/aws/ec2-terminate-by-tag_test.go:89\nOperator status check failed due to {chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \"chaos-operator-ce\" not found}\nExpected\n    <*errors.fundamental | 0xc0003ae708>: {\n        msg: \"chaos-operator-ce fails to get in Running state, last observed state: failed to get the deployment default/chaos-operator-ce due to deployments.apps \\\"chaos-operator-ce\\\" not found\",\n        stack: [0x1215167, 0x121522f, 0x125a531…",
+   "name": "BDD of ec2-terminate-by-tag experiment Check for ec2-terminate-by-tag experiment Should check for the ec2 terminate by tag in serial mode",
+   "source": "junit",
+   "status": "failed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 5.59,
+   "group": "install-litmus",
+   "id": "bdd/install-litmus/BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of Litmus installation Check for the Litmus components Should check for creation of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 11.048,
+   "group": "litmus-cleanup",
+   "id": "bdd/litmus-cleanup/BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus@AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "setup",
+   "message": "",
+   "name": "BDD of litmus cleanup Check for the litmus components Should check for deletion of Litmus",
+   "source": "junit",
+   "status": "passed",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": 586,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EC2_Test",
+   "job": "AWS_EC2_Test",
+   "kind": "job",
+   "message": "Job failed at step 'Configure AWS Credentials'",
+   "name": "job: AWS_EC2_Test",
+   "source": "job",
+   "status": "error",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860/job/131542746517",
+   "workflow": "aws"
+  },
+  {
+   "durationSec": -1,
+   "group": "aws",
+   "id": "bdd/aws/job:AWS_EBS_Loss",
+   "job": "AWS_EBS_Loss",
+   "kind": "job",
+   "message": "Job skipped, its tests did not run",
+   "name": "job: AWS_EBS_Loss",
+   "source": "job",
+   "status": "skipped",
+   "suite": "bdd",
+   "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/43321419860/job/131547915283",
+   "workflow": "aws"
   },
   {
    "durationSec": 100.052,
