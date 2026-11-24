@@ -167,8 +167,12 @@
      {
       "conclusion": "in_progress",
       "durationSec": null,
-      "failedSteps": [],
-      "firstFailedStep": null,
+      "failedSteps": [
+       "Configure AWS Credentials",
+       "Creating target EC2 instances",
+       "Get the target instance name"
+      ],
+      "firstFailedStep": "Configure AWS Credentials",
       "name": "AWS_EC2_Test",
       "url": "https://github.com/litmuschaos/litmus-e2e/actions/runs/45502543452/job/138829275951"
      }
@@ -1051,7 +1055,7 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-24T22:38:02Z",
+ "generatedAt": "2026-11-24T22:39:06Z",
  "metrics": {
   "buildsConsidered": 30,
   "durationChange": {
