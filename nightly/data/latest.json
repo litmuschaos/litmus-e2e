@@ -1,6 +1,6 @@
 {
  "build": {
-  "ageHours": 1.2,
+  "ageHours": 11.1,
   "durationSec": 4419,
   "finishedAt": "2026-11-26T22:45:17Z",
   "id": "2026-11-26",
@@ -1068,7 +1068,7 @@
    "with-appinfo"
   ]
  },
- "generatedAt": "2026-11-26T22:45:28Z",
+ "generatedAt": "2026-11-27T08:36:18Z",
  "metrics": {
   "buildsConsidered": 32,
   "durationChange": {
